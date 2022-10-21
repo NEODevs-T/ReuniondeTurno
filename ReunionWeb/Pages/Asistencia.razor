@@ -1,0 +1,256 @@
+﻿@page "/asistencia"
+
+@inject IDbDiv1Service DbDiv1Service
+
+<h3>Asistencia</h3>
+<p></p>
+
+<div>
+      <BSCol Column="4">
+
+@if (@mensaje == "Registro Exitoso")
+{
+            <BSAlert Color="BSColor.Success" IsDismissible="true" HasIcon="true"  @ref="_alertRef" Dismissed="Dismissed">
+        @mensaje
+            </BSAlert>
+}
+else if (@mensaje == "Error al Insertar los datos, Intente de Nuevo" | mensaje=="Seleccione el area.")
+{
+           
+                        <BSAlert Color="BSColor.Warning" IsDismissible="true" HasIcon="true" @ref="_alertRef" Dismissed="Dismissed">
+                @mensaje
+    </BSAlert>
+    
+}
+else if (@mensaje != "")
+{
+             <BSAlert Color="BSColor.Danger" IsDismissible="true" HasIcon="true"  @ref="_alertRef" Dismissed="Alertas.Dismissed">
+        @mensaje
+            </BSAlert>
+}
+
+</BSCol>
+</div>
+
+<p></p>
+<BSCard CardType="CardType.Card" style="width:50%; padding:10px;" >
+   
+    <p></p>
+
+
+
+        <BSForm Model="asisform" OnSubmit="Save" OnReset="Reset">
+            <BSCol Column="9">
+        
+                <BSInput InputType="InputType.Select" @bind-Value="asisform.Area">
+                    <option value ="">Seleccione...</option>
+                    <option value="DIV 1">Conversión</option>
+                    <option value="MOL">Molinos</option>
+                     <option value="Generación">Generación de Energía</option>
+                     <option value="AMB">Efluentes</option>
+                     <option value="PD&CL">Destintado</option>
+                     <option value="PP">Planta de Pulpa</option>
+                </BSInput>
+            </BSCol> 
+
+            <p></p>
+                
+          <BSRow>
+            <BSCol ColumnSmall="6">
+                Superintendente de Produccion
+            </BSCol>
+            <BSCol Column="6">
+                   <BSInputRadio CheckedValue="@(1)" @bind-Value="asisform.SptteProduccion" IsToggle="true" Color="BSColor.Success" IsOutlined="true">
+                        Presente
+                    </BSInputRadio>
+                    <BSInputRadio CheckedValue="@(0)" @bind-Value="asisform.SptteProduccion" IsToggle="true" Color="BSColor.Danger" IsOutlined="true">
+                        Ausente
+                    </BSInputRadio>
+            </BSCol>
+          </BSRow>
+          <p></p>
+            @*<BSRow>
+            <BSCol ColumnSmall="3">
+                Supervisor de Produccion
+            </BSCol>
+            <BSCol Column="6">
+                   <BSInputRadio CheckedValue="@(1)" @bind-Value="asisform.SupvProd" IsToggle="true" Color="BSColor.Success" IsOutlined="true">
+                        Presente
+                    </BSInputRadio>
+                    <BSInputRadio CheckedValue="@(0)" @bind-Value="asisform.SupvProd" IsToggle="true" Color="BSColor.Danger" IsOutlined="true">
+                        Ausente
+                    </BSInputRadio>
+            </BSCol>
+          </BSRow>*@
+           
+          <p></p>
+            <BSRow>
+            <BSCol ColumnSmall="6">
+                Superintendente de Mtto Mecanico
+            </BSCol>
+            <BSCol Column="6">
+                   <BSInputRadio CheckedValue="@(1)" @bind-Value="asisform.SupvMttoMecanico" IsToggle="true" Color="BSColor.Success" IsOutlined="true">
+                        Presente
+                    </BSInputRadio>
+                    <BSInputRadio CheckedValue="@(0)" @bind-Value="asisform.SupvMttoMecanico" IsToggle="true" Color="BSColor.Danger" IsOutlined="true">
+                        Ausente
+                    </BSInputRadio>
+            </BSCol>
+          </BSRow>
+
+            <p></p>
+            <BSRow>
+              <BSCol ColumnSmall="6">
+                Superintendente de Mtto Electrico
+            </BSCol>
+            <BSCol Column="6">
+                   <BSInputRadio CheckedValue="@(1)" @bind-Value="asisform.SupvMttoElectricoElectronico" IsToggle="true" Color="BSColor.Success" IsOutlined="true">
+                        Presente
+                    </BSInputRadio>
+                    <BSInputRadio CheckedValue="@(0)" @bind-Value="asisform.SupvMttoElectricoElectronico" IsToggle="true" Color="BSColor.Danger" IsOutlined="true">
+                        Ausente
+                    </BSInputRadio>
+            </BSCol>
+          </BSRow>
+
+            <p></p>
+            <BSRow>
+             <BSCol ColumnSmall="6">
+                Superintendente de Mtto Instrumentacion
+            </BSCol>
+            <BSCol Column="6">
+                   <BSInputRadio CheckedValue="@(1)" @bind-Value="asisform.SupvInstrumentacion" IsToggle="true" Color="BSColor.Success" IsOutlined="true">
+                        Presente
+                    </BSInputRadio>
+                    <BSInputRadio CheckedValue="@(0)" @bind-Value="asisform.SupvInstrumentacion" IsToggle="true" Color="BSColor.Danger" IsOutlined="true">
+                        Ausente
+                    </BSInputRadio>
+            </BSCol>
+          </BSRow>
+          
+              <p></p>
+            <BSRow>
+            <BSCol ColumnSmall="6">
+                Planificador
+            </BSCol>
+            <BSCol Column="6">
+                   <BSInputRadio CheckedValue="@(1)" @bind-Value="asisform.Planificador" IsToggle="true" Color="BSColor.Success" IsOutlined="true">
+                        Presente
+                    </BSInputRadio>
+                    <BSInputRadio CheckedValue="@(0)" @bind-Value="asisform.Planificador" IsToggle="true" Color="BSColor.Danger" IsOutlined="true">
+                        Ausente
+                    </BSInputRadio>
+            </BSCol>
+          </BSRow>
+            
+
+             <p></p>
+            <BSRow>
+            <BSCol ColumnSmall="6">
+                Calidad
+            </BSCol>
+            <BSCol Column="6">
+                   <BSInputRadio CheckedValue="@(1)" @bind-Value="asisform.Calidad" IsToggle="true" Color="BSColor.Success" IsOutlined="true">
+                        Presente
+                    </BSInputRadio>
+                    <BSInputRadio CheckedValue="@(0)" @bind-Value="asisform.Calidad" IsToggle="true" Color="BSColor.Danger" IsOutlined="true">
+                        Ausente
+                    </BSInputRadio>
+            </BSCol>
+          </BSRow>
+            
+          <p></p>
+            <BSRow>
+            <BSCol ColumnSmall="6">
+                Seguridad
+            </BSCol>
+            <BSCol Column="6">
+                   <BSInputRadio CheckedValue="@(1)" @bind-Value="asisform.Seguridad" IsToggle="true" Color="BSColor.Success" IsOutlined="true">
+                        Presente
+                    </BSInputRadio>
+                    <BSInputRadio CheckedValue="@(0)" @bind-Value="asisform.Seguridad" IsToggle="true" Color="BSColor.Danger" IsOutlined="true">
+                        Ausente
+                    </BSInputRadio>
+            </BSCol>
+          </BSRow>  
+
+           <p></p>
+            <BSRow>
+            <BSCol ColumnSmall="6">
+                Mtto Preventivo
+            </BSCol>
+            <BSCol Column="6">
+                   <BSInputRadio CheckedValue="@(1)" @bind-Value="asisform.MttoPrev" IsToggle="true" Color="BSColor.Success" IsOutlined="true">
+                        Presente
+                    </BSInputRadio>
+                    <BSInputRadio CheckedValue="@(0)" @bind-Value="asisform.MttoPrev" IsToggle="true" Color="BSColor.Danger" IsOutlined="true">
+                        Ausente
+                    </BSInputRadio>
+            </BSCol>
+          </BSRow>  
+          <p></p>
+           <BSButton   Color="BSColor.Success"  Size="Size.ExtraSmall" IsSubmit >  Guardar <span class="oi oi-check"></span></BSButton>
+           <BSButton   Color="BSColor.Warning"  Size="Size.ExtraSmall" IsReset>  Borrar </BSButton>
+
+       </BSForm>
+         </BSCard>
+  
+
+@code{
+
+    private Asistencium asisform = new Asistencium();
+    private List<Asistencium> asis = new List<Asistencium>();
+    private int fecha = int.Parse(DateTime.Now.ToString("yyyyMMdd"));
+    private Alerts Alertas = new Alerts();
+    private string mensaje="";
+
+
+    private bool _buttonDisabled = true;
+    private BSAlert? _alertRef;
+
+    protected async Task Save()
+    {
+
+        asisform.Fecha = fecha;
+        try{
+            
+            if (asisform.Area is not null & asisform.Area!="")
+            {
+                await DbDiv1Service.Postasistencia(asisform);
+                mensaje = "Registro Exitoso";
+                Show();
+
+                asisform = new Asistencium();
+            }
+            else{
+                mensaje = "Seleccione el area.";
+                Show();
+            }
+        } 
+        catch 
+        {
+
+            mensaje = "Error al Insertar los datos, Intente de Nuevo";
+            Show();
+        }
+    }
+
+
+    protected async Task Reset()
+    {
+        asisform = new Asistencium();
+    }
+
+
+
+    private void Show()
+    {
+        _buttonDisabled = true;
+        _alertRef?.Open();
+    }
+
+    private void Dismissed()
+    {
+        _buttonDisabled = false;
+    }
+}

@@ -1,0 +1,154 @@
+﻿@page "/EditDisc/{id:int}/{tipo:int}"
+@inject IDbDiv1Service DbDiv1Service
+@inject NavigationManager NavigationManager
+
+
+<h3>Editar Disrepancia</h3>
+
+
+<h4></h4>
+
+<BSForm Model="bdDivform"  IsRow="true" Gutters="Gutters.Medium" OnSubmit="Editar">
+   <DataAnnotationsValidator />
+    <BSCol ColumnMedium="12">
+        @_message
+        <BSValidationSummary />
+    </BSCol>
+      <BSRow>
+              
+      <BSCol Column="3">
+                <BSLabel>Division</BSLabel>
+                <BSInput InputType="InputType.Text" @bind-Value="bdDivform.Div"/>
+                    
+                <BSFeedback For="@(() => bdDivform.Div)" ValidMessage="Correcto." />
+            </BSCol> 
+            
+
+             <BSCol Column="2">
+                <BSLabel>Area</BSLabel>
+                <BSInput InputType="InputType.Text" @bind-Value="bdDivform.Area">       
+            </BSInput>
+             <BSFeedback For="@(() => bdDivform.Area)" ValidMessage="Correcto." />
+            </BSCol>
+  
+            <BSCol Column="2">
+                <BSLabel>Ksf</BSLabel>
+                <BSInput InputType="InputType.Text" @bind-Value="bdDivform.Ksf"/>
+                
+            </BSCol>
+
+               <BSCol Column="2">
+                <BSLabel>C. Equipo</BSLabel>
+                <BSInput InputType="InputType.Text" @bind-Value="bdDivform.CodigoEquipo" ValidateOnInput="true" />
+                 <BSFeedback For="@(() => bdDivform.CodigoEquipo)" ValidMessage="Correcto." />
+                </BSCol>
+
+             <BSCol ColumnSmall="2">
+                <BSLabel>Codigo</BSLabel>
+                <BSInput InputType="InputType.Select" @bind-Value="bdDivform.Codigo">
+                    <option value="">Sleccione...</option>
+                    <option value="1">1- En Curso</option>
+                    <option value="2">2- Próxima Parada</option>
+                    <option value="3">3- Falta Repuesto</option>
+                    <option value="4">4- Falta de Personal</option>
+                    <option value="5">5- Eq. no Disponible</option>
+                
+
+                </BSInput>
+            </BSCol>
+         
+            </BSRow> 
+            <p></p>
+            <BSRow> 
+                <BSCol Column="4">
+                <BSLabel>Discrepancia</BSLabel>
+                <BSInput InputType="InputType.Text" @bind-Value="bdDivform.Discrepancia" ValidateOnInput="true" />
+                 <BSFeedback For="@(() => bdDivform.Discrepancia)" ValidMessage="Correcto." />
+            </BSCol>
+
+                <BSCol Column="6">
+                <BSLabel>Plan de Accion</BSLabel>
+                <BSInput InputType="InputType.Text" @bind-Value="bdDivform.PlanDeAccion" ValidateOnInput="true" />
+                </BSCol>
+
+            </BSRow> 
+
+                <p></p>
+                <p></p>
+
+            <BSRow>
+
+                 <BSCol Column="1">
+                <BSLabel>Tiempo</BSLabel>
+                <BSInput InputType="InputType.Text" @bind-Value="bdDivform.Tiempo" ValidateOnInput="true" />
+                </BSCol>
+
+                 <BSCol Column="2">
+                <BSLabel>Fecha del Trabajo</BSLabel>
+                <BSInput InputType="InputType.Date" @bind-Value="fechatrabajo" ValidateOnInput="true" />
+                </BSCol>
+
+                <BSCol ColumnSmall="2">
+                <BSLabel>Responsable</BSLabel>
+                <BSInput InputType="InputType.Select" @bind-Value="bdDivform.Responsable">
+                    <option value="">Seleccione...</option>
+                    <option value="PRODUCCION">PRODUCCION</option>
+                    <option value="MTTO MECANICO">MTTO MECANICO</option>
+                    <option value="MTTO ELECTRICO/ELECTRONICO">MTTO ELECTRICO/ELECTRONICO</option>
+                    <option value="MTTO INSTRUMENTACION">MTTO INSTRUMENTACION</option>
+                    <option value="SEGURIDAD">SEGURIDAD</option>
+                    <option value="CALIDAD">CALIDAD</option>
+                    <option value="OPERACIONES EFLUENTES">OPERACIONES EFLUENTES</option>
+                </BSInput>
+                  <BSFeedback For="@(() => bdDivform.Responsable)" ValidMessage="Correcto." />
+            </BSCol>
+
+             <BSCol ColumnSmall="2">
+                <BSLabel>Status</BSLabel>
+                <BSInput InputType="InputType.Select" @bind-Value="bdDivform.Status">
+                    <option value="">Seleccione...</option>
+                    <option value="Listo">Listo</option>
+                    <option value="Pendiente">Pendiente</option>
+                      <BSFeedback For="@(() => bdDivform.Status)" ValidMessage="Correcto." />
+                </BSInput>
+            </BSCol>
+
+             <BSCol Column="1">
+                <BSLabel>SPA</BSLabel>
+                <BSInput InputType="InputType.Text" @bind-Value="bdDivform.Ps" ValidateOnInput="true" />
+                </BSCol>
+
+             </BSRow>
+              <p></p>
+               <p></p>
+            <BSCol Column="12">
+           <BSButton   Color="BSColor.Success"  Size="Size.ExtraSmall" IsSubmit>  Guardar <span class="oi oi-check"></span></BSButton>
+@*           <BSButton   Color="BSColor.Primary"  Size="Size.ExtraSmall" IsReset>  Nuevo </BSButton>
+*@            </BSCol>
+       </BSForm>
+
+@code {
+
+    [Parameter]
+    public int? Id { get; set; }
+     [Parameter]
+    public int? tipo { get; set; }
+    string _message="";
+    BdDiv1 bdDivform = new BdDiv1();
+    private List<BdDiv1> bdDiv1slist = new List<BdDiv1>();
+    private DateTime fechahoy, fechatrabajo=DateTime.Today;
+    private string fechahoy2;
+
+    protected override async Task OnParametersSetAsync()
+    {
+
+       bdDivform = await DbDiv1Service.GetDiscrepantacia((int)Id);
+
+
+    }
+     async Task Editar()
+    {
+       
+            await DbDiv1Service.PutDiscrepancia(bdDivform, (int)tipo );
+     }
+    }

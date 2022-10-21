@@ -1,0 +1,155 @@
+﻿@page "/reunion"
+@page "/reunion/{accion:int}"
+@inject IDbDiv1Service DbDiv1Service
+@inject NavigationManager NavigationManager
+
+<h3>Formato de Reunión</h3>
+
+         <BSContainer> 
+             
+          <BSRow>
+            <BSCol Column="4">
+                
+                <BSInput InputType="InputType.Select" @bind-Value="Div">
+                    <option value="DIV 1">Conversión</option>
+                    <option value="MOL">Molinos</option>
+                     <option value="Generación">Generación de Energía</option>
+                     <option value="AMB">Efluentes</option>
+                     <option value="PD&CL">Destintado</option>
+                     <option value="PP">Planta de Pulpa</option>
+                </BSInput>
+            </BSCol> 
+            
+                <BSCol ColumnSmall="3">
+                        <BSButton IsOutlined   Color="BSColor.Success"  Size="Size.ExtraSmall" @onclick="Get"> Reunión <span class="oi oi-check"></span></BSButton>
+      
+                </BSCol> 
+            </BSRow>
+
+
+    </BSContainer>    
+    
+        <p>
+
+        </p>
+
+@if (DbDiv1Service.dbDiv1s.Count()>0 && dataIsLoaded == 2)
+{
+    <BSContainer>
+
+
+    <BSTable IsResponsive="true" IsStriped="true" IsBordered="true" IsHoverable="true">
+        <BSTHead Class="cabecera">
+            <BSTR>
+                
+                @*<BSTD>Id</BSTD>*@             
+                <BSTD>Área</BSTD>
+                <BSTD>Ksf</BSTD>
+                <BSTD>Código de Equipo</BSTD>
+                <BSTD ColSpan="4">Discrepancia</BSTD>
+                <BSTD>Código</BSTD>
+                <BSTD>Plan de Acción</BSTD>
+                <BSTD>Tiempo</BSTD>
+                <BSTD>Responsable</BSTD>
+                <BSTD>Status</BSTD>
+                @* <BSTD>Produfin</BSTD>*@
+                <BSTD>Ps</BSTD>
+                <BSTD>Fecha de Reunión</BSTD> @*Fecha del dia de reunion*@
+                @* <BSTD>FechaTrab</BSTD>*@
+                @*<BSTD>Div</BSTD>*@
+                @*<BSTD>Fecha BPCS</BSTD>*@
+                <BSTD>Fecha del Trabajo</BSTD>@*Fecha de listo el trabajo*@
+                <BSTD></BSTD>
+
+
+            </BSTR>
+        </BSTHead>
+        <BSTBody>
+            @foreach (var d in DbDiv1Service.dbDiv1s)
+            {
+                @*@if (@d.Fecha2 == ayer)
+                {*@
+                     @if (@d.Status != "Listo" &  d.Status != "LISTO")
+                {
+                    <BSTR>
+                       @*<BSTD>@d.Id</BSTD>*@
+                        <BSTD>@d.Area</BSTD>
+                        <BSTD>@d.Ksf</BSTD>
+                        <BSTD>@d.CodigoEquipo</BSTD>
+                        <BSTD ColSpan="4" class="textotabla">@d.Discrepancia</BSTD>
+                        <BSTD>@d.Codigo</BSTD>
+                        <BSTD Class="textotabla">@d.PlanDeAccion</BSTD>
+                        <BSTD>@d.Tiempo</BSTD>
+                        <BSTD>@d.Responsable</BSTD>
+
+                        @if (@d.Status == "Listo" | d.Status == "LISTO")
+                        {
+                            <BSTD>@d.Status</BSTD>
+                        }
+                        else
+                        {
+                           <BSTD Class="pendiente">@d.Status</BSTD>
+                        }
+                        @*<BSTD>@d.Produfin</BSTD>*@
+                        <BSTD>@d.Ps</BSTD>
+                        <BSTD>@d.Fecha</BSTD>
+                        @*<BSTD>@d.FechaTrab</BSTD>*@
+                        @*<BSTD>@d.Div</BSTD>*@
+                        @*<BSTD>@d.Fecha2</BSTD>*@
+                        <BSTD>@d.FechaTrab1</BSTD>
+                        <BSTD>
+                         <button class="btn btn-success" @onclick="(() => Editar(d.Id))"><i class="oi oi-pencil"></i></button>
+                           </BSTD>
+
+                    </BSTR>
+                    }
+               @* }*@
+
+            }
+
+
+        </BSTBody>
+  
+    </BSTable>
+    </BSContainer>   
+}
+else if (dataIsLoaded==1 && DbDiv1Service.dbDiv1s.Count()==0)
+{
+    <p>Cargando...</p>
+}
+else if (dataIsLoaded==2 && DbDiv1Service.dbDiv1s.Count()==0)
+{
+    <p>No hay datos para esta fecha.</p>
+}
+
+@code {
+   
+     [Parameter]
+    public int? accion { get; set; }
+    int dataIsLoaded = 0;
+     string ayer = DateTime.Now.AddDays(-1).ToString("yyyyMMdd");
+    private string Div { get; set; } = "DIV 1";
+
+
+    protected async Task Get()
+    {   
+        dataIsLoaded = 1;
+        await DbDiv1Service.GetPendientes(Div);
+        dataIsLoaded = 2;
+    }
+     void Editar(int id)
+    {
+        NavigationManager.NavigateTo($"EditDisc/{id}/1");
+      
+    }
+    protected override async Task OnParametersSetAsync()
+    {
+        if (accion !=null)
+        {
+            dataIsLoaded = 1;
+            dataIsLoaded = 2;
+        }
+
+    }
+
+}
