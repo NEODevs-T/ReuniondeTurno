@@ -1,5 +1,5 @@
 ﻿@page "/reunion"
-@page "/reunion/{accion:int}"
+@page "/reunion/{accion}"
 @inject IDbDiv1Service DbDiv1Service
 @inject NavigationManager NavigationManager
 
@@ -123,19 +123,22 @@ else if (dataIsLoaded==2 && DbDiv1Service.dbDiv1s.Count()==0)
 }
 
 @code {
-   
-     [Parameter]
-    public int? accion { get; set; }
+
+    [Parameter]
+    public string? accion { get; set; }
     int dataIsLoaded = 0;
-     string ayer = DateTime.Now.AddDays(-1).ToString("yyyyMMdd");
+    string ayer = DateTime.Now.AddDays(-1).ToString("yyyyMMdd");
     private string Div { get; set; } = "DIV 1";
 
 
     protected async Task Get()
-    {   
-        dataIsLoaded = 1;
-        await DbDiv1Service.GetPendientes(Div);
-        dataIsLoaded = 2;
+    {
+        if (dataIsLoaded != 1)
+        {
+            dataIsLoaded = 1;
+            await DbDiv1Service.GetPendientes(Div);
+            dataIsLoaded = 2;
+        }
     }
      void Editar(int id)
     {

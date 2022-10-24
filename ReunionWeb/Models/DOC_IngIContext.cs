@@ -167,11 +167,7 @@ namespace ReunionWeb.Models
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            if (!optionsBuilder.IsConfigured)
-            {
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-                optionsBuilder.UseSqlServer("Data Source=10.20.1.60\\DBVEN01;Initial Catalog=DOC_IngI;Persist Security Info=True;User ID=usrDocIng;Password=usrDoc08*Sq*");
-            }
+           
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

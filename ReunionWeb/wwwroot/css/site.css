@@ -2,6 +2,7 @@
 
 html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    background-image: linear-gradient(to right #fff, #ECECEC, #DEDEDE);
 }
 
 h1:focus {
@@ -23,7 +24,26 @@ a, .btn-link {
     border-color: #1861ac;
 }
 
-.content {
+.cabecera {
+    background-image: linear-gradient(to right,#79B943,#3CAD49, #00A23B );
+    color: azure;
+    border: 0.1px !important;
+}
+
+.boxhome {
+    /*background-image: linear-gradient(to right,rgba( 0, 162, 59, 0.6 ),rgba( 60, 173, 73, 0.6 ), rgba( 121, 185, 67, 0.6 ));*/
+    background-color: rgba( 155, 155, 155, 0.25 );
+    box-shadow: 0 8px 15px 0 rgba( 31, 38, 135, 0.37 );
+    backdrop-filter: blur( 1.5px );
+    -webkit-backdrop-filter: blur( 1.5px );
+    border-radius: 8px;
+    border: 1px solid rgba( 255, 255, 255, 0.18 );
+    padding-left: 20px;
+    padding-right: 10px;
+    padding-top: 10px;
+    padding-bottom: 20px;
+}
+    .content {
     padding-top: 1.1rem;
 }
 

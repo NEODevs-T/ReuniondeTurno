@@ -148,7 +148,7 @@
     }
      async Task Editar()
     {
-       
-            await DbDiv1Service.PutDiscrepancia(bdDivform, (int)tipo );
+
+        await DbDiv1Service.UpdateDiscrepancia(bdDivform, (int)Id, (int)tipo);
      }
     }

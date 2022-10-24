@@ -1,89 +1,125 @@
 ﻿using Microsoft.AspNetCore.Components;
 using ReunionWeb.Models;
+using ReunionWeb.Controllers;
+using Microsoft.EntityFrameworkCore;
 
 namespace ReunionWeb.Services
 {
     public class DbDiv1Service:IDbDiv1Service
     {
-        private readonly HttpClient _http;
-        private readonly NavigationManager _navigationManager;
-
+ 
         public List<BdDiv1> dbDiv1s { get; set; } = new List<BdDiv1>();
 
         public BdDiv1 dbDiv { get; set; } = new BdDiv1();
         public List<Asistencium> asistencia { get; set; } = new List<Asistencium>();
+        private readonly DOC_IngIContext _context; 
+        private readonly NavigationManager _navigationManager;
 
-        public DbDiv1Service(HttpClient http, NavigationManager navigationManager)
+        public DbDiv1Service(DOC_IngIContext _IngIContext, NavigationManager navigationManager)
         {
-            _http = http;
+
             _navigationManager = navigationManager;
+            _context = _IngIContext;
         }
-
-
+        //obtener discrepancias para pendientes y reunion 
         public async Task GetPendientes(string div)
         {
-            var result = await _http.GetFromJsonAsync<List<BdDiv1>>($"api/ReunionDia/{div}");
-            if (result != null)
-                dbDiv1s = result;
+
+            string f1 = DateTime.Now.AddDays(-1).ToString("yyyMMdd");
+            string f2 = DateTime.Now.ToString("yyyMMdd");
+
+            dbDiv1s = await _context.BdDiv1s
+                .Where(a => a.Fecha2 == f1 && a.Div == div || a.Fecha2 == f2 && a.Div == div)
+                .OrderByDescending(b => b.Id)
+                .ToListAsync();
+
 
         }
-
+        //obtener discrepancia a editar
         public async Task<BdDiv1> GetDiscrepantacia(int id)
         {
-            var result = await _http.GetFromJsonAsync<BdDiv1>($"api/ReunionDia/discrepancia/{id}");
-            if (result != null)
-                //dbDiv = result;
-                return result;
-            throw new Exception("Hero not found!");
+            var div1 = await _context.BdDiv1s
+             .FirstOrDefaultAsync(h => h.Id == id);
+           if(div1 == null)
+            throw new Exception("not found!");
+            return div1;
+
+        }
+
+        public async Task SetDiscrepancias(string div)
+        {
+
+            string f1 = DateTime.Now.AddDays(-1).ToString("yyyMMdd");
+            string f2 = DateTime.Now.ToString("yyyMMdd");
+
+            dbDiv1s = await _context.BdDiv1s
+                .Where(a => a.Fecha2 == f1 && a.Div == div || a.Fecha2 == f2 && a.Div == div)
+                .OrderByDescending(b => b.Id)
+                .ToListAsync();
+
+        }
+        public async Task Insertasistencia(Asistencium asistencium)
+        {
+
+            _context.Asistencia.Add(asistencium);
+            await _context.SaveChangesAsync();
 
         }
 
 
-        public async Task Postasistencia(Asistencium asistencium)
+        public async Task InsertDiscrepancia(BdDiv1 bdDiv1)
         {
-            var result = await _http.PostAsJsonAsync("api/ReunionDia/Asistencia", asistencium);
-
-
+                _context.BdDiv1s.Add(bdDiv1);
+                await _context.SaveChangesAsync();            
         }
 
-
-        public async Task PostDiscrepancia(BdDiv1 bdDiv1)
+        public async Task UpdateDiscrepancia(BdDiv1 d,int id, int tipo)
         {
-            var result = await _http.PostAsJsonAsync("api/ReunionDia/Discrep", bdDiv1);
-            // await SetAsistencia(result);
-        }
+            string div="";
 
-        public async Task PutDiscrepancia(BdDiv1 bdDiv1, int tipo)
-        {
-            var result = await _http.PutAsJsonAsync($"api/ReunionDia/{bdDiv1.Id}", bdDiv1);
+            if (d.Div is not null)
+            {
+                div = d.Div;
+            }
+               
+
+            var bdDivform = await _context.BdDiv1s
+                .FirstOrDefaultAsync(sh => sh.Id == id);
+            if (bdDivform == null)
+                throw new Exception("Sorry, not found");
+          
+
+            bdDivform.Area = d.Area;
+            bdDivform.Codigo = d.Codigo;
+            bdDivform.CodigoEquipo = d.CodigoEquipo;
+            bdDivform.Discrepancia = d.Discrepancia;
+            bdDivform.Div = d.Div;
+            bdDivform.Fecha = d.Fecha;
+            bdDivform.Fecha2 = d.Fecha2;
+            bdDivform.FechaTrab = d.FechaTrab;
+            bdDivform.FechaTrab1 = d.FechaTrab1;
+            bdDivform.Id = d.Id;
+            bdDivform.Ksf = d.Ksf;
+            bdDivform.PlanDeAccion = d.PlanDeAccion;
+            bdDivform.Ps = d.Ps;
+            bdDivform.Responsable = d.Responsable;
+            bdDivform.Status = d.Status;
+            bdDivform.Tiempo = d.Tiempo;
+
+            await _context.SaveChangesAsync();  
+            
+           
             if (tipo == 0)
             {
-                await SetPendientes(result);
+                _navigationManager.NavigateTo($"pendientes/{div}");
             }
             else
             {
-                await SetReunion(result);
+                _navigationManager.NavigateTo($"reunion/{div}");
             }
 
         }
-        private async Task SetPendientes(HttpResponseMessage result)
-        {
-            var response = await result.Content.ReadFromJsonAsync<List<BdDiv1>>();
-
-            dbDiv1s = response;
-            int tipo = 0;
-            _navigationManager.NavigateTo($"pendientes/{tipo}");
-
-        }
-        private async Task SetReunion(HttpResponseMessage result)
-        {
-            var response = await result.Content.ReadFromJsonAsync<List<BdDiv1>>();
-
-            dbDiv1s = response;
-
-            _navigationManager.NavigateTo($"reunion/1");
-
-        }
+ 
 
     }
 }

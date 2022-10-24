@@ -10,9 +10,9 @@ namespace ReunionWeb.Services
 
         Task GetPendientes(string div);
         Task<BdDiv1> GetDiscrepantacia(int id);
-        Task Postasistencia(Asistencium asistencium);
-        Task PostDiscrepancia(BdDiv1 bdDiv1);
-        Task PutDiscrepancia(BdDiv1 bdDiv1, int tipo);
+        Task Insertasistencia(Asistencium asistencium);
+        Task InsertDiscrepancia(BdDiv1 bdDiv1);
+        Task UpdateDiscrepancia(BdDiv1 bdDiv1, int id, int tipo);
 
     }
 }

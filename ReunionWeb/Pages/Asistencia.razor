@@ -216,7 +216,7 @@ else if (@mensaje != "")
             
             if (asisform.Area is not null & asisform.Area!="")
             {
-                await DbDiv1Service.Postasistencia(asisform);
+                await DbDiv1Service.Insertasistencia(asisform);
                 mensaje = "Registro Exitoso";
                 Show();
 

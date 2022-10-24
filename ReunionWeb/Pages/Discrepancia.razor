@@ -31,7 +31,7 @@ else if (@mensaje != "")
 
 <p></p>
 
-  <BSForm Model="bdDivform" Class="cuadrito" IsRow="true" Gutters="Gutters.Medium" OnSubmit="Insert" OnReset="Reset">
+  <BSForm Model="bdDivform" Class="boxhome" IsRow="true" Gutters="Gutters.Medium" OnSubmit="Insert" OnReset="Reset">
    <DataAnnotationsValidator />
     <BSCol ColumnMedium="12">
         @_message
@@ -39,7 +39,7 @@ else if (@mensaje != "")
     </BSCol>
       <BSRow>
               
-      <BSCol Column="3">
+      <BSCol Column="3" >
                 <BSLabel>Division</BSLabel>
                 <BSInput InputType="InputType.Select" @bind-Value="bdDivform.Div">
 
@@ -351,7 +351,7 @@ else if (@mensaje != "")
                 }
                 else
                 {
-                    await DbDiv1Service.PostDiscrepancia(bdDivform);
+                    await DbDiv1Service.InsertDiscrepancia(bdDivform);
                     mensaje = "Registro Exitoso";
                     Alertas.Show();
                     //bdDivform = new BdDiv1();
