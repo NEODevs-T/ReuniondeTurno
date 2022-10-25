@@ -11,6 +11,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddScoped<IDbDiv1Service, DbDiv1Service>();
+builder.Services.AddControllersWithViews();
 builder.Services.AddBlazorStrap();
 builder.Services.AddDbContext<DOC_IngIContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")), ServiceLifetime.Transient);

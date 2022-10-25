@@ -58,7 +58,7 @@ else if (@mensaje != "")
 
              <BSCol Column="2">
                 <BSLabel>Area</BSLabel>
-                <BSInput InputType="InputType.Select" @bind-Value="bdDivform.Area">
+                <BSInput InputType="InputType.Select" @bind-Value="bdDivform.Area" ValidateOnInput="true">
 
                    <option value="">Seleccione...</option>
 
@@ -166,7 +166,7 @@ else if (@mensaje != "")
   
             <BSCol Column="2">
                 <BSLabel>Ksf</BSLabel>
-                <BSInput InputType="InputType.Select" @bind-Value="bdDivform.Ksf">
+                <BSInput InputType="InputType.Select" @bind-Value="bdDivform.Ksf" ValidateOnInput="true">
 
                     <option value="">Seleccione...</option>
                     <option value="Prod.">Prod.</option>
@@ -183,6 +183,7 @@ else if (@mensaje != "")
                      <option value="SOL">SOL</option>
                      
                 </BSInput>
+                <BSFeedback For="@(() => bdDivform.Ksf)" ValidMessage="Correcto." />
             </BSCol>
                <BSCol Column="2">
                 <BSLabel>C. Equipo</BSLabel>
@@ -233,12 +234,12 @@ else if (@mensaje != "")
                 
              <BSCol ColumnSmall="3">
                 <BSLabel>Status</BSLabel>
-                <BSInput InputType="InputType.Select" @bind-Value="bdDivform.Status">
+                <BSInput InputType="InputType.Select" @bind-Value="bdDivform.Status" ValidateOnInput="true">
                     <option value="">Seleccione...</option>
                    @* <option value="Listo">Listo</option>*@
-                    <option value="Pendiente">Pendiente</option>
-                      <BSFeedback For="@(() => bdDivform.Status)" ValidMessage="Correcto." />
+                    <option value="Pendiente">Pendiente</option>                      
                 </BSInput>
+                <BSFeedback For="@(() => bdDivform.Status)" ValidMessage="Correcto." />
             </BSCol>
 
             </BSRow> 

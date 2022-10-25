@@ -14,7 +14,7 @@ namespace ReunionWeb.Controllers
         {
             _context = _IngIContext;
         }
-        //public static List<BdDiv1> bdDiv1s = new List<BdDiv1> { };
+        public static List<BdDiv1> bdDiv1s = new List<BdDiv1> { };
         public static List<Asistencium> asistencia = new List<Asistencium> { };
 
 
