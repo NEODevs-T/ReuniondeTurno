@@ -58,7 +58,7 @@ else if (@mensaje != "")
 
              <BSCol Column="2">
                 <BSLabel>Area</BSLabel>
-                <BSInput InputType="InputType.Select" @bind-Value="bdDivform.Area" ValidateOnInput="true">
+                <BSInput InputType="InputType.Select" @bind-Value="bdDivform.Area" >
 
                    <option value="">Seleccione...</option>
 
@@ -166,7 +166,7 @@ else if (@mensaje != "")
   
             <BSCol Column="2">
                 <BSLabel>Ksf</BSLabel>
-                <BSInput InputType="InputType.Select" @bind-Value="bdDivform.Ksf" ValidateOnInput="true">
+                <BSInput InputType="InputType.Select" @bind-Value="bdDivform.Ksf">
 
                     <option value="">Seleccione...</option>
                     <option value="Prod.">Prod.</option>
@@ -187,7 +187,7 @@ else if (@mensaje != "")
             </BSCol>
                <BSCol Column="2">
                 <BSLabel>C. Equipo</BSLabel>
-                <BSInput InputType="InputType.Text" @bind-Value="bdDivform.CodigoEquipo" ValidateOnInput="true" />
+                <BSInput InputType="InputType.Text" @bind-Value="bdDivform.CodigoEquipo"  />
                  <BSFeedback For="@(() => bdDivform.CodigoEquipo)" ValidMessage="Correcto." />
                 </BSCol>
 
@@ -221,7 +221,7 @@ else if (@mensaje != "")
             <BSRow> 
                 <BSCol Column="6">
                 <BSLabel>Discrepancia</BSLabel>
-                <BSInput InputType="InputType.TextArea" @bind-Value="bdDivform.Discrepancia" ValidateOnInput="true" />
+                <BSInput InputType="InputType.TextArea" @bind-Value="bdDivform.Discrepancia"  />
                  <BSFeedback For="@(() => bdDivform.Discrepancia)" ValidMessage="Correcto." />
             </BSCol>
 
@@ -234,7 +234,7 @@ else if (@mensaje != "")
                 
              <BSCol ColumnSmall="3">
                 <BSLabel>Status</BSLabel>
-                <BSInput InputType="InputType.Select" @bind-Value="bdDivform.Status" ValidateOnInput="true">
+                <BSInput InputType="InputType.Select" @bind-Value="bdDivform.Status" >
                     <option value="">Seleccione...</option>
                    @* <option value="Listo">Listo</option>*@
                     <option value="Pendiente">Pendiente</option>                      
