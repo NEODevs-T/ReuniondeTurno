@@ -10,6 +10,11 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
+//builder.Services.AddSingleton<APIDiv1Service>();
+builder.Services.AddHttpClient<IAPIDiv1Service, APIDiv1Service>(client =>
+{
+    client.BaseAddress = new Uri("http://localhost:5071/");
+});
 builder.Services.AddScoped<IDbDiv1Service, DbDiv1Service>();
 builder.Services.AddControllersWithViews();
 builder.Services.AddBlazorStrap();
