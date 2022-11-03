@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 using ReunionWeb.Models;
+using ReunionWeb.NeoDbs;
 
 namespace ReunionWeb.Services
 {
@@ -13,6 +14,7 @@ namespace ReunionWeb.Services
 
         public BdDiv1 dbDiv { get; set; } = new BdDiv1();
         public List<Asistencium> asistencia { get; set; } = new List<Asistencium>();
+        public List<Centro> centro { get; set; } = new List<Centro>();
 
         public APIDiv1Service(HttpClient http, NavigationManager navigationManager)
         {
@@ -20,6 +22,15 @@ namespace ReunionWeb.Services
             _navigationManager = navigationManager;
         }
 
+
+        public async Task GetCentros()
+        {
+            var result = await _http.GetFromJsonAsync<List<Centro>>($"http://operaciones.papeleslatinos.com/ReunionApi/Lineas");
+            //var result = await _http.GetFromJsonAsync<List<Centro>>($"http://localhost:5258/Lineas");
+            if (result != null)
+                centro = result;
+
+        }
 
         public async Task GetPendientes(string div)
         {
@@ -85,5 +96,6 @@ namespace ReunionWeb.Services
             _navigationManager.NavigateTo($"reunion/1");
 
         }
+
     }
 }

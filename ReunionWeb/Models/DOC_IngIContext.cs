@@ -64,7 +64,6 @@ namespace ReunionWeb.Models
         public virtual DbSet<Dibujante> Dibujantes { get; set; } = null!;
         public virtual DbSet<Dicmct> Dicmcts { get; set; } = null!;
         public virtual DbSet<Disposicion> Disposicions { get; set; } = null!;
-        public virtual DbSet<Division> Divisions { get; set; } = null!;
         public virtual DbSet<Divisione> Divisiones { get; set; } = null!;
         public virtual DbSet<Dpto> Dptos { get; set; } = null!;
         public virtual DbSet<EfiDiarium> EfiDiaria { get; set; } = null!;
@@ -113,7 +112,6 @@ namespace ReunionWeb.Models
         public virtual DbSet<ObsSsl> ObsSsls { get; set; } = null!;
         public virtual DbSet<Oportunidad> Oportunidads { get; set; } = null!;
         public virtual DbSet<OportunidadPanasa> OportunidadPanasas { get; set; } = null!;
-        public virtual DbSet<Pai> Pais { get; set; } = null!;
         public virtual DbSet<PartesEquipo> PartesEquipos { get; set; } = null!;
         public virtual DbSet<PersonalCalidad> PersonalCalidads { get; set; } = null!;
         public virtual DbSet<PlanAccionGerenciaPanasa> PlanAccionGerenciaPanasas { get; set; } = null!;
@@ -2373,34 +2371,7 @@ namespace ReunionWeb.Models
                     .HasColumnName("placa_vehiculo");
             });
 
-            modelBuilder.Entity<Division>(entity =>
-            {
-                entity.ToTable("Division");
-
-                entity.Property(e => e.Id).HasColumnName("ID");
-
-                entity.Property(e => e.Celda)
-                    .HasMaxLength(50)
-                    .IsUnicode(false);
-
-                entity.Property(e => e.Departamento)
-                    .HasMaxLength(50)
-                    .IsUnicode(false);
-
-                entity.Property(e => e.DivId).HasColumnName("DivID");
-
-                entity.Property(e => e.Division1)
-                    .HasMaxLength(50)
-                    .IsUnicode(false)
-                    .HasColumnName("Division");
-
-                entity.Property(e => e.DpartId).HasColumnName("dpartID");
-
-                entity.Property(e => e.Zona)
-                    .HasMaxLength(50)
-                    .IsUnicode(false);
-            });
-
+          
             modelBuilder.Entity<Divisione>(entity =>
             {
                 entity.HasNoKey();
@@ -5107,18 +5078,7 @@ namespace ReunionWeb.Models
                     .HasColumnName("SUPERVISOR");
             });
 
-            modelBuilder.Entity<Pai>(entity =>
-            {
-                entity.HasNoKey();
-
-                entity.Property(e => e.Idpais)
-                    .ValueGeneratedOnAdd()
-                    .HasColumnName("idpais");
-
-                entity.Property(e => e.PaDescrip)
-                    .HasMaxLength(20)
-                    .IsUnicode(false);
-            });
+          
 
             modelBuilder.Entity<PartesEquipo>(entity =>
             {

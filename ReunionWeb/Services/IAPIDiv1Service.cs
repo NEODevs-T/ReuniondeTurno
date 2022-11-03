@@ -1,4 +1,5 @@
 ﻿using ReunionWeb.Models;
+using ReunionWeb.NeoDbs;
 
 namespace ReunionWeb.Services
 {
@@ -6,6 +7,10 @@ namespace ReunionWeb.Services
     {
         List<BdDiv1> dbDiv1s { get; set; }
         List<Asistencium> asistencia { get; set; }
+        List<Centro> centro { get; set; }
+
+        Task GetCentros();
+
 
         Task GetPendientes(string div);
         Task<BdDiv1> GetDiscrepantacia(int id);

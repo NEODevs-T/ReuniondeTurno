@@ -18,6 +18,7 @@ namespace ReunionWeb.Models
         public string? Codigo { get; set; }
         public string? PlanDeAccion { get; set; }
         public string? Tiempo { get; set; }
+        [Required(ErrorMessage = "Indique el responsable.")]
         public string? Responsable { get; set; }
         [Required(ErrorMessage = "Indique el status.")]
         public string? Status { get; set; }

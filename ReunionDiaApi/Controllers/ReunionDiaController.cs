@@ -5,7 +5,7 @@ using ReunionWeb.Models;
 
 namespace ReunionDiaApi.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("/[controller]")]
     [ApiController]
     public class ReunionDiaController : ControllerBase
     {

@@ -1,5 +1,8 @@
 ﻿@page "/discrepancia"
+
+
 @inject IDbDiv1Service DbDiv1Service
+@inject IAPIDiv1Service APIDiv1Service
 
 
 <h3>Discrepancias</h3>
@@ -39,23 +42,57 @@ else if (@mensaje != "")
     </BSCol>
       <BSRow>
               
-      <BSCol Column="3" >
-                <BSLabel>Division</BSLabel>
+                <BSCol Column="3" >
+                <BSLabel>Centro</BSLabel>
                 <BSInput InputType="InputType.Select" @bind-Value="bdDivform.Div">
-
                     <option value="">Seleccione...</option>
-
-                    <option value="DIV 1">Conversión</option>
-                    <option value="MOL">Molinos</option>
-                     <option value="Generación">Generación de Energía</option>
-                     <option value="AMB">Efluentes</option>
-                     <option value="PD&CL">Destintado</option>
-                     <option value="PP">Planta de Pulpa</option>
+                    @foreach (var d in APIDiv1Service.centro)
+                    {
+                    <option value="@d.Cnom">@d.Cnom</option>
+                    }                 
                 </BSInput>
                 <BSFeedback For="@(() => bdDivform.Div)" ValidMessage="Correcto." />
+               </BSCol> 
+
+
+
+            <BSCol Column="2" >
+                <BSLabel>Division</BSLabel>
+                <BSInput InputType="InputType.Select" @bind-Value="Division">
+                    <option value="">Seleccione...</option>
+                    @foreach (var d in APIDiv1Service.centro)
+                        {
+                            @foreach (var e in d.Divisions)
+                                 {
+                                     if(bdDivform.Div== d.Cnom)
+                                     {
+                                    <option value="@e.IdDivision">@e.Dnombre</option>
+                                     }
+                                   }
+                        }                 
+                </BSInput>
+                <BSFeedback For="@(() => Division)" ValidMessage="Correcto." />
             </BSCol> 
             
-
+                  <BSCol Column="3" >
+                <BSLabel>Línea</BSLabel>
+                <BSInput InputType="InputType.Select" @bind-Value="bdDivform.Area">
+                    <option value="">Seleccione...</option>
+                    @foreach (var d in APIDiv1Service.centro)
+                        {
+                            @foreach (var e in d.Lineas)
+                                 {
+                                     if(Division== e.IdDivision)
+                                     {
+                                    <option value="@e.Lnom">@e.Lnom</option>
+                                     }
+                                   }
+                        }                 
+                </BSInput>
+                <BSFeedback For="@(() => bdDivform.Area)" ValidMessage="Correcto." />
+            </BSCol> 
+            
+@*
              <BSCol Column="2">
                 <BSLabel>Area</BSLabel>
                 <BSInput InputType="InputType.Select" @bind-Value="bdDivform.Area" >
@@ -162,8 +199,11 @@ else if (@mensaje != "")
 
             </BSInput>
              <BSFeedback For="@(() => bdDivform.Area)" ValidMessage="Correcto." />
-            </BSCol>
+            </BSCol>*@
   
+            </BSRow> 
+            <p></p>
+            <BSRow> 
             <BSCol Column="2">
                 <BSLabel>Ksf</BSLabel>
                 <BSInput InputType="InputType.Select" @bind-Value="bdDivform.Ksf">
@@ -175,12 +215,10 @@ else if (@mensaje != "")
                      <option value="Seg.">Seg.</option>
                      <option value="R.Quin">R.Quin</option>
                      <option value="Aud.">Aud.</option>
-                     <option value="RETRABAJO">RETRABAJO</option>
                      <option value="Prev.">Prev.</option>
                      <option value="RRHH">RRHH</option>
                      <option value="Amb.">Amb.</option>
-                     <option value="PM">PM</option>
-                     <option value="SOL">SOL</option>
+
                      
                 </BSInput>
                 <BSFeedback For="@(() => bdDivform.Ksf)" ValidMessage="Correcto." />
@@ -232,26 +270,26 @@ else if (@mensaje != "")
                 </BSCol>*@ 
                 
                 
-             <BSCol ColumnSmall="3">
+          @*   <BSCol ColumnSmall="3">
                 <BSLabel>Status</BSLabel>
                 <BSInput InputType="InputType.Select" @bind-Value="bdDivform.Status" >
                     <option value="">Seleccione...</option>
-                   @* <option value="Listo">Listo</option>*@
+                   <option value="Listo">Listo</option>
                     <option value="Pendiente">Pendiente</option>                      
                 </BSInput>
                 <BSFeedback For="@(() => bdDivform.Status)" ValidMessage="Correcto." />
-            </BSCol>
+            </BSCol>*@
 
             </BSRow> 
 
                 <p></p>
 
 
-           @* <BSRow>
+            <BSRow>
         <p></p>
 
 
-                 <BSCol Column="1">
+           @*      <BSCol Column="1">
                 <BSLabel>Tiempo</BSLabel>
                 <BSInput InputType="InputType.Text" @bind-Value="bdDivform.Tiempo" ValidateOnInput="true" />
                 </BSCol>
@@ -259,7 +297,7 @@ else if (@mensaje != "")
                  <BSCol Column="2">
                 <BSLabel>Fecha del Trabajo</BSLabel>
                 <BSInput InputType="InputType.Date" @bind-Value="fechatrabajo" ValidateOnInput="true" />
-                </BSCol>
+                </BSCol>*@
 
                 <BSCol ColumnSmall="2">
                 <BSLabel>Responsable</BSLabel>
@@ -275,7 +313,7 @@ else if (@mensaje != "")
                 </BSInput>
                   <BSFeedback For="@(() => bdDivform.Responsable)" ValidMessage="Correcto." />
             </BSCol>
-
+@*
              <BSCol ColumnSmall="2">
                 <BSLabel>Status</BSLabel>
                 <BSInput InputType="InputType.Select" @bind-Value="bdDivform.Status">
@@ -292,8 +330,8 @@ else if (@mensaje != "")
                 <BSLabel>PS</BSLabel>
                 <BSInput InputType="InputType.Text" @bind-Value="bdDivform.Ps" ValidateOnInput="true" />
                 </BSCol>
-
-             </BSRow>*@
+*@
+             </BSRow>
           
 
       
@@ -308,29 +346,41 @@ else if (@mensaje != "")
 @code {
 
 
-
     BdDiv1 bdDivform = new BdDiv1();
     Alerts Alertas = new Alerts();
     private string _message = "";
     private DateTime fechahoy, fechatrabajo=DateTime.Today;
     private string fechahoy2;
 
+    [Required(ErrorMessage = "Seleccione la división.")]
+    private int? Division { get; set; }
+
+
 
     private string mensaje = "";
 
+
+     protected override async Task OnInitializedAsync()
+    {
+        
+           await APIDiv1Service.GetCentros();
+    }
     
     protected async Task Insert(EditContext e)
     {
 
         //bdDivform.Fecha = fecha;
         try
-        {
+        {   
+            bdDivform.Status = "Pendiente";
 
             if (e.Validate())
             {
                 bdDivform.Fecha = (fechahoy = DateTime.Now);
                 bdDivform.Fecha2 = (fechahoy2 = fechahoy.ToString("yyyyMMdd"));
                 bdDivform.FechaTrab = fechatrabajo;
+                
+                
 
                 if (bdDivform.Area is null)
                 {
@@ -382,6 +432,7 @@ else if (@mensaje != "")
     protected async Task Reset()
     {
         bdDivform = new BdDiv1();
+        Division = 0;
         fechatrabajo = DateTime.Today;
     }
 
