@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ReunionWeb.Models;
@@ -68,6 +69,7 @@ namespace ReunionDiaApi.Controllers
             }
 
 
+      
             [HttpPost("Discrep")]
             public async Task<ActionResult<List<BdDiv1>>> InsertDiscrepancia(BdDiv1 bdDiv1)
             {

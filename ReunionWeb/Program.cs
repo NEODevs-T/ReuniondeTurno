@@ -1,8 +1,12 @@
+global using Microsoft.AspNetCore.Components.Authorization;
+global using Blazored.LocalStorage;
 using BlazorStrap;
 using Microsoft.EntityFrameworkCore;
 using ReunionWeb.Services;
 using ReunionWeb.Models;
 using ReunionWeb.NeoDbs;
+using ReunionWeb;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,9 +26,14 @@ builder.Services.AddBlazorStrap();
 builder.Services.AddDbContext<DOC_IngIContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")), ServiceLifetime.Transient);
 
-builder.Services.AddDbContext<DbNeoContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("Neo")), ServiceLifetime.Transient);
+//builder.Services.AddDbContext<DbNeoContext>(options =>
+// options.UseSqlServer(builder.Configuration.GetConnectionString("Neo")), ServiceLifetime.Transient);
+//builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>();
+builder.Services.AddAuthorizationCore();
+builder.Services.AddBlazoredLocalStorage();
 var app = builder.Build();
+
+
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

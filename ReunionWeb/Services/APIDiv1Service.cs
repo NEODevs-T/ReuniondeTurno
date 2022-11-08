@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Mvc;
+using ReunionWeb.DTOs;
 using ReunionWeb.Models;
 using ReunionWeb.NeoDbs;
 
@@ -21,6 +23,7 @@ namespace ReunionWeb.Services
             _http = http;
             _navigationManager = navigationManager;
         }
+  
 
 
         public async Task GetCentros()
@@ -53,15 +56,15 @@ namespace ReunionWeb.Services
 
         public async Task Postasistencia(Asistencium asistencium)
         {
+          
             var result = await _http.PostAsJsonAsync("api/ReunionDia/Asistencia", asistencium);
-
-
         }
 
 
         public async Task PostDiscrepancia(BdDiv1 bdDiv1)
         {
-            var result = await _http.PostAsJsonAsync("api/ReunionDia/Discrep", bdDiv1);
+            var result = await _http.PostAsJsonAsync("http://operaciones.papeleslatinos.com/ReunionApi/ReunionDia/Discrep", bdDiv1);
+           // var result = await _http.PostAsJsonAsync("api/ReunionDia/Discrep", bdDiv1);
             // await SetAsistencia(result);
         }
 
@@ -97,5 +100,6 @@ namespace ReunionWeb.Services
 
         }
 
+       
     }
 }

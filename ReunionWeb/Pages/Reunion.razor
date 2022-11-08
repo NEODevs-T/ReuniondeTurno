@@ -1,33 +1,53 @@
 ﻿@page "/reunion"
 @page "/reunion/{accion}"
 @inject IDbDiv1Service DbDiv1Service
+@inject IAPIDiv1Service APIDiv1Service
 @inject NavigationManager NavigationManager
 
 <h3>Formato de Reunión</h3>
 
+
          <BSContainer> 
-             
+            
+                    @if (APIDiv1Service.centro.Count()==0)
+                    {
+                                        
+
+                          <div class="loader"></div>
+                    }   
+                    else
+                    { 
           <BSRow>
             <BSCol Column="4">
                 
-                <BSInput InputType="InputType.Select" @bind-Value="Div">
+               @* <BSInput InputType="InputType.Select" @bind-Value="Div">
                     <option value="DIV 1">Conversión</option>
                     <option value="MOL">Molinos</option>
                      <option value="Generación">Generación de Energía</option>
                      <option value="AMB">Efluentes</option>
                      <option value="PD&CL">Destintado</option>
                      <option value="PP">Planta de Pulpa</option>
-                </BSInput>
+                </BSInput>*@
+                   
+                       
+                        
+                      <BSInput InputType="InputType.Select" @bind-Value="Div">
+                    @foreach (var d in APIDiv1Service.centro)
+                        {
+                            <option value="@d.Cnom">@d.Cnom</option>
+                        }    
+                        </BSInput>   
+                    
+              
             </BSCol> 
             
                 <BSCol ColumnSmall="3">
                         <BSButton IsOutlined   Color="BSColor.Success"  Size="Size.ExtraSmall" @onclick="Get"> Reunión <span class="oi oi-check"></span></BSButton>
-      
                 </BSCol> 
             </BSRow>
+            }
 
-
-    </BSContainer>    
+    </BSContainer> 
     
         <p>
 
@@ -130,6 +150,12 @@ else if (dataIsLoaded==2 && DbDiv1Service.dbDiv1s.Count()==0)
     string ayer = DateTime.Now.AddDays(-1).ToString("yyyyMMdd");
     private string Div { get; set; } = "DIV 1";
 
+    
+     protected override async Task OnInitializedAsync()
+    {
+        
+           await APIDiv1Service.GetCentros();
+    }
 
     protected async Task Get()
     {

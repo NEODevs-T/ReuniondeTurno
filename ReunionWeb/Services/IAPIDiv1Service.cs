@@ -1,4 +1,6 @@
-﻿using ReunionWeb.Models;
+﻿using Microsoft.AspNetCore.Mvc;
+using ReunionWeb.DTOs;
+using ReunionWeb.Models;
 using ReunionWeb.NeoDbs;
 
 namespace ReunionWeb.Services
@@ -9,9 +11,12 @@ namespace ReunionWeb.Services
         List<Asistencium> asistencia { get; set; }
         List<Centro> centro { get; set; }
 
+
+
+
         Task GetCentros();
 
-
+            
         Task GetPendientes(string div);
         Task<BdDiv1> GetDiscrepantacia(int id);
         Task Postasistencia(Asistencium asistencium);

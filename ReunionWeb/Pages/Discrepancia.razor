@@ -403,6 +403,7 @@ else if (@mensaje != "")
                 else
                 {
                     await DbDiv1Service.InsertDiscrepancia(bdDivform);
+                    //await APIDiv1Service.PostDiscrepancia(bdDivform);
                     mensaje = "Registro Exitoso";
                     Alertas.Show();
                     //bdDivform = new BdDiv1();

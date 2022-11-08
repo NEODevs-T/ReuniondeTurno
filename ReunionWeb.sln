@@ -5,7 +5,7 @@ VisualStudioVersion = 17.1.32210.238
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReunionWeb", "ReunionWeb\ReunionWeb.csproj", "{BEA641E6-7386-4075-BCC6-4D436A92CCAF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReunionDiaApi", "ReunionDiaApi\ReunionDiaApi.csproj", "{B37F56C7-157E-4EA3-9EC7-3ABDC520CAD2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReunionDiaApi", "ReunionDiaApi\ReunionDiaApi.csproj", "{B37F56C7-157E-4EA3-9EC7-3ABDC520CAD2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
