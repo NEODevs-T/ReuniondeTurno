@@ -2,7 +2,7 @@
 @inject HttpClient Http
 @inject AuthenticationStateProvider AuthStateProvider
 @inject ILocalStorageService LocalStorage
-@inject IAPIDiv1Service APIDiv1Service
+@*@inject AuthenticationStateProvider AuthenticationStateProvider*@
 
 
 <h3>Login</h3>
@@ -24,6 +24,7 @@
 @code {
     UserLoginDto user = new UserLoginDto();
 
+
     protected async Task HandleLogin()
     {
         var result = await Http.PostAsJsonAsync("http://localhost:5258/Lineas/Auth", user);
@@ -31,5 +32,7 @@
         Console.WriteLine(token);
         await LocalStorage.SetItemAsync("token", token);
         await AuthStateProvider.GetAuthenticationStateAsync();
+
+        
     }
 }

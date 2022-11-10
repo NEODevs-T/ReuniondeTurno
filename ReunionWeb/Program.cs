@@ -28,7 +28,7 @@ builder.Services.AddDbContext<DOC_IngIContext>(options =>
 
 //builder.Services.AddDbContext<DbNeoContext>(options =>
 // options.UseSqlServer(builder.Configuration.GetConnectionString("Neo")), ServiceLifetime.Transient);
-//builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>();
+builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>();
 builder.Services.AddAuthorizationCore();
 builder.Services.AddBlazoredLocalStorage();
 var app = builder.Build();

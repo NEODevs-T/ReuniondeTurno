@@ -1,23 +1,35 @@
 ﻿using System.Security.Claims;
 using System.Text.Json;
 using System.Net.Http.Headers;
-
+using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
+using ReunionWeb.Services;
+using ReunionWeb.DTOs;
 
 namespace ReunionWeb
 {
     public class CustomAuthStateProvider : AuthenticationStateProvider
     {
         private readonly ILocalStorageService _localStorage;
+        private readonly ProtectedLocalStorage _DataLocal;
         private readonly HttpClient _http;
+       
 
-        public CustomAuthStateProvider(ILocalStorageService localStorage, HttpClient http)
+   
+
+        public CustomAuthStateProvider(ILocalStorageService localStorage, HttpClient http, ProtectedLocalStorage DataLocal)
         {
             _localStorage = localStorage;
             _http = http;
+            _DataLocal = DataLocal;
         }
-        public override async Task<AuthenticationState> GetAuthenticationStateAsync()
+
+
+        public override async  Task<AuthenticationState>  GetAuthenticationStateAsync()
         {
-            string token = await _localStorage.GetItemAsStringAsync("token");
+           string token = await _localStorage.GetItemAsStringAsync("token");
+            //var token = "Javier";
+            //var result = await _http.PostAsJsonAsync("http://localhost:5258/Lineas/Auth", usuario);
+            //var token = await result.Content.ReadAsStringAsync();
 
             var identity = new ClaimsIdentity();
             _http.DefaultRequestHeaders.Authorization = null;
