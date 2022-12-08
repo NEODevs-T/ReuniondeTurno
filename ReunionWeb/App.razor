@@ -4,7 +4,16 @@
         <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
 
             <NotAuthorized>
-                Inicie Sesión.
+              
+              
+               <BSAlert Color="BSColor.Warning" Heading="4">
+                    <Header> No está autorizado.</Header>
+                        <Content>
+                            <p></p>
+                            <hr>
+                             <p class="mb-0"> Si requiere acceso a este moódulo consulte con los desarrolladores.</p>
+                        </Content>
+               </BSAlert>
             </NotAuthorized>
         </AuthorizeRouteView>
         <FocusOnNavigate RouteData="@routeData" Selector="h1" />

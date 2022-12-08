@@ -3,6 +3,10 @@
 
 @inject IDbDiv1Service DbDiv1Service
 @inject IAPIDiv1Service APIDiv1Service
+@inject HttpClient Http
+@inject AuthenticationStateProvider AuthStateProvider
+@inject ILocalStorageService LocalStorage
+@attribute [Authorize(Roles = "Admin, AdminChempro, SupIntendente")]
 
 
 <h3>Discrepancias</h3>
@@ -34,7 +38,7 @@ else if (@mensaje != "")
 
 <p></p>
 
-  <BSForm Model="bdDivform" Class="boxhome" IsRow="true" Gutters="Gutters.Medium" OnSubmit="Insert" OnReset="Reset">
+  <BSForm Model="Reuniondb" Class="boxhome" IsRow="true" Gutters="Gutters.Medium" OnSubmit="Insert" OnReset="Reset">
    <DataAnnotationsValidator />
     <BSCol ColumnMedium="12">
         @_message
@@ -44,212 +48,78 @@ else if (@mensaje != "")
               
                 <BSCol Column="3" >
                 <BSLabel>Centro</BSLabel>
-                <BSInput InputType="InputType.Select" @bind-Value="bdDivform.Div">
+                <BSInput InputType="InputType.Select" @bind-Value="Reuniondb.Div">
                     <option value="">Seleccione...</option>
                     @foreach (var d in APIDiv1Service.centro)
                     {
                     <option value="@d.Cnom">@d.Cnom</option>
                     }                 
                 </BSInput>
-                <BSFeedback For="@(() => bdDivform.Div)" ValidMessage="Correcto." />
+                <BSFeedback For="@(() => Reuniondb.Div)" ValidMessage="Correcto." />
                </BSCol> 
 
 
 
             <BSCol Column="2" >
                 <BSLabel>Division</BSLabel>
-                <BSInput InputType="InputType.Select" @bind-Value="Division">
+                <BSInput InputType="InputType.Select" @bind-Value="IdDiv">
                     <option value="">Seleccione...</option>
                     @foreach (var d in APIDiv1Service.centro)
                         {
                             @foreach (var e in d.Divisions)
                                  {
-                                     if(bdDivform.Div== d.Cnom)
+                                     if(Reuniondb.Div== d.Cnom)
                                      {
-                                    <option value="@e.IdDivision">@e.Dnombre</option>
+                                    <option  value="@e.IdDivision">@e.Dnombre</option>
                                      }
                                    }
                         }                 
                 </BSInput>
-                <BSFeedback For="@(() => Division)" ValidMessage="Correcto." />
+                <BSFeedback For="@(() => IdDiv)" ValidMessage="Correcto." />
             </BSCol> 
             
+
                   <BSCol Column="3" >
                 <BSLabel>Línea</BSLabel>
-                <BSInput InputType="InputType.Select" @bind-Value="bdDivform.Area">
+                <BSInput InputType="InputType.Select" @bind-Value="Reuniondb.Area">
                     <option value="">Seleccione...</option>
                     @foreach (var d in APIDiv1Service.centro)
                         {
                             @foreach (var e in d.Lineas)
                                  {
-                                     if(Division== e.IdDivision)
+                                     if(IdDiv== e.IdDivisionNavigation.IdDivision )
                                      {
                                     <option value="@e.Lnom">@e.Lnom</option>
                                      }
                                    }
                         }                 
                 </BSInput>
-                <BSFeedback For="@(() => bdDivform.Area)" ValidMessage="Correcto." />
+                <BSFeedback For="@(() => Reuniondb.Area)" ValidMessage="Correcto." />
             </BSCol> 
             
-@*
-             <BSCol Column="2">
-                <BSLabel>Area</BSLabel>
-                <BSInput InputType="InputType.Select" @bind-Value="bdDivform.Area" >
 
-                   <option value="">Seleccione...</option>
-
-            @if (bdDivform.Div == "DIV 1")
-            {                   
-                    <option value="AREA GENERAL">AREA GENERAL</option>
-                    <option value="CELDA1">CELDA1</option>
-                    <option value="CELDA2">CELDA2</option>
-                    <option value="CELDA3">CELDA3</option>
-                    <option value="CELDA4">CELDA4</option>
-                    <option value="CELDA5">CELDA5</option>
-                    <option value="CELDA6">CELDA6</option>
-                    <option value="CELDA7">CELDA7</option>
-                    <option value="CELDA8">CELDA8</option>
-                    <option value="CELDA9">CELDA9</option>
-                    <option value="PULPADORA">PULPADORA</option>
-                    <option value="BLOWER">BLOWER</option>
-                    <option value="COMEDOR SATELITE">COMEDOR SATELITE</option>
-                    <option value="REEMPAQUE">REEMPAQUE</option>
-                    <option value="ROBOPACK">ROBOPACK</option>
-                    <option value="SERVILLETA A">SERVILLETA A</option>
-                    <option value="SERVILLETA B">SERVILLETA B</option>
-                    <option value="SERVILLETA C">SERVILLETA C</option>
-                    <option value="TOALLA ROLLO">TOALLA ROLLO</option>
-                    <option value="TOALLA INTERCALADA">TOALLA INTERCALADA</option>
-                    <option value="COMPACTADORA">COMPACTADORA</option>
-                    <option value="COCKTAIL">COCKTAIL</option>
-                    <option value="INSTITUCIONAL">INSTITUCIONAL</option>
-                    <option value="IMPRESORAS">IMPRESORAS</option>
-                    <option value="SERVILLETA 01">SERVILLETA 01</option>
-                    <option value="SERVILLETA 02">SERVILLETA 02</option>
-           
-             }
-
-            @if (bdDivform.Div == "PD&CL")
-            {               
-                   
-                    <option value="SIST. 816">SIST. 816</option>
-                    <option value="LAZO 1">LAZO 1</option>
-                    <option value="LAZO 2">LAZO 2</option>
-                    <option value="LAMINACION">LAMINACION</option>
-                    <option value="OFIC-GEN">OFIC-GEN</option>                     
-               
-             }
-            else if (bdDivform.Div == "PP")
-            {
-                                         
-                        <option value="REFINACION">REFINACION</option>
-                        <option value="BLANQUEO">BLANQUEO</option>
-                        <option value="SECADO">SECADO</option>
-                        <option value="OFI-GEN">OFI-GEN</option>
-                        <option value="PREP. QUIM.">PREP. QUIM.</option>
-                        <option value="PATIO MADERA">PATIO MADERA</option>
-                               
-            } 
-             else if (bdDivform.Div == "AMB")
-            {
-                                         
-                        <option value="ÁREA AGUA FRESCA">ÁREA AGUA FRESCA</option>
-                        <option value="ÁREAS  GENERALES AMBIENTAL">ÁREAS  GENERALES AMBIENTAL</option>
-                        <option value="CIRCUITO  1">CIRCUITO  1</option>
-                        <option value="CIRCUITO  2">CIRCUITO  2</option>
-                        <option value="CIRCUITO  3">CIRCUITO  3</option>
-                        <option value="CIRCUITO  4">CIRCUITO  4</option>
-                        <option value="LABORATORIO EFLUENTES">LABORATORIO EFLUENTES</option>
-                        <option value="SISTEMA DE LODO">SISTEMA DE LODO</option>
-                        <option value="SISTEMA DE IRRIGACIÓN">SISTEMA DE IRRIGACIÓN</option>
-            
-            } 
-
-            
-            @if (bdDivform.Div == "MOL")
-            {               
-                   
-                    <option value="PM1">PM1</option>
-                    <option value="PM3">PM3</option>
-                    <option value="PM5">PM5</option>
-                    <option value="PM6">PM6</option>            
-                    <option value="ADMIN. MOLINOS">ADMIN. MOLINOS</option>
-                    <option value="PROD. CORES. SEMI.">PROD. CORES. SEMI.</option>
-                    <option value="REB. 3">REB. 3</option>
-                    <option value="PULPADORA 4">PULPADORA 4</option>
-                    <option value="EMBALAJE 2">EMBALAJE 2</option>
-                    <option value="REB. 1">REB. 1</option>
-                    <option value="RECT. CUCHILLAS">RECT. CUCHILLAS</option>
-                    <option value="SIST. 815">SIST. 815</option>
-                    <option value="SIST. 813">SIST. 813</option>
-                    <option value="EMBALAJE 1">EMBALAJE 1</option>                
-             }
-                      @if (bdDivform.Div == "Generación")
-            {       
-                    <option value="GER.GEN.ENERGIAS">GER.GEN.ENERGIAS</option>          
-                    <option value="GEN.ENERGIA ELECTRICA">GEN.ENERGIA ELECTRICA</option>          
-                    <option value="GEN.ENERGIA TERMICA">GEN.ENERGIA TERMICA</option>          
-                    <option value="GEN,ENERGIA ELECTRICA GT3">GEN,ENERGIA ELECTRICA GT3</option>          
-                    <option value="GEN.ENERGIA TERMICA GT3">GEN.ENERGIA TERMICA GT3</option>          
-                    <option value="GEN.ENERG ELECTRICA PLANTA II">GEN.ENERG ELECTRICA PLANTA II</option>          
-                    <option value="GEN.ENERG TERMICA PLTA II">GEN.ENERG TERMICA PLTA II</option>          
-             }
-
-
-            </BSInput>
-             <BSFeedback For="@(() => bdDivform.Area)" ValidMessage="Correcto." />
-            </BSCol>*@
   
             </BSRow> 
             <p></p>
             <BSRow> 
             <BSCol Column="2">
                 <BSLabel>Ksf</BSLabel>
-                <BSInput InputType="InputType.Select" @bind-Value="bdDivform.Ksf">
+                <BSInput InputType="InputType.Select" @bind-Value="Reuniondb.AfectadoKsf">
 
                     <option value="">Seleccione...</option>
-                    <option value="Prod.">Prod.</option>
-                    <option value="Mtto">Mtto.</option>
-                     <option value="Calid.">Calid.</option>
-                     <option value="Seg.">Seg.</option>
-                     <option value="R.Quin">R.Quin</option>
-                     <option value="Aud.">Aud.</option>
-                     <option value="Prev.">Prev.</option>
-                     <option value="RRHH">RRHH</option>
-                     <option value="Amb.">Amb.</option>
-
+                     @foreach (var d in APIDiv1Service.ksfs)
+                        {
+                            <option value="@d.KsfNombre">@d.KsfNombre</option>
+                        }   
                      
                 </BSInput>
-                <BSFeedback For="@(() => bdDivform.Ksf)" ValidMessage="Correcto." />
+                <BSFeedback For="@(() => Reuniondb.AfectadoKsf)" ValidMessage="Correcto." />
             </BSCol>
                <BSCol Column="2">
                 <BSLabel>C. Equipo</BSLabel>
-                <BSInput InputType="InputType.Text" @bind-Value="bdDivform.CodigoEquipo"  />
-                 <BSFeedback For="@(() => bdDivform.CodigoEquipo)" ValidMessage="Correcto." />
+                <BSInput InputType="InputType.Text" @bind-Value="Reuniondb.CodigoEquipo"  />
+                 <BSFeedback For="@(() => Reuniondb.CodigoEquipo)" ValidMessage="Correcto." />
                 </BSCol>
-
-@*
-             <BSCol ColumnSmall="2">
-                <BSLabel>Codigo</BSLabel>
-                <BSInput InputType="InputType.Select" @bind-Value="bdDivform.Codigo">
-                    <option value="">Seleccione...</option>
-
-
-             <BSCol ColumnSmall="2">
-                <BSLabel>Codigo</BSLabel>
-                <BSInput InputType="InputType.Select" @bind-Value="bdDivform.Codigo">
-                    <option value="">Sleccione...</option>
-                    <option value="1">1- En Curso</option>
-                    <option value="2">2- Próxima Parada</option>
-                    <option value="3">3- Falta Repuesto</option>
-                    <option value="4">4- Falta de Personal</option>
-                    <option value="5">5- Eq. no Disponible</option>
-                
-
-                </BSInput>
-
-            </BSCol>*@
 
 
 
@@ -259,26 +129,10 @@ else if (@mensaje != "")
             <BSRow> 
                 <BSCol Column="6">
                 <BSLabel>Discrepancia</BSLabel>
-                <BSInput InputType="InputType.TextArea" @bind-Value="bdDivform.Discrepancia"  />
-                 <BSFeedback For="@(() => bdDivform.Discrepancia)" ValidMessage="Correcto." />
+                <BSInput InputType="InputType.Text" @bind-Value="Reuniondb.Discrepancia"  />
+                 <BSFeedback For="@(() => Reuniondb.Discrepancia)" ValidMessage="Correcto." />
             </BSCol>
 
-
-               @* <BSCol Column="4">
-                <BSLabel>Plan de Accion</BSLabel>
-                <BSInput InputType="InputType.Text" @bind-Value="bdDivform.PlanDeAccion" ValidateOnInput="true" />
-                </BSCol>*@ 
-                
-                
-          @*   <BSCol ColumnSmall="3">
-                <BSLabel>Status</BSLabel>
-                <BSInput InputType="InputType.Select" @bind-Value="bdDivform.Status" >
-                    <option value="">Seleccione...</option>
-                   <option value="Listo">Listo</option>
-                    <option value="Pendiente">Pendiente</option>                      
-                </BSInput>
-                <BSFeedback For="@(() => bdDivform.Status)" ValidMessage="Correcto." />
-            </BSCol>*@
 
             </BSRow> 
 
@@ -289,48 +143,20 @@ else if (@mensaje != "")
         <p></p>
 
 
-           @*      <BSCol Column="1">
-                <BSLabel>Tiempo</BSLabel>
-                <BSInput InputType="InputType.Text" @bind-Value="bdDivform.Tiempo" ValidateOnInput="true" />
-                </BSCol>
-
-                 <BSCol Column="2">
-                <BSLabel>Fecha del Trabajo</BSLabel>
-                <BSInput InputType="InputType.Date" @bind-Value="fechatrabajo" ValidateOnInput="true" />
-                </BSCol>*@
 
                 <BSCol ColumnSmall="2">
                 <BSLabel>Responsable</BSLabel>
-                <BSInput InputType="InputType.Select" @bind-Value="bdDivform.Responsable">
+                <BSInput InputType="InputType.Select" @bind-Value="Reuniondb.Responsable">
                     <option value="">Seleccione...</option>
-                    <option value="PRODUCCION">PRODUCCION</option>
-                    <option value="MTTO MECANICO">MTTO MECANICO</option>
-                    <option value="MTTO ELECTRICO/ELECTRONICO">MTTO ELECTRICO/ELECTRONICO</option>
-                    <option value="MTTO INSTRUMENTACION">MTTO INSTRUMENTACION</option>
-                    <option value="SEGURIDAD">SEGURIDAD</option>
-                    <option value="CALIDAD">CALIDAD</option>
-                    <option value="OPERACIONES EFLUENTES">OPERACIONES EFLUENTES</option>
+               
+                    @foreach (var d in APIDiv1Service.resporeu)
+                        {
+                            <option value="@d.Rrnombre">@d.Rrnombre</option>
+                        }    
                 </BSInput>
-                  <BSFeedback For="@(() => bdDivform.Responsable)" ValidMessage="Correcto." />
-            </BSCol>
-@*
-             <BSCol ColumnSmall="2">
-                <BSLabel>Status</BSLabel>
-                <BSInput InputType="InputType.Select" @bind-Value="bdDivform.Status">
-                    <option value="">Seleccione...</option>
-                    <option value="Listo">Listo</option>
-                    <option value="Pendiente">Pendiente</option>
-                      <BSFeedback For="@(() => bdDivform.Status)" ValidMessage="Correcto." />
-                </BSInput>
+                  <BSFeedback For="@(() => Reuniondb.Responsable)" ValidMessage="Correcto." />
             </BSCol>
 
-
-
-             <BSCol Column="1">
-                <BSLabel>PS</BSLabel>
-                <BSInput InputType="InputType.Text" @bind-Value="bdDivform.Ps" ValidateOnInput="true" />
-                </BSCol>
-*@
              </BSRow>
           
 
@@ -345,68 +171,102 @@ else if (@mensaje != "")
        </BSForm>
 @code {
 
+    [CascadingParameter]   
+    //private Task<AuthenticationState> authenticationStateTask { get; set; }
 
-    BdDiv1 bdDivform = new BdDiv1();
+    private List<Claim> claims { get; set; }
+
+    private async Task CreateData()
+
+    {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        claims = Enumerable.ToList(user.Claims);
+
+    }
+
+
+    ReunionDium Reuniondb = new ReunionDium();
     Alerts Alertas = new Alerts();
     private string _message = "";
     private DateTime fechahoy, fechatrabajo=DateTime.Today;
     private string fechahoy2;
 
     [Required(ErrorMessage = "Seleccione la división.")]
-    private int? Division { get; set; }
+    private int? IdDiv { get; set; }
 
 
 
     private string mensaje = "";
 
 
-     protected override async Task OnInitializedAsync()
+    protected override async Task OnInitializedAsync()
     {
-        
-           await APIDiv1Service.GetCentros();
+
+        await CreateData();
+        if(claims[1].Value=="Admin")
+        {
+            await APIDiv1Service.GetCentros("All");  
+        }
+        else
+        {
+            await APIDiv1Service.GetCentros(claims[6].Value.ToString()); 
+        }
+
+        await APIDiv1Service.Getksf();
+        await APIDiv1Service.GetResReu();
     }
-    
+
     protected async Task Insert(EditContext e)
     {
 
-        //bdDivform.Fecha = fecha;
+        //Reuniondb.Fecha = fecha;
         try
         {   
-            bdDivform.Status = "Pendiente";
+            Reuniondb.Status = "Pendiente";
 
             if (e.Validate())
             {
-                bdDivform.Fecha = (fechahoy = DateTime.Now);
-                bdDivform.Fecha2 = (fechahoy2 = fechahoy.ToString("yyyyMMdd"));
-                bdDivform.FechaTrab = fechatrabajo;
-                
-                
+                Reuniondb.Fecha = (fechahoy = DateTime.Now);
+                Reuniondb.Fecha2 = (fechahoy2 = fechahoy.ToString("yyyyMMdd"));
+                Reuniondb.FechaTrab = fechatrabajo;
 
-                if (bdDivform.Area is null)
+                foreach (var d in APIDiv1Service.centro)
+                {
+                    foreach (var f in d.Lineas)
+                    {
+                        if(IdDiv== f.IdDivisionNavigation.IdDivision )
+                        {
+                            Reuniondb.Division = f.IdDivisionNavigation.Dnombre;
+                        }
+                     }
+                  }        
+
+                if (Reuniondb.Area is null)
                 {
 
                     mensaje = "Seleccione el area.";
                 }
-                else if (bdDivform.Div is null)
+                else if (Reuniondb.Div is null)
                 {
                     mensaje = "Seleccione la division.";
                 }
-                else if (bdDivform.Discrepancia is null)
+                else if (Reuniondb.Discrepancia is null)
                 {
                     mensaje = "Llene la discrepancia";
                 }
 
-                else if (bdDivform.Status is null)
+                else if (Reuniondb.Status is null)
                 {
                     mensaje = "Seleccione status";
                 }
                 else
                 {
-                    await DbDiv1Service.InsertDiscrepancia(bdDivform);
-                    //await APIDiv1Service.PostDiscrepancia(bdDivform);
+                    await DbDiv1Service.InsertDiscrepancia(Reuniondb);
+                    //await APIDiv1Service.PostDiscrepancia(Reuniondb);
                     mensaje = "Registro Exitoso";
                     Alertas.Show();
-                    //bdDivform = new BdDiv1();
+                    //Reuniondb = new BdDiv1();
 
                 }
               }
@@ -432,8 +292,8 @@ else if (@mensaje != "")
 
     protected async Task Reset()
     {
-        bdDivform = new BdDiv1();
-        Division = 0;
+        Reuniondb = new ReunionDium();
+        IdDiv = null;
         fechatrabajo = DateTime.Today;
     }
 

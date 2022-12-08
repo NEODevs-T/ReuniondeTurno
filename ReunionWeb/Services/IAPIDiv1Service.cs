@@ -10,16 +10,26 @@ namespace ReunionWeb.Services
         List<BdDiv1> dbDiv1s { get; set; }
         List<Asistencium> asistencia { get; set; }
         List<Centro> centro { get; set; }
+        List<Division> divisions { get; set; }
+        List<Ksf> ksfs { get; set; }
+        List<RespoReu> resporeu { get; set; }
+        List<ReunionDium> reunionditabla { get; set; }
+        List<AsistenReu> asistenreus { get; set; }
+        List<CargoReu> cargoreus { get; set; }
 
 
 
 
-        Task GetCentros();
+        Task GetCentros(string centro);
+        Task Getksf();
+        Task GetResReu();
+        Task GetDivision(string centro, string div);
+        Task GetAsistencia( string div);
 
             
         Task GetPendientes(string div);
         Task<BdDiv1> GetDiscrepantacia(int id);
-        Task Postasistencia(Asistencium asistencium);
+        Task Postasistencia(List<AsistenReu> asisten);
         Task PostDiscrepancia(BdDiv1 bdDiv1);
         Task PutDiscrepancia(BdDiv1 bdDiv1, int tipo);
     }

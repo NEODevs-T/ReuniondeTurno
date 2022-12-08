@@ -17,6 +17,12 @@ namespace ReunionWeb.Services
         public BdDiv1 dbDiv { get; set; } = new BdDiv1();
         public List<Asistencium> asistencia { get; set; } = new List<Asistencium>();
         public List<Centro> centro { get; set; } = new List<Centro>();
+        public List<Ksf> ksfs { get; set; } = new List<Ksf>();
+        public List<RespoReu> resporeu { get; set; } = new List<RespoReu>();
+        public List<ReunionDium> reunionditabla { get; set; } = new List<ReunionDium>();
+        public List<Division> divisions { get; set; } = new List<Division>();
+        public List<AsistenReu> asistenreus { get; set; } = new List<AsistenReu>();
+        public  List<CargoReu> cargoreus { get; set; } = new List<CargoReu>();
 
         public APIDiv1Service(HttpClient http, NavigationManager navigationManager)
         {
@@ -26,14 +32,36 @@ namespace ReunionWeb.Services
   
 
 
-        public async Task GetCentros()
+        public async Task GetCentros(string cent)
         {
-            var result = await _http.GetFromJsonAsync<List<Centro>>($"http://operaciones.papeleslatinos.com/ReunionApi/Lineas");
-            //var result = await _http.GetFromJsonAsync<List<Centro>>($"http://localhost:5258/Lineas");
+            var result = await _http.GetFromJsonAsync<List<Centro>>($"http://operaciones.papeleslatinos.com/ReunionApi/Lineas/{cent}");
+            //var result = await _http.GetFromJsonAsync<List<Centro>>($"http://localhost:5258/Lineas/{cent}");
             if (result != null)
                 centro = result;
 
         }
+        public async Task GetDivision(string centro, string div)
+        {
+            var result = await _http.GetFromJsonAsync<List<Division>>($"http://operaciones.papeleslatinos.com/ReunionApi/Lineas/Division/{centro}/{div}");
+            if (result != null)
+                divisions = result;
+
+        }
+        public async Task Getksf()
+        {
+            var result = await _http.GetFromJsonAsync<List<Ksf>>($"http://operaciones.papeleslatinos.com/ReunionApi/Lineas/Ksf");
+            if (result != null)
+                ksfs = result;
+
+        }
+        public async Task GetResReu()
+        {
+            var result = await _http.GetFromJsonAsync<List<RespoReu>>($"http://operaciones.papeleslatinos.com/ReunionApi/Lineas/Responsables");         
+            if (result != null)
+                resporeu = result;
+
+        }
+
 
         public async Task GetPendientes(string div)
         {
@@ -54,11 +82,15 @@ namespace ReunionWeb.Services
         }
 
 
-        public async Task Postasistencia(Asistencium asistencium)
+        public async Task GetAsistencia(string div)
         {
-          
-            var result = await _http.PostAsJsonAsync("api/ReunionDia/Asistencia", asistencium);
+            var result = await _http.GetFromJsonAsync<List<CargoReu>>($"http://operaciones.papeleslatinos.com/ReunionApi/Lineas/Asistencia/{div}");
+            if (result != null)
+                cargoreus = result;
+
         }
+
+   
 
 
         public async Task PostDiscrepancia(BdDiv1 bdDiv1)
@@ -100,6 +132,9 @@ namespace ReunionWeb.Services
 
         }
 
-       
+        public async Task Postasistencia(List<AsistenReu> asisten)
+        {
+            var result = await _http.PostAsJsonAsync("http://localhost:5258/Lineas/Asistencia", asisten);
+        }
     }
 }

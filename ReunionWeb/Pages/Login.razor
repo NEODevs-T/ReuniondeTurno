@@ -2,37 +2,97 @@
 @inject HttpClient Http
 @inject AuthenticationStateProvider AuthStateProvider
 @inject ILocalStorageService LocalStorage
-@*@inject AuthenticationStateProvider AuthenticationStateProvider*@
+
 
 
 <h3>Login</h3>
-
+<p></p>
+<BSContainer>
+<BSRow Align="Align.Start"></BSRow>
+ <BSRow Align="Align.Center">
+<BSCol Column="6">
   <BSForm Model="user" Class="boxhome" IsRow="true" Gutters="Gutters.Medium" OnSubmit="HandleLogin">
-
-    <BSCol Column="auto">
-        <BSLabel IsHidden="true">User</BSLabel>
-        <BSInput InputType="InputType.Text" placeholder="name@example.com"  @bind-Value="user.UserName"/>
+ <DataAnnotationsValidator />
+    <BSRow>
+    <BSCol Column="6">
+        @_message
+        <BSValidationSummary />
     </BSCol>
-    <BSCol Column="auto">
+
+    </BSRow> 
+    <p></p>
+    <BSRow>
+    <BSCol Column="6">
+        <BSLabel IsHidden="true">User</BSLabel>
+        <BSInput InputType="InputType.Text" placeholder="Ficha/Usuario"  @bind-Value="user.UserName"/>
+        <BSFeedback For="@(() => user.UserName)" ValidMessage="Correcto." />
+    </BSCol>
+    </BSRow>
+    <p></p>
+    <BSRow>
+    <BSCol Column="6">
         <BSLabel IsHidden="true">Password</BSLabel>
         <BSInput InputType="InputType.Password" @bind-Value="user.Password"/>
+        <BSFeedback For="@(() => user.Password)" ValidMessage="Correcto." />
     </BSCol>
-    <BSCol Column="auto">
-        <BSButton   Color="BSColor.Success"  Size="Size.ExtraSmall" IsSubmit>  Guardar <span class="oi oi-check"></span></BSButton>
+    </BSRow>
+    <p></p>
+    <BSRow>
+    <BSCol Column="6">
+        <BSButton   Color="BSColor.Success"  Size="Size.ExtraSmall" IsSubmit>  Iniciar</BSButton>
     </BSCol>
+   </BSRow>
+
 </BSForm>
+</BSCol>
+</BSRow>
+<BSRow Align="Align.End"></BSRow>
+</BSContainer>
+
+
+
+
 @code {
+
+    private string _message = "";
     UserLoginDto user = new UserLoginDto();
 
 
-    protected async Task HandleLogin()
+    protected async Task HandleLogin(EditContext e)
     {
-        var result = await Http.PostAsJsonAsync("http://localhost:5258/Lineas/Auth", user);
-        var token = await result.Content.ReadAsStringAsync();
-        Console.WriteLine(token);
-        await LocalStorage.SetItemAsync("token", token);
-        await AuthStateProvider.GetAuthenticationStateAsync();
+        user.Proyecto = "ReunionWeb";
+        if (e.Validate())
+        {
+            var result = await Http.PostAsJsonAsync("http://operaciones.papeleslatinos.com/Authentication/api/Auth/Login", user);
+            var ValidarToken = await result.Content.ReadAsStringAsync();
+
+            if (ValidarToken != null)
+            {
+                if (ValidarToken == "NotFoundUser")
+                {
+
+                }
+                else if (ValidarToken == "WrongPassword")
+                {
+
+                }
+                else if (ValidarToken == "null")
+                {
+
+                }
+                else
+                {
+                    Console.WriteLine(ValidarToken);
+                    await LocalStorage.SetItemAsync("ReunionWebToken", ValidarToken);
+                    await AuthStateProvider.GetAuthenticationStateAsync();
+                }
+            }
+
+        }
+
 
         
     }
+    
+   
 }

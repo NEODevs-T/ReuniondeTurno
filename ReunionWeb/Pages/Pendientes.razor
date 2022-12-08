@@ -1,70 +1,87 @@
 ﻿@page "/pendientes"
-@page "/pendientes/{accion}"
+@page "/pendientes/{accion}/{division}/{f1}/{f2}"
 @inject IDbDiv1Service DbDiv1Service
 @inject IAPIDiv1Service APIDiv1Service
 @inject NavigationManager NavigationManager
+@inject HttpClient Http
+@inject AuthenticationStateProvider AuthStateProvider
+@inject ILocalStorageService LocalStorage
 
-<AuthorizeView>
+
+<AuthorizeView  Roles="Admin">
 
     <NotAuthorized>
-        Hola
+        
     </NotAuthorized>
 
     <Authorized>
-        Si esta
-            </Authorized>
+       
+       </Authorized>
  </AuthorizeView>
+
+
 <h3>Pendientes y Listos</h3>
 
        <BSContainer> 
             
-                    @if (APIDiv1Service.centro.Count()==0)
-                    {
-                                        
+                @if (APIDiv1Service.centro.Count()==0)
+                {                     
+                        <div class="loader"></div>
+                }   
+                else
+                { 
+                       <BSRow>
+                                <BSCol Column="3">
+                                 <BSLabel>Centro</BSLabel>
+                                <BSInput InputType="InputType.Select" @bind-Value="Div">
+                                    <option value="">Seleccione</option>
+                                    @foreach (var d in APIDiv1Service.centro)
+                                    {
+                                        <option value="@d.Cnom">@d.Cnom</option>
+                                    }    
+                                </BSInput>                    
+                                </BSCol> 
+                                 
+                                <BSCol Column="2" >
+                                <BSLabel>División</BSLabel>
+                                 <BSInput InputType="InputType.Select" @bind-Value="Division">
+                                <option  value="">Seleccione</option>
+                                    @foreach (var d in APIDiv1Service.centro)
+                                    {
+                                        @foreach (var e in d.Divisions)
+                                    {
+                                            if(Div== d.Cnom)
+                                        {
+                                                <option  value="@e.Dnombre">@e.Dnombre</option>
+                                        }
+                                    }
+                                    }          
+                                </BSInput>              
+                                   </BSCol> 
 
-                          <div class="loader"></div>
-                    }   
-                    else
-                    { 
-          <BSRow>
-            <BSCol Column="4">
-                
-               @* <BSInput InputType="InputType.Select" @bind-Value="Div">
-                    <option value="DIV 1">Conversión</option>
-                    <option value="MOL">Molinos</option>
-                     <option value="Generación">Generación de Energía</option>
-                     <option value="AMB">Efluentes</option>
-                     <option value="PD&CL">Destintado</option>
-                     <option value="PP">Planta de Pulpa</option>
-                </BSInput>*@
-                   
-                       
-                        
-                      <BSInput InputType="InputType.Select" @bind-Value="Div">
-                    @foreach (var d in APIDiv1Service.centro)
-                        {
-                            <option value="@d.Cnom">@d.Cnom</option>
-                        }    
-                        </BSInput>   
-                    
-              
-            </BSCol> 
+                                 <BSCol Column="2">
+                                     <BSLabel>Fecha Inicial</BSLabel>
+                                 <BSInput InputType="InputType.Date" @bind-Value="fecha1"/>
+                                 </BSCol>
             
-                <BSCol ColumnSmall="3">
-                        <BSButton IsOutlined   Color="BSColor.Warning"  Size="Size.ExtraSmall" @onclick="Get">   Pendientes y Listos  <span class="oi oi-check"></span></BSButton>
-                </BSCol> 
-            </BSRow>
-            }
+                                 <BSCol Column="2">
+                                  <BSLabel>Fecha Final</BSLabel>
+                                 <BSInput InputType="InputType.Date" @bind-Value="fecha2"/>
+                                 </BSCol>
+            
+                                <BSCol ColumnSmall="3">
+                                     <BSRow><BSLabel> Buscar</BSLabel></BSRow>
+                                    <BSButton IsOutlined   Color="BSColor.Warning"  Size="Size.ExtraSmall" @onclick="Get">   Pendientes y Listos  <span class="oi oi-check"></span></BSButton>
+                                 </BSCol> 
+                       </BSRow>
+                 }
 
     </BSContainer> 
-    
-    
-        <p>
-
-        </p>  
+       
+        <p></p>  
 
 
-@if (DbDiv1Service.dbDiv1s.Count()>0 && dataIsLoaded == 2)
+@if (DbDiv1Service.reunionditablas.Count()>0 && dataIsLoaded == 2)
 {
 
 
@@ -83,7 +100,18 @@
                 <BSTD>Responsable</BSTD>
                 <BSTD>Status</BSTD>
                 @* <BSTD>Produfin</BSTD>*@
-                <BSTD>SPA</BSTD>         
+                  @if(claims[5].Value=="PAVECA")
+                 {
+                     <BSTD>SPA</BSTD>
+                 }
+                 else if (claims[5].Value=="")
+                 {
+                <BSLabel>Cargando...</BSLabel>
+                }
+                else
+                {
+                  <BSTD>ODT</BSTD>
+                }
                 <BSTD>Fecha de Reunión</BSTD> @*Fecha del dia de reunion*@
                 @* <BSTD>FechaTrab</BSTD>*@
                 @*<BSTD>Div</BSTD>*@
@@ -94,19 +122,27 @@
             </BSTR>
         </BSTHead>
         <BSTBody>
-            @foreach (var d in DbDiv1Service.dbDiv1s)
+            @foreach (var d in DbDiv1Service.reunionditablas)
             {
-               
+              
                     <BSTR>
                        @*<BSTD>@d.Id</BSTD>*@
                         <BSTD>@d.Area</BSTD>
-                        <BSTD>@d.Ksf</BSTD>
+                        <BSTD>@d.AfectadoKsf</BSTD>
                         <BSTD>@d.CodigoEquipo</BSTD>
                         <BSTD ColSpan="4" class="textotabla">@d.Discrepancia</BSTD>
                         <BSTD>@d.Codigo</BSTD>
                         <BSTD Class="textotabla">@d.PlanDeAccion</BSTD>
                         <BSTD>@d.Tiempo</BSTD>
-                        <BSTD>@d.Responsable</BSTD>
+
+                        @if (@d.Responsable == "Por Definir")
+                        {
+                            <BSTD Class="Definir">@d.Responsable</BSTD>
+                        }
+                         else
+                        {
+                             <BSTD>@d.Responsable</BSTD>
+                        }
 
                         @if (@d.Status == "Listo" | d.Status == "LISTO")
                         {
@@ -117,19 +153,20 @@
                            <BSTD Class="pendiente">@d.Status</BSTD>
                         }
                         @*<BSTD>@d.Produfin</BSTD>*@
-                        <BSTD>@d.Ps</BSTD>
-                        <BSTD>@d.Fecha</BSTD>
-                        @*<BSTD>@d.FechaTrab</BSTD>*@
+                        <BSTD>@d.OrdenTrabajo</BSTD>
+                        <BSTD>@d.Fecha.ToString("dd/MM/yyyy")</BSTD>
+                        @*<BSTD>@d.FechaTrab1</BSTD>*@
                         @*<BSTD>@d.Div</BSTD>*@
                         @*<BSTD>@d.Fecha2</BSTD>*@
-                        <BSTD>@d.FechaTrab1</BSTD>
+                        <BSTD>@d.FechaTrab.ToString("dd/MM/yyyy")</BSTD>
                          <BSTD>
                          <button class="btn btn-success" @onclick="(() => Editar(d.Id))"><i class="oi oi-pencil"></i></button>
                            </BSTD>
                     </BSTR>
+                
                
 
-            }
+        }
 
 
         </BSTBody>
@@ -140,7 +177,7 @@
 }
 else if (dataIsLoaded==1 && DbDiv1Service.dbDiv1s.Count()==0)
 {
-    <p>Cargando...</p>
+      <div class="loader"></div>
 }
 else if (dataIsLoaded==2 && DbDiv1Service.dbDiv1s.Count()==0)
 {
@@ -150,23 +187,59 @@ else if (dataIsLoaded==2 && DbDiv1Service.dbDiv1s.Count()==0)
 @code {
 
     [Parameter]
-    public string? accion { get; set; }
+    public string? accion { get; set; }//centro 
+    [Parameter]
+     public string? division { get; set; }//division 
+    [Parameter]
+    public string? f1 { get; set; }
+    [Parameter]
+    public string? f2 { get; set; }
+
     int dataIsLoaded = 0;
     string ayer = DateTime.Now.AddDays(-1).ToString("yyyyMMdd");
-    private string Div { get; set; } = "DIV 1";
+    private string Div { get; set; } //Centro
+    private string Division { get; set; } //División
+    private DateTime fecha1 = DateTime.Now;
+    private DateTime fecha2 = DateTime.Now;
 
-     protected override async Task OnInitializedAsync()
+
+    private List<Claim> claims { get; set; }
+
+    private async Task CreateData()
+
     {
-        
-           await APIDiv1Service.GetCentros();
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        claims = Enumerable.ToList(user.Claims);
+
+    }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        await CreateData();
+
+        if(claims[1].Value=="Admin")
+        {
+             await APIDiv1Service.GetCentros("All");  
+        }
+        else
+        {
+             await APIDiv1Service.GetCentros(claims[6].Value.ToString()); 
+        }
+       
+        await APIDiv1Service.Getksf();
+        await APIDiv1Service.GetResReu();
     }
 
     protected async Task Get()
     {
         if (dataIsLoaded != 1)
         {
-            dataIsLoaded = 1;
-            await DbDiv1Service.GetPendientes(Div);
+            dataIsLoaded = 1;  
+            
+            await DbDiv1Service.GetPendientes(Div,Division, fecha1, fecha2);
             dataIsLoaded = 2;
         }
     }
@@ -174,7 +247,7 @@ else if (dataIsLoaded==2 && DbDiv1Service.dbDiv1s.Count()==0)
   
     void Editar(int id)
     {
-        NavigationManager.NavigateTo($"EditDisc/{id}/0");
+        NavigationManager.NavigateTo($"EditDisc/{id}/0/{fecha1.ToString("dd-MM-yyyy")}/{fecha2.ToString("dd-MM-yyyy")}");
       
     }
 
@@ -184,7 +257,7 @@ else if (dataIsLoaded==2 && DbDiv1Service.dbDiv1s.Count()==0)
         {   
            
             dataIsLoaded = 1;
-            await DbDiv1Service.GetPendientes(Div);
+            await DbDiv1Service.GetPendientes(accion,division, DateTime.Parse(f1), DateTime.Parse(f2));
             dataIsLoaded = 2;
             
         }
@@ -197,4 +270,30 @@ else if (dataIsLoaded==2 && DbDiv1Service.dbDiv1s.Count()==0)
     //   //   await DbDiv1Service.GetPendientes(Div);
     //}
 
-}
+
+    // private string authMessage;
+    //private string surnameMessage;
+    //private IEnumerable<Claim> claims = Enumerable.Empty<Claim>();
+
+    //private async Task GetClaimsPrincipalData()
+    //{
+    //    var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+    //    var user = authState.User;
+
+    //    if (user.Identity.IsAuthenticated)
+    //    {
+    //        authMessage = $"{user.Identity.Name} is authenticated.";
+    //        claims = user.Claims;
+    //        surnameMessage = 
+    //            $"Surname: {user.FindFirst(c => c.Type == ClaimTypes.Surname)?.Value}";
+                
+    //    }
+    //    else
+    //    {
+    //        authMessage = "The user is NOT authenticated.";
+    //    }
+    //}
+      
+       
+
+    }

@@ -4,6 +4,7 @@
 
 <AuthorizeView>
     <Authorized>
+       <strong>¡Hola @context.User.Identity?.Name!</strong> 
          <BSButton   Color="BSColor.Danger"  Size="Size.ExtraSmall" OnClick="Logout">  Cerrar Sesión <span class="oi oi-out"></span></BSButton>
     </Authorized>
     <NotAuthorized>
@@ -20,7 +21,7 @@
     }
     async Task Logout()
     {
-        await LocalStorage.RemoveItemAsync("token");
+        await LocalStorage.RemoveItemAsync("ReunionWebToken");
         await AuthStateProvider.GetAuthenticationStateAsync();
     }
 }

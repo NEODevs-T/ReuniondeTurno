@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 using ReunionWeb.Models;
+using ReunionWeb.NeoDbs;
 using ReunionWeb.Controllers;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,33 +13,50 @@ namespace ReunionWeb.Services
 
         public BdDiv1 dbDiv { get; set; } = new BdDiv1();
         public List<Asistencium> asistencia { get; set; } = new List<Asistencium>();
+        
+        public  List<Centro> centros { get; set; } = new List<Centro> { };
+        public  List<Linea> lineas { get; set; } = new List<Linea> { };
+        public  List<Empresa> empresas { get; set; } = new List<Empresa> { };
+        public  List<Pai> paiss { get; set; } = new List<Pai> { };
+        public  List<Division> divs { get; set; } = new List<Division> { };
+        public  List<Ksf> ksfss { get; set; } = new List<Ksf>();
+        public  List<RespoReu> resporeus { get; set; } = new List<RespoReu>();
+        public  List<ReunionDium> reunionditablas { get; set; } = new List<ReunionDium>();
+        public  List<Division> divisionss { get; set; } = new List<Division>();
+        public  List<AsistenReu> asistenreus { get; set; } = new List<AsistenReu>();
+        public  List<CargoReu> cargoreuss { get; set; } = new List<CargoReu>();
+
+
+
+
+
         private readonly DOC_IngIContext _context; 
+        private readonly DbNeoContext _neocontext; 
         private readonly NavigationManager _navigationManager;
 
-        public DbDiv1Service(DOC_IngIContext _IngIContext, NavigationManager navigationManager)
+        public DbDiv1Service(DOC_IngIContext _IngIContext, NavigationManager navigationManager, DbNeoContext _NeoContext)
         {
 
             _navigationManager = navigationManager;
             _context = _IngIContext;
+            _neocontext = _NeoContext;
         }
         //obtener discrepancias para pendientes y reunion 
-        public async Task GetPendientes(string div)
+        public async Task GetPendientes(string centro, string div, DateTime f1, DateTime f2)
         {
+            //f1 = DateTime.Now.AddDays(-1).ToString("yyyMMdd");
+            //f2 = DateTime.Now.ToString("yyyMMdd"); a.Fecha >= f1 & a.Fecha <= f2 &
 
-            string f1 = DateTime.Now.AddDays(-1).ToString("yyyMMdd");
-            string f2 = DateTime.Now.ToString("yyyMMdd");
-
-            dbDiv1s = await _context.BdDiv1s
-                .Where(a => a.Fecha2 == f1 && a.Div == div || a.Fecha2 == f2 && a.Div == div)
-                .OrderByDescending(b => b.Id)
+            reunionditablas = await _neocontext.ReunionDia
+                .Where(a =>  a.Div == centro & a.Division==div  & a.Status== "Pendiente" | a.Div == centro & a.Division == div & a.Status == "Pendiente" & (a.Fecha>= f1 & a.Fecha <= f2))
+                .OrderByDescending(b => b.Fecha)
                 .ToListAsync();
-
 
         }
         //obtener discrepancia a editar
-        public async Task<BdDiv1> GetDiscrepantacia(int id)
+        public async Task<ReunionDium> GetDiscrepantacia(int id)
         {
-            var div1 = await _context.BdDiv1s
+            var div1 = await _neocontext.ReunionDia
              .FirstOrDefaultAsync(h => h.Id == id);
            if(div1 == null)
             throw new Exception("not found!");
@@ -46,18 +64,19 @@ namespace ReunionWeb.Services
 
         }
 
-        public async Task SetDiscrepancias(string div)
-        {
+        //public async Task SetDiscrepancias(string div)
+        //{
 
-            string f1 = DateTime.Now.AddDays(-1).ToString("yyyMMdd");
-            string f2 = DateTime.Now.ToString("yyyMMdd");
+        //    string f1 = DateTime.Now.AddDays(-1).ToString("yyyMMdd");
+        //    string f2 = DateTime.Now.ToString("yyyMMdd");
 
-            dbDiv1s = await _context.BdDiv1s
-                .Where(a => a.Fecha2 == f1 && a.Div == div || a.Fecha2 == f2 && a.Div == div)
-                .OrderByDescending(b => b.Id)
-                .ToListAsync();
+        //    reunionditablas = await _neocontext.ReunionDia
+        //        .Where(a => a.Fecha2 == f1 && a.Div == div || a.Fecha2 == f2 && a.Div == div)
+        //        .OrderByDescending(b => b.Id)
+        //        .ToListAsync();
 
-        }
+        //}
+
         public async Task Insertasistencia(Asistencium asistencium)
         {
 
@@ -67,56 +86,72 @@ namespace ReunionWeb.Services
         }
 
 
-        public async Task InsertDiscrepancia(BdDiv1 bdDiv1)
+        public async Task InsertDiscrepancia(ReunionDium bdDiv1)
         {
-                _context.BdDiv1s.Add(bdDiv1);
-                await _context.SaveChangesAsync();            
+            _neocontext.ReunionDia.Add(bdDiv1);
+                await _neocontext.SaveChangesAsync();            
         }
 
-        public async Task UpdateDiscrepancia(BdDiv1 d,int id, int tipo)
+        public async Task UpdateDiscrepancia(ReunionDium d,int id, int tipo, string f1, string f2)
         {
-            string div="";
-
+            string div="", centro="";
+           // DateTime f1= DateTime.Now;
+            
             if (d.Div is not null)
             {
-                div = d.Div;
+                div = d.Division;
+                centro = d.Div;
+               // f1 = d.Fecha;
             }
                
+            ReunionDium bdDivform = new ReunionDium();
 
-            var bdDivform = await _context.BdDiv1s
+             bdDivform = await _neocontext.ReunionDia
                 .FirstOrDefaultAsync(sh => sh.Id == id);
             if (bdDivform == null)
                 throw new Exception("Sorry, not found");
           
 
             bdDivform.Area = d.Area;
+            bdDivform.Division = d.Division;
             bdDivform.Codigo = d.Codigo;
             bdDivform.CodigoEquipo = d.CodigoEquipo;
             bdDivform.Discrepancia = d.Discrepancia;
             bdDivform.Div = d.Div;
             bdDivform.Fecha = d.Fecha;
-            bdDivform.Fecha2 = d.Fecha2;
+            bdDivform.Fecha2 = d.Fecha.ToString("yyyyMMdd");
             bdDivform.FechaTrab = d.FechaTrab;
-            bdDivform.FechaTrab1 = d.FechaTrab1;
+            bdDivform.FechaTrab1 = d.FechaTrab.ToString("yyyyMMdd");
             bdDivform.Id = d.Id;
-            bdDivform.Ksf = d.Ksf;
+            bdDivform.AfectadoKsf = d.AfectadoKsf;
             bdDivform.PlanDeAccion = d.PlanDeAccion;
-            bdDivform.Ps = d.Ps;
-            bdDivform.Responsable = d.Responsable;
-            bdDivform.Status = d.Status;
-            bdDivform.Tiempo = d.Tiempo;
-
-            await _context.SaveChangesAsync();  
             
-           
-            if (tipo == 0)
+            if (bdDivform.FechaTrab> DateTime.Now && bdDivform.Div =="Planta de Chempro")
             {
-                _navigationManager.NavigateTo($"pendientes/{div}");
+                bdDivform.OrdenTrabajo = d.Id.ToString();
             }
             else
             {
-                _navigationManager.NavigateTo($"reunion/{div}");
+                bdDivform.OrdenTrabajo = d.OrdenTrabajo;
             }
+           
+            bdDivform.Responsable = d.Responsable;
+            bdDivform.Status = d.Status;
+            bdDivform.Tiempo = d.Tiempo;
+           
+            _neocontext.Entry(bdDivform).State = EntityState.Modified;           
+             await _neocontext.SaveChangesAsync();
+
+
+                if (tipo == 0)
+                {
+                    _navigationManager.NavigateTo($"pendientes/{centro}/{div}/{f1}/{f2}");
+                }
+                else
+                {
+                    _navigationManager.NavigateTo($"reunion/{centro}/{div}/{f1}/{f2}");
+                }
+            
 
         }
  

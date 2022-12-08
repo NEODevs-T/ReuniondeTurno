@@ -1,6 +1,10 @@
 ﻿@page "/asistencia"
 
 @inject IDbDiv1Service DbDiv1Service
+@inject AuthenticationStateProvider AuthStateProvider
+@inject IAPIDiv1Service APIDiv1Service
+@inject ILocalStorageService LocalStorage
+@attribute [Authorize(Roles = "Admin, AdminChempro, SupIntendente")]
 
 <h3>Asistencia</h3>
 <p></p>
@@ -33,199 +37,227 @@ else if (@mensaje != "")
 </div>
 
 <p></p>
-<BSCard CardType="CardType.Card" style="width:50%; padding:10px;" >
+
    
     <p></p>
 
 
 
-        <BSForm Model="asisform" OnSubmit="Save" OnReset="Reset">
-            <BSCol Column="9">
+        @*<BSForm Model="asisform" OnSubmit="Save" OnReset="Reset">*@
+             <BSContainer> 
+            
+                    @if (APIDiv1Service.centro.Count()==0)
+                    {
+                                        
+
+                          <div class="loader"></div>
+                    }   
+                    else
+                    { 
+                         
         
-                <BSInput InputType="InputType.Select" @bind-Value="asisform.Area">
-                    <option value ="">Seleccione...</option>
+          <BSRow>
+              <BSCol Column="4">
+                
+               @* <BSInput InputType="InputType.Select" @bind-Value="Div">
                     <option value="DIV 1">Conversión</option>
                     <option value="MOL">Molinos</option>
                      <option value="Generación">Generación de Energía</option>
                      <option value="AMB">Efluentes</option>
                      <option value="PD&CL">Destintado</option>
                      <option value="PP">Planta de Pulpa</option>
-                </BSInput>
-            </BSCol> 
-
-            <p></p>
-                
-          <BSRow>
-            <BSCol ColumnSmall="6">
-                Superintendente de Produccion
-            </BSCol>
-            <BSCol Column="6">
-                   <BSInputRadio CheckedValue="@(1)" @bind-Value="asisform.SptteProduccion" IsToggle="true" Color="BSColor.Success" IsOutlined="true">
-                        Presente
-                    </BSInputRadio>
-                    <BSInputRadio CheckedValue="@(0)" @bind-Value="asisform.SptteProduccion" IsToggle="true" Color="BSColor.Danger" IsOutlined="true">
-                        Ausente
-                    </BSInputRadio>
-            </BSCol>
-          </BSRow>
-          <p></p>
-            @*<BSRow>
+                </BSInput>*@
+                   
+                       
+                        
+                      <BSInput InputType="InputType.Select" @bind-Value="Div">
+                       <option value="">Seleccione</option>
+                    @foreach (var d in APIDiv1Service.centro)
+                        {
+                            <option value="@d.Cnom">@d.Cnom</option>
+                        }    
+                        </BSInput>   
+             </BSCol>       
+              
             <BSCol ColumnSmall="3">
-                Supervisor de Produccion
-            </BSCol>
-            <BSCol Column="6">
-                   <BSInputRadio CheckedValue="@(1)" @bind-Value="asisform.SupvProd" IsToggle="true" Color="BSColor.Success" IsOutlined="true">
-                        Presente
-                    </BSInputRadio>
-                    <BSInputRadio CheckedValue="@(0)" @bind-Value="asisform.SupvProd" IsToggle="true" Color="BSColor.Danger" IsOutlined="true">
-                        Ausente
-                    </BSInputRadio>
-            </BSCol>
-          </BSRow>*@
+                        <BSButton IsOutlined   Color="BSColor.Success"  Size="Size.ExtraSmall" @onclick="Get">   Asistentes  <span class="oi oi-check"></span></BSButton>
+                </BSCol> 
+        
+            </BSRow>
+             
+            }
+
+    </BSContainer> 
+
+    <p></p>
+
+
+
+
+
+         @if (APIDiv1Service.cargoreus.Count()>0 && dataIsLoaded == 2)
+{
+
+    <BSCol Column="6">
+    <BSTable IsResponsive="true" IsStriped="true" IsBordered="true">
+        <BSTHead Class="cabecera">
+            <BSTR>
+                
+             
+                <BSTD>Personal</BSTD>
+                <BSTD>Presencia</BSTD>
+               @* <BSTD>Asistente</BSTD>
+                <BSTD>Inasistente</BSTD>*@
+                
            
-          <p></p>
-            <BSRow>
-            <BSCol ColumnSmall="6">
-                Superintendente de Mtto Mecanico
-            </BSCol>
-            <BSCol Column="6">
-                   <BSInputRadio CheckedValue="@(1)" @bind-Value="asisform.SupvMttoMecanico" IsToggle="true" Color="BSColor.Success" IsOutlined="true">
-                        Presente
-                    </BSInputRadio>
-                    <BSInputRadio CheckedValue="@(0)" @bind-Value="asisform.SupvMttoMecanico" IsToggle="true" Color="BSColor.Danger" IsOutlined="true">
-                        Ausente
-                    </BSInputRadio>
-            </BSCol>
-          </BSRow>
 
-            <p></p>
-            <BSRow>
-              <BSCol ColumnSmall="6">
-                Superintendente de Mtto Electrico
-            </BSCol>
-            <BSCol Column="6">
-                   <BSInputRadio CheckedValue="@(1)" @bind-Value="asisform.SupvMttoElectricoElectronico" IsToggle="true" Color="BSColor.Success" IsOutlined="true">
-                        Presente
-                    </BSInputRadio>
-                    <BSInputRadio CheckedValue="@(0)" @bind-Value="asisform.SupvMttoElectricoElectronico" IsToggle="true" Color="BSColor.Danger" IsOutlined="true">
-                        Ausente
-                    </BSInputRadio>
-            </BSCol>
-          </BSRow>
+            </BSTR>
+        </BSTHead>
+        <BSTBody>
+            @foreach (var d in listaAsistencia)
+            {
+                  
 
-            <p></p>
-            <BSRow>
-             <BSCol ColumnSmall="6">
-                Superintendente de Mtto Instrumentacion
-            </BSCol>
-            <BSCol Column="6">
-                   <BSInputRadio CheckedValue="@(1)" @bind-Value="asisform.SupvInstrumentacion" IsToggle="true" Color="BSColor.Success" IsOutlined="true">
-                        Presente
-                    </BSInputRadio>
-                    <BSInputRadio CheckedValue="@(0)" @bind-Value="asisform.SupvInstrumentacion" IsToggle="true" Color="BSColor.Danger" IsOutlined="true">
-                        Ausente
-                    </BSInputRadio>
-            </BSCol>
-          </BSRow>
-          
-              <p></p>
-            <BSRow>
-            <BSCol ColumnSmall="6">
-                Planificador
-            </BSCol>
-            <BSCol Column="6">
-                   <BSInputRadio CheckedValue="@(1)" @bind-Value="asisform.Planificador" IsToggle="true" Color="BSColor.Success" IsOutlined="true">
-                        Presente
-                    </BSInputRadio>
-                    <BSInputRadio CheckedValue="@(0)" @bind-Value="asisform.Planificador" IsToggle="true" Color="BSColor.Danger" IsOutlined="true">
-                        Ausente
-                    </BSInputRadio>
-            </BSCol>
-          </BSRow>
-            
+                        <BSTR> 
 
-             <p></p>
-            <BSRow>
-            <BSCol ColumnSmall="6">
-                Calidad
-            </BSCol>
-            <BSCol Column="6">
-                   <BSInputRadio CheckedValue="@(1)" @bind-Value="asisform.Calidad" IsToggle="true" Color="BSColor.Success" IsOutlined="true">
-                        Presente
-                    </BSInputRadio>
-                    <BSInputRadio CheckedValue="@(0)" @bind-Value="asisform.Calidad" IsToggle="true" Color="BSColor.Danger" IsOutlined="true">
-                        Ausente
-                    </BSInputRadio>
-            </BSCol>
-          </BSRow>
-            
-          <p></p>
-            <BSRow>
-            <BSCol ColumnSmall="6">
-                Seguridad
-            </BSCol>
-            <BSCol Column="6">
-                   <BSInputRadio CheckedValue="@(1)" @bind-Value="asisform.Seguridad" IsToggle="true" Color="BSColor.Success" IsOutlined="true">
-                        Presente
-                    </BSInputRadio>
-                    <BSInputRadio CheckedValue="@(0)" @bind-Value="asisform.Seguridad" IsToggle="true" Color="BSColor.Danger" IsOutlined="true">
-                        Ausente
-                    </BSInputRadio>
-            </BSCol>
-          </BSRow>  
+                        <BSTD>@d.AridCargoRNavigation.Crnombre</BSTD>
+                        <BSTD>
+                            <div Class="@BS.Form_Check @BS.Form_Switch">
+                                <BSInputCheckbox  CheckedValue="@(1)"  Color="BSColor.Success" @bind-Value="d.ArAsistente"/>
+                                <BSLabel IsCheckLabel="true">
 
-           <p></p>
-            <BSRow>
-            <BSCol ColumnSmall="6">
-                Mtto Preventivo
-            </BSCol>
-            <BSCol Column="6">
-                   <BSInputRadio CheckedValue="@(1)" @bind-Value="asisform.MttoPrev" IsToggle="true" Color="BSColor.Success" IsOutlined="true">
-                        Presente
-                    </BSInputRadio>
-                    <BSInputRadio CheckedValue="@(0)" @bind-Value="asisform.MttoPrev" IsToggle="true" Color="BSColor.Danger" IsOutlined="true">
-                        Ausente
-                    </BSInputRadio>
-            </BSCol>
-          </BSRow>  
-          <p></p>
-           <BSButton   Color="BSColor.Success"  Size="Size.ExtraSmall" IsSubmit >  Guardar <span class="oi oi-check"></span></BSButton>
-           <BSButton   Color="BSColor.Warning"  Size="Size.ExtraSmall" IsReset>  Borrar </BSButton>
+                                </BSLabel>
+                            </div>
+                        </BSTD>
+                   
+                    </BSTR>    
+                    
 
-       </BSForm>
-         </BSCard>
+            }
+
+
+        </BSTBody>
+  
+    </BSTable>
+           <BSButton IsOutlined   Color="BSColor.Success"  Size="Size.ExtraSmall" @onclick="Save">   Guardar  <span class="oi oi-check"></span></BSButton>
+    </BSCol>
+
+
+}
+else if (APIDiv1Service.cargoreus.Count()==0 && dataIsLoaded == 2)
+{
+    <p>No se ha cargado personal a este centro.</p>
+}
+else if (dataIsLoaded==1 && DbDiv1Service.dbDiv1s.Count()==0)
+{
+      <div class="loader"></div>
+}
+
   
 
 @code{
 
     private Asistencium asisform = new Asistencium();
+    private AsistenReu asiform = new AsistenReu();
     private List<Asistencium> asis = new List<Asistencium>();
+    private List<CargoReu> cr = new List<CargoReu>();
+    private AsistenReu reuform;
+
     private int fecha = int.Parse(DateTime.Now.ToString("yyyyMMdd"));
     private Alerts Alertas = new Alerts();
     private string mensaje="";
-
+    int dataIsLoaded = 0;
+    private  string RadioValue { get; set; }
+    private string Div { get; set; }
+    private List<AsistenReu> listaAsistencia  { get; set; }
 
     private bool _buttonDisabled = true;
     private BSAlert? _alertRef;
 
+
+
+    private List<Claim> claims { get; set; }
+
+    private async Task CreateData()
+
+    {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        claims = Enumerable.ToList(user.Claims);
+
+
+
+
+    }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        await CreateData();
+           if(claims[1].Value=="Admin")
+            {
+                await APIDiv1Service.GetCentros("All");  
+            }
+            else
+            {
+                await APIDiv1Service.GetCentros(claims[6].Value.ToString()); 
+            }
+
+
+
+
+    }
+
+    protected async Task Get()
+    {
+        if (dataIsLoaded != 1)
+        {
+            dataIsLoaded = 1;
+            await APIDiv1Service.GetAsistencia(Div);
+            cr=  APIDiv1Service.cargoreus;
+            listaAsistencia = new List<AsistenReu>();
+
+            for (var i = 0; i < cr.Count; i++)
+            {
+                reuform = new AsistenReu();
+                reuform.Ararea = Div;
+                reuform.Arfecha=DateTime.Now;
+                reuform.AridCargoRNavigation = cr[i];
+                listaAsistencia.Add(reuform);
+            }
+
+            
+            for (var i = 0; i < cr.Count; i++)
+            {
+              
+                listaAsistencia[i].AridCargoR=APIDiv1Service.cargoreus[i].IdCargoR;
+            }
+
+
+            dataIsLoaded = 2;
+            
+        }
+    }
+
+
     protected async Task Save()
     {
 
-        asisform.Fecha = fecha;
-        try{
-            
-            if (asisform.Area is not null & asisform.Area!="")
+        try
+        {
+            for (var i = 0; i < cr.Count; i++)
             {
-                await DbDiv1Service.Insertasistencia(asisform);
-                mensaje = "Registro Exitoso";
-                Show();
+           
+            }
 
-                asisform = new Asistencium();
-            }
-            else{
-                mensaje = "Seleccione el area.";
-                Show();
-            }
+            await APIDiv1Service.Postasistencia(listaAsistencia);
+           
+            mensaje = "Registro Exitoso";
+            dataIsLoaded = 0;
+            Show();
+
+                     
         } 
         catch 
         {
@@ -234,6 +266,8 @@ else if (@mensaje != "")
             Show();
         }
     }
+
+
 
 
     protected async Task Reset()

@@ -19,12 +19,15 @@ namespace ReunionWeb.NeoDbs
         public virtual DbSet<Centro> Centros { get; set; } = null!;
         public virtual DbSet<Division> Divisions { get; set; } = null!;
         public virtual DbSet<Empresa> Empresas { get; set; } = null!;
+        public virtual DbSet<Ksf> Ksfs { get; set; } = null!;
         public virtual DbSet<Linea> Lineas { get; set; } = null!;
         public virtual DbSet<Pai> Pais { get; set; } = null!;
+        public virtual DbSet<RespoReu> RespoReus { get; set; } = null!;
+        public virtual DbSet<ReunionDium> ReunionDia { get; set; } = null!;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            
+           
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -110,6 +113,17 @@ namespace ReunionWeb.NeoDbs
                     .HasConstraintName("FK_Empresa_Pais");
             });
 
+            modelBuilder.Entity<Ksf>(entity =>
+            {
+                entity.HasKey(e => e.Idksf);
+
+                entity.ToTable("KSF");
+
+                entity.Property(e => e.KsfNombre)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+            });
+
             modelBuilder.Entity<Linea>(entity =>
             {
                 entity.HasKey(e => e.IdLinea);
@@ -170,6 +184,94 @@ namespace ReunionWeb.NeoDbs
                     .HasMaxLength(50)
                     .IsUnicode(false)
                     .HasColumnName("PNombre");
+            });
+
+            modelBuilder.Entity<RespoReu>(entity =>
+            {
+                entity.HasKey(e => e.IdResReu);
+
+                entity.ToTable("RespoReu");
+
+                entity.Property(e => e.Rresta).HasColumnName("RREsta");
+
+                entity.Property(e => e.Rrnombre)
+                    .HasMaxLength(50)
+                    .IsUnicode(false)
+                    .HasColumnName("RRNombre");
+            });
+
+            modelBuilder.Entity<ReunionDium>(entity =>
+            {
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.AfectadoKsf)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Area)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Codigo)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.CodigoEquipo)
+                    .HasMaxLength(50)
+                    .IsUnicode(false)
+                    .HasColumnName("Codigo_equipo");
+
+                entity.Property(e => e.Discrepancia)
+                    .HasMaxLength(250)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Div)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Division)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Fecha).HasColumnType("date");
+
+                entity.Property(e => e.Fecha2)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.FechaTrab)
+                    .HasColumnType("date")
+                    .HasColumnName("Fecha_trab");
+
+                entity.Property(e => e.FechaTrab1)
+                    .HasMaxLength(50)
+                    .IsUnicode(false)
+                    .HasColumnName("Fecha_trab1");
+
+                entity.Property(e => e.OrdenTrabajo)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.PlanDeAccion)
+                    .HasMaxLength(50)
+                    .IsUnicode(false)
+                    .HasColumnName("Plan_de_accion");
+
+                entity.Property(e => e.Produfin)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Responsable)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Status)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Tiempo)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
             });
 
             OnModelCreatingPartial(modelBuilder);

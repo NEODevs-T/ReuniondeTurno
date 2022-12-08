@@ -1,12 +1,20 @@
 ﻿@inherits LayoutComponentBase
+ @inject HttpClient Http
+@inject AuthenticationStateProvider AuthStateProvider
+@inject ILocalStorageService LocalStorage
+@inject NavigationManager NavigationManager
 
 <PageTitle>ReunionWeb</PageTitle>
 
-<div class="page">
-    <div class="sidebar">
-        <NavMenu />
-    </div>
-      
+
+    <AuthorizeView>
+     
+        <Authorized>
+             <div class="page">
+            <div class="sidebar">
+            <NavMenu />
+            </div>
+  
     <main>
         <div class="top-row px-4">
            <LoginLogoutButton />
@@ -15,5 +23,156 @@
         <article class="content px-4">
             @Body
         </article>
+
     </main>
+    </div>
+        </Authorized>
+        <NotAuthorized>
+
+           
+<div class="text-center fondo">
+
+    <div class="form-signin w-25 m-auto loginform "> 
+        <div>
+                @if (@mensaje == "Accediendo...")
+                {
+                    <BSAlert Color="BSColor.Success" IsDismissible="true" HasIcon="true"  @ref="_alertRef" Dismissed="Dismissed">
+                     @mensaje
+                    </BSAlert>
+                }
+                else if (@mensaje =="Este usuario no está registrado en este proyecto."| mensaje=="Verifique el usuario.")
+                {
+           
+                    <BSAlert Color="BSColor.Warning" IsDismissible="true" HasIcon="true" @ref="_alertRef" Dismissed="Dismissed">
+                    @mensaje
+                    </BSAlert>    
+                }
+                else if (@mensaje == "Contraseña Incorrecta.")
+                {
+                    <BSAlert Color="BSColor.Danger" IsDismissible="true" HasIcon="true"  @ref="_alertRef" Dismissed="Dismissed">
+                     @mensaje
+                    </BSAlert>
+                }
+            </div>
+            <p></p>
+           
+                    <img class="mb-4" src="./images/Neo.png" alt="" width="100" height="100">
+                    <h1 class="h3 mb-3 fw-normal">Inicie Sesión</h1>
+
+
+           <BSForm Model="user"   OnSubmit="HandleLogin">
+                        <DataAnnotationsValidator />
+    
+                 <BSCol Column="8">
+                     @_message
+                     <BSValidationSummary />
+                 </BSCol>
+
+                <div class="form-floating">
+                        <BSLabel IsHidden="true">User</BSLabel>
+                        <BSInput InputType="InputType.Text" placeholder="Ficha/Usuario"  @bind-Value="user.UserName"/>
+                        <BSFeedback For="@(() => user.UserName)" ValidMessage="Correcto." />
+                </div>
+                <div class="form-floating">
+                         <BSLabel IsHidden="true">Password</BSLabel>
+                         <BSInput InputType="InputType.Password" @bind-Value="user.Password"/>
+                         <BSFeedback For="@(() => user.Password)" ValidMessage="Correcto." />
+                </div>
+
+                <p></p>
+                 @if (carga == true)
+                {   <div class="loader"></div>
+                }
+                else if(carga==false)
+                {
+                  <BSButton   Class="w-100 btn btn-lg" Color="BSColor.Success"  Size="Size.ExtraExtraLarge" IsSubmit>  Iniciar</BSButton>
+
+                }
+                <p class="mt-5 mb-3 text-muted">Neo 2022</p>
+
+               </BSForm>
+                
+    </div>
 </div>
+
+
+        </NotAuthorized>
+    </AuthorizeView>
+
+
+
+
+
+
+
+@code {
+    
+
+    [CascadingParameter]  
+    private List<Claim> claims { get; set; }
+
+    private string _message = "", mensaje="";
+    UserLoginDto user = new UserLoginDto();
+    private bool carga =false;
+    private bool _buttonDisabled = true;
+    private BSAlert? _alertRef;
+
+      
+    protected async Task HandleLogin(EditContext e)
+    {   
+        mensaje = "";
+        user.Proyecto = "ReunionWeb";
+        if (e.Validate())
+        {   carga = true;
+            var result = await Http.PostAsJsonAsync("http://operaciones.papeleslatinos.com/Authentication/api/Auth/Login", user);
+            var ValidarToken = await result.Content.ReadAsStringAsync();
+
+            if (ValidarToken != null)
+            {
+
+                if (ValidarToken == "NotFoundUser")
+                {
+                    mensaje = "Verifique el usuario.";
+                    carga = false;
+                }
+                else if (ValidarToken == "WrongPassword")
+                {
+                    mensaje = "Contraseña Incorrecta.";
+                    carga = false;
+                }
+                else if (ValidarToken == "null")
+                {
+                    mensaje = "Este usuario no está registrado en este proyecto.";
+                    carga = false;
+                }
+                else
+                {
+                    mensaje = "Accediendo...";
+                    Console.WriteLine(ValidarToken);
+                    await LocalStorage.SetItemAsync("ReunionWebToken", ValidarToken);
+                    var authState = await AuthStateProvider.GetAuthenticationStateAsync();                  
+                    var userA = authState.User;
+                    claims = Enumerable.ToList(userA.Claims);
+                    user = new UserLoginDto();
+                    carga = false;
+                    mensaje = "";
+                    NavigationManager.NavigateTo("");
+                }
+            }
+
+        }
+
+
+        
+    }
+     private void Show()
+    {
+        _buttonDisabled = true;
+        _alertRef?.Open();
+    }
+
+    private void Dismissed()
+    {
+        _buttonDisabled = false;
+    }
+}

@@ -1,8 +1,10 @@
 ﻿@page "/reunion"
-@page "/reunion/{accion}"
+@page "/reunion/{accion}/{division}/{f1}/{f2}"
 @inject IDbDiv1Service DbDiv1Service
 @inject IAPIDiv1Service APIDiv1Service
 @inject NavigationManager NavigationManager
+@inject AuthenticationStateProvider AuthStateProvider
+@attribute [Authorize(Roles = "Admin,AdminChempro, SupIntendente")]
 
 <h3>Formato de Reunión</h3>
 
@@ -18,20 +20,11 @@
                     else
                     { 
           <BSRow>
-            <BSCol Column="4">
-                
-               @* <BSInput InputType="InputType.Select" @bind-Value="Div">
-                    <option value="DIV 1">Conversión</option>
-                    <option value="MOL">Molinos</option>
-                     <option value="Generación">Generación de Energía</option>
-                     <option value="AMB">Efluentes</option>
-                     <option value="PD&CL">Destintado</option>
-                     <option value="PP">Planta de Pulpa</option>
-                </BSInput>*@
-                   
-                       
-                        
+            <BSCol Column="3">
+                 <BSLabel>Centro</BSLabel>
+        
                       <BSInput InputType="InputType.Select" @bind-Value="Div">
+                           <option value="">Seleccione</option>
                     @foreach (var d in APIDiv1Service.centro)
                         {
                             <option value="@d.Cnom">@d.Cnom</option>
@@ -40,8 +33,26 @@
                     
               
             </BSCol> 
-            
+            <BSCol Column="3">
+                    <BSLabel>División</BSLabel>
+                         <BSInput InputType="InputType.Select" @bind-Value="Division">
+                              <option  value="">Seleccione</option>
+                                 @foreach (var d in APIDiv1Service.centro)
+                                 {
+                                    @foreach (var e in d.Divisions)
+                                 {
+                                     if(Div== d.Cnom)
+                                      {
+                                             <option  value="@e.Dnombre">@e.Dnombre</option>
+                                      }
+                                 }
+                                 }          
+                                </BSInput>   
+               </BSCol> 
                 <BSCol ColumnSmall="3">
+                    <BSRow>
+                      <BSLabel>Aceptar</BSLabel>
+                     </BSRow>
                         <BSButton IsOutlined   Color="BSColor.Success"  Size="Size.ExtraSmall" @onclick="Get"> Reunión <span class="oi oi-check"></span></BSButton>
                 </BSCol> 
             </BSRow>
@@ -53,7 +64,7 @@
 
         </p>
 
-@if (DbDiv1Service.dbDiv1s.Count()>0 && dataIsLoaded == 2)
+@if (DbDiv1Service.reunionditablas.Count()>0 && dataIsLoaded == 2)
 {
     <BSContainer>
 
@@ -63,6 +74,7 @@
             <BSTR>
                 
                 @*<BSTD>Id</BSTD>*@             
+                <BSTD>División</BSTD>
                 <BSTD>Área</BSTD>
                 <BSTD>Ksf</BSTD>
                 <BSTD>Código de Equipo</BSTD>
@@ -73,8 +85,20 @@
                 <BSTD>Responsable</BSTD>
                 <BSTD>Status</BSTD>
                 @* <BSTD>Produfin</BSTD>*@
-                <BSTD>SPA</BSTD>
-                @*<BSTD>Fecha de Reunión</BSTD> Fecha del dia de reunion*@
+                 @if(claims[5].Value=="PAVECA")
+                 {
+                     <BSTD>SPA</BSTD>
+                 }
+                 else if (claims[5].Value=="")
+                 {
+                <BSLabel>Cargando...</BSLabel>
+                }
+                else
+                {
+                  <BSTD>ODT</BSTD>
+                }
+               
+                <BSTD>Fecha de Reunión</BSTD> 
                 @* <BSTD>FechaTrab</BSTD>*@
                 @*<BSTD>Div</BSTD>*@
                 @*<BSTD>Fecha BPCS</BSTD>*@
@@ -85,46 +109,55 @@
             </BSTR>
         </BSTHead>
         <BSTBody>
-            @foreach (var d in DbDiv1Service.dbDiv1s)
+            @foreach (var d in DbDiv1Service.reunionditablas)
             {
-                @*@if (@d.Fecha2 == ayer)
-                {*@
-                     @if (@d.Status != "Listo" &  d.Status != "LISTO")
-                {
-                    <BSTR>
+               @if (d.Fecha.ToString("yyyy-MM-dd")==DateTime.Now.AddDays(-1).ToString("yyyy-MM-dd") | d.Fecha.ToString("yyyy-MM-dd")==DateTime.Now.ToString("yyyy-MM-dd"))
+                  {
+                  <BSTR>
+                       
                        @*<BSTD>@d.Id</BSTD>*@
+                        <BSTD>@d.Division</BSTD>
                         <BSTD>@d.Area</BSTD>
-                        <BSTD>@d.Ksf</BSTD>
+                        <BSTD>@d.AfectadoKsf</BSTD>
                         <BSTD>@d.CodigoEquipo</BSTD>
                         <BSTD ColSpan="4" class="textotabla">@d.Discrepancia</BSTD>
                         <BSTD>@d.Codigo</BSTD>
                         <BSTD Class="textotabla">@d.PlanDeAccion</BSTD>
                         <BSTD>@d.Tiempo</BSTD>
-                        <BSTD>@d.Responsable</BSTD>
+                          @if (@d.Responsable == "Por Definir")
+                        {
+                            <BSTD Class="Definir">@d.Responsable</BSTD>
+                        }
+                         else
+                        {
+                             <BSTD>@d.Responsable</BSTD>
+                        }
 
-                        @if (@d.Status == "Listo" | d.Status == "LISTO")
-                        {
-                            <BSTD>@d.Status</BSTD>
-                        }
-                        else
-                        {
-                           <BSTD Class="pendiente">@d.Status</BSTD>
-                        }
+                            @if (@d.Status == "Listo" | d.Status == "LISTO")
+                            {
+                                <BSTD>@d.Status</BSTD>
+                            }
+                            else if(@d.Status == "Revisar")
+                            {
+                                <BSTD Class="cabecera">@d.Status</BSTD>
+                            }
+                            else
+                            {
+                                <BSTD Class="">@d.Status</BSTD>
+                            }
                         @*<BSTD>@d.Produfin</BSTD>*@
-                        <BSTD>@d.Ps</BSTD>
-                        @*<BSTD>@d.Fecha</BSTD>*@
+                        <BSTD>@d.OrdenTrabajo</BSTD>
+                        <BSTD>@d.Fecha.ToString("dd/MM/yyyy")</BSTD>
                         @*<BSTD>@d.FechaTrab</BSTD>*@
                         @*<BSTD>@d.Div</BSTD>*@
                         @*<BSTD>@d.Fecha2</BSTD>*@
-                        <BSTD>@d.FechaTrab1</BSTD>
+                        <BSTD>@d.FechaTrab.ToString("dd/MM/yyyy") </BSTD>
                         <BSTD>
                          <button class="btn btn-success" @onclick="(() => Editar(d.Id))"><i class="oi oi-pencil"></i></button>
                            </BSTD>
-
-                    </BSTR>
-                    }
-               @* }*@
-
+                   
+                  </BSTR>
+            }
             }
 
 
@@ -133,11 +166,11 @@
     </BSTable>
     </BSContainer>   
 }
-else if (dataIsLoaded==1 && DbDiv1Service.dbDiv1s.Count()==0)
+else if (dataIsLoaded==1 && DbDiv1Service.reunionditablas.Count()==0)
 {
     <p>Cargando...</p>
 }
-else if (dataIsLoaded==2 && DbDiv1Service.dbDiv1s.Count()==0)
+else if (dataIsLoaded==2 && DbDiv1Service.reunionditablas.Count()==0)
 {
     <p>No hay datos para esta fecha.</p>
 }
@@ -145,16 +178,47 @@ else if (dataIsLoaded==2 && DbDiv1Service.dbDiv1s.Count()==0)
 @code {
 
     [Parameter]
-    public string? accion { get; set; }
+    public string? accion { get; set; }//centro
+     [Parameter]
+     public string? division { get; set; }//division 
+    [Parameter]
+    public string? f1 { get; set; }
+    [Parameter]
+    public string? f2 { get; set; }
+
     int dataIsLoaded = 0;
     string ayer = DateTime.Now.AddDays(-1).ToString("yyyyMMdd");
-    private string Div { get; set; } = "DIV 1";
+    private string Div { get; set; } //Centro
+    private string Division { get; set; } //División
 
+
+   
+    private List<Claim> claims { get; set; }
+
+    private async Task CreateData()
+
+    {
+      var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        claims = Enumerable.ToList(user.Claims);
+
+    }
     
      protected override async Task OnInitializedAsync()
     {
-        
-           await APIDiv1Service.GetCentros();
+            await CreateData();
+            
+            if(claims[1].Value=="Admin")
+            {
+                await APIDiv1Service.GetCentros("All");  
+            }
+        else
+        {
+             await APIDiv1Service.GetCentros(claims[6].Value.ToString()); 
+        }
+            await APIDiv1Service.Getksf();
+            await APIDiv1Service.GetResReu();
+         
     }
 
     protected async Task Get()
@@ -162,13 +226,13 @@ else if (dataIsLoaded==2 && DbDiv1Service.dbDiv1s.Count()==0)
         if (dataIsLoaded != 1)
         {
             dataIsLoaded = 1;
-            await DbDiv1Service.GetPendientes(Div);
+            await DbDiv1Service.GetPendientes(Div,Division, DateTime.Now.AddDays(-1), DateTime.Now);
             dataIsLoaded = 2;
         }
     }
      void Editar(int id)
     {
-        NavigationManager.NavigateTo($"EditDisc/{id}/1");
+        NavigationManager.NavigateTo($"EditDisc/{id}/1/{DateTime.Now.AddDays(-1).ToString("dd-MM-yyyy")}/{DateTime.Now.ToString("dd-MM-yyyy")}");
       
     }
     protected override async Task OnParametersSetAsync()
@@ -176,6 +240,7 @@ else if (dataIsLoaded==2 && DbDiv1Service.dbDiv1s.Count()==0)
         if (accion !=null)
         {
             dataIsLoaded = 1;
+             await DbDiv1Service.GetPendientes(accion,division,DateTime.Now.AddDays(-1), DateTime.Now);
             dataIsLoaded = 2;
         }
 

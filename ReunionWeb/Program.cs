@@ -26,6 +26,10 @@ builder.Services.AddBlazorStrap();
 builder.Services.AddDbContext<DOC_IngIContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")), ServiceLifetime.Transient);
 
+
+builder.Services.AddDbContext<DbNeoContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("Neo")), ServiceLifetime.Transient);
+
 //builder.Services.AddDbContext<DbNeoContext>(options =>
 // options.UseSqlServer(builder.Configuration.GetConnectionString("Neo")), ServiceLifetime.Transient);
 builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>();
