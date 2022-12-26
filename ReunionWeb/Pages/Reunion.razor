@@ -69,7 +69,7 @@
     <BSContainer>
 
 
-    <BSTable IsResponsive="true" IsStriped="true" IsBordered="true" IsHoverable="true">
+    <BSTable IsResponsive="true" IsStriped="true" IsBordered="true">
         <BSTHead Class="cabecera">
             <BSTR>
                 
@@ -111,7 +111,7 @@
         <BSTBody>
             @foreach (var d in DbDiv1Service.reunionditablas)
             {
-               @if (d.Fecha.ToString("yyyy-MM-dd")==DateTime.Now.AddDays(-1).ToString("yyyy-MM-dd") | d.Fecha.ToString("yyyy-MM-dd")==DateTime.Now.ToString("yyyy-MM-dd"))
+               @if (d.Status!="Listo")
                   {
                   <BSTR>
                        

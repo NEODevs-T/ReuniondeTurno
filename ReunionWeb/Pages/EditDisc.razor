@@ -73,11 +73,20 @@
                 <BSInput InputType="InputType.Text" IsDisabled @bind-Value="bdDivform.Discrepancia" ValidateOnInput="true" />
                  <BSFeedback For="@(() => bdDivform.Discrepancia)" ValidMessage="Correcto." />
                 </BSCol>
-
+                 @if(tipo==0)
+                {
                 <BSCol Column="6">
                 <BSLabel>Plan de Accion</BSLabel>
-                <BSInput InputType="InputType.Text" IsDisabled @bind-Value="bdDivform.PlanDeAccion" ValidateOnInput="true" />
-                </BSCol>
+                <BSInput InputType="InputType.Text" IsDisabled  @bind-Value="bdDivform.PlanDeAccion" ValidateOnInput="true" />
+                    </BSCol>
+                }
+                else
+                {
+                    <BSCol Column="6">
+                <BSLabel>Plan de Accion</BSLabel>
+                <BSInput InputType="InputType.Text"  @bind-Value="bdDivform.PlanDeAccion"  />
+                    </BSCol>
+                }
 
             </BSRow> 
 
@@ -86,15 +95,37 @@
 
             <BSRow>
 
-                 <BSCol Column="2">
-                <BSLabel>Tiempo (Min)</BSLabel>
-                <BSInput InputType="InputType.Number" @bind-Value="bdDivform.Tiempo" ValidateOnInput="true" />
-                </BSCol>
+                  @if(tipo==0)
+                {
+                    <BSCol Column="2">
+                    <BSLabel>Tiempo (Min)</BSLabel>
+                    <BSInput InputType="InputType.Number" IsDisabled @bind-Value="bdDivform.Tiempo"/>
+                    </BSCol>
 
+                }
+                else
+                {
+                    <BSCol Column="2">
+                    <BSLabel>Tiempo (Min)</BSLabel>
+                    <BSInput InputType="InputType.Number" @bind-Value="bdDivform.Tiempo"/>
+                    </BSCol>
+                }
+
+
+                   @if(tipo==0)
+                {
                  <BSCol Column="2">
                 <BSLabel>Fecha del Trabajo</BSLabel>
+                <BSInput InputType="InputType.Date" IsDisabled @bind-Value="bdDivform.FechaTrab" ValidateOnInput="true" />
+                    </BSCol>
+                }
+                else
+                {
+                     <BSCol Column="2">
+                <BSLabel>Fecha del Trabajo</BSLabel>
                 <BSInput InputType="InputType.Date" @bind-Value="bdDivform.FechaTrab" ValidateOnInput="true" />
-                </BSCol>
+                    </BSCol>
+                }
 
                 <BSCol ColumnSmall="2">
                 <BSLabel>Responsable</BSLabel>
@@ -118,7 +149,26 @@
              </BSRow>
               <p></p>
                 <BSRow>
+
+            @if(tipo==0)
+             {
              <BSCol ColumnSmall="2">
+                <BSLabel>Código</BSLabel>
+                <BSInput InputType="InputType.Select" IsDisabled @bind-Value="bdDivform.Codigo">
+                    <option value="">Sleccione...</option>
+                    <option value="1">1- En Curso</option>
+                    <option value="2">2- Próxima Parada</option>
+                    <option value="3">3- Falta Repuesto</option>
+                    <option value="4">4- Falta de Personal</option>
+                    <option value="5">5- Eq. no Disponible</option>
+                
+
+                </BSInput>
+                    </BSCol>
+                }
+                else
+                {
+                    <BSCol ColumnSmall="2">
                 <BSLabel>Código</BSLabel>
                 <BSInput InputType="InputType.Select" @bind-Value="bdDivform.Codigo">
                     <option value="">Sleccione...</option>
@@ -130,8 +180,9 @@
                 
 
                 </BSInput>
-            </BSCol>
-             
+                    </BSCol>
+                }
+
             
              <BSCol ColumnSmall="2">
                 <BSLabel>Status</BSLabel>
@@ -233,6 +284,7 @@
                 <BSLabel>Discrepancia</BSLabel>
                 <BSInput InputType="InputType.Text" IsDisabled @bind-Value="bdDivform.Discrepancia" ValidateOnInput="true" />
                 </BSCol>
+
 
                 <BSCol Column="6">
                 <BSLabel>Plan de Accion</BSLabel>

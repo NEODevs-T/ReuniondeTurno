@@ -48,10 +48,11 @@ namespace ReunionWeb.Services
             //f2 = DateTime.Now.ToString("yyyMMdd"); a.Fecha >= f1 & a.Fecha <= f2 &
 
             reunionditablas = await _neocontext.ReunionDia
-                .Where(a =>  a.Div == centro & a.Division==div  & a.Status== "Pendiente" | a.Div == centro & a.Division == div & a.Status == "Pendiente" & (a.Fecha>= f1 & a.Fecha <= f2))
+                .Where(a =>  (a.Div == centro & a.Division==div ) | (a.Div == centro & a.Division == div & (a.Fecha>= f1 & a.Fecha <= f2)))
                 .OrderByDescending(b => b.Fecha)
                 .ToListAsync();
 
+            int d = 6;
         }
         //obtener discrepancia a editar
         public async Task<ReunionDium> GetDiscrepantacia(int id)

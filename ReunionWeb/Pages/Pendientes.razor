@@ -19,7 +19,7 @@
        </Authorized>
  </AuthorizeView>
 
-
+ @error
 <h3>Pendientes y Listos</h3>
 
        <BSContainer> 
@@ -189,14 +189,14 @@ else if (dataIsLoaded==2 && DbDiv1Service.dbDiv1s.Count()==0)
     [Parameter]
     public string? accion { get; set; }//centro 
     [Parameter]
-     public string? division { get; set; }//division 
+    public string? division { get; set; }//division 
     [Parameter]
     public string? f1 { get; set; }
     [Parameter]
     public string? f2 { get; set; }
 
     int dataIsLoaded = 0;
-    string ayer = DateTime.Now.AddDays(-1).ToString("yyyyMMdd");
+    string ayer = DateTime.Now.AddDays(-1).ToString("yyyyMMdd"), error;
     private string Div { get; set; } //Centro
     private string Division { get; set; } //División
     private DateTime fecha1 = DateTime.Now;
@@ -222,13 +222,13 @@ else if (dataIsLoaded==2 && DbDiv1Service.dbDiv1s.Count()==0)
 
         if(claims[1].Value=="Admin")
         {
-             await APIDiv1Service.GetCentros("All");  
+            await APIDiv1Service.GetCentros("All");  
         }
         else
         {
-             await APIDiv1Service.GetCentros(claims[6].Value.ToString()); 
+            await APIDiv1Service.GetCentros(claims[6].Value.ToString()); 
         }
-       
+
         await APIDiv1Service.Getksf();
         await APIDiv1Service.GetResReu();
     }
@@ -238,33 +238,46 @@ else if (dataIsLoaded==2 && DbDiv1Service.dbDiv1s.Count()==0)
         if (dataIsLoaded != 1)
         {
             dataIsLoaded = 1;  
-            
+
             await DbDiv1Service.GetPendientes(Div,Division, fecha1, fecha2);
             dataIsLoaded = 2;
         }
     }
-    
-  
+
+
     void Editar(int id)
     {
         NavigationManager.NavigateTo($"EditDisc/{id}/0/{fecha1.ToString("dd-MM-yyyy")}/{fecha2.ToString("dd-MM-yyyy")}");
-      
+
     }
 
     protected override async Task OnParametersSetAsync()
     {
-        if (accion !=null)
-        {   
-           
-            dataIsLoaded = 1;
-            await DbDiv1Service.GetPendientes(accion,division, DateTime.Parse(f1), DateTime.Parse(f2));
-            dataIsLoaded = 2;
-            
+        try
+        {
+            if (accion !=null)
+            {   
+                string[] fecha1 = f1.Split('-');
+                string[] fecha2 = f2.Split('-');
+                
+                //año, mes dia
+                DateTime   date1 = new DateTime(int.Parse(fecha1[2]), int.Parse(fecha1[1]), int.Parse(fecha1[0]));
+                DateTime   date2 = new DateTime(int.Parse(fecha2[2]), int.Parse(fecha2[1]), int.Parse(fecha2[0]));
+
+                dataIsLoaded = 1;
+                await DbDiv1Service.GetPendientes(accion,division, date1, date2);
+                dataIsLoaded = 2;
+
+            }
+        }
+        catch (Exception ex)
+        {
+            error =""+ ex;
         }
 
     }
 
-
+    
     //protected override async Task OnInitializedAsync()
     //{
     //   //   await DbDiv1Service.GetPendientes(Div);
