@@ -20,7 +20,7 @@
                     else
                     { 
           <BSRow>
-            <BSCol Column="3">
+            <BSCol Column="2">
                  <BSLabel>Centro</BSLabel>
         
                       <BSInput InputType="InputType.Select" @bind-Value="Div">
@@ -33,7 +33,7 @@
                     
               
             </BSCol> 
-            <BSCol Column="3">
+            <BSCol Column="2">
                     <BSLabel>División</BSLabel>
                          <BSInput InputType="InputType.Select" @bind-Value="Division">
                               <option  value="">Seleccione</option>
@@ -49,12 +49,13 @@
                                  }          
                                 </BSInput>   
                </BSCol> 
-                <BSCol ColumnSmall="3">
+                <BSCol ColumnSmall="2">
                     <BSRow>
                       <BSLabel>Aceptar</BSLabel>
                      </BSRow>
                         <BSButton IsOutlined   Color="BSColor.Success"  Size="Size.ExtraSmall" @onclick="Get"> Reunión <span class="oi oi-check"></span></BSButton>
                 </BSCol> 
+          
             </BSRow>
             }
 
@@ -113,6 +114,7 @@
             {
                @if (d.Status!="Listo")
                   {
+
                   <BSTR>
                        
                        @*<BSTD>@d.Id</BSTD>*@
@@ -186,7 +188,7 @@ else if (dataIsLoaded==2 && DbDiv1Service.reunionditablas.Count()==0)
     [Parameter]
     public string? f2 { get; set; }
 
-    int dataIsLoaded = 0;
+    int dataIsLoaded = 0, filtrocod=0;
     string ayer = DateTime.Now.AddDays(-1).ToString("yyyyMMdd");
     private string Div { get; set; } //Centro
     private string Division { get; set; } //División
@@ -226,7 +228,7 @@ else if (dataIsLoaded==2 && DbDiv1Service.reunionditablas.Count()==0)
         if (dataIsLoaded != 1)
         {
             dataIsLoaded = 1;
-            await DbDiv1Service.GetPendientes(Div,Division, DateTime.Now.AddDays(-1), DateTime.Now);
+            await DbDiv1Service.GetPendientes(Div,Division, DateTime.Now, DateTime.Now);
             dataIsLoaded = 2;
         }
     }
@@ -240,7 +242,7 @@ else if (dataIsLoaded==2 && DbDiv1Service.reunionditablas.Count()==0)
         if (accion !=null)
         {
             dataIsLoaded = 1;
-             await DbDiv1Service.GetPendientes(accion,division,DateTime.Now.AddDays(-1), DateTime.Now);
+             await DbDiv1Service.GetPendientes(accion,division,DateTime.Now, DateTime.Now);
             dataIsLoaded = 2;
         }
 

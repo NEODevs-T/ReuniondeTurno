@@ -48,7 +48,8 @@ namespace ReunionWeb.Services
             //f2 = DateTime.Now.ToString("yyyMMdd"); a.Fecha >= f1 & a.Fecha <= f2 &
 
             reunionditablas = await _neocontext.ReunionDia
-                .Where(a =>  (a.Div == centro & a.Division==div ) | (a.Div == centro & a.Division == div & (a.Fecha>= f1 & a.Fecha <= f2)))
+                //.Where(a =>  (a.Div == centro & a.Division==div ) | (a.Div == centro & a.Division == div & (a.Fecha>= f1 & a.Fecha <= f2)))
+                .Where(a =>   (a.Div == centro & a.Division == div & (a.Fecha>= f1 & a.Fecha <= f2)))
                 .OrderByDescending(b => b.Fecha)
                 .ToListAsync();
 
@@ -65,18 +66,7 @@ namespace ReunionWeb.Services
 
         }
 
-        //public async Task SetDiscrepancias(string div)
-        //{
-
-        //    string f1 = DateTime.Now.AddDays(-1).ToString("yyyMMdd");
-        //    string f2 = DateTime.Now.ToString("yyyMMdd");
-
-        //    reunionditablas = await _neocontext.ReunionDia
-        //        .Where(a => a.Fecha2 == f1 && a.Div == div || a.Fecha2 == f2 && a.Div == div)
-        //        .OrderByDescending(b => b.Id)
-        //        .ToListAsync();
-
-        //}
+      
 
         public async Task Insertasistencia(Asistencium asistencium)
         {
