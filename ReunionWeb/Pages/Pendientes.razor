@@ -31,7 +31,7 @@
                 else
                 { 
                        <BSRow>
-                                <BSCol Column="3">
+                                <BSCol Column="2">
                                  <BSLabel>Centro</BSLabel>
                                 <BSInput InputType="InputType.Select" @bind-Value="Div">
                                     <option value="">Seleccione</option>
@@ -42,7 +42,7 @@
                                 </BSInput>                    
                                 </BSCol> 
                                  
-                                <BSCol Column="2" >
+                                <BSCol ColumnSmall="2" >
                                 <BSLabel>División</BSLabel>
                                  <BSInput InputType="InputType.Select" @bind-Value="Division">
                                 <option  value="">Seleccione</option>
@@ -68,10 +68,22 @@
                                   <BSLabel>Fecha Final</BSLabel>
                                  <BSInput InputType="InputType.Date" @bind-Value="fecha2"/>
                                  </BSCol>
+
+                                  <BSCol ColumnSmall="1">
+                                        <BSLabel>Código</BSLabel>
+                                            <BSInput InputType="InputType.Select" @bind-Value="Codigo">
+                                                <option value="Todo">Todo</option>
+                                                <option value="1">1</option>
+                                                <option value="2">2</option>
+                                                <option value="3">3</option>
+                                                <option value="4">4</option>
+                                                <option value="5">5</option>
+                                        </BSInput>
+                                </BSCol>
             
-                                <BSCol ColumnSmall="3">
+                                <BSCol ColumnSmall="2">
                                      <BSRow><BSLabel> Buscar</BSLabel></BSRow>
-                                    <BSButton IsOutlined   Color="BSColor.Warning"  Size="Size.ExtraSmall" @onclick="Get">   Pendientes y Listos  <span class="oi oi-check"></span></BSButton>
+                                    <BSButton IsOutlined   Color="BSColor.Success"  Size="Size.ExtraSmall" @onclick="Get">  Consultar  <span class="oi oi-check"></span></BSButton>
                                  </BSCol> 
                        </BSRow>
                  }
@@ -100,18 +112,7 @@
                 <BSTD>Responsable</BSTD>
                 <BSTD>Status</BSTD>
                 @* <BSTD>Produfin</BSTD>*@
-                  @if(claims[5].Value=="PAVECA")
-                 {
-                     <BSTD>SPA</BSTD>
-                 }
-                 else if (claims[5].Value=="")
-                 {
-                <BSLabel>Cargando...</BSLabel>
-                }
-                else
-                {
-                  <BSTD>ODT</BSTD>
-                }
+                <BSTD>ODT</BSTD>
                 <BSTD>Fecha de Reunión</BSTD> @*Fecha del dia de reunion*@
                 @* <BSTD>FechaTrab</BSTD>*@
                 @*<BSTD>Div</BSTD>*@
@@ -124,13 +125,14 @@
         <BSTBody>
             @foreach (var d in DbDiv1Service.reunionditablas)
             {
-              
+                @if(Codigo==d.Codigo | Codigo=="Todo")
+                {
                     <BSTR>
                        @*<BSTD>@d.Id</BSTD>*@
                         <BSTD>@d.Area</BSTD>
                         <BSTD>@d.AfectadoKsf</BSTD>
                         <BSTD>@d.CodigoEquipo</BSTD>
-                        <BSTD ColSpan="4" class="textotabla">@d.Discrepancia</BSTD>
+                        <BSTD ColSpan="4" >@d.Discrepancia</BSTD>
                         <BSTD>@d.Codigo</BSTD>
                         <BSTD Class="textotabla">@d.PlanDeAccion</BSTD>
                         <BSTD>@d.Tiempo</BSTD>
@@ -163,9 +165,10 @@
                          <button class="btn btn-success" @onclick="(() => Editar(d.Id))"><i class="oi oi-pencil"></i></button>
                            </BSTD>
                     </BSTR>
+                    }
+
                 
                
-
         }
 
 
@@ -199,6 +202,7 @@ else if (dataIsLoaded==2 && DbDiv1Service.dbDiv1s.Count()==0)
     string ayer = DateTime.Now.AddDays(-1).ToString("yyyyMMdd"), error;
     private string Div { get; set; } //Centro
     private string Division { get; set; } //División
+    private string Codigo { get; set; } = "Todo"; //Codigo
     private DateTime fecha1 = DateTime.Now;
     private DateTime fecha2 = DateTime.Now;
 
@@ -277,36 +281,6 @@ else if (dataIsLoaded==2 && DbDiv1Service.dbDiv1s.Count()==0)
 
     }
 
-    
-    //protected override async Task OnInitializedAsync()
-    //{
-    //   //   await DbDiv1Service.GetPendientes(Div);
-    //}
-
-
-    // private string authMessage;
-    //private string surnameMessage;
-    //private IEnumerable<Claim> claims = Enumerable.Empty<Claim>();
-
-    //private async Task GetClaimsPrincipalData()
-    //{
-    //    var authState = await AuthStateProvider.GetAuthenticationStateAsync();
-    //    var user = authState.User;
-
-    //    if (user.Identity.IsAuthenticated)
-    //    {
-    //        authMessage = $"{user.Identity.Name} is authenticated.";
-    //        claims = user.Claims;
-    //        surnameMessage = 
-    //            $"Surname: {user.FindFirst(c => c.Type == ClaimTypes.Surname)?.Value}";
-                
-    //    }
-    //    else
-    //    {
-    //        authMessage = "The user is NOT authenticated.";
-    //    }
-    //}
-      
-       
+         
 
     }

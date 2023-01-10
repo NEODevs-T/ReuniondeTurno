@@ -83,23 +83,11 @@
                 <BSTD>Código</BSTD>
                 <BSTD>Plan de Acción</BSTD>
                 <BSTD>Tiempo</BSTD>
-                <BSTD>Responsable</BSTD>
+                <BSTD ColSpan="1">Responsable</BSTD>
                 <BSTD>Status</BSTD>
                 @* <BSTD>Produfin</BSTD>*@
-                 @if(claims[5].Value=="PAVECA")
-                 {
-                     <BSTD>SPA</BSTD>
-                 }
-                 else if (claims[5].Value=="")
-                 {
-                <BSLabel>Cargando...</BSLabel>
-                }
-                else
-                {
-                  <BSTD>ODT</BSTD>
-                }
-               
-                <BSTD>Fecha de Reunión</BSTD> 
+                  <BSTD>ODT</BSTD>         
+                @* <BSTD>Fecha de Reunión</BSTD> *@
                 @* <BSTD>FechaTrab</BSTD>*@
                 @*<BSTD>Div</BSTD>*@
                 @*<BSTD>Fecha BPCS</BSTD>*@
@@ -128,11 +116,11 @@
                         <BSTD>@d.Tiempo</BSTD>
                           @if (@d.Responsable == "Por Definir")
                         {
-                            <BSTD Class="Definir">@d.Responsable</BSTD>
+                            <BSTD ColSpan="1"Class="Definir">@d.Responsable</BSTD>
                         }
                          else
                         {
-                             <BSTD>@d.Responsable</BSTD>
+                             <BSTD ColSpan="1">@d.Responsable</BSTD>
                         }
 
                             @if (@d.Status == "Listo" | d.Status == "LISTO")
@@ -149,7 +137,7 @@
                             }
                         @*<BSTD>@d.Produfin</BSTD>*@
                         <BSTD>@d.OrdenTrabajo</BSTD>
-                        <BSTD>@d.Fecha.ToString("dd/MM/yyyy")</BSTD>
+                        @*<BSTD>@d.Fecha.ToString("dd/MM/yyyy")</BSTD>*@
                         @*<BSTD>@d.FechaTrab</BSTD>*@
                         @*<BSTD>@d.Div</BSTD>*@
                         @*<BSTD>@d.Fecha2</BSTD>*@
