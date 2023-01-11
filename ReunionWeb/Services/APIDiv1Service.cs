@@ -6,7 +6,7 @@ using ReunionWeb.NeoDbs;
 
 namespace ReunionWeb.Services
 {
-    public class APIDiv1Service:IAPIDiv1Service
+    public class APIDiv1Service : IAPIDiv1Service
     {
 
         private readonly HttpClient _http;
@@ -22,14 +22,14 @@ namespace ReunionWeb.Services
         public List<ReunionDium> reunionditabla { get; set; } = new List<ReunionDium>();
         public List<Division> divisions { get; set; } = new List<Division>();
         public List<AsistenReu> asistenreus { get; set; } = new List<AsistenReu>();
-        public  List<CargoReu> cargoreus { get; set; } = new List<CargoReu>();
+        public List<CargoReu> cargoreus { get; set; } = new List<CargoReu>();
 
         public APIDiv1Service(HttpClient http, NavigationManager navigationManager)
         {
             _http = http;
             _navigationManager = navigationManager;
         }
-  
+
 
 
         public async Task GetCentros(string cent)
@@ -56,7 +56,7 @@ namespace ReunionWeb.Services
         }
         public async Task GetResReu()
         {
-            var result = await _http.GetFromJsonAsync<List<RespoReu>>($"http://operaciones.papeleslatinos.com/ReunionApi/Lineas/Responsables");         
+            var result = await _http.GetFromJsonAsync<List<RespoReu>>($"http://operaciones.papeleslatinos.com/ReunionApi/Lineas/Responsables");
             if (result != null)
                 resporeu = result;
 
@@ -90,13 +90,13 @@ namespace ReunionWeb.Services
 
         }
 
-   
+
 
 
         public async Task PostDiscrepancia(BdDiv1 bdDiv1)
         {
             var result = await _http.PostAsJsonAsync("http://operaciones.papeleslatinos.com/ReunionApi/ReunionDia/Discrep", bdDiv1);
-           // var result = await _http.PostAsJsonAsync("api/ReunionDia/Discrep", bdDiv1);
+            // var result = await _http.PostAsJsonAsync("api/ReunionDia/Discrep", bdDiv1);
             // await SetAsistencia(result);
         }
 

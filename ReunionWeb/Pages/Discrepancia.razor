@@ -12,166 +12,163 @@
 <h3>Discrepancias</h3>
 
 <div>
-      <BSCol Column="4">
+    <BSCol Column="4">
 
-@if (@mensaje == "Registro Exitoso")
-{
-            <BSAlert Color="BSColor.Success" IsDismissible="true" HasIcon="true"  @ref="Alertas._alertRef" Dismissed="Alertas.Dismissed">
-        @mensaje
+        @if (@mensaje == "Registro Exitoso")
+        {
+            <BSAlert Color="BSColor.Success" IsDismissible="true" HasIcon="true" @ref="Alertas._alertRef" Dismissed="Alertas.Dismissed">
+                @mensaje
             </BSAlert>
-}
+        }
         else if (@mensaje == "Error al Insertar los datos, Intente de Nuevo" | mensaje == "Seleccione el area." | mensaje == "Seleccione la division." | mensaje == "Llene la discrepancia" | mensaje == "Seleccione status" | mensaje == "Seleccione responsable")
-{
-            <BSAlert Color="BSColor.Warning" IsDismissible="true" HasIcon="true"  @ref="Alertas._alertRefWar" Dismissed="Alertas.Dismissed">
-        @mensaje
+        {
+            <BSAlert Color="BSColor.Warning" IsDismissible="true" HasIcon="true" @ref="Alertas._alertRefWar" Dismissed="Alertas.Dismissed">
+                @mensaje
             </BSAlert>
-}
-else if (@mensaje != "")
-{
-             <BSAlert Color="BSColor.Danger" IsDismissible="true" HasIcon="true"  @ref="Alertas._alertRefErr" Dismissed="Alertas.Dismissed">
-        @mensaje
+        }
+        else if (@mensaje != "")
+        {
+            <BSAlert Color="BSColor.Danger" IsDismissible="true" HasIcon="true" @ref="Alertas._alertRefErr" Dismissed="Alertas.Dismissed">
+                @mensaje
             </BSAlert>
-}
+        }
 
-</BSCol>
+    </BSCol>
 </div>
 
 <p></p>
 
-  <BSForm Model="Reuniondb" Class="boxhome" IsRow="true" Gutters="Gutters.Medium" OnSubmit="Insert" OnReset="Reset">
-   <DataAnnotationsValidator />
+<BSForm Model="Reuniondb" Class="boxhome" IsRow="true" Gutters="Gutters.Medium" OnSubmit="Insert" OnReset="Reset">
+    <DataAnnotationsValidator />
     <BSCol ColumnMedium="12">
         @_message
         <BSValidationSummary />
     </BSCol>
-      <BSRow>
-              
-                <BSCol Column="3" >
-                <BSLabel>Centro</BSLabel>
-                <BSInput InputType="InputType.Select" @bind-Value="Reuniondb.Div">
-                    <option value="">Seleccione...</option>
-                    @foreach (var d in APIDiv1Service.centro)
-                    {
+    <BSRow>
+
+        <BSCol Column="3">
+            <BSLabel>Centro</BSLabel>
+            <BSInput InputType="InputType.Select" @bind-Value="Reuniondb.Div">
+                <option value="">Seleccione...</option>
+                @foreach (var d in APIDiv1Service.centro)
+                {
                     <option value="@d.Cnom">@d.Cnom</option>
-                    }                 
-                </BSInput>
-                <BSFeedback For="@(() => Reuniondb.Div)" ValidMessage="Correcto." />
-               </BSCol> 
+                }
+            </BSInput>
+            <BSFeedback For="@(() => Reuniondb.Div)" ValidMessage="Correcto." />
+        </BSCol>
 
 
 
-            <BSCol Column="2" >
-                <BSLabel>Division</BSLabel>
-                <BSInput InputType="InputType.Select" @bind-Value="IdDiv">
-                    <option value="">Seleccione...</option>
-                    @foreach (var d in APIDiv1Service.centro)
+        <BSCol Column="2">
+            <BSLabel>Division</BSLabel>
+            <BSInput InputType="InputType.Select" @bind-Value="IdDiv">
+                <option value="">Seleccione...</option>
+                @foreach (var d in APIDiv1Service.centro)
+                {
+                    @foreach (var e in d.Divisions)
+                    {
+                        if (Reuniondb.Div == d.Cnom)
                         {
-                            @foreach (var e in d.Divisions)
-                                 {
-                                     if(Reuniondb.Div== d.Cnom)
-                                     {
-                                    <option  value="@e.IdDivision">@e.Dnombre</option>
-                                     }
-                                   }
-                        }                 
-                </BSInput>
-                <BSFeedback For="@(() => IdDiv)" ValidMessage="Correcto." />
-            </BSCol> 
-            
+                            <option value="@e.IdDivision">@e.Dnombre</option>
+                        }
+                    }
+                }
+            </BSInput>
+            <BSFeedback For="@(() => IdDiv)" ValidMessage="Correcto." />
+        </BSCol>
 
-                  <BSCol Column="3" >
-                <BSLabel>Línea</BSLabel>
-                <BSInput InputType="InputType.Select" @bind-Value="Reuniondb.Area">
-                    <option value="">Seleccione...</option>
-                    @foreach (var d in APIDiv1Service.centro)
+
+        <BSCol Column="3">
+            <BSLabel>Línea</BSLabel>
+            <BSInput InputType="InputType.Select" @bind-Value="Reuniondb.Area">
+                <option value="">Seleccione...</option>
+                @foreach (var d in APIDiv1Service.centro)
+                {
+                    @foreach (var e in d.Lineas)
+                    {
+                        if (IdDiv == e.IdDivisionNavigation.IdDivision)
                         {
-                            @foreach (var e in d.Lineas)
-                                 {
-                                     if(IdDiv== e.IdDivisionNavigation.IdDivision )
-                                     {
-                                    <option value="@e.Lnom">@e.Lnom</option>
-                                     }
-                                   }
-                        }                 
-                </BSInput>
-                <BSFeedback For="@(() => Reuniondb.Area)" ValidMessage="Correcto." />
-            </BSCol> 
-            
-
-  
-            </BSRow> 
-            <p></p>
-            <BSRow> 
-            <BSCol Column="2">
-                <BSLabel>Ksf</BSLabel>
-                <BSInput InputType="InputType.Select" @bind-Value="Reuniondb.AfectadoKsf">
-
-                    <option value="">Seleccione...</option>
-                     @foreach (var d in APIDiv1Service.ksfs)
-                        {
-                            <option value="@d.KsfNombre">@d.KsfNombre</option>
-                        }   
-                     
-                </BSInput>
-                <BSFeedback For="@(() => Reuniondb.AfectadoKsf)" ValidMessage="Correcto." />
-            </BSCol>
-               <BSCol Column="2">
-                <BSLabel>C. Equipo</BSLabel>
-                <BSInput InputType="InputType.Text" @bind-Value="Reuniondb.CodigoEquipo"  />
-                 <BSFeedback For="@(() => Reuniondb.CodigoEquipo)" ValidMessage="Correcto." />
-                </BSCol>
+                            <option value="@e.Lnom">@e.Lnom</option>
+                        }
+                    }
+                }
+            </BSInput>
+            <BSFeedback For="@(() => Reuniondb.Area)" ValidMessage="Correcto." />
+        </BSCol>
 
 
 
-         
-            </BSRow> 
-            <p></p>
-            <BSRow> 
-                <BSCol Column="6">
-                <BSLabel>Discrepancia</BSLabel>
-                <BSInput InputType="InputType.Text" @bind-Value="Reuniondb.Discrepancia"  />
-                 <BSFeedback For="@(() => Reuniondb.Discrepancia)" ValidMessage="Correcto." />
-            </BSCol>
+    </BSRow>
+    <p></p>
+    <BSRow>
+        <BSCol Column="2">
+            <BSLabel>Ksf</BSLabel>
+            <BSInput InputType="InputType.Select" @bind-Value="Reuniondb.AfectadoKsf">
+
+                <option value="">Seleccione...</option>
+                @foreach (var d in APIDiv1Service.ksfs)
+                {
+                    <option value="@d.KsfNombre">@d.KsfNombre</option>
+                }
+
+            </BSInput>
+            <BSFeedback For="@(() => Reuniondb.AfectadoKsf)" ValidMessage="Correcto." />
+        </BSCol>
+        <BSCol Column="2">
+            <BSLabel>C. Equipo</BSLabel>
+            <BSInput InputType="InputType.Text" @bind-Value="Reuniondb.CodigoEquipo" />
+            <BSFeedback For="@(() => Reuniondb.CodigoEquipo)" ValidMessage="Correcto." />
+        </BSCol>
+
+    </BSRow>
+    <p></p>
+    <BSRow>
+        <BSCol Column="6">
+            <BSLabel>Discrepancia</BSLabel>
+            <BSInput InputType="InputType.Text" @bind-Value="Reuniondb.Discrepancia" />
+            <BSFeedback For="@(() => Reuniondb.Discrepancia)" ValidMessage="Correcto." />
+        </BSCol>
 
 
-            </BSRow> 
+    </BSRow>
 
-                <p></p>
+    <p></p>
 
 
-            <BSRow>
+    <BSRow>
         <p></p>
 
 
 
-                <BSCol ColumnSmall="2">
-                <BSLabel>Responsable</BSLabel>
-                <BSInput InputType="InputType.Select" @bind-Value="Reuniondb.Responsable">
-                    <option value="">Seleccione...</option>
-               
-                    @foreach (var d in APIDiv1Service.resporeu)
-                        {
-                            <option value="@d.Rrnombre">@d.Rrnombre</option>
-                        }    
-                </BSInput>
-                  <BSFeedback For="@(() => Reuniondb.Responsable)" ValidMessage="Correcto." />
-            </BSCol>
+        <BSCol ColumnSmall="2">
+            <BSLabel>Responsable</BSLabel>
+            <BSInput InputType="InputType.Select" @bind-Value="Reuniondb.Responsable">
+                <option value="">Seleccione...</option>
 
-             </BSRow>
-          
+                @foreach (var d in APIDiv1Service.resporeu)
+                {
+                    <option value="@d.Rrnombre">@d.Rrnombre</option>
+                }
+            </BSInput>
+            <BSFeedback For="@(() => Reuniondb.Responsable)" ValidMessage="Correcto." />
+        </BSCol>
 
-      
-              <p></p>
-               <p></p>
+    </BSRow>
 
-            <BSCol Column="12">
-           <BSButton   Color="BSColor.Success"  Size="Size.ExtraSmall" IsSubmit>  Guardar <span class="oi oi-check"></span></BSButton>
-           <BSButton   Color="BSColor.Primary"  Size="Size.ExtraSmall" IsReset>  Nuevo </BSButton>
-            </BSCol>
-       </BSForm>
+
+
+    <p></p>
+    <p></p>
+
+    <BSCol Column="12">
+        <BSButton Color="BSColor.Success" Size="Size.ExtraSmall" IsSubmit>  Guardar <span class="oi oi-check"></span></BSButton>
+        <BSButton Color="BSColor.Primary" Size="Size.ExtraSmall" IsReset>  Nuevo </BSButton>
+    </BSCol>
+</BSForm>
 @code {
 
-    [CascadingParameter]   
+    [CascadingParameter]
     //private Task<AuthenticationState> authenticationStateTask { get; set; }
 
     private List<Claim> claims { get; set; }
@@ -189,7 +186,7 @@ else if (@mensaje != "")
     ReunionDium Reuniondb = new ReunionDium();
     Alerts Alertas = new Alerts();
     private string _message = "";
-    private DateTime fechahoy, fechatrabajo=DateTime.Today;
+    private DateTime fechahoy, fechatrabajo = DateTime.Today;
     private string fechahoy2;
 
     [Required(ErrorMessage = "Seleccione la división.")]
@@ -204,13 +201,13 @@ else if (@mensaje != "")
     {
 
         await CreateData();
-        if(claims[1].Value=="Admin")
+        if (claims[1].Value == "Admin")
         {
-            await APIDiv1Service.GetCentros("All");  
+            await APIDiv1Service.GetCentros("All");
         }
         else
         {
-            await APIDiv1Service.GetCentros(claims[6].Value.ToString()); 
+            await APIDiv1Service.GetCentros(claims[6].Value.ToString());
         }
 
         await APIDiv1Service.Getksf();
@@ -222,7 +219,7 @@ else if (@mensaje != "")
 
         //Reuniondb.Fecha = fecha;
         try
-        {   
+        {
             Reuniondb.Status = "Pendiente";
 
             if (e.Validate())
@@ -235,12 +232,12 @@ else if (@mensaje != "")
                 {
                     foreach (var f in d.Lineas)
                     {
-                        if(IdDiv== f.IdDivisionNavigation.IdDivision )
+                        if (IdDiv == f.IdDivisionNavigation.IdDivision)
                         {
                             Reuniondb.Division = f.IdDivisionNavigation.Dnombre;
                         }
-                     }
-                  }        
+                    }
+                }
 
                 if (Reuniondb.Area is null)
                 {
@@ -269,23 +266,24 @@ else if (@mensaje != "")
                     //Reuniondb = new BdDiv1();
 
                 }
-              }
+            }
 
-          
+
         }
         catch (Exception ex)
         {
             if (ex.ToString().Length > 100)
             {
-                mensaje = "Error al Insertar los datos, Intente de Nuevo\r  "+ex;
+                mensaje = "Error al Insertar los datos, Intente de Nuevo\r  " + ex;
                 Alertas.Show();
             }
-            else{ 
-            mensaje = "Error al Insertar los datos, Intente de Nuevo";
-            Alertas.Show();
+            else
+            {
+                mensaje = "Error al Insertar los datos, Intente de Nuevo";
+                Alertas.Show();
 
             }
-           
+
         }
     }
 

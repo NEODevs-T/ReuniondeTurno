@@ -9,125 +9,125 @@
 <h3>Formato de Reunión</h3>
 
 
-         <BSContainer> 
-            
-                    @if (APIDiv1Service.centro.Count()==0)
-                    {
-                                        
+<BSContainer>
 
-                          <div class="loader"></div>
-                    }   
-                    else
-                    { 
-          <BSRow>
+    @if (APIDiv1Service.centro.Count() == 0)
+    {
+
+
+        <div class="loader"></div>
+    }
+    else
+    {
+        <BSRow>
             <BSCol Column="2">
-                 <BSLabel>Centro</BSLabel>
-        
-                      <BSInput InputType="InputType.Select" @bind-Value="Div">
-                           <option value="">Seleccione</option>
+                <BSLabel>Centro</BSLabel>
+
+                <BSInput InputType="InputType.Select" @bind-Value="Div">
+                    <option value="">Seleccione</option>
                     @foreach (var d in APIDiv1Service.centro)
+                    {
+                    <option value="@d.Cnom">@d.Cnom</option>
+                    }
+            </BSInput>
+
+
+        </BSCol>
+        <BSCol Column="2">
+            <BSLabel>División</BSLabel>
+            <BSInput InputType="InputType.Select" @bind-Value="Division">
+                <option value="">Seleccione</option>
+                @foreach (var d in APIDiv1Service.centro)
+                    {
+                    @foreach (var e in d.Divisions)
                         {
-                            <option value="@d.Cnom">@d.Cnom</option>
-                        }    
-                        </BSInput>   
-                    
-              
-            </BSCol> 
-            <BSCol Column="2">
-                    <BSLabel>División</BSLabel>
-                         <BSInput InputType="InputType.Select" @bind-Value="Division">
-                              <option  value="">Seleccione</option>
-                                 @foreach (var d in APIDiv1Service.centro)
-                                 {
-                                    @foreach (var e in d.Divisions)
-                                 {
-                                     if(Div== d.Cnom)
-                                      {
-                                             <option  value="@e.Dnombre">@e.Dnombre</option>
-                                      }
-                                 }
-                                 }          
-                                </BSInput>   
-               </BSCol> 
-                <BSCol ColumnSmall="2">
-                    <BSRow>
-                      <BSLabel>Aceptar</BSLabel>
-                     </BSRow>
-                        <BSButton IsOutlined   Color="BSColor.Success"  Size="Size.ExtraSmall" @onclick="Get"> Reunión <span class="oi oi-check"></span></BSButton>
-                </BSCol> 
-          
+                            if (Div == d.Cnom)
+                            {
+                            <option value="@e.Dnombre">@e.Dnombre</option>
+                            }
+                        }
+                    }
+            </BSInput>
+        </BSCol>
+        <BSCol ColumnSmall="2">
+            <BSRow>
+                <BSLabel>Aceptar</BSLabel>
             </BSRow>
-            }
+            <BSButton IsOutlined Color="BSColor.Success" Size="Size.ExtraSmall" @onclick="Get"> Reunión <span class="oi oi-check"></span></BSButton>
+        </BSCol>
 
-    </BSContainer> 
-    
-        <p>
+    </BSRow>
+    }
 
-        </p>
+</BSContainer>
 
-@if (DbDiv1Service.reunionditablas.Count()>0 && dataIsLoaded == 2)
+<p>
+
+</p>
+
+@if (DbDiv1Service.reunionditablas.Count() > 0 && dataIsLoaded == 2)
 {
     <BSContainer>
 
 
-    <BSTable IsResponsive="true" IsStriped="true" IsBordered="true">
-        <BSTHead Class="cabecera">
-            <BSTR>
-                
-                @*<BSTD>Id</BSTD>*@             
-                <BSTD>División</BSTD>
-                <BSTD>Área</BSTD>
-                <BSTD>Ksf</BSTD>
-                <BSTD>Código de Equipo</BSTD>
-                <BSTD ColSpan="4">Discrepancia</BSTD>
-                <BSTD>Código</BSTD>
-                <BSTD>Plan de Acción</BSTD>
-                <BSTD>Tiempo</BSTD>
-                <BSTD ColSpan="1">Responsable</BSTD>
-                <BSTD>Status</BSTD>
-                @* <BSTD>Produfin</BSTD>*@
-                  <BSTD>ODT</BSTD>         
-                @* <BSTD>Fecha de Reunión</BSTD> *@
-                @* <BSTD>FechaTrab</BSTD>*@
-                @*<BSTD>Div</BSTD>*@
-                @*<BSTD>Fecha BPCS</BSTD>*@
-                <BSTD>Fecha del Trabajo</BSTD>@*Fecha de listo el trabajo*@
-                <BSTD></BSTD>
+        <BSTable IsResponsive="true" IsStriped="true" IsBordered="true">
+            <BSTHead Class="cabecera">
+                <BSTR>
+
+                    @*<BSTD>Id</BSTD>*@
+                    <BSTD>División</BSTD>
+                    <BSTD>Área</BSTD>
+                    <BSTD>Ksf</BSTD>
+                    <BSTD>Código de Equipo</BSTD>
+                    <BSTD ColSpan="4">Discrepancia</BSTD>
+                    <BSTD>Código</BSTD>
+                    <BSTD>Plan de Acción</BSTD>
+                    <BSTD>Tiempo</BSTD>
+                    <BSTD ColSpan="1">Responsable</BSTD>
+                    <BSTD>Status</BSTD>
+                    @* <BSTD>Produfin</BSTD>*@
+                    <BSTD>ODT</BSTD>
+                    @* <BSTD>Fecha de Reunión</BSTD> *@
+                    @* <BSTD>FechaTrab</BSTD>*@
+                    @*<BSTD>Div</BSTD>*@
+                    @*<BSTD>Fecha BPCS</BSTD>*@
+                    <BSTD>Fecha del Trabajo</BSTD>@*Fecha de listo el trabajo*@
+                    <BSTD></BSTD>
 
 
-            </BSTR>
-        </BSTHead>
-        <BSTBody>
-            @foreach (var d in DbDiv1Service.reunionditablas)
-            {
-               @if (d.Status!="Listo")
-                  {
+                </BSTR>
+            </BSTHead>
+            <BSTBody>
+                @foreach (var d in DbDiv1Service.reunionditablas)
+                {
+                    @if (d.Status != "Listo")
+                    {
 
-                  <BSTR>
-                       
-                       @*<BSTD>@d.Id</BSTD>*@
-                        <BSTD>@d.Division</BSTD>
-                        <BSTD>@d.Area</BSTD>
-                        <BSTD>@d.AfectadoKsf</BSTD>
-                        <BSTD>@d.CodigoEquipo</BSTD>
-                        <BSTD ColSpan="4" class="textotabla">@d.Discrepancia</BSTD>
-                        <BSTD>@d.Codigo</BSTD>
-                        <BSTD Class="textotabla">@d.PlanDeAccion</BSTD>
-                        <BSTD>@d.Tiempo</BSTD>
-                          @if (@d.Responsable == "Por Definir")
-                        {
-                            <BSTD ColSpan="1"Class="Definir">@d.Responsable</BSTD>
-                        }
-                         else
-                        {
-                             <BSTD ColSpan="1">@d.Responsable</BSTD>
-                        }
+                        <BSTR>
+
+                            @*<BSTD>@d.Id</BSTD>*@
+                            <BSTD>@d.Division</BSTD>
+                            <BSTD>@d.Area</BSTD>
+                            <BSTD>@d.AfectadoKsf</BSTD>
+                            <BSTD>@d.CodigoEquipo</BSTD>
+                            <BSTD ColSpan="4" class="textotabla">@d.Discrepancia</BSTD>
+                            <BSTD>@d.Codigo</BSTD>
+                            <BSTD Class="textotabla">@d.PlanDeAccion</BSTD>
+                            <BSTD>@d.Tiempo</BSTD>
+                            @if (@d.Responsable == "Por Definir")
+                            {
+                                <BSTD ColSpan="1" Class="Definir">@d.Responsable</BSTD>
+                            }
+                            else
+                            {
+                                <BSTD ColSpan="1">@d.Responsable</BSTD>
+                            }
 
                             @if (@d.Status == "Listo" | d.Status == "LISTO")
                             {
                                 <BSTD>@d.Status</BSTD>
                             }
-                            else if(@d.Status == "Revisar")
+                            else if (@d.Status == "Revisar")
                             {
                                 <BSTD Class="cabecera">@d.Status</BSTD>
                             }
@@ -135,32 +135,32 @@
                             {
                                 <BSTD Class="">@d.Status</BSTD>
                             }
-                        @*<BSTD>@d.Produfin</BSTD>*@
-                        <BSTD>@d.OrdenTrabajo</BSTD>
-                        @*<BSTD>@d.Fecha.ToString("dd/MM/yyyy")</BSTD>*@
-                        @*<BSTD>@d.FechaTrab</BSTD>*@
-                        @*<BSTD>@d.Div</BSTD>*@
-                        @*<BSTD>@d.Fecha2</BSTD>*@
-                        <BSTD>@d.FechaTrab.ToString("dd/MM/yyyy") </BSTD>
-                        <BSTD>
-                         <button class="btn btn-success" @onclick="(() => Editar(d.Id))"><i class="oi oi-pencil"></i></button>
-                           </BSTD>
-                   
-                  </BSTR>
-            }
-            }
+                            @*<BSTD>@d.Produfin</BSTD>*@
+                            <BSTD>@d.OrdenTrabajo</BSTD>
+                            @*<BSTD>@d.Fecha.ToString("dd/MM/yyyy")</BSTD>*@
+                            @*<BSTD>@d.FechaTrab</BSTD>*@
+                            @*<BSTD>@d.Div</BSTD>*@
+                            @*<BSTD>@d.Fecha2</BSTD>*@
+                            <BSTD>@d.FechaTrab.ToString("dd/MM/yyyy") </BSTD>
+                            <BSTD>
+                                <button class="btn btn-success" @onclick="(() => Editar(d.Id))"><i class="oi oi-pencil"></i></button>
+                            </BSTD>
+
+                        </BSTR>
+                    }
+                }
 
 
-        </BSTBody>
-  
-    </BSTable>
-    </BSContainer>   
+            </BSTBody>
+
+        </BSTable>
+    </BSContainer>
 }
-else if (dataIsLoaded==1 && DbDiv1Service.reunionditablas.Count()==0)
+else if (dataIsLoaded == 1 && DbDiv1Service.reunionditablas.Count() == 0)
 {
     <p>Cargando...</p>
 }
-else if (dataIsLoaded==2 && DbDiv1Service.reunionditablas.Count()==0)
+else if (dataIsLoaded == 2 && DbDiv1Service.reunionditablas.Count() == 0)
 {
     <p>No hay datos para esta fecha.</p>
 }
@@ -169,46 +169,46 @@ else if (dataIsLoaded==2 && DbDiv1Service.reunionditablas.Count()==0)
 
     [Parameter]
     public string? accion { get; set; }//centro
-     [Parameter]
-     public string? division { get; set; }//division 
+    [Parameter]
+    public string? division { get; set; }//division
     [Parameter]
     public string? f1 { get; set; }
     [Parameter]
     public string? f2 { get; set; }
 
-    int dataIsLoaded = 0, filtrocod=0;
+    int dataIsLoaded = 0, filtrocod = 0;
     string ayer = DateTime.Now.AddDays(-1).ToString("yyyyMMdd");
     private string Div { get; set; } //Centro
     private string Division { get; set; } //División
 
 
-   
+
     private List<Claim> claims { get; set; }
 
     private async Task CreateData()
 
     {
-      var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;
         claims = Enumerable.ToList(user.Claims);
 
     }
-    
-     protected override async Task OnInitializedAsync()
+
+    protected override async Task OnInitializedAsync()
     {
-            await CreateData();
-            
-            if(claims[1].Value=="Admin")
-            {
-                await APIDiv1Service.GetCentros("All");  
-            }
+        await CreateData();
+
+        if (claims[1].Value == "Admin")
+        {
+            await APIDiv1Service.GetCentros("All");
+        }
         else
         {
-             await APIDiv1Service.GetCentros(claims[6].Value.ToString()); 
+            await APIDiv1Service.GetCentros(claims[6].Value.ToString());
         }
-            await APIDiv1Service.Getksf();
-            await APIDiv1Service.GetResReu();
-         
+        await APIDiv1Service.Getksf();
+        await APIDiv1Service.GetResReu();
+
     }
 
     protected async Task Get()
@@ -216,21 +216,21 @@ else if (dataIsLoaded==2 && DbDiv1Service.reunionditablas.Count()==0)
         if (dataIsLoaded != 1)
         {
             dataIsLoaded = 1;
-            await DbDiv1Service.GetPendientes(Div,Division, DateTime.Now, DateTime.Now);
+            await DbDiv1Service.GetPendientes(Div, Division, DateTime.Now, DateTime.Now);
             dataIsLoaded = 2;
         }
     }
-     void Editar(int id)
+    void Editar(int id)
     {
         NavigationManager.NavigateTo($"EditDisc/{id}/1/{DateTime.Now.AddDays(-1).ToString("dd-MM-yyyy")}/{DateTime.Now.ToString("dd-MM-yyyy")}");
-      
+
     }
     protected override async Task OnParametersSetAsync()
     {
-        if (accion !=null)
+        if (accion != null)
         {
             dataIsLoaded = 1;
-             await DbDiv1Service.GetPendientes(accion,division,DateTime.Now, DateTime.Now);
+            await DbDiv1Service.GetPendientes(accion, division, DateTime.Now, DateTime.Now);
             dataIsLoaded = 2;
         }
 

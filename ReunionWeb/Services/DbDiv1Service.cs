@@ -6,32 +6,32 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ReunionWeb.Services
 {
-    public class DbDiv1Service:IDbDiv1Service
+    public class DbDiv1Service : IDbDiv1Service
     {
- 
+
         public List<BdDiv1> dbDiv1s { get; set; } = new List<BdDiv1>();
 
         public BdDiv1 dbDiv { get; set; } = new BdDiv1();
         public List<Asistencium> asistencia { get; set; } = new List<Asistencium>();
-        
-        public  List<Centro> centros { get; set; } = new List<Centro> { };
-        public  List<Linea> lineas { get; set; } = new List<Linea> { };
-        public  List<Empresa> empresas { get; set; } = new List<Empresa> { };
-        public  List<Pai> paiss { get; set; } = new List<Pai> { };
-        public  List<Division> divs { get; set; } = new List<Division> { };
-        public  List<Ksf> ksfss { get; set; } = new List<Ksf>();
-        public  List<RespoReu> resporeus { get; set; } = new List<RespoReu>();
-        public  List<ReunionDium> reunionditablas { get; set; } = new List<ReunionDium>();
-        public  List<Division> divisionss { get; set; } = new List<Division>();
-        public  List<AsistenReu> asistenreus { get; set; } = new List<AsistenReu>();
-        public  List<CargoReu> cargoreuss { get; set; } = new List<CargoReu>();
+
+        public List<Centro> centros { get; set; } = new List<Centro> { };
+        public List<Linea> lineas { get; set; } = new List<Linea> { };
+        public List<Empresa> empresas { get; set; } = new List<Empresa> { };
+        public List<Pai> paiss { get; set; } = new List<Pai> { };
+        public List<Division> divs { get; set; } = new List<Division> { };
+        public List<Ksf> ksfss { get; set; } = new List<Ksf>();
+        public List<RespoReu> resporeus { get; set; } = new List<RespoReu>();
+        public List<ReunionDium> reunionditablas { get; set; } = new List<ReunionDium>();
+        public List<Division> divisionss { get; set; } = new List<Division>();
+        public List<AsistenReu> asistenreus { get; set; } = new List<AsistenReu>();
+        public List<CargoReu> cargoreuss { get; set; } = new List<CargoReu>();
 
 
 
 
 
-        private readonly DOC_IngIContext _context; 
-        private readonly DbNeoContext _neocontext; 
+        private readonly DOC_IngIContext _context;
+        private readonly DbNeoContext _neocontext;
         private readonly NavigationManager _navigationManager;
 
         public DbDiv1Service(DOC_IngIContext _IngIContext, NavigationManager navigationManager, DbNeoContext _NeoContext)
@@ -44,12 +44,11 @@ namespace ReunionWeb.Services
         //obtener discrepancias para pendientes y reunion 
         public async Task GetPendientes(string centro, string div, DateTime f1, DateTime f2)
         {
-            //f1 = DateTime.Now.AddDays(-1).ToString("yyyMMdd");
-            //f2 = DateTime.Now.ToString("yyyMMdd"); a.Fecha >= f1 & a.Fecha <= f2 &
+            
 
             reunionditablas = await _neocontext.ReunionDia
                 //.Where(a =>  (a.Div == centro & a.Division==div ) | (a.Div == centro & a.Division == div & (a.Fecha>= f1 & a.Fecha <= f2)))
-                .Where(a =>   (a.Div == centro & a.Division == div & (a.Fecha>= f1 & a.Fecha <= f2)))
+                .Where(a => (a.Div == centro & a.Division == div & (a.Fecha >= f1 & a.Fecha <= f2)))
                 .OrderByDescending(b => b.Fecha)
                 .ToListAsync();
 
@@ -60,13 +59,13 @@ namespace ReunionWeb.Services
         {
             var div1 = await _neocontext.ReunionDia
              .FirstOrDefaultAsync(h => h.Id == id);
-           if(div1 == null)
-            throw new Exception("not found!");
+            if (div1 == null)
+                throw new Exception("not found!");
             return div1;
 
         }
 
-      
+
 
         public async Task Insertasistencia(Asistencium asistencium)
         {
@@ -80,28 +79,28 @@ namespace ReunionWeb.Services
         public async Task InsertDiscrepancia(ReunionDium bdDiv1)
         {
             _neocontext.ReunionDia.Add(bdDiv1);
-                await _neocontext.SaveChangesAsync();            
+            await _neocontext.SaveChangesAsync();
         }
 
-        public async Task UpdateDiscrepancia(ReunionDium d,int id, int tipo, string f1, string f2)
+        public async Task UpdateDiscrepancia(ReunionDium d, int id, int tipo, string f1, string f2)
         {
-            string div="", centro="";
-           // DateTime f1= DateTime.Now;
-            
+            string div = "", centro = "";
+            // DateTime f1= DateTime.Now;
+
             if (d.Div is not null)
             {
                 div = d.Division;
                 centro = d.Div;
-               // f1 = d.Fecha;
+                // f1 = d.Fecha;
             }
-               
+
             ReunionDium bdDivform = new ReunionDium();
 
-             bdDivform = await _neocontext.ReunionDia
-                .FirstOrDefaultAsync(sh => sh.Id == id);
+            bdDivform = await _neocontext.ReunionDia
+               .FirstOrDefaultAsync(sh => sh.Id == id);
             if (bdDivform == null)
                 throw new Exception("Sorry, not found");
-          
+
 
             bdDivform.Area = d.Area;
             bdDivform.Division = d.Division;
@@ -116,36 +115,27 @@ namespace ReunionWeb.Services
             bdDivform.Id = d.Id;
             bdDivform.AfectadoKsf = d.AfectadoKsf;
             bdDivform.PlanDeAccion = d.PlanDeAccion;
-            
-            if (bdDivform.FechaTrab> DateTime.Now && bdDivform.Div =="Planta de Chempro")
-            {
-                bdDivform.OrdenTrabajo = d.Id.ToString();
-            }
-            else
-            {
-                bdDivform.OrdenTrabajo = d.OrdenTrabajo;
-            }
-           
+            bdDivform.OrdenTrabajo = d.OrdenTrabajo;
             bdDivform.Responsable = d.Responsable;
             bdDivform.Status = d.Status;
             bdDivform.Tiempo = d.Tiempo;
-           
-            _neocontext.Entry(bdDivform).State = EntityState.Modified;           
-             await _neocontext.SaveChangesAsync();
+
+            _neocontext.Entry(bdDivform).State = EntityState.Modified;
+            await _neocontext.SaveChangesAsync();
 
 
-                if (tipo == 0)
-                {
-                    _navigationManager.NavigateTo($"pendientes/{centro}/{div}/{f1}/{f2}");
-                }
-                else
-                {
-                    _navigationManager.NavigateTo($"reunion/{centro}/{div}/{f1}/{f2}");
-                }
-            
+            if (tipo == 0)
+            {
+                _navigationManager.NavigateTo($"pendientes/{centro}/{div}/{f1}/{f2}");
+            }
+            else
+            {
+                _navigationManager.NavigateTo($"reunion/{centro}/{div}/{f1}/{f2}");
+            }
+
 
         }
- 
+
 
     }
 }

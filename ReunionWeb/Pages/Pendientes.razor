@@ -8,100 +8,100 @@
 @inject ILocalStorageService LocalStorage
 
 
-<AuthorizeView  Roles="Admin">
+<AuthorizeView Roles="Admin">
 
     <NotAuthorized>
-        
+
     </NotAuthorized>
 
     <Authorized>
-       
-       </Authorized>
- </AuthorizeView>
 
- @error
+    </Authorized>
+</AuthorizeView>
+
+@error
 <h3>Pendientes y Listos</h3>
 
-       <BSContainer> 
-            
-                @if (APIDiv1Service.centro.Count()==0)
-                {                     
-                        <div class="loader"></div>
-                }   
-                else
-                { 
-                       <BSRow>
-                                <BSCol Column="2">
-                                 <BSLabel>Centro</BSLabel>
-                                <BSInput InputType="InputType.Select" @bind-Value="Div">
-                                    <option value="">Seleccione</option>
-                                    @foreach (var d in APIDiv1Service.centro)
-                                    {
-                                        <option value="@d.Cnom">@d.Cnom</option>
-                                    }    
-                                </BSInput>                    
-                                </BSCol> 
-                                 
-                                <BSCol ColumnSmall="2" >
-                                <BSLabel>División</BSLabel>
-                                 <BSInput InputType="InputType.Select" @bind-Value="Division">
-                                <option  value="">Seleccione</option>
-                                    @foreach (var d in APIDiv1Service.centro)
-                                    {
-                                        @foreach (var e in d.Divisions)
-                                    {
-                                            if(Div== d.Cnom)
-                                        {
-                                                <option  value="@e.Dnombre">@e.Dnombre</option>
-                                        }
-                                    }
-                                    }          
-                                </BSInput>              
-                                   </BSCol> 
+<BSContainer>
 
-                                 <BSCol Column="2">
-                                     <BSLabel>Fecha Inicial</BSLabel>
-                                 <BSInput InputType="InputType.Date" @bind-Value="fecha1"/>
-                                 </BSCol>
-            
-                                 <BSCol Column="2">
-                                  <BSLabel>Fecha Final</BSLabel>
-                                 <BSInput InputType="InputType.Date" @bind-Value="fecha2"/>
-                                 </BSCol>
+    @if (APIDiv1Service.centro.Count() == 0)
+    {
+        <div class="loader"></div>
+    }
+    else
+    {
+        <BSRow>
+            <BSCol Column="2">
+                <BSLabel>Centro</BSLabel>
+                <BSInput InputType="InputType.Select" @bind-Value="Div">
+                    <option value="">Seleccione</option>
+                    @foreach (var d in APIDiv1Service.centro)
+                    {
+                    <option value="@d.Cnom">@d.Cnom</option>
+                    }
+            </BSInput>
+        </BSCol>
 
-                                  <BSCol ColumnSmall="1">
-                                        <BSLabel>Código</BSLabel>
-                                            <BSInput InputType="InputType.Select" @bind-Value="Codigo">
-                                                <option value="Todo">Todo</option>
-                                                <option value="1">1</option>
-                                                <option value="2">2</option>
-                                                <option value="3">3</option>
-                                                <option value="4">4</option>
-                                                <option value="5">5</option>
-                                        </BSInput>
-                                </BSCol>
-            
-                                <BSCol ColumnSmall="2">
-                                     <BSRow><BSLabel> Buscar</BSLabel></BSRow>
-                                    <BSButton IsOutlined   Color="BSColor.Success"  Size="Size.ExtraSmall" @onclick="Get">  Consultar  <span class="oi oi-check"></span></BSButton>
-                                 </BSCol> 
-                       </BSRow>
-                 }
+        <BSCol ColumnSmall="2">
+            <BSLabel>División</BSLabel>
+            <BSInput InputType="InputType.Select" @bind-Value="Division">
+                <option value="">Seleccione</option>
+                @foreach (var d in APIDiv1Service.centro)
+                    {
+                    @foreach (var e in d.Divisions)
+                        {
+                            if (Div == d.Cnom)
+                            {
+                            <option value="@e.Dnombre">@e.Dnombre</option>
+                            }
+                        }
+                    }
+            </BSInput>
+        </BSCol>
 
-    </BSContainer> 
-       
-        <p></p>  
+        <BSCol Column="2">
+            <BSLabel>Fecha Inicial</BSLabel>
+            <BSInput InputType="InputType.Date" @bind-Value="fecha1" />
+        </BSCol>
+
+        <BSCol Column="2">
+            <BSLabel>Fecha Final</BSLabel>
+            <BSInput InputType="InputType.Date" @bind-Value="fecha2" />
+        </BSCol>
+
+        <BSCol ColumnSmall="1">
+            <BSLabel>Código</BSLabel>
+            <BSInput InputType="InputType.Select" @bind-Value="Codigo">
+                <option value="Todo">Todo</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+            </BSInput>
+        </BSCol>
+
+        <BSCol ColumnSmall="2">
+            <BSRow><BSLabel> Buscar</BSLabel></BSRow>
+            <BSButton IsOutlined Color="BSColor.Success" Size="Size.ExtraSmall" @onclick="Get">  Consultar  <span class="oi oi-check"></span></BSButton>
+        </BSCol>
+    </BSRow>
+    }
+
+</BSContainer>
+
+<p></p>
 
 
-@if (DbDiv1Service.reunionditablas.Count()>0 && dataIsLoaded == 2)
+@if (DbDiv1Service.reunionditablas.Count() > 0 && dataIsLoaded == 2)
 {
 
 
     <BSTable IsResponsive="true" IsStriped="true" IsBordered="true">
         <BSTHead Class="cabecera">
             <BSTR>
-                
-                @*<BSTD>Id</BSTD>*@             
+
+                @*<BSTD>Id</BSTD>*@
                 <BSTD>Área</BSTD>
                 <BSTD>Ksf</BSTD>
                 <BSTD>Código de Equipo</BSTD>
@@ -125,14 +125,14 @@
         <BSTBody>
             @foreach (var d in DbDiv1Service.reunionditablas)
             {
-                @if(Codigo==d.Codigo | Codigo=="Todo")
+                @if (Codigo == d.Codigo | Codigo == "Todo")
                 {
                     <BSTR>
-                       @*<BSTD>@d.Id</BSTD>*@
+                        @*<BSTD>@d.Id</BSTD>*@
                         <BSTD>@d.Area</BSTD>
                         <BSTD>@d.AfectadoKsf</BSTD>
                         <BSTD>@d.CodigoEquipo</BSTD>
-                        <BSTD ColSpan="4" >@d.Discrepancia</BSTD>
+                        <BSTD ColSpan="4">@d.Discrepancia</BSTD>
                         <BSTD>@d.Codigo</BSTD>
                         <BSTD Class="textotabla">@d.PlanDeAccion</BSTD>
                         <BSTD>@d.Tiempo</BSTD>
@@ -141,9 +141,9 @@
                         {
                             <BSTD Class="Definir">@d.Responsable</BSTD>
                         }
-                         else
+                        else
                         {
-                             <BSTD>@d.Responsable</BSTD>
+                            <BSTD>@d.Responsable</BSTD>
                         }
 
                         @if (@d.Status == "Listo" | d.Status == "LISTO")
@@ -152,7 +152,7 @@
                         }
                         else
                         {
-                           <BSTD Class="pendiente">@d.Status</BSTD>
+                            <BSTD Class="pendiente">@d.Status</BSTD>
                         }
                         @*<BSTD>@d.Produfin</BSTD>*@
                         <BSTD>@d.OrdenTrabajo</BSTD>
@@ -161,28 +161,28 @@
                         @*<BSTD>@d.Div</BSTD>*@
                         @*<BSTD>@d.Fecha2</BSTD>*@
                         <BSTD>@d.FechaTrab.ToString("dd/MM/yyyy")</BSTD>
-                         <BSTD>
-                         <button class="btn btn-success" @onclick="(() => Editar(d.Id))"><i class="oi oi-pencil"></i></button>
-                           </BSTD>
+                        <BSTD>
+                            <button class="btn btn-success" @onclick="(() => Editar(d.Id))"><i class="oi oi-pencil"></i></button>
+                        </BSTD>
                     </BSTR>
-                    }
+                }
 
-                
-               
-        }
+
+
+            }
 
 
         </BSTBody>
-  
+
     </BSTable>
-  
+
 
 }
-else if (dataIsLoaded==1 && DbDiv1Service.dbDiv1s.Count()==0)
+else if (dataIsLoaded == 1 && DbDiv1Service.dbDiv1s.Count() == 0)
 {
-      <div class="loader"></div>
+    <div class="loader"></div>
 }
-else if (dataIsLoaded==2 && DbDiv1Service.dbDiv1s.Count()==0)
+else if (dataIsLoaded == 2 && DbDiv1Service.dbDiv1s.Count() == 0)
 {
     <p>No hay datos para esta fecha.</p>
 }
@@ -190,9 +190,9 @@ else if (dataIsLoaded==2 && DbDiv1Service.dbDiv1s.Count()==0)
 @code {
 
     [Parameter]
-    public string? accion { get; set; }//centro 
+    public string? accion { get; set; }//centro
     [Parameter]
-    public string? division { get; set; }//division 
+    public string? division { get; set; }//division
     [Parameter]
     public string? f1 { get; set; }
     [Parameter]
@@ -224,13 +224,13 @@ else if (dataIsLoaded==2 && DbDiv1Service.dbDiv1s.Count()==0)
 
         await CreateData();
 
-        if(claims[1].Value=="Admin")
+        if (claims[1].Value == "Admin")
         {
-            await APIDiv1Service.GetCentros("All");  
+            await APIDiv1Service.GetCentros("All");
         }
         else
         {
-            await APIDiv1Service.GetCentros(claims[6].Value.ToString()); 
+            await APIDiv1Service.GetCentros(claims[6].Value.ToString());
         }
 
         await APIDiv1Service.Getksf();
@@ -241,9 +241,9 @@ else if (dataIsLoaded==2 && DbDiv1Service.dbDiv1s.Count()==0)
     {
         if (dataIsLoaded != 1)
         {
-            dataIsLoaded = 1;  
+            dataIsLoaded = 1;
 
-            await DbDiv1Service.GetPendientes(Div,Division, fecha1, fecha2);
+            await DbDiv1Service.GetPendientes(Div, Division, fecha1, fecha2);
             dataIsLoaded = 2;
         }
     }
@@ -259,28 +259,28 @@ else if (dataIsLoaded==2 && DbDiv1Service.dbDiv1s.Count()==0)
     {
         try
         {
-            if (accion !=null)
-            {   
+            if (accion != null)
+            {
                 string[] fecha1 = f1.Split('-');
                 string[] fecha2 = f2.Split('-');
-                
+
                 //año, mes dia
-                DateTime   date1 = new DateTime(int.Parse(fecha1[2]), int.Parse(fecha1[1]), int.Parse(fecha1[0]));
-                DateTime   date2 = new DateTime(int.Parse(fecha2[2]), int.Parse(fecha2[1]), int.Parse(fecha2[0]));
+                DateTime date1 = new DateTime(int.Parse(fecha1[2]), int.Parse(fecha1[1]), int.Parse(fecha1[0]));
+                DateTime date2 = new DateTime(int.Parse(fecha2[2]), int.Parse(fecha2[1]), int.Parse(fecha2[0]));
 
                 dataIsLoaded = 1;
-                await DbDiv1Service.GetPendientes(accion,division, date1, date2);
+                await DbDiv1Service.GetPendientes(accion, division, date1, date2);
                 dataIsLoaded = 2;
 
             }
         }
         catch (Exception ex)
         {
-            error =""+ ex;
+            error = "" + ex;
         }
 
     }
 
-         
+
 
     }
