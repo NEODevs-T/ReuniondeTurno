@@ -22,6 +22,7 @@ namespace ReunionWeb.Services
         public List<Ksf> ksfss { get; set; } = new List<Ksf>();
         public List<RespoReu> resporeus { get; set; } = new List<RespoReu>();
         public List<ReunionDium> reunionditablas { get; set; } = new List<ReunionDium>();
+        public List<ReuDium> reudiatablas { get; set; } = new List<ReuDium>();
         public List<Division> divisionss { get; set; } = new List<Division>();
         public List<AsistenReu> asistenreus { get; set; } = new List<AsistenReu>();
         public List<CargoReu> cargoreuss { get; set; } = new List<CargoReu>();
@@ -46,22 +47,27 @@ namespace ReunionWeb.Services
         {
             
 
-            reunionditablas = await _neocontext.ReunionDia
+            //reunionditablas = await _neocontext.ReunionDia
+            reudiatablas = await _neocontext.ReuDia
                 //.Where(a =>  (a.Div == centro & a.Division==div ) | (a.Div == centro & a.Division == div & (a.Fecha>= f1 & a.Fecha <= f2)))
-                .Where(a => (a.Div == centro & a.Division == div & (a.Fecha >= f1 & a.Fecha <= f2)))
-                .OrderByDescending(b => b.Fecha)
+                .Where(a => (a.Rdcentro == centro & a.Rddiv == div & (a.RdfecReu >= f1 & a.RdfecReu <= f2)))
+                .Include(b=>b.IdksfNavigation)
+                .Include(b=>b.IdResReuNavigation)
+                .OrderByDescending(b => b.RdfecReu)
                 .ToListAsync();
 
-            int d = 6;
+          
         }
         //obtener discrepancia a editar
-        public async Task<ReunionDium> GetDiscrepantacia(int id)
+        public async Task<ReuDium> GetDiscrepantacia(int id)
         {
-            var div1 = await _neocontext.ReunionDia
-             .FirstOrDefaultAsync(h => h.Id == id);
-            if (div1 == null)
+            var disc = await _neocontext.ReuDia
+                .Include(b => b.IdksfNavigation)
+                .Include(b => b.IdResReuNavigation)
+                .FirstOrDefaultAsync(h => h.IdReuDia == id);
+            if (disc == null)
                 throw new Exception("not found!");
-            return div1;
+            return disc;
 
         }
 
@@ -76,51 +82,53 @@ namespace ReunionWeb.Services
         }
 
 
-        public async Task InsertDiscrepancia(ReunionDium bdDiv1)
+        public async Task InsertDiscrepancia(ReuDium discre)
         {
-            _neocontext.ReunionDia.Add(bdDiv1);
+            _neocontext.ReuDia.Add(discre);
             await _neocontext.SaveChangesAsync();
         }
 
-        public async Task UpdateDiscrepancia(ReunionDium d, int id, int tipo, string f1, string f2)
+        public async Task UpdateDiscrepancia(ReuDium d, int id, int tipo, string f1, string f2)
         {
             string div = "", centro = "";
             // DateTime f1= DateTime.Now;
 
-            if (d.Div is not null)
+            if (d.Rdcentro is not null)
             {
-                div = d.Division;
-                centro = d.Div;
+                div = d.Rddiv;
+                centro = d.Rdcentro;
                 // f1 = d.Fecha;
             }
 
-            ReunionDium bdDivform = new ReunionDium();
+            ReuDium bdDiscrep = new ReuDium();
 
-            bdDivform = await _neocontext.ReunionDia
-               .FirstOrDefaultAsync(sh => sh.Id == id);
-            if (bdDivform == null)
+            bdDiscrep = await _neocontext.ReuDia
+                .Include(b => b.IdksfNavigation)
+                .Include(b => b.IdResReuNavigation)
+               .FirstOrDefaultAsync(sh => sh.IdReuDia == id);
+            if (bdDiscrep == null)
                 throw new Exception("Sorry, not found");
 
 
-            bdDivform.Area = d.Area;
-            bdDivform.Division = d.Division;
-            bdDivform.Codigo = d.Codigo;
-            bdDivform.CodigoEquipo = d.CodigoEquipo;
-            bdDivform.Discrepancia = d.Discrepancia;
-            bdDivform.Div = d.Div;
-            bdDivform.Fecha = d.Fecha;
-            bdDivform.Fecha2 = d.Fecha.ToString("yyyyMMdd");
-            bdDivform.FechaTrab = d.FechaTrab;
-            bdDivform.FechaTrab1 = d.FechaTrab.ToString("yyyyMMdd");
-            bdDivform.Id = d.Id;
-            bdDivform.AfectadoKsf = d.AfectadoKsf;
-            bdDivform.PlanDeAccion = d.PlanDeAccion;
-            bdDivform.OrdenTrabajo = d.OrdenTrabajo;
-            bdDivform.Responsable = d.Responsable;
-            bdDivform.Status = d.Status;
-            bdDivform.Tiempo = d.Tiempo;
+            bdDiscrep.Rdarea = d.Rdarea;
+            bdDiscrep.Rddiv = d.Rddiv;
+            bdDiscrep.RdcodDis = d.RdcodDis;
+            bdDiscrep.RdcodEq = d.RdcodEq;
+            bdDiscrep.Rddisc = d.Rddisc;
+            bdDiscrep.Rdcentro = d.Rdcentro;
+            bdDiscrep.RdfecReu = d.RdfecReu;
+            bdDiscrep.RdfecTra = d.RdfecTra;
+            bdDiscrep.Idksf = d.Idksf;
+            bdDiscrep.RdplanAcc = d.RdplanAcc;
+            bdDiscrep.Rdodt = d.Rdodt;
+            bdDiscrep.IdResReu = d.IdResReu;
+            bdDiscrep.Rdstatus = d.Rdstatus;
+            bdDiscrep.Rdtiempo = d.Rdtiempo;
+            //bdDiscrep.IdPais = d.IdPais;
+            //bdDiscrep.RdnumDis = d.RdnumDis;
+            //bdDiscrep.Rdobs = d.Rdobs;
 
-            _neocontext.Entry(bdDivform).State = EntityState.Modified;
+            _neocontext.Entry(bdDiscrep).State = EntityState.Modified;
             await _neocontext.SaveChangesAsync();
 
 

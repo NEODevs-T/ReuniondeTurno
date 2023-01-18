@@ -3,7 +3,7 @@
 html, body {
     font-family: Tahoma !important;
     background-image: linear-gradient(to right #fff, #ECECEC, #DEDEDE);
-    font-size: 11pt;
+    font-size: 10pt !important;
 }
 
 h1:focus {
@@ -30,6 +30,10 @@ a, .btn-link {
     color: azure;
     border: 0.1px !important;
 }
+.listo {
+    background-color: rgb(23, 194, 42, 0.58) !important;
+}
+
 .pendiente {
     background-color: rgba(225, 196, 23, 0.77) !important;
 }

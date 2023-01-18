@@ -16,6 +16,8 @@ namespace ReunionWeb.NeoDbs
         {
         }
 
+        public virtual DbSet<AsistenReu> AsistenReus { get; set; } = null!;
+        public virtual DbSet<CargoReu> CargoReus { get; set; } = null!;
         public virtual DbSet<Centro> Centros { get; set; } = null!;
         public virtual DbSet<Division> Divisions { get; set; } = null!;
         public virtual DbSet<Empresa> Empresas { get; set; } = null!;
@@ -23,6 +25,7 @@ namespace ReunionWeb.NeoDbs
         public virtual DbSet<Linea> Lineas { get; set; } = null!;
         public virtual DbSet<Pai> Pais { get; set; } = null!;
         public virtual DbSet<RespoReu> RespoReus { get; set; } = null!;
+        public virtual DbSet<ReuDium> ReuDia { get; set; } = null!;
         public virtual DbSet<ReunionDium> ReunionDia { get; set; } = null!;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -32,6 +35,58 @@ namespace ReunionWeb.NeoDbs
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<AsistenReu>(entity =>
+            {
+                entity.HasKey(e => e.IdAsistencia);
+
+                entity.ToTable("AsistenReu");
+
+                entity.Property(e => e.ArObser)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Ararea)
+                    .HasMaxLength(50)
+                    .IsUnicode(false)
+                    .HasColumnName("ARArea");
+
+                entity.Property(e => e.Arfecha)
+                    .HasColumnType("date")
+                    .HasColumnName("ARFecha");
+
+                entity.Property(e => e.AridCargoR).HasColumnName("ARIdCargoR");
+
+                entity.HasOne(d => d.AridCargoRNavigation)
+                    .WithMany(p => p.AsistenReus)
+                    .HasForeignKey(d => d.AridCargoR)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_AsistenReu_CargoReu");
+            });
+
+            modelBuilder.Entity<CargoReu>(entity =>
+            {
+                entity.HasKey(e => e.IdCargoR);
+
+                entity.ToTable("CargoReu");
+
+                entity.Property(e => e.Cearea)
+                    .HasMaxLength(50)
+                    .IsUnicode(false)
+                    .HasColumnName("CEArea");
+
+                entity.Property(e => e.Crempresa)
+                    .HasMaxLength(50)
+                    .IsUnicode(false)
+                    .HasColumnName("CREmpresa");
+
+                entity.Property(e => e.Cresta).HasColumnName("CREsta");
+
+                entity.Property(e => e.Crnombre)
+                    .HasMaxLength(50)
+                    .IsUnicode(false)
+                    .HasColumnName("CRNombre");
+            });
+
             modelBuilder.Entity<Centro>(entity =>
             {
                 entity.HasKey(e => e.IdCentro);
@@ -198,6 +253,122 @@ namespace ReunionWeb.NeoDbs
                     .HasMaxLength(50)
                     .IsUnicode(false)
                     .HasColumnName("RRNombre");
+            });
+
+            modelBuilder.Entity<ReuDium>(entity =>
+            {
+
+                entity.HasKey(e => e.IdReuDia);
+
+                entity.Property(e => e.IdReuDia)
+                   .ValueGeneratedOnAdd()
+                   .HasComment("id tabla");
+
+                entity.Property(e => e.IdPais).HasComment("Id del pais");
+
+            
+
+                entity.Property(e => e.Idksf).HasComment("Id del afectado");
+
+                entity.Property(e => e.Rdarea)
+                    .HasMaxLength(50)
+                    .IsUnicode(false)
+                    .HasColumnName("RDArea")
+                    .HasComment("Lineas o maquinas.");
+
+                entity.Property(e => e.Rdcentro)
+                    .HasMaxLength(50)
+                    .IsUnicode(false)
+                    .HasColumnName("RDCentro")
+                    .HasComment("centro o planta");
+
+                entity.Property(e => e.RdcodDis)
+                    .HasMaxLength(2)
+                    .IsUnicode(false)
+                    .HasColumnName("RDCodDis")
+                    .HasComment("Codigo del estado de la discrepancia.");
+
+                entity.Property(e => e.RdcodEq)
+                    .HasMaxLength(50)
+                    .IsUnicode(false)
+                    .HasColumnName("RDCodEq")
+                    .HasComment("Codigo del equipo");
+
+                entity.Property(e => e.Rddisc)
+                    .HasMaxLength(250)
+                    .IsUnicode(false)
+                    .HasColumnName("RDDisc")
+                    .HasComment("Descripción de la discrepancia");
+
+                entity.Property(e => e.Rddiv)
+                    .HasMaxLength(50)
+                    .IsUnicode(false)
+                    .HasColumnName("RDDiv")
+                    .HasComment("Division");
+
+                entity.Property(e => e.RdfecReu)
+                    .HasColumnType("date")
+                    .HasColumnName("RDFecReu")
+                    .HasComment("fecha de la discrepancia planteada en la reunion");
+
+                entity.Property(e => e.RdfecTra)
+                    .HasColumnType("date")
+                    .HasColumnName("RDFecTra")
+                    .HasComment("fecha planificada del trabajo.");
+
+                entity.Property(e => e.RdnumDis)
+                    .HasMaxLength(50)
+                    .IsUnicode(false)
+                    .HasColumnName("RDNumDis")
+                    .HasComment("Correlativo de la discrepancia si es mayor a un dia");
+
+                entity.Property(e => e.Rdobs)
+                    .HasMaxLength(200)
+                    .IsUnicode(false)
+                    .HasColumnName("RDObs")
+                    .HasComment("observación.");
+
+                entity.Property(e => e.Rdodt)
+                    .HasMaxLength(50)
+                    .IsUnicode(false)
+                    .HasColumnName("RDOdt")
+                    .HasComment("orden de trabajo");
+
+                entity.Property(e => e.RdplanAcc)
+                    .HasMaxLength(200)
+                    .IsUnicode(false)
+                    .HasColumnName("RDPlanAcc")
+                    .HasComment("Plan de acción.");
+
+                entity.Property(e => e.Rdstatus)
+                    .HasMaxLength(50)
+                    .IsUnicode(false)
+                    .HasColumnName("RDStatus")
+                    .HasComment("Estado de las discrepancia");
+
+                entity.Property(e => e.Rdtiempo)
+                    .HasMaxLength(50)
+                    .IsUnicode(false)
+                    .HasColumnName("RDTiempo")
+                    .HasComment("Tiempo de reparación de la discrepancia.");
+
+                entity.HasOne(d => d.IdPaisNavigation)
+                    .WithMany()
+                    .HasForeignKey(d => d.IdPais)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_ReuDia_Pais");
+
+                entity.HasOne(d => d.IdResReuNavigation)
+                    .WithMany()
+                    .HasForeignKey(d => d.IdResReu)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_ReuDia_RespoReu");
+
+                entity.HasOne(d => d.IdksfNavigation)
+                    .WithMany()
+                    .HasForeignKey(d => d.Idksf)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_ReuDia_KSF");
             });
 
             modelBuilder.Entity<ReunionDium>(entity =>

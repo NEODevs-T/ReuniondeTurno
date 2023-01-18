@@ -49,6 +49,18 @@
                     }
             </BSInput>
         </BSCol>
+
+        <BSCol ColumnSmall="1">
+            <BSLabel>Código</BSLabel>
+            <BSInput InputType="InputType.Select" @bind-Value="Codigo">
+                <option value="Todo">Todo</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+            </BSInput>
+        </BSCol>
         <BSCol ColumnSmall="2">
             <BSRow>
                 <BSLabel>Aceptar</BSLabel>
@@ -65,7 +77,7 @@
 
 </p>
 
-@if (DbDiv1Service.reunionditablas.Count() > 0 && dataIsLoaded == 2)
+@if (DbDiv1Service.reudiatablas.Count() > 0 && dataIsLoaded == 2)
 {
     <BSContainer>
 
@@ -85,12 +97,7 @@
                     <BSTD>Tiempo</BSTD>
                     <BSTD ColSpan="1">Responsable</BSTD>
                     <BSTD>Status</BSTD>
-                    @* <BSTD>Produfin</BSTD>*@
                     <BSTD>ODT</BSTD>
-                    @* <BSTD>Fecha de Reunión</BSTD> *@
-                    @* <BSTD>FechaTrab</BSTD>*@
-                    @*<BSTD>Div</BSTD>*@
-                    @*<BSTD>Fecha BPCS</BSTD>*@
                     <BSTD>Fecha del Trabajo</BSTD>@*Fecha de listo el trabajo*@
                     <BSTD></BSTD>
 
@@ -98,55 +105,47 @@
                 </BSTR>
             </BSTHead>
             <BSTBody>
-                @foreach (var d in DbDiv1Service.reunionditablas)
+                @foreach (var d in DbDiv1Service.reudiatablas)
                 {
-                    @if (d.Status != "Listo")
+                    @if (d.Rdstatus != "Listo")
                     {
+                        @if (Codigo == d.RdcodDis | Codigo == "Todo")
+                        {
+                            <BSTR>
+                                @*<BSTD>@d.IdReuDia</BSTD>*@
+                                <BSTD>@d.Rddiv</BSTD>
+                                <BSTD>@d.Rdarea</BSTD>
+                                <BSTD>@d.IdksfNavigation.KsfNombre</BSTD>
+                                <BSTD>@d.RdcodEq</BSTD>
+                                <BSTD ColSpan="4">@d.Rddisc</BSTD>
+                                <BSTD>@d.RdcodDis</BSTD>
+                                <BSTD Class="textotabla">@d.RdplanAcc</BSTD>
+                                <BSTD>@d.Rdtiempo</BSTD>
+                                @if (@d.IdResReuNavigation.Rrnombre == "Por Definir")
+                                {
+                                    <BSTD Class="Definir">@d.IdResReuNavigation.Rrnombre </BSTD>
+                                }
+                                else
+                                {
+                                    <BSTD ColSpan="1">@d.IdResReuNavigation.Rrnombre</BSTD>
+                                }
 
-                        <BSTR>
+                                @if (@d.Rdstatus == "Revisar")
+                                {
+                                    <BSTD Class="cabecera">@d.Rdstatus</BSTD>
+                                }
+                                else
+                                {
+                                    <BSTD Class="">@d.Rdstatus</BSTD>
+                                }
+                                <BSTD>@d.Rdodt</BSTD>
+                                <BSTD>@d.RdfecTra.ToString("dd/MM/yyyy") </BSTD>
+                                <BSTD>
+                                    <button class="btn btn-success" @onclick="(() => Editar(d.IdReuDia))"><i class="oi oi-pencil"></i></button>
+                                </BSTD>
 
-                            @*<BSTD>@d.Id</BSTD>*@
-                            <BSTD>@d.Division</BSTD>
-                            <BSTD>@d.Area</BSTD>
-                            <BSTD>@d.AfectadoKsf</BSTD>
-                            <BSTD>@d.CodigoEquipo</BSTD>
-                            <BSTD ColSpan="4" class="textotabla">@d.Discrepancia</BSTD>
-                            <BSTD>@d.Codigo</BSTD>
-                            <BSTD Class="textotabla">@d.PlanDeAccion</BSTD>
-                            <BSTD>@d.Tiempo</BSTD>
-                            @if (@d.Responsable == "Por Definir")
-                            {
-                                <BSTD ColSpan="1" Class="Definir">@d.Responsable</BSTD>
-                            }
-                            else
-                            {
-                                <BSTD ColSpan="1">@d.Responsable</BSTD>
-                            }
-
-                            @if (@d.Status == "Listo" | d.Status == "LISTO")
-                            {
-                                <BSTD>@d.Status</BSTD>
-                            }
-                            else if (@d.Status == "Revisar")
-                            {
-                                <BSTD Class="cabecera">@d.Status</BSTD>
-                            }
-                            else
-                            {
-                                <BSTD Class="">@d.Status</BSTD>
-                            }
-                            @*<BSTD>@d.Produfin</BSTD>*@
-                            <BSTD>@d.OrdenTrabajo</BSTD>
-                            @*<BSTD>@d.Fecha.ToString("dd/MM/yyyy")</BSTD>*@
-                            @*<BSTD>@d.FechaTrab</BSTD>*@
-                            @*<BSTD>@d.Div</BSTD>*@
-                            @*<BSTD>@d.Fecha2</BSTD>*@
-                            <BSTD>@d.FechaTrab.ToString("dd/MM/yyyy") </BSTD>
-                            <BSTD>
-                                <button class="btn btn-success" @onclick="(() => Editar(d.Id))"><i class="oi oi-pencil"></i></button>
-                            </BSTD>
-
-                        </BSTR>
+                            </BSTR>
+                        }
                     }
                 }
 
@@ -180,6 +179,7 @@ else if (dataIsLoaded == 2 && DbDiv1Service.reunionditablas.Count() == 0)
     string ayer = DateTime.Now.AddDays(-1).ToString("yyyyMMdd");
     private string Div { get; set; } //Centro
     private string Division { get; set; } //División
+    private string Codigo { get; set; } = "Todo"; //Codigo
 
 
 

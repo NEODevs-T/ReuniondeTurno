@@ -20,9 +20,11 @@ namespace ReunionWeb.Services
         public List<Ksf> ksfs { get; set; } = new List<Ksf>();
         public List<RespoReu> resporeu { get; set; } = new List<RespoReu>();
         public List<ReunionDium> reunionditabla { get; set; } = new List<ReunionDium>();
+        public List<ReuDium> reudiatabla { get; set; } = new List<ReuDium>();
         public List<Division> divisions { get; set; } = new List<Division>();
         public List<AsistenReu> asistenreus { get; set; } = new List<AsistenReu>();
         public List<CargoReu> cargoreus { get; set; } = new List<CargoReu>();
+        public List<StatsAsisDto> StatsAsisDtos { get; set; } = new List<StatsAsisDto>();
 
         public APIDiv1Service(HttpClient http, NavigationManager navigationManager)
         {
@@ -89,6 +91,14 @@ namespace ReunionWeb.Services
                 cargoreus = result;
 
         }
+        public async Task GetStatsAsist(string div,string f1, string f2)
+        {
+
+            //var result = await _http.GetFromJsonAsync<List<StatsAsisDto>>($"http://localhost:5258/Lineas/StatsAsis/{div}/{f1}/{f2}");
+            var result = await _http.GetFromJsonAsync<List<StatsAsisDto>>($"http://operaciones.papeleslatinos.com/ReunionApi/Lineas/StatsAsis/{div}/{f1}/{f2}");
+            if (result != null)
+                StatsAsisDtos = result;
+        }
 
 
 
@@ -132,9 +142,12 @@ namespace ReunionWeb.Services
 
         }
 
-        public async Task Postasistencia(List<AsistenReu> asisten)
+        public async Task<string> Postasistencia(List<AsistenReu> asisten)
         {
-            var result = await _http.PostAsJsonAsync("http://operaciones.papeleslatinos.com/ReunionApi/ReunionDia/Lineas/Asistencia", asisten);
+            var result = await _http.PostAsJsonAsync("http://operaciones.papeleslatinos.com/ReunionApi/Lineas/Asistencia", asisten);
+            //var result = await _http.PostAsJsonAsync("http://localhost:5258/Lineas/Asistencia", asisten);
+            var msj=await result.Content.ReadAsStringAsync();
+            return msj;
         }
     }
 }

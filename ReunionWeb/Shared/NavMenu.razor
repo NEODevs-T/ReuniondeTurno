@@ -10,56 +10,70 @@
 <div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
     <nav class="flex-column">
 
-         <AuthorizeView  Roles="Admin,AdminChempro, SupIntendente">
+        <AuthorizeView Roles="Admin,AdminChempro, SupIntendente">
 
-        <Authorized>  
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="oi oi-home" aria-hidden="true"></span> Home
-            </NavLink>
-        </div>
-          <div class="nav-item px-3">
-            <NavLink class="nav-link" href="discrepancia">
-                <span class="oi oi-warning" aria-hidden="true"></span> Discrepancias
-            </NavLink>
-        </div>
+            <Authorized>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                        <span class="oi oi-home" aria-hidden="true"></span> Home
+                    </NavLink>
+                </div>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="discrepancia">
+                        <span class="oi oi-warning" aria-hidden="true"></span> Discrepancias
+                    </NavLink>
+                </div>
 
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="pendientes">
-                <span class="oi oi-tags" aria-hidden="true"></span> Pendientes 
-            </NavLink>
-        </div>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="pendientes">
+                        <span class="oi oi-tags" aria-hidden="true"></span> Pendientes
+                    </NavLink>
+                </div>
 
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="asistencia">
-                <span class="oi oi-list" aria-hidden="true"></span> Asistencia
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="reunion">
-                <span class="oi oi-people" aria-hidden="true"></span> Pizarra
-            </NavLink>
-        </div>
-     </Authorized>
-      
-        
-        <NotAuthorized>
-          <div class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="oi oi-home" aria-hidden="true"></span> Home
-            </NavLink>
-        </div>
-        
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="asistencia">
+                        <span class="oi oi-list" aria-hidden="true"></span> Asistencia
+                    </NavLink>
+                </div>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="reunion">
+                        <span class="oi oi-people" aria-hidden="true"></span> Pizarra
+                    </NavLink>
+                </div>
 
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="pendientes">
-                <span class="oi oi-tags" aria-hidden="true"></span> Pendientes 
-            </NavLink>
-        </div>
+            </Authorized>
 
-      </NotAuthorized>
 
-    </AuthorizeView>
+            <NotAuthorized>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                        <span class="oi oi-home" aria-hidden="true"></span> Home
+                    </NavLink>
+                </div>
+
+
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="pendientes">
+                        <span class="oi oi-tags" aria-hidden="true"></span> Pendientes
+                    </NavLink>
+                </div>
+
+            </NotAuthorized>
+
+
+
+        </AuthorizeView>
+        <AuthorizeView Roles="Admin,AdminChempro">
+            <Authorized>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="stats_asistencia">
+                        <span class="oi oi-graph" aria-hidden="true"></span> % Asistencias
+                    </NavLink>
+                </div>
+            </Authorized>
+
+
+        </AuthorizeView>
     </nav>
     <div class="powered align-items-center justify-content-center" style="  position:fixed; display: flex; align-items: center; ;bottom:0px;">
         <small class="text-muted"> Powered By  </small><img src="./images/LogoNeo.png" alt="PAVECA" width="60px" />

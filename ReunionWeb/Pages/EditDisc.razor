@@ -13,7 +13,7 @@
 <AuthorizeView Roles="Admin,AdminChempro, SupIntendente">
 
     <Authorized>
-        <BSForm Model="bdDivform" IsRow="true" Gutters="Gutters.Medium" OnSubmit="Editar">
+        <BSForm Model="DiscForm" IsRow="true" Gutters="Gutters.Medium" OnSubmit="Editar">
             <DataAnnotationsValidator />
             <BSCol ColumnMedium="12">
                 @_message
@@ -23,45 +23,45 @@
 
                 <BSCol Column="3">
                     <BSLabel>Centro</BSLabel>
-                    <BSInput InputType="InputType.Text" IsDisabled @bind-Value="bdDivform.Div" />
+                    <BSInput InputType="InputType.Text" IsDisabled @bind-Value="DiscForm.Rdcentro" />
 
-                    <BSFeedback For="@(() => bdDivform.Div)" ValidMessage="Correcto." />
+                    <BSFeedback For="@(() => DiscForm.Rdcentro)" ValidMessage="Correcto." />
                 </BSCol>
 
 
                 <BSCol Column="2">
                     <BSLabel>División</BSLabel>
-                    <BSInput InputType="InputType.Text" IsDisabled @bind-Value="bdDivform.Division">
+                    <BSInput InputType="InputType.Text" IsDisabled @bind-Value="DiscForm.Rddiv">
                     </BSInput>
-                    <BSFeedback For="@(() => bdDivform.Area)" ValidMessage="Correcto." />
+                    <BSFeedback For="@(() => DiscForm.Rddiv)" ValidMessage="Correcto." />
                 </BSCol>
 
                 <BSCol Column="2">
                     <BSLabel>Area</BSLabel>
-                    <BSInput InputType="InputType.Text" IsDisabled @bind-Value="bdDivform.Area">
+                    <BSInput InputType="InputType.Text" IsDisabled @bind-Value="DiscForm.Rdarea">
                     </BSInput>
-                    <BSFeedback For="@(() => bdDivform.Area)" ValidMessage="Correcto." />
+                    <BSFeedback For="@(() => DiscForm.Rdarea)" ValidMessage="Correcto." />
                 </BSCol>
 
 
                 <BSCol Column="2">
                     <BSLabel>Ksf</BSLabel>
-                    <BSInput InputType="InputType.Select" @bind-Value="bdDivform.AfectadoKsf">
+                    <BSInput InputType="InputType.Select" @bind-Value="DiscForm.Idksf">
 
                         <option value="">Seleccione...</option>
                         @foreach (var d in APIDiv1Service.ksfs)
                         {
-                            <option value="@d.KsfNombre">@d.KsfNombre</option>
+                            <option value="@d.Idksf">@d.KsfNombre</option>
                         }
 
                     </BSInput>
-                    <BSFeedback For="@(() => bdDivform.AfectadoKsf)" ValidMessage="Correcto." />
+                    <BSFeedback For="@(() => DiscForm.Idksf)" ValidMessage="Correcto." />
                 </BSCol>
 
                 <BSCol Column="2">
                     <BSLabel>C. Equipo</BSLabel>
-                    <BSInput InputType="InputType.Text" @bind-Value="bdDivform.CodigoEquipo" ValidateOnInput="true" />
-                    <BSFeedback For="@(() => bdDivform.CodigoEquipo)" ValidMessage="Correcto." />
+                    <BSInput InputType="InputType.Text" @bind-Value="DiscForm.RdcodEq" ValidateOnInput="true" />
+                    <BSFeedback For="@(() => DiscForm.RdcodEq)" ValidMessage="Correcto." />
                 </BSCol>
 
 
@@ -70,8 +70,8 @@
             <BSRow>
                 <BSCol Column="6">
                     <BSLabel>Discrepancia</BSLabel>
-                    <BSInput InputType="InputType.TextArea" IsDisabled @bind-Value="bdDivform.Discrepancia" ValidateOnInput="true" />
-                    <BSFeedback For="@(() => bdDivform.Discrepancia)" ValidMessage="Correcto." />
+                    <BSInput InputType="InputType.TextArea" IsDisabled @bind-Value="DiscForm.Rddisc" ValidateOnInput="true" />
+                    <BSFeedback For="@(() => DiscForm.Rddisc)" ValidMessage="Correcto." />
                 </BSCol>
             </BSRow>
             <p></p>
@@ -81,14 +81,14 @@
                 {
                     <BSCol Column="6">
                         <BSLabel>Plan de Accion</BSLabel>
-                        <BSInput InputType="InputType.Text" IsDisabled @bind-Value="bdDivform.PlanDeAccion" ValidateOnInput="true" />
+                        <BSInput InputType="InputType.Text" IsDisabled @bind-Value="DiscForm.RdplanAcc" ValidateOnInput="true" />
                     </BSCol>
                 }
                 else
                 {
                     <BSCol Column="6">
                         <BSLabel>Plan de Accion</BSLabel>
-                        <BSInput InputType="InputType.Text" @bind-Value="bdDivform.PlanDeAccion" />
+                        <BSInput InputType="InputType.Text" @bind-Value="DiscForm.RdplanAcc" />
                     </BSCol>
                 }
 
@@ -103,7 +103,7 @@
                 {
                     <BSCol Column="2">
                         <BSLabel>Tiempo (Min)</BSLabel>
-                        <BSInput InputType="InputType.Number" IsDisabled @bind-Value="bdDivform.Tiempo" />
+                        <BSInput InputType="InputType.Number" IsDisabled @bind-Value="DiscForm.Rdtiempo" />
                     </BSCol>
 
                 }
@@ -111,7 +111,7 @@
                 {
                     <BSCol Column="2">
                         <BSLabel>Tiempo (Min)</BSLabel>
-                        <BSInput InputType="InputType.Number" @bind-Value="bdDivform.Tiempo" />
+                        <BSInput InputType="InputType.Number" @bind-Value="DiscForm.Rdtiempo" />
                     </BSCol>
                 }
 
@@ -120,34 +120,34 @@
                 {
                     <BSCol Column="2">
                         <BSLabel>Fecha del Trabajo</BSLabel>
-                        <BSInput InputType="InputType.Date" IsDisabled @bind-Value="bdDivform.FechaTrab" ValidateOnInput="true" />
+                        <BSInput InputType="InputType.Date" IsDisabled @bind-Value="DiscForm.RdfecTra" ValidateOnInput="true" />
                     </BSCol>
                 }
                 else
                 {
                     <BSCol Column="2">
                         <BSLabel>Fecha del Trabajo</BSLabel>
-                        <BSInput InputType="InputType.Date" @bind-Value="bdDivform.FechaTrab" ValidateOnInput="true" />
+                        <BSInput InputType="InputType.Date" @bind-Value="DiscForm.RdfecTra" ValidateOnInput="true" />
                     </BSCol>
                 }
 
                 <BSCol ColumnSmall="2">
                     <BSLabel>Responsable</BSLabel>
-                    <BSInput InputType="InputType.Select" @bind-Value="bdDivform.Responsable">
+                    <BSInput InputType="InputType.Select" @bind-Value="DiscForm.IdResReu">
                         <option value="">Seleccione...</option>
                         @foreach (var d in APIDiv1Service.resporeu)
                         {
-                            <option value="@d.Rrnombre">@d.Rrnombre</option>
+                            <option value="@d.IdResReu">@d.Rrnombre</option>
                         }
                     </BSInput>
-                    <BSFeedback For="@(() => bdDivform.Responsable)" ValidMessage="Correcto." />
+                    <BSFeedback For="@(() => DiscForm.IdResReu)" ValidMessage="Correcto." />
                 </BSCol>
 
                 @if (tipo == 0)
                 {
                     <BSCol Column="2">
                         <BSLabel>Fecha Reunión</BSLabel>
-                        <BSInput InputType="InputType.Date" @bind-Value="bdDivform.Fecha" ValidateOnInput="true" />
+                        <BSInput InputType="InputType.Date" @bind-Value="DiscForm.RdfecReu" ValidateOnInput="true" />
                     </BSCol>
                 }
             </BSRow>
@@ -158,7 +158,7 @@
                 {
                     <BSCol ColumnSmall="2">
                         <BSLabel>Código</BSLabel>
-                        <BSInput InputType="InputType.Select" IsDisabled @bind-Value="bdDivform.Codigo">
+                        <BSInput InputType="InputType.Select" IsDisabled @bind-Value="DiscForm.RdcodDis">
                             <option value="">Sleccione...</option>
                             <option value="1">1- En Curso</option>
                             <option value="2">2- Próxima Parada</option>
@@ -174,7 +174,7 @@
                 {
                     <BSCol ColumnSmall="2">
                         <BSLabel>Código</BSLabel>
-                        <BSInput InputType="InputType.Select" @bind-Value="bdDivform.Codigo">
+                        <BSInput InputType="InputType.Select" @bind-Value="DiscForm.RdcodDis">
                             <option value="">Sleccione...</option>
                             <option value="1">1- En Curso</option>
                             <option value="2">2- Próxima Parada</option>
@@ -190,7 +190,7 @@
 
                 <BSCol ColumnSmall="2">
                     <BSLabel>Status</BSLabel>
-                    <BSInput InputType="InputType.Select" @bind-Value="bdDivform.Status">
+                    <BSInput InputType="InputType.Select" @bind-Value="DiscForm.Rdstatus">
                         <option value="">Seleccione...</option>
                         @if (tipo == 0)
                         {
@@ -202,13 +202,13 @@
                         }
 
                         <option value="Pendiente">Pendiente</option>
-                        <BSFeedback For="@(() => bdDivform.Status)" ValidMessage="Correcto." />
+                        <BSFeedback For="@(() => DiscForm.Rdstatus)" ValidMessage="Correcto." />
                     </BSInput>
                 </BSCol>
 
                 <BSCol Column="1">
                     <BSLabel>ODT</BSLabel>
-                    <BSInput InputType="InputType.Text" @bind-Value="bdDivform.OrdenTrabajo" ValidateOnInput="true" />
+                    <BSInput InputType="InputType.Text" @bind-Value="DiscForm.Rdodt" ValidateOnInput="true" />
                 </BSCol>
 
             </BSRow>
@@ -225,7 +225,7 @@
     <NotAuthorized>
 
 
-        <BSForm Model="bdDivform" IsRow="true" Gutters="Gutters.Medium" OnSubmit="Editar">
+        <BSForm Model="DiscForm" IsRow="true" Gutters="Gutters.Medium" OnSubmit="Editar">
             <DataAnnotationsValidator />
             <BSCol ColumnMedium="12">
                 @_message
@@ -235,30 +235,30 @@
 
                 <BSCol Column="3">
                     <BSLabel>Centro</BSLabel>
-                    <BSInput InputType="InputType.Text" IsDisabled @bind-Value="bdDivform.Div" />
+                    <BSInput InputType="InputType.Text" IsDisabled @bind-Value="DiscForm.Rdcentro" />
                 </BSCol>
 
 
                 <BSCol Column="2">
                     <BSLabel>División</BSLabel>
-                    <BSInput InputType="InputType.Text" IsDisabled @bind-Value="bdDivform.Division">
+                    <BSInput InputType="InputType.Text" IsDisabled @bind-Value="DiscForm.Rddiv">
                     </BSInput>
                 </BSCol>
 
                 <BSCol Column="2">
                     <BSLabel>Area</BSLabel>
-                    <BSInput InputType="InputType.Text" IsDisabled @bind-Value="bdDivform.Area">
+                    <BSInput InputType="InputType.Text" IsDisabled @bind-Value="DiscForm.Rdarea">
                     </BSInput>
                 </BSCol>
 
 
 
-                <BSInput InputType="InputType.Select" hidden @bind-Value="bdDivform.AfectadoKsf">
+                <BSInput InputType="InputType.Select" hidden @bind-Value="DiscForm.Idksf">
 
                     <option value="">Seleccione...</option>
                     @foreach (var d in APIDiv1Service.ksfs)
                     {
-                        <option value="@d.KsfNombre">@d.KsfNombre</option>
+                        <option value="@d.Idksf">@d.KsfNombre</option>
                     }
 
                 </BSInput>
@@ -266,7 +266,7 @@
 
                 <BSCol Column="2">
                     <BSLabel>C. Equipo</BSLabel>
-                    <BSInput InputType="InputType.Text" IsDisabled @bind-Value="bdDivform.CodigoEquipo" ValidateOnInput="true" />
+                    <BSInput InputType="InputType.Text" IsDisabled @bind-Value="DiscForm.RdcodEq" ValidateOnInput="true" />
                 </BSCol>
 
 
@@ -275,13 +275,13 @@
             <BSRow>
                 <BSCol Column="4">
                     <BSLabel>Discrepancia</BSLabel>
-                    <BSInput InputType="InputType.Text" IsDisabled @bind-Value="bdDivform.Discrepancia" ValidateOnInput="true" />
+                    <BSInput InputType="InputType.Text" IsDisabled @bind-Value="DiscForm.Rddisc" ValidateOnInput="true" />
                 </BSCol>
 
 
                 <BSCol Column="6">
                     <BSLabel>Plan de Accion</BSLabel>
-                    <BSInput InputType="InputType.Text" IsDisabled @bind-Value="bdDivform.PlanDeAccion" ValidateOnInput="true" />
+                    <BSInput InputType="InputType.Text" IsDisabled @bind-Value="DiscForm.RdplanAcc" ValidateOnInput="true" />
                 </BSCol>
 
             </BSRow>
@@ -292,21 +292,21 @@
             <BSRow>
 
 
-                <BSInput InputType="InputType.Text" hidden @bind-Value="bdDivform.Tiempo" ValidateOnInput="true" />
+                <BSInput InputType="InputType.Text" hidden @bind-Value="DiscForm.Rdtiempo" ValidateOnInput="true" />
 
 
                 <BSCol Column="2">
                     <BSLabel>Fecha del Trabajo</BSLabel>
-                    <BSInput InputType="InputType.Date" IsDisabled @bind-Value="bdDivform.FechaTrab" ValidateOnInput="true" />
+                    <BSInput InputType="InputType.Date" IsDisabled @bind-Value="DiscForm.RdfecTra" ValidateOnInput="true" />
                 </BSCol>
 
                 <BSCol ColumnSmall="2">
                     <BSLabel>Responsable</BSLabel>
-                    <BSInput InputType="InputType.Select" IsDisabled @bind-Value="bdDivform.Responsable">
+                    <BSInput InputType="InputType.Select" IsDisabled @bind-Value="DiscForm.IdResReu">
                         <option value="">Seleccione...</option>
                         @foreach (var d in APIDiv1Service.resporeu)
                         {
-                            <option value="@d.Rrnombre">@d.Rrnombre</option>
+                            <option value="@d.IdResReu">@d.Rrnombre</option>
                         }
                     </BSInput>
 
@@ -316,7 +316,7 @@
 
                 <BSCol ColumnSmall="2">
                     <BSLabel>Código</BSLabel>
-                    <BSInput InputType="InputType.Select" @bind-Value="bdDivform.Codigo">
+                    <BSInput InputType="InputType.Select" @bind-Value="DiscForm.RdcodDis">
                         <option value="">Seleccione...</option>
                         <option value="1">1- En Curso</option>
                         <option value="2">2- Próxima Parada</option>
@@ -331,7 +331,7 @@
 
                 <BSCol ColumnSmall="2">
                     <BSLabel>Status</BSLabel>
-                    <BSInput InputType="InputType.Select" @bind-Value="bdDivform.Status">
+                    <BSInput InputType="InputType.Select" @bind-Value="DiscForm.Rdstatus">
                         <option value="">Seleccione...</option>
                         @if (tipo == 0)
                         {
@@ -343,13 +343,13 @@
                         }
 
                         <option value="Pendiente">Pendiente</option>
-                        <BSFeedback For="@(() => bdDivform.Status)" ValidMessage="Correcto." />
+                        <BSFeedback For="@(() => DiscForm.Rdstatus)" ValidMessage="Correcto." />
                     </BSInput>
                 </BSCol>
 
                 <BSCol Column="1">
                     <BSLabel>ODT</BSLabel>
-                    <BSInput InputType="InputType.Text" @bind-Value="bdDivform.OrdenTrabajo" ValidateOnInput="true" />
+                    <BSInput InputType="InputType.Text" @bind-Value="DiscForm.Rdodt" ValidateOnInput="true" />
                 </BSCol>
 
             </BSRow>
@@ -377,8 +377,8 @@
     public string? f2 { get; set; }
 
     string _message = "";
-    ReunionDium bdDivform = new ReunionDium();
-    private List<ReunionDium> bdDiv1slist = new List<ReunionDium>();
+    ReuDium DiscForm = new ReuDium();
+    private List<ReuDium> bdDiv1slist = new List<ReuDium>();
     private DateTime fechahoy, fechatrabajo = DateTime.Today;
     private string fechahoy2, Emp = "";
 
@@ -397,7 +397,7 @@
     {
         await CreateData();
         Emp = claims[5].Value;
-        bdDivform = await DbDiv1Service.GetDiscrepantacia((int)Id);
+        DiscForm = await DbDiv1Service.GetDiscrepantacia((int)Id);
         await APIDiv1Service.Getksf();
         await APIDiv1Service.GetResReu();
 
@@ -406,6 +406,6 @@
     async Task Editar()
     {
 
-        await DbDiv1Service.UpdateDiscrepancia(bdDivform, (int)Id, (int)tipo, f1, f2);
+        await DbDiv1Service.UpdateDiscrepancia(DiscForm, (int)Id, (int)tipo, f1, f2);
     }
     }

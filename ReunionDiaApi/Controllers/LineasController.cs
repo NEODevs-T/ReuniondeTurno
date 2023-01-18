@@ -28,29 +28,31 @@ namespace ReunionDiaApi.Controllers
         public static List<ReunionDium> reunionditabla = new List<ReunionDium>();
         public static List<Division> divisions = new List<Division>();
         public static List<AsistenReu> asistenreus = new List<AsistenReu>();
-        public static List<CargoReu> cargoreus= new List<CargoReu>();
+        public static List<CargoReu> cargoreus = new List<CargoReu>();
+        public static List<StatsAsisDto> StatsAsis = new List<StatsAsisDto>();
+
 
 
         [HttpGet("{cent}")]
         public async Task<ActionResult<List<Linea>>> GetBdDiv(string cent)
         {
-            if(cent=="All")
+            if (cent == "All")
             {
-                 centro = await _context.Centros
-                .Include(x => x.Divisions)
-                .ThenInclude(post => post.Lineas)
-                .ToListAsync();
+                centro = await _context.Centros
+               .Include(x => x.Divisions)
+               .ThenInclude(post => post.Lineas)
+               .ToListAsync();
             }
-         
+
             else
             {
-                 centro = await _context.Centros
-                .Include(x => x.Divisions)
-                .ThenInclude(post => post.Lineas)
-                .Where(x => x.Cnom == cent)
-                .ToListAsync();
+                centro = await _context.Centros
+               .Include(x => x.Divisions)
+               .ThenInclude(post => post.Lineas)
+               .Where(x => x.Cnom == cent)
+               .ToListAsync();
             }
-           
+
 
             return Ok(centro);
         }
@@ -71,7 +73,7 @@ namespace ReunionDiaApi.Controllers
         {
 
             cargoreus = await _context.CargoReus
-                .Where(a => a.Cearea==div)
+                .Where(a => a.Cearea == div)
                 .ToListAsync();
 
             return Ok(cargoreus);
@@ -85,12 +87,12 @@ namespace ReunionDiaApi.Controllers
         {
 
             ksfs = await _context.Ksfs
-                .Where(a=>a.KsfEsta==true)
+                .Where(a => a.KsfEsta == true)
                 .ToListAsync();
 
             return Ok(ksfs);
-        }  
-        
+        }
+
         [HttpGet("Responsables")]
         public async Task<ActionResult<List<Linea>>> GetRespon()
         {
@@ -103,14 +105,70 @@ namespace ReunionDiaApi.Controllers
             return Ok(resporeu);
         }
 
+
+        [HttpGet("StatsAsis/{cent}/{f1}/{f2}")]
+        public async Task<ActionResult<List<StatsAsisDto>>> GetStatsAsis(string cent, string f1, string f2)
+        {
+
+            string[] fecha1 = f1.Split('-');
+            string[] fecha2 = f2.Split('-');
+
+            //año, mes dia
+            DateTime date1 = new DateTime(int.Parse(fecha1[2]), int.Parse(fecha1[1]), int.Parse(fecha1[0]));
+            DateTime date2 = new DateTime(int.Parse(fecha2[2]), int.Parse(fecha2[1]), int.Parse(fecha2[0]));
+
+
+
+            if (cent == "All")
+            {
+                var result = await _context.AsistenReus
+               .Include(x => x.AridCargoRNavigation)
+               .Where(x => x.Arfecha >= date1 & x.Arfecha <= date2)
+               .GroupBy(x => x.AridCargoRNavigation.Crnombre)
+               .Select(a => new
+               {
+                   a.Key,
+                   Asistencias = a.Sum(b => b.ArAsistente)
+               })
+               .ToListAsync();
+
+                return Ok(result);
+            }
+
+            else
+            {
+                var result = await _context.AsistenReus
+               .Include(x => x.AridCargoRNavigation)
+               .Where(x => (x.Arfecha >= date1 & x.Arfecha <= date2) && x.Ararea == cent)
+               .GroupBy(x => x.AridCargoRNavigation.Crnombre)
+               .Select(a => new
+               {
+                   Cargo = a.Key,
+                   Asistencias = a.Sum(b => b.ArAsistente)
+               })
+               .ToListAsync();
+
+                return Ok(result);
+            }
+
+
+            return Ok();
+        }
+
         [HttpPost("Asistencia")]
         public async Task<ActionResult<string>> SaveAsistencia(List<AsistenReu> list)
         {
+            DateTime d=DateTime.Now;
 
-          
-                try
-                {  
-                
+            try
+            {
+                var result = await _context.AsistenReus
+                .Include(x => x.AridCargoRNavigation)
+                .Where(x => x.Arfecha == d && x.Ararea == list[0].Ararea)
+                .FirstOrDefaultAsync();
+                if (result == null)
+                {
+
                     for (var i = 0; i < list.Count; i++)
                     {
                         AsistenReu insertar = new AsistenReu();
@@ -122,25 +180,31 @@ namespace ReunionDiaApi.Controllers
 
                         _context.AsistenReus.Add(insertar);
                         await _context.SaveChangesAsync();
-                    
+
                     }
-                    return Ok();
+                    return Ok("Registro Exitoso");
                 }
-                catch
+                else
                 {
-                    return BadRequest();
+                    return BadRequest("Ya se registro asistencia");
                 }
-          
+
+            }
+            catch
+            {
+                return BadRequest("Error, intente nuevamente");
+            }
+
         }
 
 
 
-        [HttpPost("Auth")]
-        public ActionResult<string> Loging(UserLoginDto request)
-        {
-            string token = @"eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGRzaWctbW9yZSNobWFjLXNoYTUxMiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiQWRtaW4iLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJBZG1pbiIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL2dpdmVubmFtZSI6IkFkbWluIiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvc3VybmFtZSI6IlBydWViYSIsImV4cCI6MTY2OTEzMDYxNX0.Akph2dgCZkX7dzBPpb5ujxFjezWiUCzkv80GyGaQ0SdhIV_c03Cybjsay5__rw69wT4mksFdkoJ87PeoAico8g";
-            return token;
-        }
+        //[HttpPost("Auth")]
+        //public ActionResult<string> Loging(UserLoginDto request)
+        //{
+        //    string token = @"eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGRzaWctbW9yZSNobWFjLXNoYTUxMiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiQWRtaW4iLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJBZG1pbiIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL2dpdmVubmFtZSI6IkFkbWluIiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvc3VybmFtZSI6IlBydWViYSIsImV4cCI6MTY2OTEzMDYxNX0.Akph2dgCZkX7dzBPpb5ujxFjezWiUCzkv80GyGaQ0SdhIV_c03Cybjsay5__rw69wT4mksFdkoJ87PeoAico8g";
+        //    return token;
+        //}
 
     }
 }

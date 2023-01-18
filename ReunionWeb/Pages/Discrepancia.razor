@@ -48,14 +48,14 @@
 
         <BSCol Column="3">
             <BSLabel>Centro</BSLabel>
-            <BSInput InputType="InputType.Select" @bind-Value="Reuniondb.Div">
+            <BSInput InputType="InputType.Select" @bind-Value="Reuniondb.Rdcentro">
                 <option value="">Seleccione...</option>
                 @foreach (var d in APIDiv1Service.centro)
                 {
                     <option value="@d.Cnom">@d.Cnom</option>
                 }
             </BSInput>
-            <BSFeedback For="@(() => Reuniondb.Div)" ValidMessage="Correcto." />
+            <BSFeedback For="@(() => Reuniondb.Rdcentro)" ValidMessage="Correcto." />
         </BSCol>
 
 
@@ -68,7 +68,7 @@
                 {
                     @foreach (var e in d.Divisions)
                     {
-                        if (Reuniondb.Div == d.Cnom)
+                        if (Reuniondb.Rdcentro == d.Cnom)
                         {
                             <option value="@e.IdDivision">@e.Dnombre</option>
                         }
@@ -81,7 +81,7 @@
 
         <BSCol Column="3">
             <BSLabel>Línea</BSLabel>
-            <BSInput InputType="InputType.Select" @bind-Value="Reuniondb.Area">
+            <BSInput InputType="InputType.Select" @bind-Value="Reuniondb.Rdarea">
                 <option value="">Seleccione...</option>
                 @foreach (var d in APIDiv1Service.centro)
                 {
@@ -94,7 +94,7 @@
                     }
                 }
             </BSInput>
-            <BSFeedback For="@(() => Reuniondb.Area)" ValidMessage="Correcto." />
+            <BSFeedback For="@(() => Reuniondb.Rdarea)" ValidMessage="Correcto." />
         </BSCol>
 
 
@@ -104,21 +104,21 @@
     <BSRow>
         <BSCol Column="2">
             <BSLabel>Ksf</BSLabel>
-            <BSInput InputType="InputType.Select" @bind-Value="Reuniondb.AfectadoKsf">
+            <BSInput InputType="InputType.Select" @bind-Value="Reuniondb.Idksf">
 
                 <option value="">Seleccione...</option>
                 @foreach (var d in APIDiv1Service.ksfs)
                 {
-                    <option value="@d.KsfNombre">@d.KsfNombre</option>
+                    <option value="@d.Idksf">@d.KsfNombre</option>
                 }
 
             </BSInput>
-            <BSFeedback For="@(() => Reuniondb.AfectadoKsf)" ValidMessage="Correcto." />
+            <BSFeedback For="@(() => Reuniondb.Idksf)" ValidMessage="Correcto." />
         </BSCol>
         <BSCol Column="2">
             <BSLabel>C. Equipo</BSLabel>
-            <BSInput InputType="InputType.Text" @bind-Value="Reuniondb.CodigoEquipo" />
-            <BSFeedback For="@(() => Reuniondb.CodigoEquipo)" ValidMessage="Correcto." />
+            <BSInput InputType="InputType.Text" @bind-Value="Reuniondb.RdcodEq" />
+            <BSFeedback For="@(() => Reuniondb.RdcodEq)" ValidMessage="Correcto." />
         </BSCol>
 
     </BSRow>
@@ -126,8 +126,8 @@
     <BSRow>
         <BSCol Column="6">
             <BSLabel>Discrepancia</BSLabel>
-            <BSInput InputType="InputType.Text" @bind-Value="Reuniondb.Discrepancia" />
-            <BSFeedback For="@(() => Reuniondb.Discrepancia)" ValidMessage="Correcto." />
+            <BSInput InputType="InputType.Text" @bind-Value="Reuniondb.Rddisc" />
+            <BSFeedback For="@(() => Reuniondb.Rddisc)" ValidMessage="Correcto." />
         </BSCol>
 
 
@@ -143,15 +143,15 @@
 
         <BSCol ColumnSmall="2">
             <BSLabel>Responsable</BSLabel>
-            <BSInput InputType="InputType.Select" @bind-Value="Reuniondb.Responsable">
+            <BSInput InputType="InputType.Select" @bind-Value="Reuniondb.IdResReu">
                 <option value="">Seleccione...</option>
 
                 @foreach (var d in APIDiv1Service.resporeu)
                 {
-                    <option value="@d.Rrnombre">@d.Rrnombre</option>
+                    <option value="@d.IdResReu">@d.Rrnombre</option>
                 }
             </BSInput>
-            <BSFeedback For="@(() => Reuniondb.Responsable)" ValidMessage="Correcto." />
+            <BSFeedback For="@(() => Reuniondb.IdResReu)" ValidMessage="Correcto." />
         </BSCol>
 
     </BSRow>
@@ -183,7 +183,7 @@
     }
 
 
-    ReunionDium Reuniondb = new ReunionDium();
+    ReuDium Reuniondb = new ReuDium();
     Alerts Alertas = new Alerts();
     private string _message = "";
     private DateTime fechahoy, fechatrabajo = DateTime.Today;
@@ -220,13 +220,13 @@
         //Reuniondb.Fecha = fecha;
         try
         {
-            Reuniondb.Status = "Pendiente";
+            Reuniondb.Rdstatus = "Pendiente";
+            Reuniondb.IdPais = 1;
 
             if (e.Validate())
             {
-                Reuniondb.Fecha = (fechahoy = DateTime.Now);
-                Reuniondb.Fecha2 = (fechahoy2 = fechahoy.ToString("yyyyMMdd"));
-                Reuniondb.FechaTrab = fechatrabajo;
+                Reuniondb.RdfecReu = (fechahoy = DateTime.Now);
+                Reuniondb.RdfecTra = fechatrabajo;
 
                 foreach (var d in APIDiv1Service.centro)
                 {
@@ -234,26 +234,26 @@
                     {
                         if (IdDiv == f.IdDivisionNavigation.IdDivision)
                         {
-                            Reuniondb.Division = f.IdDivisionNavigation.Dnombre;
+                            Reuniondb.Rddiv = f.IdDivisionNavigation.Dnombre;
                         }
                     }
                 }
 
-                if (Reuniondb.Area is null)
+                if (Reuniondb.Rdarea is null)
                 {
 
                     mensaje = "Seleccione el area.";
                 }
-                else if (Reuniondb.Div is null)
+                else if (Reuniondb.Rddiv is null)
                 {
                     mensaje = "Seleccione la division.";
                 }
-                else if (Reuniondb.Discrepancia is null)
+                else if (Reuniondb.Rddisc is null)
                 {
                     mensaje = "Llene la discrepancia";
                 }
 
-                else if (Reuniondb.Status is null)
+                else if (Reuniondb.Rdstatus is null)
                 {
                     mensaje = "Seleccione status";
                 }
@@ -290,7 +290,7 @@
 
     protected async Task Reset()
     {
-        Reuniondb = new ReunionDium();
+        Reuniondb = new ReuDium();
         IdDiv = null;
         fechatrabajo = DateTime.Today;
     }

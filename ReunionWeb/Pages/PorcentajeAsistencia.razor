@@ -1,12 +1,16 @@
-﻿@page "/asistencia"
-
+﻿@page "/stats_asistencia"
 @inject IDbDiv1Service DbDiv1Service
-@inject AuthenticationStateProvider AuthStateProvider
 @inject IAPIDiv1Service APIDiv1Service
+@inject NavigationManager NavigationManager
+@inject HttpClient Http
+@inject AuthenticationStateProvider AuthStateProvider
 @inject ILocalStorageService LocalStorage
 @attribute [Authorize(Roles = "Admin, AdminChempro, SupIntendente")]
 
-<h3>Asistencia</h3>
+
+
+
+<h3>Porcentaje de Asistencia</h3>
 <p></p>
 
 <div>
@@ -55,9 +59,9 @@
 
 
         <BSRow>
-            <BSCol Column="4">
+            <BSCol Column="3">
 
-
+                <BSLabel>Centro</BSLabel>
                 <BSInput InputType="InputType.Select" @bind-Value="Div">
                     <option value="">Seleccione</option>
                     @foreach (var d in APIDiv1Service.centro)
@@ -67,9 +71,21 @@
             </BSInput>
             </BSCol>
 
-            <BSCol ColumnSmall="3">
-                <BSButton IsOutlined Color="BSColor.Success" Size="Size.ExtraSmall" @onclick="Get">   Asistentes  <span class="oi oi-check"></span></BSButton>
+              <BSCol Column="2">
+                <BSLabel>Fecha Inicial</BSLabel>
+                <BSInput InputType="InputType.Date" @bind-Value="fecha1" />
             </BSCol>
+
+            <BSCol Column="2">
+                <BSLabel>Fecha Final</BSLabel>
+                <BSInput InputType="InputType.Date" @bind-Value="fecha2" />
+            </BSCol>
+
+            <BSCol Column="3">
+                <BSRow><BSLabel> Buscar</BSLabel></BSRow>
+                <BSButton IsOutlined Color="BSColor.Success" Size="Size.ExtraSmall" @onclick="Get">   Estadísticas  <span class="oi oi-check"></span></BSButton>
+            </BSCol>
+
 
         </BSRow>
 
@@ -83,9 +99,11 @@
 
 
 
-@if (APIDiv1Service.cargoreus.Count() > 0 && dataIsLoaded == 2)
+@if (APIDiv1Service.StatsAsisDtos.Count() > 0 && dataIsLoaded == 2)
 {
-
+    <p><h5>@dias Días de reunión. </h5></p>
+    
+    <p></p>
     <BSCol Column="6">
         <BSTable IsResponsive="true" IsStriped="true" IsBordered="true">
             <BSTHead Class="cabecera">
@@ -94,25 +112,21 @@
 
                     <BSTD>Personal</BSTD>
                     <BSTD>Presencia</BSTD>
+                    <BSTD>% Asistencia</BSTD>
                   
                 </BSTR>
             </BSTHead>
             <BSTBody>
-                @foreach (var d in listaAsistencia)
+                @foreach (var d in porasis)
                 {
 
 
                     <BSTR>
 
-                        <BSTD>@d.AridCargoRNavigation.Crnombre</BSTD>
-                        <BSTD>
-                            <div Class="@BS.Form_Check @BS.Form_Switch">
-                                <BSInputCheckbox CheckedValue="@(1)" Color="BSColor.Success" @bind-Value="d.ArAsistente" />
-                                <BSLabel IsCheckLabel="true">
+                        <BSTD>@d.Cargo</BSTD>
+                        <BSTD>@d.Asistencias</BSTD>
+                        <BSTD>@d.Total %</BSTD>
 
-                                </BSLabel>
-                            </div>
-                        </BSTD>
 
                     </BSTR>
 
@@ -121,9 +135,12 @@
 
 
             </BSTBody>
-
+            <BSTR>
+                        <BSTD>Total</BSTD>
+                        <BSTD> </BSTD>
+                        <BSTD>@asistotal %</BSTD>
+            </BSTR>
         </BSTable>
-        <BSButton IsOutlined Color="BSColor.Success" Size="Size.ExtraSmall" @onclick="Save">   Guardar  <span class="oi oi-check"></span></BSButton>
     </BSCol>
 
 
@@ -141,19 +158,17 @@ else if (dataIsLoaded == 1 && DbDiv1Service.dbDiv1s.Count() == 0)
 
 @code {
 
-    private Asistencium asisform = new Asistencium();
-    private AsistenReu asiform = new AsistenReu();
-    private List<Asistencium> asis = new List<Asistencium>();
-    private List<CargoReu> cr = new List<CargoReu>();
-    private AsistenReu reuform;
+    private List<StatsAsisDto> porasis = new List<StatsAsisDto>();
 
-    private int fecha = int.Parse(DateTime.Now.ToString("yyyyMMdd"));
+
     private Alerts Alertas = new Alerts();
-    private string mensaje = "", result = "";//resultado del save;
-    int dataIsLoaded = 0;
-    private string RadioValue { get; set; }
+    int dataIsLoaded = 0;  
+    private string mensaje = "", f1="", f2="";
     private string Div { get; set; }
-    private List<AsistenReu> listaAsistencia { get; set; }
+    private DateTime fecha1 = DateTime.Now;
+    private DateTime fecha2 = DateTime.Now;
+    double asistotal = 0; 
+    int dias = 0;
 
     private bool _buttonDisabled = true;
     private BSAlert? _alertRef;
@@ -195,70 +210,46 @@ else if (dataIsLoaded == 1 && DbDiv1Service.dbDiv1s.Count() == 0)
 
     protected async Task Get()
     {
+        f1=fecha1.ToString("dd-MM-yyyy");
+        f2=fecha2.ToString("dd-MM-yyyy");
+
+        DateTime inicio = fecha1, hasta = fecha2;
+         dias = 0;
+        asistotal = 0;
+
+        while(inicio <= hasta)
+        {
+
+            if(inicio.DayOfWeek != DayOfWeek.Saturday && inicio.DayOfWeek != DayOfWeek.Sunday)
+                dias++;
+
+            inicio = inicio.AddDays(1);
+        }
+
         if (dataIsLoaded != 1)
         {
             dataIsLoaded = 1;
-            await APIDiv1Service.GetAsistencia(Div);
-            cr = APIDiv1Service.cargoreus;
-            listaAsistencia = new List<AsistenReu>();
+            await APIDiv1Service.GetStatsAsist(Div, f1,f2);
+            porasis = APIDiv1Service.StatsAsisDtos;
 
-            for (var i = 0; i < cr.Count; i++)
+            foreach (var a in porasis)
             {
-                reuform = new AsistenReu();
-                reuform.Ararea = Div;
-                reuform.Arfecha = DateTime.Now;
-                reuform.AridCargoRNavigation = cr[i];
-                listaAsistencia.Add(reuform);
+                a.Total = Math.Round((a.Asistencias / dias)*100);
+                asistotal = asistotal + a.Total;
             }
-
-
-            for (var i = 0; i < cr.Count; i++)
-            {
-
-                listaAsistencia[i].AridCargoR = APIDiv1Service.cargoreus[i].IdCargoR;
-            }
-
-
+            asistotal = Math.Round((asistotal / porasis.Count));
             dataIsLoaded = 2;
 
         }
     }
 
 
-    protected async Task Save()
-    {
-
-        int time = int.Parse(DateTime.Now.ToString("hh"));
-        try
-        {   if(time==9)
-            {
-                mensaje=await APIDiv1Service.Postasistencia(listaAsistencia);              
-                dataIsLoaded = 0;
-                Show();
-            }
-            else
-            {
-                mensaje = "Solo se puede registrar a las 9:00 am";
-                dataIsLoaded = 0;
-                Show();
-            }
-        }
-        catch (Exception ex)
-        {
-
-            mensaje = "Error al Insertar los datos, Intente de Nuevo";
-            Show();
-        }
-    }
+   
 
 
 
 
-    protected async Task Reset()
-    {
-        asisform = new Asistencium();
-    }
-
+   
 
 
     private void Show()
@@ -271,4 +262,4 @@ else if (dataIsLoaded == 1 && DbDiv1Service.dbDiv1s.Count() == 0)
     {
         _buttonDisabled = false;
     }
-}
+    }

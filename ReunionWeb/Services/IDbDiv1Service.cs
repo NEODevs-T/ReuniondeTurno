@@ -18,15 +18,20 @@ namespace ReunionWeb.Services
          List<Ksf> ksfss { get; set; }
          List<RespoReu> resporeus { get; set; }
          List<ReunionDium> reunionditablas { get; set; }
+         List<ReuDium> reudiatablas { get; set; }
          List<Division> divisionss { get; set; }
          List<AsistenReu> asistenreus { get; set; }
          List<CargoReu> cargoreuss { get; set; }
 
         Task GetPendientes(string centro, string div, DateTime f1, DateTime f2);
-        Task<ReunionDium> GetDiscrepantacia(int id);
+        Task<ReuDium> GetDiscrepantacia(int id);
+        //Task<ReunionDium> GetDiscrepantacia(int id);
         Task Insertasistencia(Asistencium asistencium);
-        Task InsertDiscrepancia(ReunionDium bdDiv1);
-        Task UpdateDiscrepancia(ReunionDium bdDiv1, int id, int tipo, string f1, string f2);
+       // Task Insertasistencia(Asistencium asistencium);
+        Task InsertDiscrepancia(ReuDium discre);
+        //Task InsertDiscrepancia(ReunionDium bdDiv1);
+        Task UpdateDiscrepancia(ReuDium bdDiv1, int id, int tipo, string f1, string f2);
+        //Task UpdateDiscrepancia(ReunionDium bdDiv1, int id, int tipo, string f1, string f2);
 
     }
 }
