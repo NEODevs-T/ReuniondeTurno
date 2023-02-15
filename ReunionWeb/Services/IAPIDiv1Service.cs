@@ -17,10 +17,11 @@ namespace ReunionWeb.Services
         List<ReuDium> reudiatabla { get; set; }
         List<AsistenReu> asistenreus { get; set; }
         List<CargoReu> cargoreus { get; set; }
-        List<StatsAsisDto> StatsAsisDtos { get; set; } 
+        List<StatsAsisDto> StatsAsisDtos { get; set; }
+         List<EquipoEam> equipos { get; set; } 
 
 
-
+        Task GetEquiposEAM(string centro);
         Task GetCentros(string centro);
         Task Getksf();
         Task GetResReu();

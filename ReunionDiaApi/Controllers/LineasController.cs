@@ -30,6 +30,7 @@ namespace ReunionDiaApi.Controllers
         public static List<AsistenReu> asistenreus = new List<AsistenReu>();
         public static List<CargoReu> cargoreus = new List<CargoReu>();
         public static List<StatsAsisDto> StatsAsis = new List<StatsAsisDto>();
+        public static List<EquipoEam> equipos = new List<EquipoEam>();
 
 
 
@@ -55,6 +56,15 @@ namespace ReunionDiaApi.Controllers
 
 
             return Ok(centro);
+        }
+
+        [HttpGet("Equipos/{cent}")]
+        public async Task<ActionResult<List<EquipoEam>>> EquiposEAM(string cent)
+        {          
+                equipos = await _context.EquipoEams
+                .Include(x =>x.IdLineaNavigation)
+              .ToListAsync();
+            return Ok(equipos);
         }
 
         [HttpGet("Division/{centro}/{div}")]

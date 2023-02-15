@@ -30,19 +30,19 @@
     }
     else
     {
-    <BSRow>
+        <BSRow>
             <BSCol Column="2">
                 <BSLabel>Centro</BSLabel>
                 <BSInput InputType="InputType.Select" @bind-Value="Div">
                     <option value="">Seleccione</option>
                     @foreach (var d in APIDiv1Service.centro)
                     {
-                        <option value="@d.Cnom">@d.Cnom</option>
+                    <option value="@d.Cnom">@d.Cnom</option>
                     }
-                </BSInput>
-            </BSCol>
+            </BSInput>
+        </BSCol>
 
-            <BSCol ColumnSmall="2">
+        <BSCol ColumnSmall="2">
             <BSLabel>División</BSLabel>
             <BSInput InputType="InputType.Select" @bind-Value="Division">
                 <option value="">Seleccione</option>
@@ -52,19 +52,19 @@
                         {
                             if (Div == d.Cnom)
                             {
-                                <option value="@e.Dnombre">@e.Dnombre</option>
+                            <option value="@e.Dnombre">@e.Dnombre</option>
                             }
                         }
                     }
             </BSInput>
-            </BSCol>
+        </BSCol>
 
         <BSCol Column="2">
             <BSLabel>Fecha Inicial</BSLabel>
             <BSInput InputType="InputType.Date" @bind-Value="fecha1" />
         </BSCol>
 
-        <BSCol Column="2">
+        <BSCol ColumnSmall="2">
             <BSLabel>Fecha Final</BSLabel>
             <BSInput InputType="InputType.Date" @bind-Value="fecha2" />
         </BSCol>
@@ -81,9 +81,20 @@
             </BSInput>
         </BSCol>
 
+        <BSCol ColumnSmall="1">
+            <BSLabel>Estado</BSLabel>
+            <BSInput InputType="InputType.Select" @bind-Value="Status">
+                <option value="Todo">Todo</option>
+                <option value="Pendiente">Pendiente</option>
+                <option value="Pendiente/Responsable">Pendiente/Responsable</option>
+                <option value="Listo">Listo</option>
+                <option value="Cerrado">Cerrado</option>
+            </BSInput>
+        </BSCol>
+
         <BSCol ColumnSmall="2">
             <BSRow><BSLabel> Buscar</BSLabel></BSRow>
-            <BSButton IsOutlined Color="BSColor.Success" Size="Size.ExtraSmall" @onclick="Get">  Consultar  <span class="oi oi-check"></span></BSButton>
+            <BSButton IsOutlined Color="BSColor.Success" Size="Size.ExtraSmall" @onclick="Get">   <span class="oi oi-check"></span></BSButton>
         </BSCol>
     </BSRow>
     }
@@ -110,7 +121,7 @@
                 <BSTD>Plan de Acción</BSTD>
                 <BSTD>Tiempo</BSTD>
                 <BSTD>Responsable</BSTD>
-                <BSTD>Status</BSTD>         
+                <BSTD>Status</BSTD>
                 <BSTD>ODT</BSTD>
                 <BSTD>Fecha de Reunión</BSTD> @*Fecha del dia de reunion*@
                 <BSTD>Fecha del Trabajo</BSTD>@*Fecha de listo el trabajo*@
@@ -123,40 +134,43 @@
             {
                 @if (Codigo == d.RdcodDis | Codigo == "Todo")
                 {
-                    <BSTR>
-                        @*<BSTD>@d.IdReuDia</BSTD>*@
-                        <BSTD>@d.Rdarea</BSTD>
-                        <BSTD>@d.IdksfNavigation.KsfNombre</BSTD>
-                        <BSTD>@d.RdcodEq</BSTD>
-                        <BSTD ColSpan="4">@d.Rddisc</BSTD>
-                        <BSTD>@d.RdcodDis</BSTD>
-                        <BSTD Class="textotabla">@d.RdplanAcc</BSTD>
-                        <BSTD>@d.Rdtiempo</BSTD>
-                        @if (@d.IdResReuNavigation.Rrnombre == "Por Definir")
-                        {
-                            <BSTD Class="Definir">@d.IdResReuNavigation.Rrnombre </BSTD>
-                        }
-                        else
-                        {
-                            <BSTD>@d.IdResReuNavigation.Rrnombre </BSTD>
-                        }
+                    @if (Status == d.Rdstatus | Status == "Todo")
+                    {
+                        <BSTR>
+                            @*<BSTD>@d.IdReuDia</BSTD>*@
+                            <BSTD>@d.Rdarea</BSTD>
+                            <BSTD>@d.IdksfNavigation.KsfNombre</BSTD>
+                            <BSTD>@d.RdcodEq</BSTD>
+                            <BSTD ColSpan="4">@d.Rddisc.ToUpperInvariant()</BSTD>
+                            <BSTD>@d.RdcodDis</BSTD>
+                            <BSTD Class="textotabla">@d.RdplanAcc</BSTD>
+                            <BSTD>@d.Rdtiempo</BSTD>
+                            @if (@d.IdResReuNavigation.Rrnombre == "Por Definir")
+                            {
+                                <BSTD Class="Definir">@d.IdResReuNavigation.Rrnombre </BSTD>
+                            }
+                            else
+                            {
+                                <BSTD>@d.IdResReuNavigation.Rrnombre </BSTD>
+                            }
 
-                        @if (@d.Rdstatus == "Listo" )
-                        {
-                            <BSTD Class="listo">@d.Rdstatus</BSTD>
-                        }
-                        else
-                        {
-                            <BSTD Class="pendiente">@d.Rdstatus</BSTD>
-                        }
-                        <BSTD>@d.Rdodt</BSTD>
-                        <BSTD>@d.RdfecReu.ToString("dd/MM/yyyy")</BSTD>                    
-                        <BSTD>@d.RdfecTra.ToString("dd/MM/yyyy")</BSTD>
-                        <BSTD>
-                            <button class="btn btn-success" @onclick="(() => Editar(d.IdReuDia))"><i class="oi oi-pencil"></i></button>
-                        </BSTD>
-                    </BSTR>
-                 
+                            @if (@d.Rdstatus == "Listo")
+                            {
+                                <BSTD Class="listo">@d.Rdstatus</BSTD>
+                            }
+                            else
+                            {
+                                <BSTD Class="pendiente">@d.Rdstatus</BSTD>
+                            }
+                            <BSTD>@d.Rdodt</BSTD>
+                            <BSTD>@d.RdfecReu.ToString("dd/MM/yyyy")</BSTD>
+                            <BSTD>@d.RdfecTra.ToString("dd/MM/yyyy")</BSTD>
+                            <BSTD>
+                                <button class="btn btn-success" @onclick="(() => Editar(d.IdReuDia))"><i class="oi oi-pencil"></i></button>
+                            </BSTD>
+                        </BSTR>
+
+                    }
                 }
 
 
@@ -196,6 +210,7 @@ else if (dataIsLoaded == 2 && DbDiv1Service.dbDiv1s.Count() == 0)
     private string Div { get; set; } //Centro
     private string Division { get; set; } //División
     private string Codigo { get; set; } = "Todo"; //Codigo
+    private string Status { get; set; } = "Todo"; //Status
     private DateTime fecha1 = DateTime.Now;
     private DateTime fecha2 = DateTime.Now;
 

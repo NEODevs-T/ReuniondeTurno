@@ -21,6 +21,7 @@ namespace ReunionDiaApi.Models
         public virtual DbSet<Centro> Centros { get; set; } = null!;
         public virtual DbSet<Division> Divisions { get; set; } = null!;
         public virtual DbSet<Empresa> Empresas { get; set; } = null!;
+        public virtual DbSet<EquipoEam> EquipoEams { get; set; } = null!;
         public virtual DbSet<Ksf> Ksfs { get; set; } = null!;
         public virtual DbSet<Linea> Lineas { get; set; } = null!;
         public virtual DbSet<Pai> Pais { get; set; } = null!;
@@ -30,6 +31,7 @@ namespace ReunionDiaApi.Models
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
+            
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -167,6 +169,29 @@ namespace ReunionDiaApi.Models
                     .HasConstraintName("FK_Empresa_Pais");
             });
 
+            modelBuilder.Entity<EquipoEam>(entity =>
+            {
+                entity.HasKey(e => e.IdEquipo);
+
+                entity.ToTable("EquipoEAM");
+
+                entity.Property(e => e.EcodEquiEam)
+                    .HasMaxLength(200)
+                    .IsUnicode(false)
+                    .HasColumnName("ECodEquiEAM");
+
+                entity.Property(e => e.EnombreEam)
+                    .HasMaxLength(200)
+                    .IsUnicode(false)
+                    .HasColumnName("ENombreEAM");
+
+                entity.HasOne(d => d.IdLineaNavigation)
+                    .WithMany(p => p.EquipoEams)
+                    .HasForeignKey(d => d.IdLinea)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_EquipoEAM_Linea");
+            });
+
             modelBuilder.Entity<Ksf>(entity =>
             {
                 entity.HasKey(e => e.Idksf);
@@ -256,13 +281,11 @@ namespace ReunionDiaApi.Models
 
             modelBuilder.Entity<ReuDium>(entity =>
             {
-                entity.HasNoKey();
+                entity.HasKey(e => e.IdReuDia);
+
+                entity.Property(e => e.IdReuDia).HasComment("id tabla");
 
                 entity.Property(e => e.IdPais).HasComment("Id del pais");
-
-                entity.Property(e => e.IdReuDia)
-                    .ValueGeneratedOnAdd()
-                    .HasComment("id tabla");
 
                 entity.Property(e => e.Idksf).HasComment("Id del afectado");
 
@@ -349,19 +372,19 @@ namespace ReunionDiaApi.Models
                     .HasComment("Tiempo de reparación de la discrepancia.");
 
                 entity.HasOne(d => d.IdPaisNavigation)
-                    .WithMany()
+                    .WithMany(p => p.ReuDia)
                     .HasForeignKey(d => d.IdPais)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_ReuDia_Pais");
 
                 entity.HasOne(d => d.IdResReuNavigation)
-                    .WithMany()
+                    .WithMany(p => p.ReuDia)
                     .HasForeignKey(d => d.IdResReu)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_ReuDia_RespoReu");
 
                 entity.HasOne(d => d.IdksfNavigation)
-                    .WithMany()
+                    .WithMany(p => p.ReuDia)
                     .HasForeignKey(d => d.Idksf)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_ReuDia_KSF");
@@ -420,7 +443,7 @@ namespace ReunionDiaApi.Models
                     .IsUnicode(false);
 
                 entity.Property(e => e.PlanDeAccion)
-                    .HasMaxLength(50)
+                    .HasMaxLength(100)
                     .IsUnicode(false)
                     .HasColumnName("Plan_de_accion");
 

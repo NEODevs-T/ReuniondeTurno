@@ -18,8 +18,8 @@ namespace ReunionWeb.NeoDbs
         public string? Status { get; set; }
         public string? Produfin { get; set; }
         public string? OrdenTrabajo { get; set; }
-        public DateTime Fecha { get; set; }
-        public DateTime FechaTrab { get; set; }
+        public DateTime? Fecha { get; set; }
+        public DateTime? FechaTrab { get; set; }
         public string? Div { get; set; }
         public string? Fecha2 { get; set; }
         public string? FechaTrab1 { get; set; }

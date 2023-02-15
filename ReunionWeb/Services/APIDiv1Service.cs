@@ -25,6 +25,7 @@ namespace ReunionWeb.Services
         public List<AsistenReu> asistenreus { get; set; } = new List<AsistenReu>();
         public List<CargoReu> cargoreus { get; set; } = new List<CargoReu>();
         public List<StatsAsisDto> StatsAsisDtos { get; set; } = new List<StatsAsisDto>();
+        public List<EquipoEam> equipos { get; set; } = new List<EquipoEam>();
 
         public APIDiv1Service(HttpClient http, NavigationManager navigationManager)
         {
@@ -32,7 +33,15 @@ namespace ReunionWeb.Services
             _navigationManager = navigationManager;
         }
 
+        //Conversion
+        public async Task GetEquiposEAM(string cent)
+        {
+            var result = await _http.GetFromJsonAsync<List<EquipoEam>>($"http://operaciones.papeleslatinos.com/ReunionApi/Lineas/Equipos/{cent}");
+            //var result = await _http.GetFromJsonAsync<List<EquipoEam>>($"http://localhost:5258/Lineas/Equipos/{cent}");
+            if (result != null)
+                equipos = result;
 
+        }
 
         public async Task GetCentros(string cent)
         {

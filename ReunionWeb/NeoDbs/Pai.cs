@@ -8,6 +8,7 @@ namespace ReunionWeb.NeoDbs
         public Pai()
         {
             Empresas = new HashSet<Empresa>();
+            ReuDia = new HashSet<ReuDium>();
         }
 
         public int IdPais { get; set; }
@@ -15,5 +16,6 @@ namespace ReunionWeb.NeoDbs
         public bool Pestado { get; set; }
 
         public virtual ICollection<Empresa> Empresas { get; set; }
+        public virtual ICollection<ReuDium> ReuDia { get; set; }
     }
 }

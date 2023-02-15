@@ -8,6 +8,11 @@ namespace ReunionDiaApi.Models
     /// </summary>
     public partial class Linea
     {
+        public Linea()
+        {
+            EquipoEams = new HashSet<EquipoEam>();
+        }
+
         /// <summary>
         /// identificador de la linea
         /// </summary>
@@ -34,5 +39,6 @@ namespace ReunionDiaApi.Models
 
         public virtual Centro IdCentroNavigation { get; set; } = null!;
         public virtual Division? IdDivisionNavigation { get; set; }
+        public virtual ICollection<EquipoEam> EquipoEams { get; set; }
     }
 }

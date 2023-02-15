@@ -70,7 +70,7 @@
             <BSRow>
                 <BSCol Column="6">
                     <BSLabel>Discrepancia</BSLabel>
-                    <BSInput InputType="InputType.TextArea" IsDisabled @bind-Value="DiscForm.Rddisc" ValidateOnInput="true" />
+                    <BSInput InputType="InputType.TextArea"  @bind-Value="DiscForm.Rddisc" ValidateOnInput="true" />
                     <BSFeedback For="@(() => DiscForm.Rddisc)" ValidMessage="Correcto." />
                 </BSCol>
             </BSRow>
@@ -195,6 +195,8 @@
                         @if (tipo == 0)
                         {
                             <option value="Listo">Listo</option>
+                            <option value="Cerrado">Cerrado</option>
+
                         }
                         else
                         {
@@ -206,10 +208,23 @@
                     </BSInput>
                 </BSCol>
 
-                <BSCol Column="1">
-                    <BSLabel>ODT</BSLabel>
-                    <BSInput InputType="InputType.Text" @bind-Value="DiscForm.Rdodt" ValidateOnInput="true" />
-                </BSCol>
+                @if (APIDiv1Service.resporeu.Count() > 0)
+                {
+                    if (planificador == "Admin" | planificador == "Planificador")
+                    {
+                        <BSCol Column="2">
+                            <BSLabel>ODT</BSLabel>
+                            <BSInput InputType="InputType.Text" @bind-Value="DiscForm.Rdodt" ValidateOnInput="true" />
+                        </BSCol>
+                    }
+                    else
+                    {
+                        <BSCol Column="2">
+                            <BSLabel>ODT</BSLabel>
+                            <BSInput InputType="InputType.Text" IsDisabled @bind-Value="DiscForm.Rdodt" ValidateOnInput="true" />
+                        </BSCol>
+                    }
+                }
 
             </BSRow>
             <p></p>
@@ -275,7 +290,7 @@
             <BSRow>
                 <BSCol Column="4">
                     <BSLabel>Discrepancia</BSLabel>
-                    <BSInput InputType="InputType.Text" IsDisabled @bind-Value="DiscForm.Rddisc" ValidateOnInput="true" />
+                    <BSInput InputType="InputType.Text"  @bind-Value="DiscForm.Rddisc" ValidateOnInput="true" />
                 </BSCol>
 
 
@@ -323,34 +338,74 @@
                         <option value="3">3- Falta Repuesto</option>
                         <option value="4">4- Falta de Personal</option>
                         <option value="5">5- Eq. no Disponible</option>
-
-
                     </BSInput>
                 </BSCol>
+       
+                @if (APIDiv1Service.resporeu.Count() > 0)
+                {
+                    if (planificador == "Admin" | planificador == "Planificador")
+                    {
+                        <BSCol ColumnSmall="2">
+                            <BSLabel>Status</BSLabel>
+                            <BSInput InputType="InputType.Select" @bind-Value="DiscForm.Rdstatus">
+                                <option value="">Seleccione...</option>
+                                @if (tipo == 0)
+                                {
+                                    <option value="Listo">Listo</option>
+                                    <option value="Pendiente/Responsable">Pendiente/Responsable</option>
 
+                                }
+                                else
+                                {
+                                    <option value="Revisar">Revisar</option>
+                                }
 
-                <BSCol ColumnSmall="2">
-                    <BSLabel>Status</BSLabel>
-                    <BSInput InputType="InputType.Select" @bind-Value="DiscForm.Rdstatus">
-                        <option value="">Seleccione...</option>
-                        @if (tipo == 0)
-                        {
-                            <option value="Listo">Listo</option>
-                        }
-                        else
-                        {
-                            <option value="Revisar">Revisar</option>
-                        }
-
-                        <option value="Pendiente">Pendiente</option>
-                        <BSFeedback For="@(() => DiscForm.Rdstatus)" ValidMessage="Correcto." />
-                    </BSInput>
+                                    <option value="Pendiente">Pendiente</option>
+                            <BSFeedback For="@(() => DiscForm.Rdstatus)" ValidMessage="Correcto." />
+                        </BSInput>
                 </BSCol>
+                    }
 
-                <BSCol Column="1">
-                    <BSLabel>ODT</BSLabel>
-                    <BSInput InputType="InputType.Text" @bind-Value="DiscForm.Rdodt" ValidateOnInput="true" />
-                </BSCol>
+                    else
+                    {
+                         <BSCol ColumnSmall="2">
+                            <BSLabel>Status</BSLabel>
+                            <BSInput InputType="InputType.Select" @bind-Value="DiscForm.Rdstatus">
+                                <option value="">Seleccione...</option>
+                                @if (tipo == 0)
+                                {
+                                    <option value="Listo">Listo</option>
+                                }
+                                else
+                                {
+                                    <option value="Revisar">Revisar</option>
+                                }
+
+                                    <option value="Pendiente">Pendiente</option>
+                            <BSFeedback For="@(() => DiscForm.Rdstatus)" ValidMessage="Correcto." />
+                        </BSInput>
+                    </BSCol>
+                    }
+
+
+                    if (planificador == "Admin" | planificador == "Planificador")
+                    {
+                        <BSCol Column="2">
+                            <BSLabel>ODT</BSLabel>
+                            <BSInput InputType="InputType.Text" @bind-Value="DiscForm.Rdodt" ValidateOnInput="true" />
+                        </BSCol>
+                    }
+                    else
+                    {
+                        <BSCol Column="2">
+                            <BSLabel>ODT</BSLabel>
+                            <BSInput InputType="InputType.Text" IsDisabled @bind-Value="DiscForm.Rdodt" ValidateOnInput="true" />
+                        </BSCol>
+                    }
+                }
+
+
+
 
             </BSRow>
             <p></p>
@@ -380,7 +435,7 @@
     ReuDium DiscForm = new ReuDium();
     private List<ReuDium> bdDiv1slist = new List<ReuDium>();
     private DateTime fechahoy, fechatrabajo = DateTime.Today;
-    private string fechahoy2, Emp = "";
+    private string fechahoy2, Emp = "", planificador;
 
     private List<Claim> claims { get; set; }
 
@@ -391,17 +446,17 @@
         var user = authState.User;
         claims = Enumerable.ToList(user.Claims);
 
+
     }
 
     protected override async Task OnParametersSetAsync()
     {
         await CreateData();
         Emp = claims[5].Value;
+        planificador = claims[1].Value;
         DiscForm = await DbDiv1Service.GetDiscrepantacia((int)Id);
         await APIDiv1Service.Getksf();
         await APIDiv1Service.GetResReu();
-
-
     }
     async Task Editar()
     {

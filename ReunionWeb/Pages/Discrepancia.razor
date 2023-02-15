@@ -102,6 +102,37 @@
     </BSRow>
     <p></p>
     <BSRow>
+
+        @if (APIDiv1Service.centro.Count > 0)
+        {
+            @if (Reuniondb.Rdcentro == "Conversión")
+            {
+                <BSCol Column="4">
+                    <BSLabel>C. Equipo</BSLabel>
+                    <BSInput InputType="InputType.Select" @bind-Value="Reuniondb.RdcodEq">
+                        <option value="">Seleccione...</option>
+                        @foreach (var d in APIDiv1Service.equipos)
+                        {
+                            if (Reuniondb.Rdarea == d.IdLineaNavigation.Lnom)
+                            {
+                        <option value="@d.EcodEquiEam">@d.EcodEquiEam - @d.EnombreEam</option>
+                            }
+                        }
+            </BSInput>
+            <BSFeedback For="@(() => Reuniondb.RdcodEq)" ValidMessage="Correcto." />
+        </BSCol>
+
+            }
+            else
+            {
+                <BSCol Column="2">
+                    <BSLabel>C. Equipo</BSLabel>
+                    <BSInput InputType="InputType.Text" @bind-Value="Reuniondb.RdcodEq" />
+                    <BSFeedback For="@(() => Reuniondb.RdcodEq)" ValidMessage="Correcto." />
+                </BSCol>
+            }
+        }
+
         <BSCol Column="2">
             <BSLabel>Ksf</BSLabel>
             <BSInput InputType="InputType.Select" @bind-Value="Reuniondb.Idksf">
@@ -115,11 +146,7 @@
             </BSInput>
             <BSFeedback For="@(() => Reuniondb.Idksf)" ValidMessage="Correcto." />
         </BSCol>
-        <BSCol Column="2">
-            <BSLabel>C. Equipo</BSLabel>
-            <BSInput InputType="InputType.Text" @bind-Value="Reuniondb.RdcodEq" />
-            <BSFeedback For="@(() => Reuniondb.RdcodEq)" ValidMessage="Correcto." />
-        </BSCol>
+
 
     </BSRow>
     <p></p>
@@ -204,10 +231,20 @@
         if (claims[1].Value == "Admin")
         {
             await APIDiv1Service.GetCentros("All");
+
+            if (claims[6].Value == "Conversión")
+            {
+                await APIDiv1Service.GetEquiposEAM("Conversión");
+            }
         }
         else
         {
             await APIDiv1Service.GetCentros(claims[6].Value.ToString());
+
+            if (claims[6].Value == "Conversión")
+            {
+                await APIDiv1Service.GetEquiposEAM("Conversión");
+            }
         }
 
         await APIDiv1Service.Getksf();
@@ -262,6 +299,9 @@
                     await DbDiv1Service.InsertDiscrepancia(Reuniondb);
                     //await APIDiv1Service.PostDiscrepancia(Reuniondb);
                     mensaje = "Registro Exitoso";
+                    Reuniondb = new ReuDium();
+                    IdDiv = null;
+                    fechatrabajo = DateTime.Today;
                     Alertas.Show();
                     //Reuniondb = new BdDiv1();
 
