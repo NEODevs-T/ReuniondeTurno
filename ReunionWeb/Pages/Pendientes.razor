@@ -211,8 +211,8 @@ else if (dataIsLoaded == 2 && DbDiv1Service.dbDiv1s.Count() == 0)
     private string Division { get; set; } //División
     private string Codigo { get; set; } = "Todo"; //Codigo
     private string Status { get; set; } = "Todo"; //Status
-    private DateTime fecha1 = DateTime.Now;
-    private DateTime fecha2 = DateTime.Now;
+    public DateTime fecha1;
+    public  DateTime fecha2;
 
 
     private List<Claim> claims { get; set; }
@@ -229,7 +229,8 @@ else if (dataIsLoaded == 2 && DbDiv1Service.dbDiv1s.Count() == 0)
 
     protected override async Task OnInitializedAsync()
     {
-
+        fecha1 = DateTime.Now;
+        fecha2 = DateTime.Now;
         await CreateData();
 
         if (claims[1].Value == "Admin")
@@ -243,6 +244,7 @@ else if (dataIsLoaded == 2 && DbDiv1Service.dbDiv1s.Count() == 0)
 
         await APIDiv1Service.Getksf();
         await APIDiv1Service.GetResReu();
+
     }
 
     protected async Task Get()
@@ -267,14 +269,17 @@ else if (dataIsLoaded == 2 && DbDiv1Service.dbDiv1s.Count() == 0)
     {
         try
         {
+
             if (accion != null)
             {
-                string[] fecha1 = f1.Split('-');
-                string[] fecha2 = f2.Split('-');
+                string[] fec1 = f1.Split('-');
+                string[] fec2 = f2.Split('-');
 
                 //año, mes dia
-                DateTime date1 = new DateTime(int.Parse(fecha1[2]), int.Parse(fecha1[1]), int.Parse(fecha1[0]));
-                DateTime date2 = new DateTime(int.Parse(fecha2[2]), int.Parse(fecha2[1]), int.Parse(fecha2[0]));
+                DateTime date1 = new DateTime(int.Parse(fec1[2]), int.Parse(fec1[1]), int.Parse(fec1[0]));
+                DateTime date2 = new DateTime(int.Parse(fec2[2]), int.Parse(fec2[1]), int.Parse(fec2[0]));
+                fecha1 = date1;
+                fecha2 = date2;
 
                 dataIsLoaded = 1;
                 await DbDiv1Service.GetPendientes(accion, division, date1, date2);

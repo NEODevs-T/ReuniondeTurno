@@ -70,7 +70,7 @@
             <BSRow>
                 <BSCol Column="6">
                     <BSLabel>Discrepancia</BSLabel>
-                    <BSInput InputType="InputType.TextArea"  @bind-Value="DiscForm.Rddisc" ValidateOnInput="true" />
+                    <BSInput InputType="InputType.TextArea"  @bind-Value="DiscForm.Rddisc"  />
                     <BSFeedback For="@(() => DiscForm.Rddisc)" ValidMessage="Correcto." />
                 </BSCol>
             </BSRow>
@@ -81,7 +81,7 @@
                 {
                     <BSCol Column="6">
                         <BSLabel>Plan de Accion</BSLabel>
-                        <BSInput InputType="InputType.Text" IsDisabled @bind-Value="DiscForm.RdplanAcc" ValidateOnInput="true" />
+                        <BSInput InputType="InputType.Text" IsDisabled @bind-Value="DiscForm.RdplanAcc"  />
                     </BSCol>
                 }
                 else
