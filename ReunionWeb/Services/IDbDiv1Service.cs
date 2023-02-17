@@ -23,7 +23,7 @@ namespace ReunionWeb.Services
          List<AsistenReu> asistenreus { get; set; }
          List<CargoReu> cargoreuss { get; set; }
 
-        Task GetPendientes(string centro, string div, DateTime f1, DateTime f2);
+        Task GetPendientes(string centro, string div, DateTime f1, DateTime f2, string tipo);
         Task<ReuDium> GetDiscrepantacia(int id);
         //Task<ReunionDium> GetDiscrepantacia(int id);
         Task Insertasistencia(Asistencium asistencium);

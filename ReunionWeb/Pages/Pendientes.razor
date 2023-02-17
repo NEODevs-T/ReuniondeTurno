@@ -145,23 +145,27 @@
                             <BSTD>@d.RdcodDis</BSTD>
                             <BSTD Class="textotabla">@d.RdplanAcc</BSTD>
                             <BSTD>@d.Rdtiempo</BSTD>
-                            @if (@d.IdResReuNavigation.Rrnombre == "Por Definir")
-                            {
-                                <BSTD Class="Definir">@d.IdResReuNavigation.Rrnombre </BSTD>
-                            }
-                            else
-                            {
-                                <BSTD>@d.IdResReuNavigation.Rrnombre </BSTD>
-                            }
+                                @if (@d.IdResReuNavigation.Rrnombre == "Por Definir")
+                                {
+                                    <BSTD Class="Definir">@d.IdResReuNavigation.Rrnombre </BSTD>
+                                }
+                                else
+                                {
+                                    <BSTD>@d.IdResReuNavigation.Rrnombre </BSTD>
+                                }
 
-                            @if (@d.Rdstatus == "Listo")
-                            {
-                                <BSTD Class="listo">@d.Rdstatus</BSTD>
-                            }
-                            else
-                            {
-                                <BSTD Class="pendiente">@d.Rdstatus</BSTD>
-                            }
+                                @if (@d.Rdstatus == "Listo")
+                                {
+                                    <BSTD Class="listo">@d.Rdstatus</BSTD>
+                                }
+                                else if (@d.Rdstatus == "Cerrado")
+                                {
+                                    <BSTD Class="Cerrado">@d.Rdstatus</BSTD>
+                                }
+                                else
+                                {
+                                    <BSTD Class="pendiente">@d.Rdstatus</BSTD>
+                                }
                             <BSTD>@d.Rdodt</BSTD>
                             <BSTD>@d.RdfecReu.ToString("dd/MM/yyyy")</BSTD>
                             <BSTD>@d.RdfecTra.ToString("dd/MM/yyyy")</BSTD>
@@ -203,6 +207,8 @@ else if (dataIsLoaded == 2 && DbDiv1Service.dbDiv1s.Count() == 0)
     public string? f1 { get; set; }
     [Parameter]
     public string? f2 { get; set; }
+    [Parameter]
+    public string? tipo { get; set; }
 
     int dataIsLoaded = 0;
     string ayer = DateTime.Now.AddDays(-1).ToString("yyyyMMdd"), error;
@@ -212,7 +218,7 @@ else if (dataIsLoaded == 2 && DbDiv1Service.dbDiv1s.Count() == 0)
     private string Codigo { get; set; } = "Todo"; //Codigo
     private string Status { get; set; } = "Todo"; //Status
     public DateTime fecha1;
-    public  DateTime fecha2;
+    public DateTime fecha2;
 
 
     private List<Claim> claims { get; set; }
@@ -253,7 +259,7 @@ else if (dataIsLoaded == 2 && DbDiv1Service.dbDiv1s.Count() == 0)
         {
             dataIsLoaded = 1;
 
-            await DbDiv1Service.GetPendientes(Div, Division, fecha1, fecha2);
+            await DbDiv1Service.GetPendientes(Div, Division, fecha1, fecha2, "0");
             dataIsLoaded = 2;
         }
     }
@@ -282,7 +288,7 @@ else if (dataIsLoaded == 2 && DbDiv1Service.dbDiv1s.Count() == 0)
                 fecha2 = date2;
 
                 dataIsLoaded = 1;
-                await DbDiv1Service.GetPendientes(accion, division, date1, date2);
+                await DbDiv1Service.GetPendientes(accion, division, date1, date2, tipo);
                 dataIsLoaded = 2;
 
             }

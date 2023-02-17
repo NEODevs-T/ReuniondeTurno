@@ -37,7 +37,6 @@ namespace ReunionWeb.NeoDbs
         public string? LcenCos { get; set; }
         public string? Lofic { get; set; }
 
-        public virtual Centro IdCentroNavigation { get; set; } = null!;
         public virtual Division? IdDivisionNavigation { get; set; }
         public virtual ICollection<EquipoEam> EquipoEams { get; set; }
     }

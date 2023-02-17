@@ -1,10 +1,10 @@
 ﻿@page "/reunion"
-@page "/reunion/{accion}/{division}/{f1}/{f2}"
+@page "/reunion/{accion}/{division}/{f1}/{f2}/{tipo}"
 @inject IDbDiv1Service DbDiv1Service
 @inject IAPIDiv1Service APIDiv1Service
 @inject NavigationManager NavigationManager
 @inject AuthenticationStateProvider AuthStateProvider
-@attribute [Authorize(Roles = "Admin,AdminChempro, SupIntendente")]
+@attribute [Authorize(Roles = "Admin,AdminChempro, SupIntendente, Planificador, Mantenimiento")]
 
 <h3>Formato de Reunión</h3>
 
@@ -92,14 +92,17 @@
                     <BSTD>Ksf</BSTD>
                     <BSTD>Código de Equipo</BSTD>
                     <BSTD ColSpan="4">Discrepancia</BSTD>
-                    <BSTD>Código</BSTD>
+                    <BSTD>Código</BSTD>-+
                     <BSTD>Plan de Acción</BSTD>
                     <BSTD>Tiempo</BSTD>
                     <BSTD ColSpan="1">Responsable</BSTD>
                     <BSTD>Status</BSTD>
                     <BSTD>ODT</BSTD>
                     <BSTD>Fecha del Trabajo</BSTD>@*Fecha de listo el trabajo*@
-                    <BSTD></BSTD>
+                     @if (Rol == "Admin" | Rol == "AdminChempro" | Rol == "SupIntendente")
+                                {<BSTD></BSTD>
+
+                                }
 
 
                 </BSTR>
@@ -111,38 +114,51 @@
                     {
                         @if (Codigo == d.RdcodDis | Codigo == "Todo")
                         {
+                            
+                            
                             <BSTR>
+
                                 @*<BSTD>@d.IdReuDia</BSTD>*@
                                 <BSTD>@d.Rddiv</BSTD>
                                 <BSTD>@d.Rdarea</BSTD>
                                 <BSTD>@d.IdksfNavigation.KsfNombre</BSTD>
                                 <BSTD>@d.RdcodEq</BSTD>
-                                <BSTD ColSpan="4">@d.Rddisc.ToUpperInvariant()</BSTD>
+                                <BSTD ColSpan="4">@d.Rddisc.ToUpper()</BSTD>
                                 <BSTD>@d.RdcodDis</BSTD>
-                                <BSTD Class="textotabla">@d.RdplanAcc</BSTD>
+                                    @if(@d.RdplanAcc is  not null)
+                                    {
+                                        <BSTD Class="textotabla listo">@d.RdplanAcc</BSTD>
+                                    }
+                                    else
+                                    {
+                                        <BSTD Class="textotabla ">@d.RdplanAcc</BSTD>
+                                    }
                                 <BSTD>@d.Rdtiempo</BSTD>
-                                @if (@d.IdResReuNavigation.Rrnombre == "Por Definir")
-                                {
-                                    <BSTD Class="Definir">@d.IdResReuNavigation.Rrnombre </BSTD>
-                                }
-                                else
-                                {
-                                    <BSTD ColSpan="1">@d.IdResReuNavigation.Rrnombre</BSTD>
-                                }
+                                    @if (@d.IdResReuNavigation.Rrnombre == "Por Definir")
+                                    {
+                                        <BSTD Class="Definir">@d.IdResReuNavigation.Rrnombre </BSTD>
+                                    }
+                                    else
+                                    {
+                                        <BSTD ColSpan="1">@d.IdResReuNavigation.Rrnombre</BSTD>
+                                    }
 
-                                @if (@d.Rdstatus == "Revisar")
-                                {
-                                    <BSTD Class="cabecera">@d.Rdstatus</BSTD>
-                                }
-                                else
-                                {
-                                    <BSTD Class="">@d.Rdstatus</BSTD>
-                                }
+                                    @if (@d.Rdstatus == "Revisar")
+                                    {
+                                        <BSTD Class="cabecera">@d.Rdstatus</BSTD>
+                                    }
+                                    else
+                                    {
+                                        <BSTD Class="">@d.Rdstatus</BSTD>
+                                    }
                                 <BSTD>@d.Rdodt</BSTD>
                                 <BSTD>@d.RdfecTra.ToString("dd/MM/yyyy") </BSTD>
-                                <BSTD>
-                                    <button class="btn btn-success" @onclick="(() => Editar(d.IdReuDia))"><i class="oi oi-pencil"></i></button>
-                                </BSTD>
+                                @if (Rol == "Admin" | Rol == "AdminChempro" | Rol == "SupIntendente")
+                                {
+                                    <BSTD>
+                                        <button class="btn btn-success" @onclick="(() => Editar(d.IdReuDia))"><i class="oi oi-pencil"></i></button>
+                                    </BSTD>
+                                }
 
                             </BSTR>
                         }
@@ -174,12 +190,16 @@ else if (dataIsLoaded == 2 && DbDiv1Service.reunionditablas.Count() == 0)
     public string? f1 { get; set; }
     [Parameter]
     public string? f2 { get; set; }
+    [Parameter]
+    public string? tipo { get; set; }
+
 
     int dataIsLoaded = 0, filtrocod = 0;
     string ayer = DateTime.Now.AddDays(-1).ToString("yyyyMMdd");
     private string Div { get; set; } //Centro
     private string Division { get; set; } //División
     private string Codigo { get; set; } = "Todo"; //Codigo
+    private string Rol { get; set; } = ""; //Rol del usuario
 
 
 
@@ -197,6 +217,8 @@ else if (dataIsLoaded == 2 && DbDiv1Service.reunionditablas.Count() == 0)
     protected override async Task OnInitializedAsync()
     {
         await CreateData();
+        Rol = claims[1].Value;
+
 
         if (claims[1].Value == "Admin")
         {
@@ -216,7 +238,7 @@ else if (dataIsLoaded == 2 && DbDiv1Service.reunionditablas.Count() == 0)
         if (dataIsLoaded != 1)
         {
             dataIsLoaded = 1;
-            await DbDiv1Service.GetPendientes(Div, Division, DateTime.Now, DateTime.Now);
+            await DbDiv1Service.GetPendientes(Div, Division, DateTime.Now.AddDays(-1), DateTime.Now,"1");
             dataIsLoaded = 2;
         }
     }
@@ -230,7 +252,7 @@ else if (dataIsLoaded == 2 && DbDiv1Service.reunionditablas.Count() == 0)
         if (accion != null)
         {
             dataIsLoaded = 1;
-            await DbDiv1Service.GetPendientes(accion, division, DateTime.Now, DateTime.Now);
+            await DbDiv1Service.GetPendientes(accion, division, DateTime.Now.AddDays(-1), DateTime.Now,tipo);
             dataIsLoaded = 2;
         }
 

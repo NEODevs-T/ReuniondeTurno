@@ -17,8 +17,9 @@ namespace ReunionWeb.NeoDbs
         }
 
         public virtual DbSet<AsistenReu> AsistenReus { get; set; } = null!;
+        public virtual DbSet<CambFec> CambFecs { get; set; } = null!;
+        public virtual DbSet<CambStat> CambStats { get; set; } = null!;
         public virtual DbSet<CargoReu> CargoReus { get; set; } = null!;
-        public virtual DbSet<Centro> Centros { get; set; } = null!;
         public virtual DbSet<Division> Divisions { get; set; } = null!;
         public virtual DbSet<Empresa> Empresas { get; set; } = null!;
         public virtual DbSet<EquipoEam> EquipoEams { get; set; } = null!;
@@ -31,7 +32,7 @@ namespace ReunionWeb.NeoDbs
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            
+          
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -64,6 +65,65 @@ namespace ReunionWeb.NeoDbs
                     .HasConstraintName("FK_AsistenReu_CargoReu");
             });
 
+            modelBuilder.Entity<CambFec>(entity =>
+            {
+                entity.HasKey(e => e.IdCambFec);
+
+                entity.ToTable("CambFec");
+
+                entity.Property(e => e.IdCambFec).ValueGeneratedOnAdd();
+
+                entity.Property(e => e.Cffec)
+                    .HasColumnType("datetime")
+                    .HasColumnName("CFFec");
+
+                entity.Property(e => e.CffecNew)
+                    .HasColumnType("datetime")
+                    .HasColumnName("CFFecNew");
+
+                entity.Property(e => e.Cfuser)
+                    .HasMaxLength(50)
+                    .IsUnicode(false)
+                    .HasColumnName("CFUser");
+
+                entity.Property(e => e.IdReuDia)
+                    .HasMaxLength(10)
+                    .IsFixedLength();
+
+                entity.HasOne(d => d.IdCambFecNavigation)
+                    .WithOne(p => p.CambFec)
+                    .HasForeignKey<CambFec>(d => d.IdCambFec)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_CambFec_ReuDia");
+            });
+
+            modelBuilder.Entity<CambStat>(entity =>
+            {
+                entity.HasKey(e => e.IdCambStat);
+
+                entity.ToTable("CambStat");
+
+                entity.Property(e => e.Cbfecha)
+                    .HasColumnType("datetime")
+                    .HasColumnName("CBFecha");
+
+                entity.Property(e => e.Cbstat)
+                    .HasMaxLength(50)
+                    .IsUnicode(false)
+                    .HasColumnName("CBStat");
+
+                entity.Property(e => e.Cbuser)
+                    .HasMaxLength(50)
+                    .IsUnicode(false)
+                    .HasColumnName("CBUser");
+
+                entity.HasOne(d => d.IdReuDiaNavigation)
+                    .WithMany(p => p.CambStats)
+                    .HasForeignKey(d => d.IdReuDia)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_CambStat_ReuDia");
+            });
+
             modelBuilder.Entity<CargoReu>(entity =>
             {
                 entity.HasKey(e => e.IdCargoR);
@@ -88,38 +148,6 @@ namespace ReunionWeb.NeoDbs
                     .HasColumnName("CRNombre");
             });
 
-            modelBuilder.Entity<Centro>(entity =>
-            {
-                entity.HasKey(e => e.IdCentro);
-
-                entity.ToTable("Centro");
-
-                entity.HasComment("centro de produccion");
-
-                entity.Property(e => e.IdCentro).HasComment("identificador del centro");
-
-                entity.Property(e => e.Cdetalle)
-                    .HasMaxLength(2000)
-                    .IsUnicode(false)
-                    .HasColumnName("CDetalle")
-                    .HasComment("Detalle del centro");
-
-                entity.Property(e => e.Cestado)
-                    .HasColumnName("CEstado")
-                    .HasComment("0: Inactivo, 1:Activo");
-
-                entity.Property(e => e.Cnom)
-                    .HasMaxLength(500)
-                    .IsUnicode(false)
-                    .HasColumnName("CNom")
-                    .HasComment("nombre del centro");
-
-                entity.HasOne(d => d.IdEmpresaNavigation)
-                    .WithMany(p => p.Centros)
-                    .HasForeignKey(d => d.IdEmpresa)
-                    .HasConstraintName("FK_Centro_Empresa");
-            });
-
             modelBuilder.Entity<Division>(entity =>
             {
                 entity.HasKey(e => e.IdDivision);
@@ -137,11 +165,6 @@ namespace ReunionWeb.NeoDbs
                     .HasMaxLength(500)
                     .IsUnicode(false)
                     .HasColumnName("DNombre");
-
-                entity.HasOne(d => d.IdCentroNavigation)
-                    .WithMany(p => p.Divisions)
-                    .HasForeignKey(d => d.IdCentro)
-                    .HasConstraintName("FK_Division_Centro");
             });
 
             modelBuilder.Entity<Empresa>(entity =>
@@ -240,12 +263,6 @@ namespace ReunionWeb.NeoDbs
                     .HasMaxLength(50)
                     .IsUnicode(false)
                     .HasColumnName("LOFIC");
-
-                entity.HasOne(d => d.IdCentroNavigation)
-                    .WithMany(p => p.Lineas)
-                    .HasForeignKey(d => d.IdCentro)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_Linea_Centro");
 
                 entity.HasOne(d => d.IdDivisionNavigation)
                     .WithMany(p => p.Lineas)

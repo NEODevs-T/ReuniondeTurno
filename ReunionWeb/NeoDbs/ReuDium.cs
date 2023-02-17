@@ -5,6 +5,11 @@ namespace ReunionWeb.NeoDbs
 {
     public partial class ReuDium
     {
+        public ReuDium()
+        {
+            CambStats = new HashSet<CambStat>();
+        }
+
         /// <summary>
         /// id tabla
         /// </summary>
@@ -78,5 +83,7 @@ namespace ReunionWeb.NeoDbs
         public virtual Pai IdPaisNavigation { get; set; } = null!;
         public virtual RespoReu IdResReuNavigation { get; set; } = null!;
         public virtual Ksf IdksfNavigation { get; set; } = null!;
+        public virtual CambFec? CambFec { get; set; }
+        public virtual ICollection<CambStat> CambStats { get; set; }
     }
 }

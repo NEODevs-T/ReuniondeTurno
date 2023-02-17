@@ -17,6 +17,8 @@ namespace ReunionDiaApi.Models
         }
 
         public virtual DbSet<AsistenReu> AsistenReus { get; set; } = null!;
+        public virtual DbSet<CambFec> CambFecs { get; set; } = null!;
+        public virtual DbSet<CambStat> CambStats { get; set; } = null!;
         public virtual DbSet<CargoReu> CargoReus { get; set; } = null!;
         public virtual DbSet<Centro> Centros { get; set; } = null!;
         public virtual DbSet<Division> Divisions { get; set; } = null!;
@@ -62,6 +64,65 @@ namespace ReunionDiaApi.Models
                     .HasForeignKey(d => d.AridCargoR)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_AsistenReu_CargoReu");
+            });
+
+            modelBuilder.Entity<CambFec>(entity =>
+            {
+                entity.HasKey(e => e.IdCambFec);
+
+                entity.ToTable("CambFec");
+
+                entity.Property(e => e.IdCambFec).ValueGeneratedOnAdd();
+
+                entity.Property(e => e.Cffec)
+                    .HasColumnType("datetime")
+                    .HasColumnName("CFFec");
+
+                entity.Property(e => e.CffecNew)
+                    .HasColumnType("datetime")
+                    .HasColumnName("CFFecNew");
+
+                entity.Property(e => e.Cfuser)
+                    .HasMaxLength(50)
+                    .IsUnicode(false)
+                    .HasColumnName("CFUser");
+
+                entity.Property(e => e.IdReuDia)
+                    .HasMaxLength(10)
+                    .IsFixedLength();
+
+                entity.HasOne(d => d.IdCambFecNavigation)
+                    .WithOne(p => p.CambFec)
+                    .HasForeignKey<CambFec>(d => d.IdCambFec)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_CambFec_ReuDia");
+            });
+
+            modelBuilder.Entity<CambStat>(entity =>
+            {
+                entity.HasKey(e => e.IdCambStat);
+
+                entity.ToTable("CambStat");
+
+                entity.Property(e => e.Cbfecha)
+                    .HasColumnType("datetime")
+                    .HasColumnName("CBFecha");
+
+                entity.Property(e => e.Cbstat)
+                    .HasMaxLength(50)
+                    .IsUnicode(false)
+                    .HasColumnName("CBStat");
+
+                entity.Property(e => e.Cbuser)
+                    .HasMaxLength(50)
+                    .IsUnicode(false)
+                    .HasColumnName("CBUser");
+
+                entity.HasOne(d => d.IdReuDiaNavigation)
+                    .WithMany(p => p.CambStats)
+                    .HasForeignKey(d => d.IdReuDia)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_CambStat_ReuDia");
             });
 
             modelBuilder.Entity<CargoReu>(entity =>

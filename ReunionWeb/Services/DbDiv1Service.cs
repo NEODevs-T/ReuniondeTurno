@@ -43,20 +43,29 @@ namespace ReunionWeb.Services
             _neocontext = _NeoContext;
         }
         //obtener discrepancias para pendientes y reunion 
-        public async Task GetPendientes(string centro, string div, DateTime f1, DateTime f2)
+        public async Task GetPendientes(string centro, string div, DateTime f1, DateTime f2, string tipo)
         {
-            
-
-            //reunionditablas = await _neocontext.ReunionDia
-            reudiatablas = await _neocontext.ReuDia
+            if (tipo == "1")
+            {
+                reudiatablas = await _neocontext.ReuDia
                 //.Where(a =>  (a.Div == centro & a.Division==div ) | (a.Div == centro & a.Division == div & (a.Fecha>= f1 & a.Fecha <= f2)))
                 .Where(a => (a.Rdcentro == centro & a.Rddiv == div & (a.RdfecReu >= f1 & a.RdfecReu <= f2)))
-                .Include(b=>b.IdksfNavigation)
-                .Include(b=>b.IdResReuNavigation)
+                .Include(b => b.IdksfNavigation)
+                .Include(b => b.IdResReuNavigation)
                 .OrderByDescending(b => b.RdfecReu)
                 .ToListAsync();
+            }
+            else
+            {
+                reudiatablas = await _neocontext.ReuDia
+                //.Where(a =>  (a.Div == centro & a.Division==div ) | (a.Div == centro & a.Division == div & (a.Fecha>= f1 & a.Fecha <= f2)))
+                .Where(a => (a.Rdcentro == centro & a.Rddiv == div & (a.RdfecTra >= f1 & a.RdfecTra <= f2)))
+                .Include(b => b.IdksfNavigation)
+                .Include(b => b.IdResReuNavigation)
+                .OrderByDescending(b => b.RdfecReu)
+                .ToListAsync();
+            }
 
-          
         }
         //obtener discrepancia a editar
         public async Task<ReuDium> GetDiscrepantacia(int id)
@@ -131,6 +140,8 @@ namespace ReunionWeb.Services
             _neocontext.Entry(bdDiscrep).State = EntityState.Modified;
             await _neocontext.SaveChangesAsync();
 
+
+            //TODO pasar el tipo, para saber si bsco por fecha de trabajo o reunion
 
             if (tipo == 0)
             {
