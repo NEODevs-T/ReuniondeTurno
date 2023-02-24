@@ -177,7 +177,7 @@
                                     <BSCol>
                                         @if (UsrAdmin != "")
                                         {
-                                            <BSButton Color="BSColor.Primary" IsOutlined @onclick="(() => GetHistory(d.IdReuDia))" Target="History"><i class="oi oi-eye"></i></BSButton>
+                                            <BSButton Color="BSColor.Primary" IsOutlined @onclick="(() => GetHistory(d.IdReuDia))"  Target="History"  ><i class="oi oi-eye"></i></BSButton>
                                         }
                                     </BSCol>
                                 </BSRow>
@@ -202,7 +202,7 @@
         <Header>Trazabilidad</Header>
         <Content>
             <h5>Cambios de Estados:</h5>
-            @if (DbDiv1Service.cambiostatus.Count() > 0)
+            @if (cambiostatuss.Count() > 0 && cargandocambio == true)
             {
                 <BSTable IsResponsive="true" IsStriped="true" IsBordered="true">
                     <BSTHead Class="cabecera">
@@ -213,7 +213,7 @@
                         </BSTR>
                     </BSTHead>
                     <BSTBody>
-                        @foreach (var d in DbDiv1Service.cambiostatus)
+                        @foreach (var d in cambiostatuss)
                         {
                             <BSTR>
                                 <BSTD>@d.Cbfecha</BSTD>
@@ -224,13 +224,19 @@
                     </BSTBody>
                 </BSTable>
             }
-            else
+            else if (cambiostatuss.Count() == 0 && cargandocambio == false)
+            {
+                <BSSpinner SpinnerType="SpinnerType.Grow" Color="BSColor.Success" />
+            }
+            else if (cambiostatuss.Count() == 0 && cargandocambio == true)
             {
                 <p>No hay registros aún...</p>
             }
             <p></p>
+            <p></p>
             <h5>Cambios de Fecha de Trabajo:</h5>
-            @if (DbDiv1Service.cambiofecha.Count() > 0)
+
+            @if (cambiofechas.Count() > 0 && cargandocambio == true)
             {
                 <BSTable IsResponsive="true" IsStriped="true" IsBordered="true">
                     <BSTHead Class="cabecera">
@@ -241,7 +247,7 @@
                         </BSTR>
                     </BSTHead>
                     <BSTBody>
-                        @foreach (var d in DbDiv1Service.cambiofecha)
+                        @foreach (var d in cambiofechas)
                         {
                             <BSTR>
                                 <BSTD>@d.Cffec</BSTD>
@@ -252,7 +258,11 @@
                     </BSTBody>
                 </BSTable>
             }
-            else
+            else if (cambiofechas.Count() == 0 && cargandocambio == false)
+            {
+                <BSSpinner SpinnerType="SpinnerType.Grow" Color="BSColor.Success" />
+            }
+            else if (cambiofechas.Count() == 0 && cargandocambio == true)
             {
                 <p>No hay registros aún...</p>
             }
@@ -295,9 +305,11 @@ else if (dataIsLoaded == 2 && DbDiv1Service.dbDiv1s.Count() == 0)
     private string Codigo { get; set; } = "Todo"; //Codigo
     private string Status { get; set; } = "Todo"; //Status
     private string UsrAdmin { get; set; } = ""; //permisos de admin
+    private bool cargandocambio { get; set; } = false; //para cargar los datos del trazabilidad
     public DateTime fecha1;
     public DateTime fecha2;
-
+    List<CambFec> cambiofechas = new List<CambFec>();
+    List<CambStat> cambiostatuss = new List<CambStat>();
 
     private List<Claim> claims { get; set; }
 
@@ -344,8 +356,14 @@ else if (dataIsLoaded == 2 && DbDiv1Service.dbDiv1s.Count() == 0)
     }
     protected async Task GetHistory(int idreu)
     {
+        cargandocambio = false;
+        cambiostatuss = new List<CambStat>();
+        cambiofechas = new List<CambFec>();
         await DbDiv1Service.GetCambioStatus(idreu);
         await DbDiv1Service.GetCambioFecha(idreu);
+        cambiostatuss = DbDiv1Service.cambiostatus;
+        cambiofechas = DbDiv1Service.cambiofecha;
+        cargandocambio = true;
 
     }
 
