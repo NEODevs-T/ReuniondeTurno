@@ -1,5 +1,5 @@
 ﻿@page "/pendientes"
-@page "/pendientes/{accion}/{division}/{f1}/{f2}"
+@page "/pendientes/{accion}/{division}/{f1}/{f2}/{tipo}"
 @inject IDbDiv1Service DbDiv1Service
 @inject IAPIDiv1Service APIDiv1Service
 @inject NavigationManager NavigationManager
@@ -145,32 +145,42 @@
                             <BSTD>@d.RdcodDis</BSTD>
                             <BSTD Class="textotabla">@d.RdplanAcc</BSTD>
                             <BSTD>@d.Rdtiempo</BSTD>
-                                @if (@d.IdResReuNavigation.Rrnombre == "Por Definir")
-                                {
-                                    <BSTD Class="Definir">@d.IdResReuNavigation.Rrnombre </BSTD>
-                                }
-                                else
-                                {
-                                    <BSTD>@d.IdResReuNavigation.Rrnombre </BSTD>
-                                }
+                            @if (@d.IdResReuNavigation.Rrnombre == "Por Definir")
+                            {
+                                <BSTD Class="Definir">@d.IdResReuNavigation.Rrnombre </BSTD>
+                            }
+                            else
+                            {
+                                <BSTD>@d.IdResReuNavigation.Rrnombre </BSTD>
+                            }
 
-                                @if (@d.Rdstatus == "Listo")
-                                {
-                                    <BSTD Class="listo">@d.Rdstatus</BSTD>
-                                }
-                                else if (@d.Rdstatus == "Cerrado")
-                                {
-                                    <BSTD Class="Cerrado">@d.Rdstatus</BSTD>
-                                }
-                                else
-                                {
-                                    <BSTD Class="pendiente">@d.Rdstatus</BSTD>
-                                }
+                            @if (@d.Rdstatus == "Listo")
+                            {
+                                <BSTD Class="listo">@d.Rdstatus</BSTD>
+                            }
+                            else if (@d.Rdstatus == "Cerrado")
+                            {
+                                <BSTD Class="Cerrado">@d.Rdstatus</BSTD>
+                            }
+                            else
+                            {
+                                <BSTD Class="pendiente">@d.Rdstatus</BSTD>
+                            }
                             <BSTD>@d.Rdodt</BSTD>
                             <BSTD>@d.RdfecReu.ToString("dd/MM/yyyy")</BSTD>
                             <BSTD>@d.RdfecTra.ToString("dd/MM/yyyy")</BSTD>
                             <BSTD>
-                                <button class="btn btn-success" @onclick="(() => Editar(d.IdReuDia))"><i class="oi oi-pencil"></i></button>
+                                <BSRow>
+                                    <BSCol>
+                                        <button class="btn btn-success" @onclick="(() => Editar(d.IdReuDia))"><i class="oi oi-pencil"></i></button>
+                                    </BSCol>
+                                    <BSCol>
+                                        @if (UsrAdmin != "")
+                                        {
+                                            <BSButton Color="BSColor.Primary" IsOutlined @onclick="(() => GetHistory(d.IdReuDia))" Target="History"><i class="oi oi-eye"></i></BSButton>
+                                        }
+                                    </BSCol>
+                                </BSRow>
                             </BSTD>
                         </BSTR>
 
@@ -185,6 +195,73 @@
         </BSTBody>
 
     </BSTable>
+
+
+    @*Mostrar la trazabilidad*@
+    <BSModal IsCentered="true" DataId="History">
+        <Header>Trazabilidad</Header>
+        <Content>
+            <h5>Cambios de Estados:</h5>
+            @if (DbDiv1Service.cambiostatus.Count() > 0)
+            {
+                <BSTable IsResponsive="true" IsStriped="true" IsBordered="true">
+                    <BSTHead Class="cabecera">
+                        <BSTR>
+                            <BSTD>Fecha del Cambio</BSTD>
+                            <BSTD>Status Nuevo</BSTD>
+                            <BSTD>Usuario</BSTD>
+                        </BSTR>
+                    </BSTHead>
+                    <BSTBody>
+                        @foreach (var d in DbDiv1Service.cambiostatus)
+                        {
+                            <BSTR>
+                                <BSTD>@d.Cbfecha</BSTD>
+                                <BSTD>@d.Cbstat</BSTD>
+                                <BSTD>@d.Cbuser</BSTD>
+                            </BSTR>
+                        }
+                    </BSTBody>
+                </BSTable>
+            }
+            else
+            {
+                <p>No hay registros aún...</p>
+            }
+            <p></p>
+            <h5>Cambios de Fecha de Trabajo:</h5>
+            @if (DbDiv1Service.cambiofecha.Count() > 0)
+            {
+                <BSTable IsResponsive="true" IsStriped="true" IsBordered="true">
+                    <BSTHead Class="cabecera">
+                        <BSTR>
+                            <BSTD>Fecha del Cambio</BSTD>
+                            <BSTD>Nueva Fecha de Trabajo</BSTD>
+                            <BSTD>Usuario</BSTD>
+                        </BSTR>
+                    </BSTHead>
+                    <BSTBody>
+                        @foreach (var d in DbDiv1Service.cambiofecha)
+                        {
+                            <BSTR>
+                                <BSTD>@d.Cffec</BSTD>
+                                <BSTD>@d.CffecNew</BSTD>
+                                <BSTD>@d.Cfuser</BSTD>
+                            </BSTR>
+                        }
+                    </BSTBody>
+                </BSTable>
+            }
+            else
+            {
+                <p>No hay registros aún...</p>
+            }
+        </Content>
+        <Footer Context="modal">
+            <BSButton MarginStart="Margins.Auto" Color="BSColor.Success" @onclick="modal.HideAsync">Aceptar</BSButton>
+
+        </Footer>
+    </BSModal>
 
 
 }
@@ -217,6 +294,7 @@ else if (dataIsLoaded == 2 && DbDiv1Service.dbDiv1s.Count() == 0)
     private string Division { get; set; } //División
     private string Codigo { get; set; } = "Todo"; //Codigo
     private string Status { get; set; } = "Todo"; //Status
+    private string UsrAdmin { get; set; } = ""; //permisos de admin
     public DateTime fecha1;
     public DateTime fecha2;
 
@@ -241,6 +319,7 @@ else if (dataIsLoaded == 2 && DbDiv1Service.dbDiv1s.Count() == 0)
 
         if (claims[1].Value == "Admin")
         {
+            UsrAdmin = claims[1].Value;
             await APIDiv1Service.GetCentros("All");
         }
         else
@@ -262,6 +341,12 @@ else if (dataIsLoaded == 2 && DbDiv1Service.dbDiv1s.Count() == 0)
             await DbDiv1Service.GetPendientes(Div, Division, fecha1, fecha2, "0");
             dataIsLoaded = 2;
         }
+    }
+    protected async Task GetHistory(int idreu)
+    {
+        await DbDiv1Service.GetCambioStatus(idreu);
+        await DbDiv1Service.GetCambioFecha(idreu);
+
     }
 
 

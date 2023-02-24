@@ -26,6 +26,9 @@ namespace ReunionWeb.Services
         public List<Division> divisionss { get; set; } = new List<Division>();
         public List<AsistenReu> asistenreus { get; set; } = new List<AsistenReu>();
         public List<CargoReu> cargoreuss { get; set; } = new List<CargoReu>();
+        public List<CambStat> cambiostatus { get; set; } = new List<CambStat>();
+        public List<CambFec> cambiofecha { get; set; } = new List<CambFec>();
+      
 
 
 
@@ -49,7 +52,7 @@ namespace ReunionWeb.Services
             {
                 reudiatablas = await _neocontext.ReuDia
                 //.Where(a =>  (a.Div == centro & a.Division==div ) | (a.Div == centro & a.Division == div & (a.Fecha>= f1 & a.Fecha <= f2)))
-                .Where(a => (a.Rdcentro == centro & a.Rddiv == div & (a.RdfecReu >= f1 & a.RdfecReu <= f2)))
+                .Where(a => (a.Rdcentro == centro & a.Rddiv == div & (a.Rdstatus!="Listo" & a.Rdstatus != "Cerrado") & (a.RdfecReu >= f1 & a.RdfecReu <= f2)))
                 .Include(b => b.IdksfNavigation)
                 .Include(b => b.IdResReuNavigation)
                 .OrderByDescending(b => b.RdfecReu)
@@ -67,6 +70,25 @@ namespace ReunionWeb.Services
             }
 
         }
+
+        //Consultas para los cambios de estatus en una discrepancia
+        public async Task GetCambioStatus(int idreu)
+        {
+            cambiostatus = await _neocontext.CambStats
+                .Where(a => a.IdReuDia == idreu)
+                .OrderByDescending(b => b.IdCambStat)
+                .ToListAsync();
+        }
+
+        public async Task GetCambioFecha(int idreu)
+        {
+            cambiostatus = await _neocontext.CambStats
+                .Where(a => a.IdReuDia == idreu)
+                .OrderByDescending(b => b.IdCambStat)
+                .ToListAsync();
+        }
+
+
         //obtener discrepancia a editar
         public async Task<ReuDium> GetDiscrepantacia(int id)
         {
@@ -97,7 +119,21 @@ namespace ReunionWeb.Services
             await _neocontext.SaveChangesAsync();
         }
 
-        public async Task UpdateDiscrepancia(ReuDium d, int id, int tipo, string f1, string f2)
+        
+        public async Task InsertCambioStatus(CambStat status)
+        {
+            _neocontext.CambStats.Add(status);
+            await _neocontext.SaveChangesAsync();
+        }
+
+        public async Task InsertCambioFec(CambFec cambiofec)
+        {
+            _neocontext.CambFecs.Add(cambiofec);
+            await _neocontext.SaveChangesAsync();
+        }
+        
+
+        public async Task<bool> UpdateDiscrepancia(ReuDium d, int id, int tipo, string f1, string f2)
         {
             string div = "", centro = "";
             // DateTime f1= DateTime.Now;
@@ -137,19 +173,25 @@ namespace ReunionWeb.Services
             //bdDiscrep.RdnumDis = d.RdnumDis;
             //bdDiscrep.Rdobs = d.Rdobs;
 
-            _neocontext.Entry(bdDiscrep).State = EntityState.Modified;
-            await _neocontext.SaveChangesAsync();
-
-
-            //TODO pasar el tipo, para saber si bsco por fecha de trabajo o reunion
-
-            if (tipo == 0)
+            try
             {
-                _navigationManager.NavigateTo($"pendientes/{centro}/{div}/{f1}/{f2}");
+                _neocontext.Entry(bdDiscrep).State = EntityState.Modified;
+                await _neocontext.SaveChangesAsync();
+                //TODO pasar el tipo, para saber si bsco por fecha de trabajo o reunion
+                
+                if (tipo == 0)
+                {
+                    _navigationManager.NavigateTo($"pendientes/{centro}/{div}/{f1}/{f2}/{tipo}");
+                }
+                else
+                {
+                    _navigationManager.NavigateTo($"reunion/{centro}/{div}/{f1}/{f2}/{tipo}");
+                }
+                return true;
             }
-            else
+            catch (Exception ex)
             {
-                _navigationManager.NavigateTo($"reunion/{centro}/{div}/{f1}/{f2}");
+                return false;
             }
 
 

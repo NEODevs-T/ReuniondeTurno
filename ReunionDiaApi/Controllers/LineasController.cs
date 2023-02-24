@@ -103,6 +103,8 @@ namespace ReunionDiaApi.Controllers
             return Ok(ksfs);
         }
 
+
+
         [HttpGet("Responsables")]
         public async Task<ActionResult<List<Linea>>> GetRespon()
         {
@@ -115,7 +117,7 @@ namespace ReunionDiaApi.Controllers
             return Ok(resporeu);
         }
 
-
+        //Obtener asistencia
         [HttpGet("StatsAsis/{cent}/{f1}/{f2}")]
         public async Task<ActionResult<List<StatsAsisDto>>> GetStatsAsis(string cent, string f1, string f2)
         {

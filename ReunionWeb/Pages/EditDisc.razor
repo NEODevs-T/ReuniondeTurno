@@ -6,7 +6,17 @@
 @inject ILocalStorageService LocalStorage
 
 <h3>Editar Disrepancia</h3>
+<div>
+    <BSCol Column="4">
 
+        @if (cambio == false)
+        {
+            <BSAlert Color="BSColor.Danger" IsDismissible="true" HasIcon="true" @ref="Alertas._alertRef" Dismissed="Alertas.Dismissed">
+                @mensaje
+            </BSAlert>
+        }
+    </BSCol>
+</div>
 
 
 <h4></h4>
@@ -70,7 +80,7 @@
             <BSRow>
                 <BSCol Column="6">
                     <BSLabel>Discrepancia</BSLabel>
-                    <BSInput InputType="InputType.TextArea"  @bind-Value="DiscForm.Rddisc"  />
+                    <BSInput InputType="InputType.TextArea" @bind-Value="DiscForm.Rddisc" />
                     <BSFeedback For="@(() => DiscForm.Rddisc)" ValidMessage="Correcto." />
                 </BSCol>
             </BSRow>
@@ -81,7 +91,7 @@
                 {
                     <BSCol Column="6">
                         <BSLabel>Plan de Accion</BSLabel>
-                        <BSInput InputType="InputType.Text" IsDisabled @bind-Value="DiscForm.RdplanAcc"  />
+                        <BSInput InputType="InputType.Text" IsDisabled @bind-Value="DiscForm.RdplanAcc" />
                     </BSCol>
                 }
                 else
@@ -120,14 +130,14 @@
                 {
                     <BSCol Column="2">
                         <BSLabel>Fecha del Trabajo</BSLabel>
-                        <BSInput InputType="InputType.Date" IsDisabled @bind-Value="DiscForm.RdfecTra" ValidateOnInput="true" />
+                        <BSInput InputType="InputType.Date" IsDisabled @bind-Value="DiscForm.RdfecTra" />
                     </BSCol>
                 }
                 else
                 {
                     <BSCol Column="2">
                         <BSLabel>Fecha del Trabajo</BSLabel>
-                        <BSInput InputType="InputType.Date" @bind-Value="DiscForm.RdfecTra" ValidateOnInput="true" />
+                        <BSInput InputType="InputType.Date" @bind-Value="DiscForm.RdfecTra" />
                     </BSCol>
                 }
 
@@ -231,6 +241,8 @@
             <p></p>
             <BSCol Column="12">
                 <BSButton Color="BSColor.Success" Size="Size.ExtraSmall" IsSubmit>  Guardar <span class="oi oi-check"></span></BSButton>
+                <BSButton Color="BSColor.Danger" Size="Size.ExtraSmall" OnClick=Back>  Atras <span class="oi oi-arrow-left"></span></BSButton>
+
             </BSCol>
         </BSForm>
 
@@ -281,7 +293,7 @@
 
                 <BSCol Column="2">
                     <BSLabel>C. Equipo</BSLabel>
-                    <BSInput InputType="InputType.Text" IsDisabled @bind-Value="DiscForm.RdcodEq" ValidateOnInput="true" />
+                    <BSInput InputType="InputType.Text" IsDisabled @bind-Value="DiscForm.RdcodEq" />
                 </BSCol>
 
 
@@ -290,13 +302,13 @@
             <BSRow>
                 <BSCol Column="4">
                     <BSLabel>Discrepancia</BSLabel>
-                    <BSInput InputType="InputType.Text"  @bind-Value="DiscForm.Rddisc" ValidateOnInput="true" />
+                    <BSInput InputType="InputType.Text" @bind-Value="DiscForm.Rddisc" />
                 </BSCol>
 
 
                 <BSCol Column="6">
                     <BSLabel>Plan de Accion</BSLabel>
-                    <BSInput InputType="InputType.Text" IsDisabled @bind-Value="DiscForm.RdplanAcc" ValidateOnInput="true" />
+                    <BSInput InputType="InputType.Text" IsDisabled @bind-Value="DiscForm.RdplanAcc" />
                 </BSCol>
 
             </BSRow>
@@ -307,13 +319,24 @@
             <BSRow>
 
 
-                <BSInput InputType="InputType.Text" hidden @bind-Value="DiscForm.Rdtiempo" ValidateOnInput="true" />
+                <BSInput InputType="InputType.Text" hidden @bind-Value="DiscForm.Rdtiempo" />
 
+                @if (planificador == "Admin" | planificador == "Planificador")
+                {
+                    <BSCol Column="2">
+                        <BSLabel>Fecha del Trabajo</BSLabel>
+                        <BSInput InputType="InputType.Date" @bind-Value="DiscForm.RdfecTra" />
+                    </BSCol>
 
-                <BSCol Column="2">
-                    <BSLabel>Fecha del Trabajo</BSLabel>
-                    <BSInput InputType="InputType.Date" IsDisabled @bind-Value="DiscForm.RdfecTra" ValidateOnInput="true" />
-                </BSCol>
+                }
+                else
+                {
+                    <BSCol Column="2">
+                        <BSLabel>Fecha del Trabajo</BSLabel>
+                        <BSInput InputType="InputType.Date" @bind-Value="DiscForm.RdfecTra" />
+                    </BSCol>
+                }
+
 
                 <BSCol ColumnSmall="2">
                     <BSLabel>Responsable</BSLabel>
@@ -340,7 +363,7 @@
                         <option value="5">5- Eq. no Disponible</option>
                     </BSInput>
                 </BSCol>
-       
+
                 @if (APIDiv1Service.resporeu.Count() > 0)
                 {
                     if (planificador == "Admin" | planificador == "Planificador")
@@ -351,40 +374,40 @@
                                 <option value="">Seleccione...</option>
                                 @if (tipo == 0)
                                 {
-                                    <option value="Listo">Listo</option>
-                                    <option value="Pendiente/Responsable">Pendiente/Responsable</option>
+                            <option value="Listo">Listo</option>
+                            <option value="Pendiente/Responsable">Pendiente/Responsable</option>
 
                                 }
                                 else
                                 {
-                                    <option value="Revisar">Revisar</option>
+                            <option value="Revisar">Revisar</option>
                                 }
 
-                                    <option value="Pendiente">Pendiente</option>
-                            <BSFeedback For="@(() => DiscForm.Rdstatus)" ValidMessage="Correcto." />
-                        </BSInput>
+                        <option value="Pendiente">Pendiente</option>
+                        <BSFeedback For="@(() => DiscForm.Rdstatus)" ValidMessage="Correcto." />
+                    </BSInput>
                 </BSCol>
                     }
 
                     else
                     {
-                         <BSCol ColumnSmall="2">
+                        <BSCol ColumnSmall="2">
                             <BSLabel>Status</BSLabel>
                             <BSInput InputType="InputType.Select" @bind-Value="DiscForm.Rdstatus">
                                 <option value="">Seleccione...</option>
                                 @if (tipo == 0)
                                 {
-                                    <option value="Listo">Listo</option>
+                            <option value="Listo">Listo</option>
                                 }
                                 else
                                 {
-                                    <option value="Revisar">Revisar</option>
+                            <option value="Revisar">Revisar</option>
                                 }
 
-                                    <option value="Pendiente">Pendiente</option>
-                            <BSFeedback For="@(() => DiscForm.Rdstatus)" ValidMessage="Correcto." />
-                        </BSInput>
-                    </BSCol>
+                        <option value="Pendiente">Pendiente</option>
+                        <BSFeedback For="@(() => DiscForm.Rdstatus)" ValidMessage="Correcto." />
+                    </BSInput>
+                </BSCol>
                     }
 
 
@@ -392,14 +415,14 @@
                     {
                         <BSCol Column="2">
                             <BSLabel>ODT</BSLabel>
-                            <BSInput InputType="InputType.Text" @bind-Value="DiscForm.Rdodt" ValidateOnInput="true" />
+                            <BSInput InputType="InputType.Text" @bind-Value="DiscForm.Rdodt" />
                         </BSCol>
                     }
                     else
                     {
                         <BSCol Column="2">
                             <BSLabel>ODT</BSLabel>
-                            <BSInput InputType="InputType.Text" IsDisabled @bind-Value="DiscForm.Rdodt" ValidateOnInput="true" />
+                            <BSInput InputType="InputType.Text" IsDisabled @bind-Value="DiscForm.Rdodt" />
                         </BSCol>
                     }
                 }
@@ -412,6 +435,7 @@
             <p></p>
             <BSCol Column="12">
                 <BSButton Color="BSColor.Success" Size="Size.ExtraSmall" IsSubmit>  Guardar <span class="oi oi-check"></span></BSButton>
+                <BSButton Color="BSColor.Danger" Size="Size.ExtraSmall" OnClick=Back>  Atras <span class="oi oi-arrow-left"></span></BSButton>
             </BSCol>
         </BSForm>
 
@@ -431,22 +455,28 @@
     [Parameter]
     public string? f2 { get; set; }
 
-    string _message = "";
-    ReuDium DiscForm = new ReuDium();
-    private List<ReuDium> bdDiv1slist = new List<ReuDium>();
-    private DateTime fechahoy, fechatrabajo = DateTime.Today;
-    private string fechahoy2, Emp = "", planificador;//Variable para verificar si es el usuario del planificador;
+    string _message = "", mensaje = "Ocurrió un error al registrar la información. Intente de nuevo";
+    bool cambio = true;
 
-    private List<Claim> claims { get; set; }
+    ReuDium DiscForm = new ReuDium();//Formulario para editar, la discrepancia
+    CambStat CambStat = new CambStat();//Formulario para agregar que usuario hizo el cambio de status.
+    CambFec CambFec = new CambFec();//Formulario para agregar que usuario hizo el cambio de fecha.
+
+    private Alerts Alertas = new Alerts();
+
+    private DateTime fechahoy, fechatrabajo = DateTime.Today;
+    private string fechahoy2, Emp = "";//Empresa
+    private string planificador;//Variable para verificar si es el usuario del planificador;
+    private string camStat;//Variable para verificar si es el usuario cambio el Status;
+    private DateTime camFec;//Variable para verificar si es el usuario cambio la Fecha;
+
+    private List<Claim> claims { get; set; }//obtener datos del token
 
     private async Task CreateData()
-
     {
         var authState = await AuthStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;
         claims = Enumerable.ToList(user.Claims);
-
-
     }
 
     protected override async Task OnParametersSetAsync()
@@ -455,12 +485,55 @@
         Emp = claims[5].Value;
         planificador = claims[1].Value;
         DiscForm = await DbDiv1Service.GetDiscrepantacia((int)Id);
+
+        camStat = DiscForm.Rdstatus;
+        camFec = DiscForm.RdfecTra;
+
         await APIDiv1Service.Getksf();
         await APIDiv1Service.GetResReu();
     }
+
+    async Task Back()
+    {
+        if (tipo == 0)
+                {
+
+                    NavigationManager.NavigateTo($"pendientes/{DiscForm.Rdcentro}/{DiscForm.Rddiv}/{f1}/{f2}/{tipo}");
+                }
+                else
+                {
+                    NavigationManager.NavigateTo($"reunion/{DiscForm.Rdcentro}/{DiscForm.Rddiv}/{f1}/{f2}/{tipo}");
+                }
+    }
     async Task Editar()
     {
+        try
+        {
+            cambio = await DbDiv1Service.UpdateDiscrepancia(DiscForm, (int)Id, (int)tipo, f1, f2);
 
-        await DbDiv1Service.UpdateDiscrepancia(DiscForm, (int)Id, (int)tipo, f1, f2);
+            if (camStat != DiscForm.Rdstatus & cambio==true)
+            {
+                CambStat.IdReuDia = (int)Id;
+                CambStat.Cbfecha = DateTime.Now;
+                CambStat.Cbstat = DiscForm.Rdstatus;
+                CambStat.Cbuser = claims[2].Value + " " + claims[3].Value;
+
+                await DbDiv1Service.InsertCambioStatus(CambStat);
+            }
+            if (camFec != DiscForm.RdfecTra  & cambio==true)
+            {
+                CambFec.IdReuDia = (int)Id;
+                CambFec.Cffec = DateTime.Now;
+                CambFec.CffecNew = DiscForm.RdfecTra;
+                CambFec.Cfuser = claims[2].Value + " " + claims[3].Value;
+
+                await DbDiv1Service.InsertCambioFec(CambFec);
+            }
+        }
+        catch (Exception ex)
+        {
+            
+        }
+
     }
     }

@@ -77,6 +77,7 @@ namespace ReunionWeb.NeoDbs
                     .HasColumnType("datetime")
                     .HasColumnName("CFFec");
 
+
                 entity.Property(e => e.CffecNew)
                     .HasColumnType("datetime")
                     .HasColumnName("CFFecNew");
@@ -86,15 +87,15 @@ namespace ReunionWeb.NeoDbs
                     .IsUnicode(false)
                     .HasColumnName("CFUser");
 
-                entity.Property(e => e.IdReuDia)
-                    .HasMaxLength(10)
-                    .IsFixedLength();
 
-                entity.HasOne(d => d.IdCambFecNavigation)
-                    .WithOne(p => p.CambFec)
-                    .HasForeignKey<CambFec>(d => d.IdCambFec)
+
+                entity.HasOne(d => d.IdReuDiaNavigation)
+                    .WithMany(p => p.CambFec)
+                     .HasForeignKey(d => d.IdReuDia)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_CambFec_ReuDia");
+
+
             });
 
             modelBuilder.Entity<CambStat>(entity =>

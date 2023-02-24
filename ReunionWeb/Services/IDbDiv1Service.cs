@@ -22,15 +22,20 @@ namespace ReunionWeb.Services
          List<Division> divisionss { get; set; }
          List<AsistenReu> asistenreus { get; set; }
          List<CargoReu> cargoreuss { get; set; }
+         List<CambStat> cambiostatus { get; set; }
+         List<CambFec> cambiofecha { get; set; }
 
         Task GetPendientes(string centro, string div, DateTime f1, DateTime f2, string tipo);
+        Task GetCambioStatus(int idreu);
+        Task GetCambioFecha(int idreu);
         Task<ReuDium> GetDiscrepantacia(int id);
         //Task<ReunionDium> GetDiscrepantacia(int id);
         Task Insertasistencia(Asistencium asistencium);
        // Task Insertasistencia(Asistencium asistencium);
         Task InsertDiscrepancia(ReuDium discre);
-        //Task InsertDiscrepancia(ReunionDium bdDiv1);
-        Task UpdateDiscrepancia(ReuDium bdDiv1, int id, int tipo, string f1, string f2);
+        Task InsertCambioStatus(CambStat status);//Insertar usuario que cambio el status
+        Task InsertCambioFec(CambFec cambiofec);//Insertar el usuarrio que cambio la fecha de trabajo.
+        Task<bool> UpdateDiscrepancia(ReuDium bdDiv1, int id, int tipo, string f1, string f2);
         //Task UpdateDiscrepancia(ReunionDium bdDiv1, int id, int tipo, string f1, string f2);
 
     }
