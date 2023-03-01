@@ -87,7 +87,7 @@
             <p></p>
 
             <BSRow>
-                @if (tipo == 0)
+                @if (tipo == 0 | tipo == 2)
                 {
                     <BSCol Column="6">
                         <BSLabel>Plan de Accion</BSLabel>
@@ -109,7 +109,7 @@
 
             <BSRow>
 
-                @if (tipo == 0)
+                @if (tipo == 0 | tipo == 2)
                 {
                     <BSCol Column="2">
                         <BSLabel>Tiempo (Min)</BSLabel>
@@ -126,7 +126,7 @@
                 }
 
 
-                @if (tipo == 0)
+                @if (tipo == 0 | tipo == 2)
                 {
                     <BSCol Column="2">
                         <BSLabel>Fecha del Trabajo</BSLabel>
@@ -153,7 +153,7 @@
                     <BSFeedback For="@(() => DiscForm.IdResReu)" ValidMessage="Correcto." />
                 </BSCol>
 
-                @if (tipo == 0)
+                @if (tipo == 0 | tipo == 2)
                 {
                     <BSCol Column="2">
                         <BSLabel>Fecha Reunión</BSLabel>
@@ -164,7 +164,7 @@
             <p></p>
             <BSRow>
 
-                @if (tipo == 0)
+                @if (tipo == 0 | tipo == 2)
                 {
                     <BSCol ColumnSmall="2">
                         <BSLabel>Código</BSLabel>
@@ -202,7 +202,7 @@
                     <BSLabel>Status</BSLabel>
                     <BSInput InputType="InputType.Select" @bind-Value="DiscForm.Rdstatus">
                         <option value="">Seleccione...</option>
-                        @if (tipo == 0)
+                        @if (tipo == 0 | tipo == 2)
                         {
                             <option value="Listo">Listo</option>
                             <option value="Cerrado">Cerrado</option>
@@ -372,7 +372,7 @@
                             <BSLabel>Status</BSLabel>
                             <BSInput InputType="InputType.Select" @bind-Value="DiscForm.Rdstatus">
                                 <option value="">Seleccione...</option>
-                                @if (tipo == 0)
+                                @if (tipo == 0 | tipo == 2)
                                 {
                             <option value="Listo">Listo</option>
                             <option value="Pendiente/Responsable">Pendiente/Responsable</option>
@@ -395,7 +395,7 @@
                             <BSLabel>Status</BSLabel>
                             <BSInput InputType="InputType.Select" @bind-Value="DiscForm.Rdstatus">
                                 <option value="">Seleccione...</option>
-                                @if (tipo == 0)
+                                @if (tipo == 0 | tipo == 2)
                                 {
                             <option value="Listo">Listo</option>
                                 }
@@ -496,14 +496,18 @@
     async Task Back()
     {
         if (tipo == 0)
-                {
+        {
 
-                    NavigationManager.NavigateTo($"pendientes/{DiscForm.Rdcentro}/{DiscForm.Rddiv}/{f1}/{f2}/{tipo}");
-                }
-                else
-                {
-                    NavigationManager.NavigateTo($"reunion/{DiscForm.Rdcentro}/{DiscForm.Rddiv}/{f1}/{f2}/{tipo}");
-                }
+            NavigationManager.NavigateTo($"pendientes/{DiscForm.Rdcentro}/{DiscForm.Rddiv}/{f1}/{f2}/{tipo}");
+        }
+        else if (tipo == 2)
+        {
+            NavigationManager.NavigateTo($"pendientes/{DiscForm.Rdcentro}/{DiscForm.Rddiv}/{f1}/{f2}/{tipo}");
+        }
+        else
+        {
+            NavigationManager.NavigateTo($"reunion/{DiscForm.Rdcentro}/{DiscForm.Rddiv}/{f1}/{f2}/{tipo}");
+        }
     }
     async Task Editar()
     {
@@ -511,7 +515,7 @@
         {
             cambio = await DbDiv1Service.UpdateDiscrepancia(DiscForm, (int)Id, (int)tipo, f1, f2);
 
-            if (camStat != DiscForm.Rdstatus & cambio==true)
+            if (camStat != DiscForm.Rdstatus & cambio == true)
             {
                 CambStat.IdReuDia = (int)Id;
                 CambStat.Cbfecha = DateTime.Now;
@@ -520,7 +524,7 @@
 
                 await DbDiv1Service.InsertCambioStatus(CambStat);
             }
-            if (camFec != DiscForm.RdfecTra  & cambio==true)
+            if (camFec != DiscForm.RdfecTra & cambio == true)
             {
                 CambFec.IdReuDia = (int)Id;
                 CambFec.Cffec = DateTime.Now;
@@ -532,7 +536,7 @@
         }
         catch (Exception ex)
         {
-            
+
         }
 
     }

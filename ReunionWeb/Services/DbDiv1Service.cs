@@ -48,6 +48,8 @@ namespace ReunionWeb.Services
         //obtener discrepancias para pendientes y reunion 
         public async Task GetPendientes(string centro, string div, DateTime f1, DateTime f2, string tipo)
         {
+            //tipo 0 Pendientes para 
+
             if (tipo == "1")
             {
                 reudiatablas = await _neocontext.ReuDia
@@ -58,11 +60,19 @@ namespace ReunionWeb.Services
                 .OrderByDescending(b => b.RdfecReu)
                 .ToListAsync();
             }
-            else
+            else if (tipo == "0")
             {
                 reudiatablas = await _neocontext.ReuDia
                 //.Where(a =>  (a.Div == centro & a.Division==div ) | (a.Div == centro & a.Division == div & (a.Fecha>= f1 & a.Fecha <= f2)))
                 .Where(a => (a.Rdcentro == centro & a.Rddiv == div & (a.RdfecTra >= f1 & a.RdfecTra <= f2)))
+                .Include(b => b.IdksfNavigation)
+                .Include(b => b.IdResReuNavigation)
+                .OrderByDescending(b => b.RdfecReu)
+                .ToListAsync();
+            }else if (tipo == "2")
+            {
+                reudiatablas = await _neocontext.ReuDia
+                .Where(a => (a.Rdcentro == centro & a.Rddiv == div & (a.RdfecReu >= f1 & a.RdfecReu <= f2)))
                 .Include(b => b.IdksfNavigation)
                 .Include(b => b.IdResReuNavigation)
                 .OrderByDescending(b => b.RdfecReu)
@@ -183,10 +193,14 @@ namespace ReunionWeb.Services
                 {
                     _navigationManager.NavigateTo($"pendientes/{centro}/{div}/{f1}/{f2}/{tipo}");
                 }
-                else
+                else if (tipo == 1)
                 {
                     _navigationManager.NavigateTo($"reunion/{centro}/{div}/{f1}/{f2}/{tipo}");
+                }else if (tipo == 2)
+                {
+                    _navigationManager.NavigateTo($"pendientes/{centro}/{div}/{f1}/{f2}/{tipo}");
                 }
+                
                 return true;
             }
             catch (Exception ex)

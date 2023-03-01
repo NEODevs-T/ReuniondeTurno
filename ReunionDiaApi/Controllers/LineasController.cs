@@ -83,7 +83,8 @@ namespace ReunionDiaApi.Controllers
         {
 
             cargoreus = await _context.CargoReus
-                .Where(a => a.Cearea == div)
+                .Where(a => a.Cearea == div & a.Cresta==true)
+
                 .ToListAsync();
 
             return Ok(cargoreus);

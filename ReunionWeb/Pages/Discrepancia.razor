@@ -105,7 +105,7 @@
 
         @if (APIDiv1Service.centro.Count > 0)
         {
-            @if (Reuniondb.Rdcentro == "Conversión")
+            @if (Reuniondb.Rdcentro == "Conversión" | Reuniondb.Rdcentro == "Molinos")
             {
                 <BSCol Column="4">
                     <BSLabel>C. Equipo</BSLabel>
@@ -216,6 +216,10 @@
     private DateTime fechahoy, fechatrabajo = DateTime.Today;
     private string fechahoy2;
 
+    CambStat CambStat = new CambStat();//Formulario para agregar que usuario hizo el cambio de status.
+    CambFec CambFec = new CambFec();//Formulario para agregar que usuario hizo el cambio de fecha.
+
+
     [Required(ErrorMessage = "Seleccione la división.")]
     private int? IdDiv { get; set; }
 
@@ -297,7 +301,8 @@
                 else
                 {
                     await DbDiv1Service.InsertDiscrepancia(Reuniondb);
-                    //await APIDiv1Service.PostDiscrepancia(Reuniondb);
+                    //await APIDiv1Service.PostDiscrepancia(Reuniondb);                   
+                    
                     mensaje = "Registro Exitoso";
                     Reuniondb = new ReuDium();
                     IdDiv = null;
