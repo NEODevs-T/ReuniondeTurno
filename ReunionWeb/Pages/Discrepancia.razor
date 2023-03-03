@@ -96,6 +96,14 @@
             </BSInput>
             <BSFeedback For="@(() => Reuniondb.Rdarea)" ValidMessage="Correcto." />
         </BSCol>
+        <BSCol>
+            <BSRow>
+                <BSLabel>Recargar Equipos</BSLabel>
+            </BSRow>
+
+            <BSButton Color="BSColor.Success" Size="Size.ExtraSmall" IsOutlined>  <span class="oi oi-reload"></span>  </BSButton>
+
+        </BSCol>
 
 
 
@@ -135,6 +143,7 @@
 
         <BSCol Column="2">
             <BSLabel>Ksf</BSLabel>
+            
             <BSInput InputType="InputType.Select" @bind-Value="Reuniondb.Idksf">
 
                 <option value="">Seleccione...</option>
@@ -191,6 +200,7 @@
     <BSCol Column="12">
         <BSButton Color="BSColor.Success" Size="Size.ExtraSmall" IsSubmit>  Guardar <span class="oi oi-check"></span></BSButton>
         <BSButton Color="BSColor.Primary" Size="Size.ExtraSmall" IsReset>  Nuevo </BSButton>
+
     </BSCol>
 </BSForm>
 @code {
@@ -215,6 +225,7 @@
     private string _message = "";
     private DateTime fechahoy, fechatrabajo = DateTime.Today;
     private string fechahoy2;
+    private int Idretornado;
 
     CambStat CambStat = new CambStat();//Formulario para agregar que usuario hizo el cambio de status.
     CambFec CambFec = new CambFec();//Formulario para agregar que usuario hizo el cambio de fecha.
@@ -236,19 +247,16 @@
         {
             await APIDiv1Service.GetCentros("All");
 
-            if (claims[6].Value == "Conversión")
+            if (claims[6].Value == "Conversión" | claims[6].Value == "Molinos")
             {
-                await APIDiv1Service.GetEquiposEAM("Conversión");
+                await APIDiv1Service.GetEquiposEAM("All");
             }
         }
         else
         {
             await APIDiv1Service.GetCentros(claims[6].Value.ToString());
+            await APIDiv1Service.GetEquiposEAM(claims[6].Value.ToString());
 
-            if (claims[6].Value == "Conversión")
-            {
-                await APIDiv1Service.GetEquiposEAM("Conversión");
-            }
         }
 
         await APIDiv1Service.Getksf();
@@ -269,6 +277,7 @@
                 Reuniondb.RdfecReu = (fechahoy = DateTime.Now);
                 Reuniondb.RdfecTra = fechatrabajo;
 
+                //Asigno el id de la division al form
                 foreach (var d in APIDiv1Service.centro)
                 {
                     foreach (var f in d.Lineas)
@@ -300,9 +309,37 @@
                 }
                 else
                 {
-                    await DbDiv1Service.InsertDiscrepancia(Reuniondb);
-                    //await APIDiv1Service.PostDiscrepancia(Reuniondb);                   
-                    
+                   Idretornado= await DbDiv1Service.InsertDiscrepancia(Reuniondb);
+                    //await APIDiv1Service.PostDiscrepancia(Reuniondb);
+
+
+                    try
+                    {
+
+                        if (Idretornado !=0  )
+                        {
+                            CambStat.IdReuDia = Idretornado;
+                            CambStat.Cbfecha = DateTime.Now;
+                            CambStat.Cbstat =Reuniondb.Rdstatus;
+                            CambStat.Cbuser = claims[2].Value + " " + claims[3].Value;
+
+                            await DbDiv1Service.InsertCambioStatus(CambStat);
+                        }
+                        if (Idretornado !=0)
+                        {
+                            CambFec.IdReuDia = Idretornado;
+                            CambFec.Cffec = DateTime.Now;
+                            CambFec.CffecNew = Reuniondb.RdfecTra;
+                            CambFec.Cfuser = claims[2].Value + " " + claims[3].Value;
+
+                            await DbDiv1Service.InsertCambioFec(CambFec);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+
+                    }
+
                     mensaje = "Registro Exitoso";
                     Reuniondb = new ReuDium();
                     IdDiv = null;

@@ -119,14 +119,16 @@ namespace ReunionWeb.Services
 
             _context.Asistencia.Add(asistencium);
             await _context.SaveChangesAsync();
+          
 
         }
 
 
-        public async Task InsertDiscrepancia(ReuDium discre)
+        public async Task<int> InsertDiscrepancia(ReuDium discre)
         {
             _neocontext.ReuDia.Add(discre);
             await _neocontext.SaveChangesAsync();
+            return discre.IdReuDia;
         }
 
         

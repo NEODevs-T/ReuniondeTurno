@@ -60,10 +60,21 @@ namespace ReunionDiaApi.Controllers
 
         [HttpGet("Equipos/{cent}")]
         public async Task<ActionResult<List<EquipoEam>>> EquiposEAM(string cent)
-        {          
+        {
+            if (cent == "All")
+            {
                 equipos = await _context.EquipoEams
-                .Include(x =>x.IdLineaNavigation)
+               .Include(x => x.IdLineaNavigation)
+             .ToListAsync();
+            }
+            else
+            {
+                equipos = await _context.EquipoEams
+                .Include(x => x.IdLineaNavigation)
+                .Where(x=>x.IdLineaNavigation.IdDivisionNavigation.IdCentroNavigation.Cnom== cent)
               .ToListAsync();
+            }
+               
             return Ok(equipos);
         }
 
