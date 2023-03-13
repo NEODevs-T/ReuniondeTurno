@@ -51,6 +51,7 @@ namespace ReunionWeb.NeoDbs
                     .HasMaxLength(50)
                     .IsUnicode(false)
                     .HasColumnName("ARArea");
+            
 
                 entity.Property(e => e.Arfecha)
                     .HasColumnType("date")

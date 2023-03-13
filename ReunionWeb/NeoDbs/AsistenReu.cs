@@ -10,6 +10,7 @@ namespace ReunionWeb.NeoDbs
         public DateTime? Arfecha { get; set; }
         public int AridCargoR { get; set; }
         public int ArAsistente { get; set; }
+        public int ArSuplente { get; set; }
         public string? ArObser { get; set; }
 
         public virtual CargoReu AridCargoRNavigation { get; set; } = null!;

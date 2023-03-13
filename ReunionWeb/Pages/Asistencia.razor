@@ -18,7 +18,7 @@
                 @mensaje
             </BSAlert>
         }
-        else if (@mensaje == "Error al Insertar los datos, Intente de Nuevo" | mensaje == "Seleccione el area." | mensaje== "Solo se puede registrar a las 9:00 am")
+        else if (@mensaje == "Error al Insertar los datos, Intente de Nuevo" | mensaje == "Seleccione el area." | mensaje == "Solo se puede registrar a las 9:00 am")
         {
 
             <BSAlert Color="BSColor.Warning" IsDismissible="true" HasIcon="true" @ref="_alertRef" Dismissed="Dismissed">
@@ -65,13 +65,13 @@
                     <option value="@d.Cnom">@d.Cnom</option>
                     }
             </BSInput>
-            </BSCol>
+        </BSCol>
 
-            <BSCol ColumnSmall="3">
-                <BSButton IsOutlined Color="BSColor.Success" Size="Size.ExtraSmall" @onclick="Get">   Asistentes  <span class="oi oi-check"></span></BSButton>
-            </BSCol>
+        <BSCol ColumnSmall="3">
+            <BSButton IsOutlined Color="BSColor.Success" Size="Size.ExtraSmall" @onclick="Get">   Asistentes  <span class="oi oi-check"></span></BSButton>
+        </BSCol>
 
-        </BSRow>
+    </BSRow>
 
     }
 
@@ -94,7 +94,8 @@
 
                     <BSTD>Personal</BSTD>
                     <BSTD>Presencia</BSTD>
-                  
+                    <BSTD>Suplencia</BSTD>
+
                 </BSTR>
             </BSTHead>
             <BSTBody>
@@ -111,6 +112,12 @@
                                 <BSLabel IsCheckLabel="true">
 
                                 </BSLabel>
+                            </div>
+                        </BSTD>
+                        <BSTD>
+                            <div Class="@BS.Form_Check">
+                                <BSInputCheckbox CheckedValue="@(1)" Value="@(0)" />
+                             
                             </div>
                         </BSTD>
 
@@ -230,9 +237,10 @@ else if (dataIsLoaded == 1 && DbDiv1Service.dbDiv1s.Count() == 0)
 
         int time = int.Parse(DateTime.Now.ToString("hh"));
         try
-        {   if(time==9)
+        {
+            if (time == 9)
             {
-                mensaje=await APIDiv1Service.Postasistencia(listaAsistencia);              
+                mensaje = await APIDiv1Service.Postasistencia(listaAsistencia);
                 dataIsLoaded = 0;
                 Show();
             }

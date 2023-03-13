@@ -71,6 +71,7 @@ namespace ReunionDiaApi.Controllers
             {
                 equipos = await _context.EquipoEams
                 .Include(x => x.IdLineaNavigation)
+                .ThenInclude(y =>y.IdDivisionNavigation)
                 .Where(x=>x.IdLineaNavigation.IdDivisionNavigation.IdCentroNavigation.Cnom== cent)
               .ToListAsync();
             }
@@ -200,6 +201,7 @@ namespace ReunionDiaApi.Controllers
                         insertar.Arfecha = list[i].Arfecha;
                         insertar.AridCargoR = list[i].AridCargoR;
                         insertar.ArAsistente = list[i].ArAsistente;
+                        insertar.ArSuplente = list[i].ArAsistente;
                         insertar.Ararea = list[i].Ararea;
 
                         _context.AsistenReus.Add(insertar);

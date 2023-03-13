@@ -54,7 +54,7 @@ namespace ReunionWeb.Services
             {
                 reudiatablas = await _neocontext.ReuDia
                 //.Where(a =>  (a.Div == centro & a.Division==div ) | (a.Div == centro & a.Division == div & (a.Fecha>= f1 & a.Fecha <= f2)))
-                .Where(a => (a.Rdcentro == centro & a.Rddiv == div & (a.Rdstatus!="Listo" & a.Rdstatus != "Cerrado") & (a.RdfecReu >= f1 & a.RdfecReu <= f2)))
+                .Where(a => (a.Rdcentro == centro & a.Rddiv == div & (a.Rdstatus!="Listo" & a.Rdstatus != "Cerrado")))
                 .Include(b => b.IdksfNavigation)
                 .Include(b => b.IdResReuNavigation)
                 .OrderByDescending(b => b.RdfecReu)
