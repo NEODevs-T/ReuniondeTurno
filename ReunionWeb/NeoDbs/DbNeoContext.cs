@@ -210,6 +210,12 @@ namespace ReunionWeb.NeoDbs
                     .IsUnicode(false)
                     .HasColumnName("ENombreEAM");
 
+                entity.Property(e => e.EdescriEam)
+                 .IsUnicode(false)
+                 .HasColumnName("EDescriEAM");
+
+                entity.Property(e => e.EestaEam).HasColumnName("EEstaEAM");
+
                 entity.HasOne(d => d.IdLineaNavigation)
                     .WithMany(p => p.EquipoEams)
                     .HasForeignKey(d => d.IdLinea)

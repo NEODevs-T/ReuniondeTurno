@@ -54,7 +54,7 @@ namespace ReunionWeb.Services
             {
                 reudiatablas = await _neocontext.ReuDia
                 //.Where(a =>  (a.Div == centro & a.Division==div ) | (a.Div == centro & a.Division == div & (a.Fecha>= f1 & a.Fecha <= f2)))
-                .Where(a => (a.Rdcentro == centro & a.Rddiv == div & (a.Rdstatus!="Listo" & a.Rdstatus != "Cerrado")))
+                .Where(a => (a.Rdcentro == centro & a.Rddiv == div & (a.Rdstatus!="Listo" & a.Rdstatus != "Cerrado")&& (a.RdfecReu >= f1 & a.RdfecReu <= f2)))
                 .Include(b => b.IdksfNavigation)
                 .Include(b => b.IdResReuNavigation)
                 .OrderByDescending(b => b.RdfecReu)
@@ -86,15 +86,15 @@ namespace ReunionWeb.Services
         {
             cambiostatus = await _neocontext.CambStats
                 .Where(a => a.IdReuDia == idreu)
-                .OrderByDescending(b => b.IdCambStat)
+               // .OrderByDescending(b => b.IdCambStat)
                 .ToListAsync();
         }
 
         public async Task GetCambioFecha(int idreu)
         {
-            cambiostatus = await _neocontext.CambStats
+            cambiofecha = await _neocontext.CambFecs
                 .Where(a => a.IdReuDia == idreu)
-                .OrderByDescending(b => b.IdCambStat)
+                //.OrderByDescending(b => b.IdCambFec)
                 .ToListAsync();
         }
 
@@ -143,7 +143,14 @@ namespace ReunionWeb.Services
             _neocontext.CambFecs.Add(cambiofec);
             await _neocontext.SaveChangesAsync();
         }
-        
+        //Insertar discrepancia con chismoso
+        public async Task<bool> InsertarRegistros(CambFec data, CambStat data2)
+        {        
+                _neocontext.CambFecs.Add(data);            
+                _neocontext.CambStats.Add(data2);
+            
+            return await _neocontext.SaveChangesAsync() > 0;
+        }
 
         public async Task<bool> UpdateDiscrepancia(ReuDium d, int id, int tipo, string f1, string f2)
         {

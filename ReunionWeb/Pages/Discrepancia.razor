@@ -20,7 +20,7 @@
                 @mensaje
             </BSAlert>
         }
-        else if (@mensaje == "Error al Insertar los datos, Intente de Nuevo" | mensaje == "Seleccione el area." | mensaje == "Seleccione la division." | mensaje == "Llene la discrepancia" | mensaje == "Seleccione status" | mensaje == "Seleccione responsable")
+        else if (@mensaje == "Error de conexión, Intente de nuevo " | mensaje == "Seleccione el area." | mensaje == "Seleccione la division." | mensaje == "Llene la discrepancia" | mensaje == "Seleccione status" | mensaje == "Seleccione responsable")
         {
             <BSAlert Color="BSColor.Warning" IsDismissible="true" HasIcon="true" @ref="Alertas._alertRefWar" Dismissed="Alertas.Dismissed">
                 @mensaje
@@ -28,7 +28,7 @@
         }
         else if (@mensaje != "")
         {
-            <BSAlert Color="BSColor.Danger" IsDismissible="true" HasIcon="true" @ref="Alertas._alertRefErr" Dismissed="Alertas.Dismissed">
+            <BSAlert Color="BSColor.Warning" IsDismissible="true" HasIcon="true" @ref="Alertas._alertRefErr" Dismissed="Alertas.Dismissed">
                 @mensaje
             </BSAlert>
         }
@@ -62,7 +62,7 @@
 
         <BSCol Column="2">
             <BSLabel>Division</BSLabel>
-            <BSInput InputType="InputType.Select" @bind-Value="IdDiv" >
+            <BSInput InputType="InputType.Select" @bind-Value="IdDiv">
                 <option value="">Seleccione...</option>
                 @foreach (var d in APIDiv1Service.centro)
                 {
@@ -70,7 +70,7 @@
                     {
                         if (Reuniondb.Rdcentro == d.Cnom)
                         {
-                            <option  value="@e.IdDivision">@e.Dnombre</option>
+                            <option value="@e.IdDivision">@e.Dnombre</option>
                         }
                     }
                 }
@@ -81,7 +81,7 @@
 
         <BSCol Column="3">
             <BSLabel>Línea</BSLabel>
-            <BSInput InputType="InputType.Select" @bind-Value="Reuniondb.Rdarea" >
+            <BSInput InputType="InputType.Select" @bind-Value="Reuniondb.Rdarea">
                 <option value="">Seleccione...</option>
                 @foreach (var d in APIDiv1Service.centro)
                 {
@@ -89,7 +89,7 @@
                     {
                         if (IdDiv == e.IdDivisionNavigation.IdDivision)
                         {
-                            <option   value="@e.Lnom">@e.Lnom</option>
+                            <option value="@e.Lnom">@e.Lnom</option>
                         }
                     }
                 }
@@ -109,7 +109,7 @@
                 <BSLabel>Filtrar: </BSLabel>
             </BSRow>
 
-     
+
             <BSInputRadio CheckedValue="@("0")" @bind-Value="tipoequipo" IsToggle="true" Size="Size.ExtraSmall" Color="BSColor.Success" IsOutlined="true">
                 <span class="oi oi-list"></span>
             </BSInputRadio>
@@ -126,8 +126,8 @@
             {
                 <BSCol Column="4">
                     <BSLabel>C. Equipo</BSLabel>
-                    <BSInput InputType="InputType.Select"  @bind-Value="Reuniondb.RdcodEq">
-                       
+                    <BSInput InputType="InputType.Select" @bind-Value="Reuniondb.RdcodEq">
+
                         <option value="">Seleccione...</option>
                         @foreach (var d in APIDiv1Service.equipos)
                         {
@@ -191,10 +191,10 @@
                     <BSFeedback For="@(() => Reuniondb.RdcodEq)" ValidMessage="Correcto." />*@
             </BSCol>
         }
-      @*  else if (APIDiv1Service.centro.Count == 0 & tipoequipo == "1")
-        {
+        @*  else if (APIDiv1Service.centro.Count == 0 & tipoequipo == "1")
+            {
             <p>No se encuentran equipos, cambie a campo de texto.</p>
-        }*@
+            }*@
 
 
         <BSCol Column="2">
@@ -285,7 +285,6 @@
     private string fechahoy2;
     private int Idretornado;
     private string tipoequipo { get; set; } = "1";//validar si es lista o busqueda de equipo
-
     CambStat CambStat = new CambStat();//Formulario para agregar que usuario hizo el cambio de status.
     CambFec CambFec = new CambFec();//Formulario para agregar que usuario hizo el cambio de fecha.
 
@@ -301,7 +300,7 @@
     protected override async Task OnInitializedAsync()
     {
 
-        await CreateData(); 
+        await CreateData();
         await APIDiv1Service.Getksf();
         await APIDiv1Service.GetResReu();
         if (claims[1].Value == "Admin")
@@ -340,7 +339,7 @@
                 Reuniondb.RdfecTra = fechatrabajo;
 
                 //Guara cod equipo si es por la lista
-                if (tipoequipo=="1")
+                if (tipoequipo == "1")
                 {
                     Reuniondb.RdcodEq = selectedEquipoId;
 
@@ -377,40 +376,45 @@
                 }
                 else
                 {
-                    Idretornado = await DbDiv1Service.InsertDiscrepancia(Reuniondb);
+                    //Idretornado = await DbDiv1Service.InsertDiscrepancia(Reuniondb);
                     //await APIDiv1Service.PostDiscrepancia(Reuniondb);
 
 
-                    try
-                    {
+                    //if (Idretornado != 0)
+                    //{
+                    //    CambStat.IdReuDia = Idretornado;
+                    //    CambStat.Cbfecha = DateTime.Now;
+                    //    CambStat.Cbstat = "Pendiente";
+                    //    CambStat.Cbuser = claims[2].Value + " " + claims[3].Value;
 
-                        if (Idretornado != 0)
-                        {
-                            CambStat.IdReuDia = Idretornado;
-                            CambStat.Cbfecha = DateTime.Now;
-                            CambStat.Cbstat = Reuniondb.Rdstatus;
-                            CambStat.Cbuser = claims[2].Value + " " + claims[3].Value;
+                    //    await DbDiv1Service.InsertCambioStatus(CambStat);
+                    //}
+                    //if (Idretornado != 0)
+                    //{
+                    //    CambFec.IdReuDia = Idretornado;
+                    //    CambFec.Cffec = DateTime.Now;
+                    //    CambFec.CffecNew = DateTime.Now;
+                    //    CambFec.Cfuser = claims[2].Value + " " + claims[3].Value;
 
-                            await DbDiv1Service.InsertCambioStatus(CambStat);
-                        }
-                        if (Idretornado != 0)
-                        {
-                            CambFec.IdReuDia = Idretornado;
-                            CambFec.Cffec = DateTime.Now;
-                            CambFec.CffecNew = Reuniondb.RdfecTra;
-                            CambFec.Cfuser = claims[2].Value + " " + claims[3].Value;
+                    //    await DbDiv1Service.InsertCambioFec(CambFec);
+                    //}
+                    CambStat.IdReuDiaNavigation = Reuniondb;
+                    CambStat.Cbfecha = DateTime.Now;
+                    CambStat.Cbstat = "Pendiente";
+                    CambStat.Cbuser = claims[2].Value + " " + claims[3].Value;
 
-                            await DbDiv1Service.InsertCambioFec(CambFec);
-                        }
-                    }
-                    catch (Exception ex)
-                    {
+                    CambFec.IdReuDiaNavigation = Reuniondb;
+                    CambFec.Cffec = DateTime.Now;
+                    CambFec.CffecNew = DateTime.Now;
+                    CambFec.Cfuser = claims[2].Value + " " + claims[3].Value;
 
-                    }
+                    await DbDiv1Service.InsertarRegistros(CambFec,CambStat);
 
                     mensaje = "Registro Exitoso";
                     Reuniondb = new ReuDium();
                     IdDiv = null;
+                    equiposfiltro = null;
+                    selectedEquipoName = selectedEquipoId = null;
                     fechatrabajo = DateTime.Today;
                     Alertas.Show();
                     //Reuniondb = new BdDiv1();
@@ -420,21 +424,20 @@
 
 
         }
-        catch (Exception ex)
+        catch (Microsoft.EntityFrameworkCore.DbUpdateException ex)
         {
-            if (ex.ToString().Length > 100)
-            {
-                mensaje = "Error al Insertar los datos, Intente de Nuevo\r  " + ex;
-                Alertas.Show();
-            }
-            else
-            {
-                mensaje = "Error al Insertar los datos, Intente de Nuevo";
-                Alertas.Show();
+            mensaje = "Error de conexión de datos. Intente de nuevo ";
+            Alertas.Show();
 
-            }
 
         }
+        catch (Exception ex)
+        {
+            mensaje = "Error inesperado. " +ex.Message;
+            Alertas.Show();
+        }
+
+
     }
 
 
@@ -449,7 +452,7 @@
     string? selectedEquipoId;
     string? selectedEquipoName;
     string? filter;
-    bool codsuccess=false;
+    bool codsuccess = false;
 
 
 

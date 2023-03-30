@@ -116,7 +116,7 @@
                         </BSTD>
                         <BSTD>
                             <div Class="@BS.Form_Check">
-                                <BSInputCheckbox CheckedValue="@(1)" Value="@(0)" />
+                                <BSInputCheckbox CheckedValue="@(1)"  @bind-Value="d.ArSuplente" />
                              
                             </div>
                         </BSTD>
@@ -158,7 +158,7 @@ else if (dataIsLoaded == 1 && DbDiv1Service.dbDiv1s.Count() == 0)
     private Alerts Alertas = new Alerts();
     private string mensaje = "", result = "";//resultado del save;
     int dataIsLoaded = 0;
-    private string RadioValue { get; set; }
+   // private string RadioValue { get; set; }
     private string Div { get; set; }
     private List<AsistenReu> listaAsistencia { get; set; }
 

@@ -266,7 +266,7 @@
             <p></p>
             <h5>Cambios de Fecha de Trabajo:</h5>
 
-            @if (cambiofechas.Count() > 0 && cargandocambio == true)
+            @if (cambiofechas.Count() > 0)
             {
                 <BSTable IsResponsive="true" IsStriped="true" IsBordered="true">
                     <BSTHead Class="cabecera">
@@ -393,8 +393,9 @@ else if (dataIsLoaded == 2 && DbDiv1Service.dbDiv1s.Count() == 0)
         cambiofechas = new List<CambFec>();
         await DbDiv1Service.GetCambioStatus(idreu);
         await DbDiv1Service.GetCambioFecha(idreu);
-        cambiostatuss = DbDiv1Service.cambiostatus;
         cambiofechas = DbDiv1Service.cambiofecha;
+        cambiostatuss = DbDiv1Service.cambiostatus;
+        
         cargandocambio = true;
 
     }

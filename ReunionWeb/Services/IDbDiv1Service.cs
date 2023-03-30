@@ -35,6 +35,7 @@ namespace ReunionWeb.Services
         Task<int> InsertDiscrepancia(ReuDium discre);
         Task InsertCambioStatus(CambStat status);//Insertar usuario que cambio el status
         Task InsertCambioFec(CambFec cambiofec);//Insertar el usuarrio que cambio la fecha de trabajo.
+        Task<bool> InsertarRegistros(CambFec cambiofec, CambStat status);//Insertar discrepancias con chismoso(Trazabilidad)
         Task<bool> UpdateDiscrepancia(ReuDium bdDiv1, int id, int tipo, string f1, string f2);
         //Task UpdateDiscrepancia(ReunionDium bdDiv1, int id, int tipo, string f1, string f2);
 

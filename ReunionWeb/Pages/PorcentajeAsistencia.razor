@@ -22,7 +22,7 @@
                 @mensaje
             </BSAlert>
         }
-        else if (@mensaje == "Error al Insertar los datos, Intente de Nuevo" | mensaje == "Seleccione el area." | mensaje== "Solo se puede registrar a las 9:00 am")
+        else if (@mensaje == "Error al Insertar los datos, Intente de Nuevo" | mensaje == "Seleccione el area." | mensaje == "Solo se puede registrar a las 9:00 am")
         {
 
             <BSAlert Color="BSColor.Warning" IsDismissible="true" HasIcon="true" @ref="_alertRef" Dismissed="Dismissed">
@@ -69,25 +69,30 @@
                     <option value="@d.Cnom">@d.Cnom</option>
                     }
             </BSInput>
-            </BSCol>
+        </BSCol>
 
-              <BSCol Column="2">
-                <BSLabel>Fecha Inicial</BSLabel>
-                <BSInput InputType="InputType.Date" @bind-Value="fecha1" />
-            </BSCol>
+        <BSCol Column="2">
+            <BSLabel>Fecha Inicial</BSLabel>
+            <BSInput InputType="InputType.Date" @bind-Value="fecha1" />
+        </BSCol>
 
-            <BSCol Column="2">
-                <BSLabel>Fecha Final</BSLabel>
-                <BSInput InputType="InputType.Date" @bind-Value="fecha2" />
-            </BSCol>
+        <BSCol Column="2">
+            <BSLabel>Fecha Final</BSLabel>
+            <BSInput InputType="InputType.Date" @bind-Value="fecha2" />
+        </BSCol>
 
-            <BSCol Column="3">
-                <BSRow><BSLabel> Buscar</BSLabel></BSRow>
-                <BSButton IsOutlined Color="BSColor.Success" Size="Size.ExtraSmall" @onclick="Get">   Estadísticas  <span class="oi oi-check"></span></BSButton>
-            </BSCol>
+        <BSCol Column="2">
+            <BSLabel>Días Feriados</BSLabel>
+            <BSInput InputType="InputType.Number" @bind-Value="feriados" />
+        </BSCol>
+
+        <BSCol Column="3">
+            <BSRow><BSLabel> Buscar</BSLabel></BSRow>
+            <BSButton IsOutlined Color="BSColor.Success" Size="Size.ExtraSmall" @onclick="Get">   Estadísticas  <span class="oi oi-check"></span></BSButton>
+        </BSCol>
 
 
-        </BSRow>
+    </BSRow>
 
     }
 
@@ -102,49 +107,125 @@
 @if (APIDiv1Service.StatsAsisDtos.Count() > 0 && dataIsLoaded == 2)
 {
     <p><h5>@dias Días de reunión. </h5></p>
-    
+
     <p></p>
-    <BSCol Column="6">
-        <BSTable IsResponsive="true" IsStriped="true" IsBordered="true">
-            <BSTHead Class="cabecera">
-                <BSTR>
+    <BSRow>
+    <BSCol ColumnSmall="6" Column="3">
 
 
-                    <BSTD>Personal</BSTD>
-                    <BSTD>Presencia</BSTD>
-                    <BSTD>% Asistencia</BSTD>
-                  
-                </BSTR>
-            </BSTHead>
-            <BSTBody>
-                @foreach (var d in porasis)
-                {
+            <BSInputRadio CheckedValue="@(0)" @bind-Value="Lista" IsToggle="true" Size="Size.ExtraSmall" Color="BSColor.Success" IsOutlined="true">
+                Porcentaje  %
+            </BSInputRadio>
 
 
+            <BSInputRadio CheckedValue="@(1)" @bind-Value="Lista" IsToggle="true" Size="Size.ExtraSmall" Color="BSColor.Success" IsOutlined="true">
+                Lista Diaria
+                <span class="oi oi-list"></span>
+            </BSInputRadio>
+
+    </BSCol>
+    </BSRow>
+    <p></p>
+    if (Lista == 0)
+    {
+        <BSCol Column="6">
+            <BSTable IsResponsive="true" IsStriped="true" IsBordered="true">
+                <BSTHead Class="cabecera">
                     <BSTR>
 
-                        <BSTD>@d.Cargo</BSTD>
-                        <BSTD>@d.Asistencias</BSTD>
-                        <BSTD>@d.Total %</BSTD>
 
+                        <BSTD>Personal</BSTD>
+                        <BSTD>Presencia</BSTD>
+                        <BSTD>% Asistencia</BSTD>
 
                     </BSTR>
+                </BSTHead>
+                <BSTBody>
+                    @foreach (var d in porasis)
+                    {
 
 
-                }
+                        <BSTR>
+
+                            <BSTD>@d.Cargo</BSTD>
+                            <BSTD>@d.Asistencias</BSTD>
+                            <BSTD>@d.Total %</BSTD>
 
 
-            </BSTBody>
-            <BSTR>
-                        <BSTD>Total</BSTD>
-                        <BSTD> </BSTD>
-                        <BSTD>@asistotal %</BSTD>
-            </BSTR>
-        </BSTable>
-    </BSCol>
+                        </BSTR>
 
 
+                    }
+
+
+                </BSTBody>
+                <BSTR>
+                    <BSTD>Total</BSTD>
+                    <BSTD> </BSTD>
+                    <BSTD>@asistotal %</BSTD>
+                </BSTR>
+            </BSTable>
+        </BSCol>
+    }
+    else
+    {
+        <BSCol Column="10">
+            <BSTable IsResponsive="true" IsStriped="true" IsBordered="true">
+                <BSTHead Class="cabecera">
+                    <BSTR>
+
+
+                        <BSTD>Fecha</BSTD>
+                        <BSTD>Personal</BSTD>
+                        <BSTD>Asitencia</BSTD>
+                        <BSTD>Asistencia Suplente</BSTD>
+
+                    </BSTR>
+                </BSTHead>
+                <BSTBody>
+                    @foreach (var d in APIDiv1Service.asistenreus)
+                    {
+
+
+                        <BSTR>
+
+                            <BSTD>@d.Arfecha</BSTD>
+                            <BSTD>@d.AridCargoRNavigation.Crnombre</BSTD>
+
+                            @if (@d.ArAsistente == 1)
+                            {
+                                <BSTD>Asistió </BSTD>
+                            }
+                            else
+                            {
+                                <BSTD>Ausente</BSTD>
+                            }
+
+
+                            @if (@d.ArSuplente == 1)
+                            {
+                                <BSTD>Suplencia</BSTD>
+                            }
+                            else
+                            {
+                                <BSTD>-</BSTD>
+                            }
+
+
+
+                        </BSTR>
+
+
+                    }
+
+
+                </BSTBody>
+
+            </BSTable>
+        </BSCol>
+    }
 }
+
 else if (APIDiv1Service.cargoreus.Count() == 0 && dataIsLoaded == 2)
 {
     <p>No se ha cargado personal a este centro.</p>
@@ -159,15 +240,18 @@ else if (dataIsLoaded == 1 && DbDiv1Service.dbDiv1s.Count() == 0)
 @code {
 
     private List<StatsAsisDto> porasis = new List<StatsAsisDto>();
+    private List<AsistenReu> listaasistencia = new List<AsistenReu>();
 
 
     private Alerts Alertas = new Alerts();
-    int dataIsLoaded = 0;  
-    private string mensaje = "", f1="", f2="";
+    int dataIsLoaded = 0;
+    private string mensaje = "", f1 = "", f2 = "";
     private string Div { get; set; }
+    private int feriados { get; set; } = 0;
+    private int Lista { get; set; } = 0;
     private DateTime fecha1 = DateTime.Now;
     private DateTime fecha2 = DateTime.Now;
-    double asistotal = 0; 
+    double asistotal = 0;
     int dias = 0;
 
     private bool _buttonDisabled = true;
@@ -210,17 +294,17 @@ else if (dataIsLoaded == 1 && DbDiv1Service.dbDiv1s.Count() == 0)
 
     protected async Task Get()
     {
-        f1=fecha1.ToString("dd-MM-yyyy");
-        f2=fecha2.ToString("dd-MM-yyyy");
+        f1 = fecha1.ToString("dd-MM-yyyy");
+        f2 = fecha2.ToString("dd-MM-yyyy");
 
         DateTime inicio = fecha1, hasta = fecha2;
-         dias = 0;
+        dias = 0;
         asistotal = 0;
 
-        while(inicio <= hasta)
+        while (inicio <= hasta)
         {
 
-            if(inicio.DayOfWeek != DayOfWeek.Saturday && inicio.DayOfWeek != DayOfWeek.Sunday)
+            if (inicio.DayOfWeek != DayOfWeek.Saturday && inicio.DayOfWeek != DayOfWeek.Sunday)
                 dias++;
 
             inicio = inicio.AddDays(1);
@@ -229,12 +313,14 @@ else if (dataIsLoaded == 1 && DbDiv1Service.dbDiv1s.Count() == 0)
         if (dataIsLoaded != 1)
         {
             dataIsLoaded = 1;
-            await APIDiv1Service.GetStatsAsist(Div, f1,f2);
+            await APIDiv1Service.GetListaAsist(Div, f1, f2);
+            await APIDiv1Service.GetStatsAsist(Div, f1, f2);
             porasis = APIDiv1Service.StatsAsisDtos;
+            dias = dias - feriados;
 
             foreach (var a in porasis)
             {
-                a.Total = Math.Round((a.Asistencias / dias)*100);
+                a.Total = Math.Round((a.Asistencias / dias) * 100);
                 asistotal = asistotal + a.Total;
             }
             asistotal = Math.Round((asistotal / porasis.Count));
@@ -244,12 +330,12 @@ else if (dataIsLoaded == 1 && DbDiv1Service.dbDiv1s.Count() == 0)
     }
 
 
-   
 
 
 
 
-   
+
+
 
 
     private void Show()

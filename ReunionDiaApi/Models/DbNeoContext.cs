@@ -54,7 +54,7 @@ namespace ReunionDiaApi.Models
                     .HasColumnName("ARArea");
 
                 entity.Property(e => e.Arfecha)
-                    .HasColumnType("date")
+                    .HasColumnType("datetime")
                     .HasColumnName("ARFecha");
 
                 entity.Property(e => e.AridCargoR).HasColumnName("ARIdCargoR");
@@ -245,6 +245,12 @@ namespace ReunionDiaApi.Models
                     .HasMaxLength(200)
                     .IsUnicode(false)
                     .HasColumnName("ENombreEAM");
+
+                entity.Property(e => e.EdescriEam)
+                 .IsUnicode(false)
+                 .HasColumnName("EDescriEAM");
+
+                entity.Property(e => e.EestaEam).HasColumnName("EEstaEAM");
 
                 entity.HasOne(d => d.IdLineaNavigation)
                     .WithMany(p => p.EquipoEams)

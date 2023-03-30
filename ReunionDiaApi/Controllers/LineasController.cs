@@ -63,20 +63,44 @@ namespace ReunionDiaApi.Controllers
         {
             if (cent == "All")
             {
-                equipos = await _context.EquipoEams
-               .Include(x => x.IdLineaNavigation)
-             .ToListAsync();
+                var result = await _context.EquipoEams
+                 .Include(x => x.IdLineaNavigation)
+                 .Where(x => x.EestaEam == true)
+                 .Select(p => new
+                 {
+                     p.EcodEquiEam,
+                     p.EnombreEam,
+                     p.IdLineaNavigation
+                 })
+                 .AsNoTracking()
+                  .ToListAsync();
+
+                return Ok(result);
             }
             else
             {
-                equipos = await _context.EquipoEams
-                .Include(x => x.IdLineaNavigation)
-                .ThenInclude(y =>y.IdDivisionNavigation)
-                .Where(x=>x.IdLineaNavigation.IdDivisionNavigation.IdCentroNavigation.Cnom== cent)
-              .ToListAsync();
+                //equipos = await _context.EquipoEams
+                //.Include(x => x.IdLineaNavigation)
+                //.ThenInclude(y => y.IdDivisionNavigation)
+                //.Where(x => x.IdLineaNavigation.IdDivisionNavigation.IdCentroNavigation.Cnom == cent)
+                //.ToListAsync();
+
+                var result = await _context.EquipoEams
+                 .Include(x => x.IdLineaNavigation)
+                 .Where(x => x.IdLineaNavigation.IdDivisionNavigation.IdCentroNavigation.Cnom == cent && x.EestaEam == true)
+                 .Select(p => new 
+                 {
+                     p.EcodEquiEam, 
+                     p.EnombreEam, 
+                     p.IdLineaNavigation
+                 })
+                 .AsNoTracking()
+                  .ToListAsync();
+
+                  return Ok(result);
             }
-               
-            return Ok(equipos);
+
+          
         }
 
         [HttpGet("Division/{centro}/{div}")]
@@ -130,7 +154,7 @@ namespace ReunionDiaApi.Controllers
             return Ok(resporeu);
         }
 
-        //Obtener asistencia
+        //Obtener asistencia en porcentaje
         [HttpGet("StatsAsis/{cent}/{f1}/{f2}")]
         public async Task<ActionResult<List<StatsAsisDto>>> GetStatsAsis(string cent, string f1, string f2)
         {
@@ -180,6 +204,59 @@ namespace ReunionDiaApi.Controllers
             return Ok();
         }
 
+        //Obtener asistencia por dia
+        [HttpGet("ListaAsis/{cent}/{f1}/{f2}")]
+        public async Task<ActionResult<List<AsistenReu>>> GetListaAsis(string cent, string f1, string f2)
+        {
+
+            string[] fecha1 = f1.Split('-');
+            string[] fecha2 = f2.Split('-');
+
+            //año, mes dia
+            DateTime date1 = new DateTime(int.Parse(fecha1[2]), int.Parse(fecha1[1]), int.Parse(fecha1[0]));
+            DateTime date2 = new DateTime(int.Parse(fecha2[2]), int.Parse(fecha2[1]), int.Parse(fecha2[0]));
+
+
+
+            if (cent == "All")
+            {
+                var result = await _context.AsistenReus
+               .Include(x => x.AridCargoRNavigation)
+               .Where(x => x.Arfecha >= date1 & x.Arfecha <= date2)
+               .GroupBy(x => x.AridCargoRNavigation.Crnombre)
+               .ToListAsync();
+
+                return Ok(result);
+            }
+
+            else
+            {
+                var result = await _context.AsistenReus
+               .Include(x => x.AridCargoRNavigation)
+               .Where(x => (x.Arfecha >= date1 & x.Arfecha <= date2) && x.Ararea == cent)
+               .ToListAsync();
+
+                return Ok(result);
+            }
+
+
+            return Ok();
+        }
+
+        [HttpGet("EquiposLinea/{Centro}")]
+        public async Task<ActionResult<List<Empresa>>> EquiposLineaEAM(string Centro)
+        {
+            
+                empresa = await _context.Empresas
+                .Include(x => x.IdPaisNavigation)
+                .Include(y=>y.Centros)
+                .Where(x=>x.Centros.First(i=>i.Cnom== Centro).IdEmpresa==x.IdEmpresa)
+                .ToListAsync();
+
+
+            return Ok(empresa);
+        }
+
         [HttpPost("Asistencia")]
         public async Task<ActionResult<string>> SaveAsistencia(List<AsistenReu> list)
         {
@@ -201,7 +278,7 @@ namespace ReunionDiaApi.Controllers
                         insertar.Arfecha = list[i].Arfecha;
                         insertar.AridCargoR = list[i].AridCargoR;
                         insertar.ArAsistente = list[i].ArAsistente;
-                        insertar.ArSuplente = list[i].ArAsistente;
+                        insertar.ArSuplente = list[i].ArSuplente;
                         insertar.Ararea = list[i].Ararea;
 
                         _context.AsistenReus.Add(insertar);

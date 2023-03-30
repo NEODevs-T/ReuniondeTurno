@@ -1,0 +1,193 @@
+﻿@page "/addequipo"
+@inject IDbDiv1Service DbDiv1Service
+@inject IAPIDiv1Service APIDiv1Service
+@inject HttpClient Http
+@inject AuthenticationStateProvider AuthStateProvider
+@inject ILocalStorageService LocalStorage
+@attribute [Authorize(Roles = "Admin, AdminChempro, SupIntendente")]
+
+<h3>Códigos de Equipos </h3>
+<p>
+
+</p>
+
+
+
+
+
+    @if (APIDiv1Service.centro.Count() == 0)
+{
+    <div class="loader"></div>
+
+}
+else
+{
+    if (tipo == 1)
+    {
+        <BSInputRadio CheckedValue="@(0)" @bind-Value="tipo" IsToggle="true" Size="Size.ExtraSmall" Color="BSColor.Success" IsOutlined="true">
+            Volver
+            <span class="oi oi-people"></span>
+        </BSInputRadio>
+        <div class="contenedor">
+            <BSForm Model="EquipoForm" Class="boxhome" IsRow="true" Gutters="Gutters.Medium" OnSubmit="Insert" OnReset="Reset">
+                <DataAnnotationsValidator />
+                <BSCol ColumnMedium="12">
+                    @_message
+                    <BSValidationSummary />
+                </BSCol>
+                <BSRow>
+                    <BSCol Column="4" ColumnSmall="2">
+                        <BSLabel>Centro</BSLabel>
+                        <BSInput InputType="InputType.Select" @bind-Value="Centro">
+                            <option value="">Seleccione</option>
+                            @foreach (var d in APIDiv1Service.centro)
+                    {
+                        <option value="@d.IdCentro">@d.Cnom</option>
+                    }
+                </BSInput>
+                <BSFeedback For="@(() =>Centro)" ValidMessage="Correcto." />
+            </BSCol>
+
+            <BSCol Column="4" ColumnSmall="2">
+                <BSLabel>División</BSLabel>
+                <BSInput InputType="InputType.Select" @bind-Value="Division">
+                    <option value="">Seleccione</option>
+                    @foreach (var d in APIDiv1Service.centro)
+                    {
+                        @foreach (var e in d.Divisions)
+                        {
+                            if (e.IdCentro == d.IdCentro)
+                            {
+                                <option value="@e.IdDivision">@e.Dnombre</option>
+                            }
+                        }
+                    }
+                </BSInput>
+                <BSFeedback For="@(() =>Division)" ValidMessage="Correcto." />
+            </BSCol>
+
+
+            <BSCol Column="4">
+                <BSLabel>Línea</BSLabel>
+                <BSInput InputType="InputType.Select" @bind-Value="Linea">
+                    <option value="">Seleccione...</option>
+                    @foreach (var d in APIDiv1Service.centro)
+                    {
+                        @foreach (var e in d.Lineas)
+                        {
+                            if (Division == e.IdDivisionNavigation.IdDivision)
+                            {
+                                <option value="@e.IdLinea">@e.Lnom</option>
+                            }
+                        }
+                    }
+                </BSInput>
+                <BSFeedback For="@(() =>Linea)" ValidMessage="Correcto." />
+
+            </BSCol>
+        </BSRow>
+
+
+
+        <p></p>
+        <BSRow>
+            <BSCol Column="3">
+                <BSLabel>Código Eam</BSLabel>
+                <BSInput InputType="InputType.Text" @bind-Value="EquipoForm.EcodEquiEam" />
+                <BSFeedback For="@(() => EquipoForm.EcodEquiEam)" ValidMessage="Correcto." />
+            </BSCol>
+        </BSRow>
+        <p></p>
+        <BSRow>
+            <BSCol Column="4">
+                <BSLabel>Nombre del Equipo</BSLabel>
+                <BSInput InputType="InputType.Text" @bind-Value="EquipoForm.EnombreEam" />
+                <BSFeedback For="@(() => EquipoForm.EnombreEam)" ValidMessage="Correcto." />
+            </BSCol>
+            <BSRow>
+                <BSCol Column="6">
+                    <BSLabel>Descripción</BSLabel>
+                    <BSInput InputType="InputType.TextArea" @bind-Value="EquipoForm.EdescriEam" />
+                </BSCol>
+            </BSRow>
+            <p></p>
+        </BSRow>
+        <BSCol Column="12">
+            <BSButton Color="BSColor.Success" Size="Size.ExtraSmall" IsSubmit IsOutlined>  GuardarEquipo <span class="oi oi-check"></span></BSButton>
+
+            <BSButton Color="BSColor.Primary" Size="Size.ExtraSmall" IsReset IsOutlined>  Nuevo en Línea</BSButton>
+
+            <BSButton Color="BSColor.Warning" Size="Size.ExtraSmall" IsReset IsOutlined>  Nuevo</BSButton>
+
+        </BSCol>
+    </BSForm>
+</div>
+    }
+    else if (tipo == 2)
+    {
+        <BSInputRadio CheckedValue="@(0)" @bind-Value="tipo" IsToggle="true" Size="Size.ExtraSmall" Color="BSColor.Success" IsOutlined="true">
+            Volver
+            <span class="oi oi-people"></span>
+        </BSInputRadio>
+    }
+    else
+    {
+        <BSInputRadio CheckedValue="@(1)" @bind-Value="tipo" IsToggle="true" Size="Size.ExtraSmall" Color="BSColor.Success" IsOutlined="true">
+            Ageregar Equipos
+            <span class="oi oi-people"></span>
+        </BSInputRadio>
+        <BSInputRadio CheckedValue="@(2)" @bind-Value="tipo" IsToggle="true" Size="Size.ExtraSmall" Color="BSColor.Success" IsOutlined="true">
+            Consultar Equipos
+            <span class="oi oi-people"></span>
+        </BSInputRadio>
+    }
+}
+
+
+
+@code {
+    [Required(ErrorMessage = "Seleccione el Centro.")]
+    private int Centro { get; set; } //para cargar los datos del trazabilidad
+    [Required(ErrorMessage = "Seleccione la división.")]
+    private int Division { get; set; }
+    [Required(ErrorMessage = "Seleccione la Línea.")]
+    private int Linea { get; set; }
+    private int tipo { get; set; } = 0;
+
+    string _message;
+
+    EquipoEam EquipoForm = new EquipoEam();
+    private List<Claim> claims { get; set; }
+
+    private async Task CreateData()
+
+    {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        claims = Enumerable.ToList(user.Claims);
+
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        await CreateData();
+
+        await APIDiv1Service.GetCentros(claims[6].Value.ToString());
+        await APIDiv1Service.GetEquiposEAM(claims[6].Value.ToString());
+
+
+
+    }
+
+    protected async Task Insert(EditContext e)
+    {
+    }
+
+    protected async Task Reset()
+    {
+        EquipoForm = new EquipoEam();
+        Centro = 0;
+
+    }
+    }

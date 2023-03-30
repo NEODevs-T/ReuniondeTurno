@@ -28,6 +28,7 @@ namespace ReunionWeb.Services
         Task GetDivision(string centro, string div);
         Task GetAsistencia( string div);
         Task GetStatsAsist( string div, string f1,string f2);
+        Task GetListaAsist( string div, string f1,string f2);
 
             
         Task GetPendientes(string div);
