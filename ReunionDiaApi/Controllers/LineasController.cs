@@ -172,7 +172,7 @@ namespace ReunionDiaApi.Controllers
             {
                 var result = await _context.AsistenReus
                .Include(x => x.AridCargoRNavigation)
-               .Where(x => x.Arfecha >= date1 & x.Arfecha <= date2)
+               .Where(x => x.Arfecha.Value.Date >= date1 & x.Arfecha.Value.Date <= date2)
                .GroupBy(x => x.AridCargoRNavigation.Crnombre)
                .Select(a => new
                {
@@ -188,7 +188,7 @@ namespace ReunionDiaApi.Controllers
             {
                 var result = await _context.AsistenReus
                .Include(x => x.AridCargoRNavigation)
-               .Where(x => (x.Arfecha >= date1 & x.Arfecha <= date2) && x.Ararea == cent)
+               .Where(x => (x.Arfecha.Value.Date >= date1 & x.Arfecha.Value.Date <= date2) && x.Ararea == cent)
                .GroupBy(x => x.AridCargoRNavigation.Crnombre)
                .Select(a => new
                {
@@ -222,7 +222,7 @@ namespace ReunionDiaApi.Controllers
             {
                 var result = await _context.AsistenReus
                .Include(x => x.AridCargoRNavigation)
-               .Where(x => x.Arfecha >= date1 & x.Arfecha <= date2)
+               .Where(x => x.Arfecha.Value.Date >= date1 & x.Arfecha.Value.Date <= date2)
                .GroupBy(x => x.AridCargoRNavigation.Crnombre)
                .ToListAsync();
 
@@ -233,7 +233,7 @@ namespace ReunionDiaApi.Controllers
             {
                 var result = await _context.AsistenReus
                .Include(x => x.AridCargoRNavigation)
-               .Where(x => (x.Arfecha >= date1 & x.Arfecha <= date2) && x.Ararea == cent)
+               .Where(x => (x.Arfecha.Value.Date >= date1 & x.Arfecha.Value.Date <= date2) && x.Ararea == cent)
                .ToListAsync();
 
                 return Ok(result);
@@ -302,12 +302,6 @@ namespace ReunionDiaApi.Controllers
 
 
 
-        //[HttpPost("Auth")]
-        //public ActionResult<string> Loging(UserLoginDto request)
-        //{
-        //    string token = @"eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGRzaWctbW9yZSNobWFjLXNoYTUxMiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiQWRtaW4iLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJBZG1pbiIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL2dpdmVubmFtZSI6IkFkbWluIiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvc3VybmFtZSI6IlBydWViYSIsImV4cCI6MTY2OTEzMDYxNX0.Akph2dgCZkX7dzBPpb5ujxFjezWiUCzkv80GyGaQ0SdhIV_c03Cybjsay5__rw69wT4mksFdkoJ87PeoAico8g";
-        //    return token;
-        //}
 
     }
 }

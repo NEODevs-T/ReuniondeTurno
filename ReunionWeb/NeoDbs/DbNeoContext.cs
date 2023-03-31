@@ -54,7 +54,7 @@ namespace ReunionWeb.NeoDbs
             
 
                 entity.Property(e => e.Arfecha)
-                    .HasColumnType("date")
+                    .HasColumnType("datetime")
                     .HasColumnName("ARFecha");
 
                 entity.Property(e => e.AridCargoR).HasColumnName("ARIdCargoR");
