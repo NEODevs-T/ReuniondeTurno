@@ -22,6 +22,7 @@ namespace ReunionWeb.Services
         public List<ReunionDium> reunionditabla { get; set; } = new List<ReunionDium>();
         public List<ReuDium> reudiatabla { get; set; } = new List<ReuDium>();
         public List<Division> divisions { get; set; } = new List<Division>();
+        public List<Linea> lineas { get; set; } = new List<Linea>();
         public List<AsistenReu> asistenreus { get; set; } = new List<AsistenReu>();
         public List<CargoReu> cargoreus { get; set; } = new List<CargoReu>();
         public List<StatsAsisDto> StatsAsisDtos { get; set; } = new List<StatsAsisDto>();
@@ -59,6 +60,13 @@ namespace ReunionWeb.Services
             //var result = await _http.GetFromJsonAsync<List<Division>>($"http://operaciones.papeleslatinos.com/ReunionApi/Lineas/Division/{centro}/{div}");
             if (result != null)
                 divisions = result;
+
+        }  
+        public async Task GetLineas(int div)
+        {
+            var result = await _http.GetFromJsonAsync<List<Linea>>($"http://localhost:5258/Empresas/Lineas/{div}");
+            if (result != null)
+                lineas = result;
 
         }
         public async Task Getksf()

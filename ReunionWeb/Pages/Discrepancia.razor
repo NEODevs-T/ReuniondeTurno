@@ -63,6 +63,8 @@
         <BSCol Column="2">
             <BSLabel>Division</BSLabel>
             <BSInput InputType="InputType.Select" @bind-Value="IdDiv">
+           @* <BSInput InputType="InputType.Select" @onchange=BuscarLineas @bind-Value="IdDiv">*@
+
                 <option value="">Seleccione...</option>
                 @foreach (var d in APIDiv1Service.centro)
                 {
@@ -95,8 +97,22 @@
                 }
             </BSInput>
             <BSFeedback For="@(() => Reuniondb.Rdarea)" ValidMessage="Correcto." />
-        </BSCol>
+        </BSCol>       
+@*        
+        <BSCol Column="3">
+            <BSLabel>Línea</BSLabel>
+            <BSInput InputType="InputType.Select" @bind-Value="Reuniondb.Rdarea">
+                <option value="">Seleccione...</option>
+                @foreach (var d in APIDiv1Service.lineas)
+                {
 
+                 <option value="@d.Lnom">@d.Lnom</option>
+                  
+                }
+            </BSInput>
+            <BSFeedback For="@(() => Reuniondb.Rdarea)" ValidMessage="Correcto." />
+        </BSCol>
+*@
 
 
 
@@ -120,37 +136,38 @@
 
 
         </BSCol>
-        @if (APIDiv1Service.centro.Count > 0 & tipoequipo == "0")
+        @if (APIDiv1Service.centro.Count > 0 &   tipoequipo == "0")
         {
-            @if (Reuniondb.Rdcentro == "Conversión" | Reuniondb.Rdcentro == "Molinos")
-            {
-                <BSCol Column="4">
-                    <BSLabel>C. Equipo</BSLabel>
-                    <BSInput InputType="InputType.Select" @bind-Value="Reuniondb.RdcodEq">
+          @*  @if (Reuniondb.Rdcentro == "Conversión" | Reuniondb.Rdcentro == "Molinos")*@
+                @if (Reuniondb.Rdcentro != "Chempro" )
+                {
+                    <BSCol Column="4">
+                        <BSLabel>C. Equipo</BSLabel>
+                        <BSInput InputType="InputType.Select" @bind-Value="Reuniondb.RdcodEq">
 
-                        <option value="">Seleccione...</option>
-                        @foreach (var d in APIDiv1Service.equipos)
-                        {
-                            if (Reuniondb.Rdarea == d.IdLineaNavigation.Lnom)
+                            <option value="">Seleccione...</option>
+                            @foreach (var d in APIDiv1Service.equipos)
                             {
-                        <option value="@d.EcodEquiEam">@d.EcodEquiEam - @d.EnombreEam</option>
+                                if (Reuniondb.Rdarea == d.IdLineaNavigation.Lnom)
+                                {
+                                    <option value="@d.EcodEquiEam">@d.EcodEquiEam - @d.EnombreEam</option>
+                                }
                             }
-                        }
 
 
-            </BSInput>
-            <BSFeedback For="@(() => Reuniondb.RdcodEq)" ValidMessage="Correcto." />
-        </BSCol>
+                        </BSInput>
+                        <BSFeedback For="@(() => Reuniondb.RdcodEq)" ValidMessage="Correcto." />
+                    </BSCol>
 
-            }
-            else
-            {
-                <BSCol Column="4">
-                    <BSLabel>C. Equipo</BSLabel>
-                    <BSInput InputType="InputType.Text" @bind-Value="Reuniondb.RdcodEq" />
-                    <BSFeedback For="@(() => Reuniondb.RdcodEq)" ValidMessage="Correcto." />
-                </BSCol>
-            }
+                }
+                else
+                {
+                    <BSCol Column="4">
+                        <BSLabel>C. Equipo</BSLabel>
+                        <BSInput InputType="InputType.Text" @bind-Value="Reuniondb.RdcodEq" />
+                        <BSFeedback For="@(() => Reuniondb.RdcodEq)" ValidMessage="Correcto." />
+                    </BSCol>
+                }
         }
         else if (APIDiv1Service.centro.Count > 0 & tipoequipo == "1")
         {
@@ -188,13 +205,13 @@
                     </p>
                 }
                 @*            <BSInput InputType="InputType.Text" @bind-Value="Reuniondb.RdcodEq" />
-                    <BSFeedback For="@(() => Reuniondb.RdcodEq)" ValidMessage="Correcto." />*@
+            <BSFeedback For="@(() => Reuniondb.RdcodEq)" ValidMessage="Correcto." />*@
             </BSCol>
         }
         @*  else if (APIDiv1Service.centro.Count == 0 & tipoequipo == "1")
-            {
-            <p>No se encuentran equipos, cambie a campo de texto.</p>
-            }*@
+        {
+        <p>No se encuentran equipos, cambie a campo de texto.</p>
+        }*@
 
 
         <BSCol Column="2">
@@ -306,6 +323,7 @@
         if (claims[1].Value == "Admin")
         {
             await APIDiv1Service.GetCentros("All");
+            //await APIDiv1Service.GetCentros(claims[11].Value.ToString());
 
             if (claims[6].Value == "Conversión" | claims[6].Value == "Molinos")
             {
@@ -315,9 +333,8 @@
         else
         {
             await APIDiv1Service.GetCentros(claims[6].Value.ToString());
+            //await APIDiv1Service.GetCentros(claims[11].Value.ToString());
             await APIDiv1Service.GetEquiposEAM(claims[6].Value.ToString());
-
-
 
         }
 
@@ -387,7 +404,7 @@
                     CambFec.CffecNew = DateTime.Now;
                     CambFec.Cfuser = claims[2].Value + " " + claims[3].Value;
 
-                    await DbDiv1Service.InsertarRegistros(CambFec,CambStat);
+                    await DbDiv1Service.InsertarRegistros(CambFec, CambStat);
 
                     mensaje = "Registro Exitoso";
                     Reuniondb = new ReuDium();
@@ -416,7 +433,7 @@
         }
         catch (Exception ex)
         {
-            mensaje = "Error inesperado. " +ex.Message;
+            mensaje = "Error inesperado. " + ex.Message;
             Alertas.Show();
         }
 
@@ -427,6 +444,8 @@
     protected async Task Reset()
     {
         Reuniondb = new ReuDium();
+        CambStat = new CambStat();
+        CambFec = new CambFec();
         IdDiv = null;
         fechatrabajo = DateTime.Today;
     }
@@ -459,5 +478,26 @@
         selectedEquipoName = equiposfiltro!.First(c => c.EcodEquiEam.Equals(selectedEquipoId)).EnombreEam;
         equiposfiltro = null;
     }
+    //protected async Task BuscarLineas(EventArgs e)
+    //{
+       
 
+    //    if (IdDiv!= 0)
+    //    {
+     
+    //        await APIDiv1Service.GetLineas(IdDiv.Value);
+   
+    //    }
+    //}
+      protected async Task BuscarLineas(ChangeEventArgs e)
+    {
+
+
+        if (IdDiv!= 0)
+        {
+     
+            await APIDiv1Service.GetLineas(IdDiv.Value);
+   
+        }
+    }
 }

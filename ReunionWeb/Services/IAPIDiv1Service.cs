@@ -10,6 +10,7 @@ namespace ReunionWeb.Services
         List<BdDiv1> dbDiv1s { get; set; }
         List<Asistencium> asistencia { get; set; }
         List<Centro> centro { get; set; }
+        List<Linea> lineas { get; set; }
         List<Division> divisions { get; set; }
         List<Ksf> ksfs { get; set; }
         List<RespoReu> resporeu { get; set; }
@@ -27,6 +28,7 @@ namespace ReunionWeb.Services
         Task GetResReu();
         Task GetDivision(string centro, string div);
         Task GetAsistencia( string div);
+        Task GetLineas( int div);
         Task GetStatsAsist( string div, string f1,string f2);
         Task GetListaAsist( string div, string f1,string f2);
 
