@@ -30,7 +30,8 @@ namespace ReunionWeb.Services
         public List<CargoReu> cargoreuss { get; set; } = new List<CargoReu>();
         public List<CambStat> cambiostatus { get; set; } = new List<CambStat>();
         public List<CambFec> cambiofecha { get; set; } = new List<CambFec>();
-        public Centro centrodiscrepancia { get; set; } = new Centro();
+       // public Centro centrodiscrepancia { get; set; } = new Centro();
+        public Division centrodiscrepancia { get; set; } = new Division();
         //public CentroDivision centrodiv { get; set; } = new CentroDivision();
 
 
@@ -52,10 +53,11 @@ namespace ReunionWeb.Services
         //obtener discrepancias para pendientes y reunion 
         public async Task GetPendientes(string idcentro, string iddiv, DateTime f1, DateTime f2, string tipo)
         {
-           
+
 
             //Consultar nombre del centro y division  para insertarlos
-            CentroDivision centrodiv = await GetCentroDiv(idcentro, iddiv, 0);
+            CentroDivision centrodiv = new CentroDivision();
+            centrodiv = await GetCentroDiv(idcentro, iddiv, 0);
 
 
             string centro = centrodiv.Cnom;
@@ -108,7 +110,8 @@ namespace ReunionWeb.Services
             if (d.Rdcentro is not null)
             {
                 //Consultar nombre del centro y division pra retornar el id en pendientes
-                CentroDivision centrodiv = await GetCentroDiv(d.Rdcentro, d.Rddiv, 1);
+                CentroDivision centrodiv = new CentroDivision();
+                 centrodiv = await GetCentroDiv(d.Rdcentro, d.Rddiv, 1);
                 centro = centrodiv.IdCentro.ToString();
                 div = centrodiv.IdDivision.ToString();
                 
@@ -178,41 +181,54 @@ namespace ReunionWeb.Services
             CentroDivision CD = new CentroDivision();
             if (tipo == 0)
             {
-                centrodiscrepancia = await _neocontext.Centros
-               .Include(d => d.Divisions)
-               .Where(c => c.IdCentro == int.Parse(centro) && c.Divisions.Any(i => i.IdDivision == int.Parse(division)))
-               .Select(t => new Centro
-               {
-                   Cnom = t.Cnom,
-                   Divisions = t.Divisions.Select(cd => new Division
-                   {
-                       Dnombre = cd.Dnombre
-                   }).ToList()
-               })
-                .AsNoTracking()
-                .FirstOrDefaultAsync();
+             
+
+
+                centrodiscrepancia = await _neocontext.Divisions
+                    .Include(c => c.IdCentroNavigation)
+                    .Where(d => d.IdDivision == int.Parse(division))
+                    .Select(di=> new Division
+                    {
+                        IdDivision=di.IdDivision,
+                        Dnombre=di.Dnombre,
+                        IdCentroNavigation = di.IdCentroNavigation
+                    })
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync();
+
+
+
+                CD.IdCentro = centrodiscrepancia.IdCentroNavigation.IdCentro;
+                CD.IdDivision = centrodiscrepancia.IdDivision;
+                CD.Cnom = centrodiscrepancia.IdCentroNavigation.Cnom;
+                CD.Dnombre = centrodiscrepancia.Dnombre;
             }
 
             else if(tipo==1)
             {
-                centrodiscrepancia = await _neocontext.Centros
-               .Include(d => d.Divisions)
-               .Where(c => c.Cnom == centro && c.Divisions.Any(i => i.Dnombre == division))
-               .Select(t => new Centro
-               {
-                   IdCentro = t.IdCentro,
-                   Divisions = t.Divisions.Select(cd => new Division
-                   {
-                       IdDivision = cd.IdDivision
-                   }).ToList()
-               })
-                .AsNoTracking()
-                .FirstOrDefaultAsync();
+              
+
+
+                centrodiscrepancia = await _neocontext.Divisions
+                    .Include(c => c.IdCentroNavigation)
+                    .Where(d => d.Dnombre ==division && d.IdCentroNavigation.Cnom==centro )
+                    .Select(di => new Division
+                    {
+                        IdDivision = di.IdDivision,
+                        Dnombre = di.Dnombre,
+                        IdCentroNavigation = di.IdCentroNavigation
+                    })
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync();
+
+
+
+                CD.IdCentro = centrodiscrepancia.IdCentroNavigation.IdCentro;
+                CD.IdDivision = centrodiscrepancia.IdDivision;
+                CD.Cnom = centrodiscrepancia.IdCentroNavigation.Cnom;
+                CD.Dnombre = centrodiscrepancia.Dnombre;
             }
-            CD.IdCentro = centrodiscrepancia.IdCentro;
-            CD.IdDivision = centrodiscrepancia.Divisions.ElementAt(0).IdDivision;
-            CD.Cnom = centrodiscrepancia.Cnom;
-            CD.Dnombre = centrodiscrepancia.Divisions.ElementAt(0).Dnombre;
+  
             
             return CD;
          }

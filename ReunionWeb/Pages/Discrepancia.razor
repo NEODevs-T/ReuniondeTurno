@@ -322,8 +322,9 @@
         await APIReunionService.GetResReu();
         if (claims[1].Value == "Admin")
         {
-            await APIReunionService.GetCentros("All");
-            //await APIReunionService.GetCentros(claims[11].Value.ToString());
+           //await APIReunionService.GetCentros("All");
+           await APIReunionService.GetCentrosxEmpresa("All" + claims[10].Value);
+
 
             if (claims[6].Value == "Conversión" | claims[6].Value == "Molinos")
             {
@@ -332,8 +333,8 @@
         }
         else
         {
-            await APIReunionService.GetCentros(claims[6].Value.ToString());
-            //await APIReunionService.GetCentros(claims[11].Value.ToString());
+            //await APIReunionService.GetCentros(claims[6].Value.ToString());
+            await APIReunionService.GetCentrosxEmpresa(claims[11].Value);
             await APIReunionService.GetEquiposEAM(claims[6].Value.ToString());
 
         }

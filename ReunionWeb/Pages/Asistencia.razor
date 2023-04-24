@@ -188,11 +188,13 @@ else if (dataIsLoaded == 1 && APIReunionService.cargoreus.Count() == 0)
         await CreateData();
         if (claims[1].Value == "Admin")
         {
-            await APIReunionService.GetCentros("All");
+            //await APIReunionService.GetCentros("All");
+            await APIReunionService.GetCentrosxEmpresa("All" + claims[10].Value);
         }
         else
         {
-            await APIReunionService.GetCentros(claims[6].Value.ToString());
+            //await APIReunionService.GetCentros(claims[6].Value.ToString());
+            await APIReunionService.GetCentrosxEmpresa(claims[11].Value);
         }
 
 

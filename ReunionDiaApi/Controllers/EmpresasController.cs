@@ -6,7 +6,7 @@ using ReunionDiaApi.DTOs;
 
 namespace ReunionDiaApi.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("/[controller]")]
     [ApiController]
     public class EmpresasController : ControllerBase
     {
@@ -51,7 +51,7 @@ namespace ReunionDiaApi.Controllers
         }
 
 
-        //Obtener Paises 
+        //Obtener emppresa x pais 
         [HttpGet("Empresa/{idpais}")]
         public async Task<ActionResult<List<Empresa>>> GetEmpresas(string idpais)
         {
@@ -64,7 +64,7 @@ namespace ReunionDiaApi.Controllers
         }
 
         //Obtener lista de centros y divisiones x empresa o centro
-        [HttpGet("Centro/{cent}")]
+        [HttpGet("Centros/{cent}")]
         public async Task<ActionResult<List<Centro>>> GetCentros(string cent)
         {
             string cen="";

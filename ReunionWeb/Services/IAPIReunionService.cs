@@ -24,6 +24,7 @@ namespace ReunionWeb.Services
 
         Task GetEquiposEAM(string centro);
         Task GetCentros(string centro);
+        Task GetCentrosxEmpresa(string centro);
         Task Getksf();
         Task GetResReu();
         Task GetDivision(string centro, string div);

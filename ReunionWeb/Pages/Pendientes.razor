@@ -373,11 +373,15 @@ else if (dataIsLoaded == 2 && DbReunionService.reudiatablas.Count() == 0)
         if (claims[1].Value == "Admin")
         {
             UsrAdmin = claims[1].Value;
-            await APIReunionService.GetCentros("All");
+            //await APIReunionService.GetCentros("All");
+            await APIReunionService.GetCentrosxEmpresa("All" + claims[10].Value);
+
         }
         else
         {
-            await APIReunionService.GetCentros(claims[6].Value.ToString());
+            //await APIReunionService.GetCentros(claims[6].Value.ToString());
+            await APIReunionService.GetCentrosxEmpresa(claims[11].Value);
+
         }
 
         await APIReunionService.Getksf();

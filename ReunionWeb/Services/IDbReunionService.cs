@@ -25,7 +25,7 @@ namespace ReunionWeb.Services
          List<CargoReu> cargoreuss { get; set; }
          List<CambStat> cambiostatus { get; set; }
          List<CambFec> cambiofecha { get; set; }
-         Centro centrodiscrepancia { get; set; }
+         Division centrodiscrepancia { get; set; }
         
         Task GetPendientes(string centro, string div, DateTime f1, DateTime f2, string tipo);
         Task GetCambioStatus(int idreu);

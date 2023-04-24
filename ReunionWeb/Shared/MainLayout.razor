@@ -124,8 +124,8 @@
         user.Proyecto = "ReunionWeb";
         if (e.Validate())
         {   carga = true;
-            //var result = await Http.PostAsJsonAsync("http://neo.paveca.com.ve/Authentication/api/Auth/Login", user);
-            var result = await Http.PostAsJsonAsync("http://localhost:5090/api/Auth/Login", user);
+            var result = await Http.PostAsJsonAsync("http://neo.paveca.com.ve/Authentication/api/Auth/Login", user);
+            //var result = await Http.PostAsJsonAsync("http://localhost:5090/api/Auth/Login", user);
             var ValidarToken = await result.Content.ReadAsStringAsync();
 
             if (ValidarToken != null)
