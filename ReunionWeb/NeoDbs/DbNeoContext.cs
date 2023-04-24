@@ -20,6 +20,8 @@ namespace ReunionWeb.NeoDbs
         public virtual DbSet<CambFec> CambFecs { get; set; } = null!;
         public virtual DbSet<CambStat> CambStats { get; set; } = null!;
         public virtual DbSet<CargoReu> CargoReus { get; set; } = null!;
+
+        public virtual DbSet<Centro> Centros { get; set; } = null!;
         public virtual DbSet<Division> Divisions { get; set; } = null!;
         public virtual DbSet<Empresa> Empresas { get; set; } = null!;
         public virtual DbSet<EquipoEam> EquipoEams { get; set; } = null!;
@@ -30,10 +32,10 @@ namespace ReunionWeb.NeoDbs
         public virtual DbSet<ReuDium> ReuDia { get; set; } = null!;
         public virtual DbSet<ReunionDium> ReunionDia { get; set; } = null!;
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
+        //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        //{
           
-        }
+        //}
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -150,6 +152,38 @@ namespace ReunionWeb.NeoDbs
                     .HasColumnName("CRNombre");
             });
 
+            modelBuilder.Entity<Centro>(entity =>
+            {
+                entity.HasKey(e => e.IdCentro);
+
+                entity.ToTable("Centro");
+
+                entity.HasComment("centro de produccion");
+
+                entity.Property(e => e.IdCentro).HasComment("identificador del centro");
+
+                entity.Property(e => e.Cdetalle)
+                    .HasMaxLength(2000)
+                    .IsUnicode(false)
+                    .HasColumnName("CDetalle")
+                    .HasComment("Detalle del centro");
+
+                entity.Property(e => e.Cestado)
+                    .HasColumnName("CEstado")
+                    .HasComment("0: Inactivo, 1:Activo");
+
+                entity.Property(e => e.Cnom)
+                    .HasMaxLength(500)
+                    .IsUnicode(false)
+                    .HasColumnName("CNom")
+                    .HasComment("nombre del centro");
+
+                entity.HasOne(d => d.IdEmpresaNavigation)
+                    .WithMany(p => p.Centros)
+                    .HasForeignKey(d => d.IdEmpresa)
+                    .HasConstraintName("FK_Centro_Empresa");
+            });
+
             modelBuilder.Entity<Division>(entity =>
             {
                 entity.HasKey(e => e.IdDivision);
@@ -165,8 +199,13 @@ namespace ReunionWeb.NeoDbs
 
                 entity.Property(e => e.Dnombre)
                     .HasMaxLength(500)
-                    .IsUnicode(false)
+                    .IsUnicode(false) 
                     .HasColumnName("DNombre");
+
+                entity.HasOne(d => d.IdCentroNavigation)
+                    .WithMany(p => p.Divisions)
+                    .HasForeignKey(d => d.IdCentro)
+                    .HasConstraintName("FK_Division_Centro");
             });
 
             modelBuilder.Entity<Empresa>(entity =>

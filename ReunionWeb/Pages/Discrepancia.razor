@@ -1,8 +1,8 @@
 ﻿@page "/discrepancia"
 
 
-@inject IDbDiv1Service DbDiv1Service
-@inject IAPIDiv1Service APIDiv1Service
+@inject IDbReunionService DbReunionService
+@inject IAPIReunionService APIReunionService
 @inject HttpClient Http
 @inject AuthenticationStateProvider AuthStateProvider
 @inject ILocalStorageService LocalStorage
@@ -50,7 +50,7 @@
             <BSLabel>Centro</BSLabel>
             <BSInput InputType="InputType.Select" @bind-Value="Reuniondb.Rdcentro">
                 <option value="">Seleccione...</option>
-                @foreach (var d in APIDiv1Service.centro)
+                @foreach (var d in APIReunionService.centro)
                 {
                     <option value="@d.Cnom">@d.Cnom</option>
                 }
@@ -66,7 +66,7 @@
            @* <BSInput InputType="InputType.Select" @onchange=BuscarLineas @bind-Value="IdDiv">*@
 
                 <option value="">Seleccione...</option>
-                @foreach (var d in APIDiv1Service.centro)
+                @foreach (var d in APIReunionService.centro)
                 {
                     @foreach (var e in d.Divisions)
                     {
@@ -85,7 +85,7 @@
             <BSLabel>Línea</BSLabel>
             <BSInput InputType="InputType.Select" @bind-Value="Reuniondb.Rdarea">
                 <option value="">Seleccione...</option>
-                @foreach (var d in APIDiv1Service.centro)
+                @foreach (var d in APIReunionService.centro)
                 {
                     @foreach (var e in d.Lineas)
                     {
@@ -103,7 +103,7 @@
             <BSLabel>Línea</BSLabel>
             <BSInput InputType="InputType.Select" @bind-Value="Reuniondb.Rdarea">
                 <option value="">Seleccione...</option>
-                @foreach (var d in APIDiv1Service.lineas)
+                @foreach (var d in APIReunionService.lineas)
                 {
 
                  <option value="@d.Lnom">@d.Lnom</option>
@@ -136,7 +136,7 @@
 
 
         </BSCol>
-        @if (APIDiv1Service.centro.Count > 0 &   tipoequipo == "0")
+        @if (APIReunionService.centro.Count > 0 &   tipoequipo == "0")
         {
           @*  @if (Reuniondb.Rdcentro == "Conversión" | Reuniondb.Rdcentro == "Molinos")*@
                 @if (Reuniondb.Rdcentro != "Chempro" )
@@ -146,7 +146,7 @@
                         <BSInput InputType="InputType.Select" @bind-Value="Reuniondb.RdcodEq">
 
                             <option value="">Seleccione...</option>
-                            @foreach (var d in APIDiv1Service.equipos)
+                            @foreach (var d in APIReunionService.equipos)
                             {
                                 if (Reuniondb.Rdarea == d.IdLineaNavigation.Lnom)
                                 {
@@ -169,7 +169,7 @@
                     </BSCol>
                 }
         }
-        else if (APIDiv1Service.centro.Count > 0 & tipoequipo == "1")
+        else if (APIReunionService.centro.Count > 0 & tipoequipo == "1")
         {
             <BSCol Column="4">
                 <BSLabel>C. Equipo</BSLabel>
@@ -208,7 +208,7 @@
             <BSFeedback For="@(() => Reuniondb.RdcodEq)" ValidMessage="Correcto." />*@
             </BSCol>
         }
-        @*  else if (APIDiv1Service.centro.Count == 0 & tipoequipo == "1")
+        @*  else if (APIReunionService.centro.Count == 0 & tipoequipo == "1")
         {
         <p>No se encuentran equipos, cambie a campo de texto.</p>
         }*@
@@ -220,7 +220,7 @@
             <BSInput InputType="InputType.Select" @bind-Value="Reuniondb.Idksf">
 
                 <option value="">Seleccione...</option>
-                @foreach (var d in APIDiv1Service.ksfs)
+                @foreach (var d in APIReunionService.ksfs)
                 {
                     <option value="@d.Idksf">@d.KsfNombre</option>
                 }
@@ -255,7 +255,7 @@
             <BSInput InputType="InputType.Select" @bind-Value="Reuniondb.IdResReu">
                 <option value="">Seleccione...</option>
 
-                @foreach (var d in APIDiv1Service.resporeu)
+                @foreach (var d in APIReunionService.resporeu)
                 {
                     <option value="@d.IdResReu">@d.Rrnombre</option>
                 }
@@ -318,23 +318,23 @@
     {
 
         await CreateData();
-        await APIDiv1Service.Getksf();
-        await APIDiv1Service.GetResReu();
+        await APIReunionService.Getksf();
+        await APIReunionService.GetResReu();
         if (claims[1].Value == "Admin")
         {
-            await APIDiv1Service.GetCentros("All");
-            //await APIDiv1Service.GetCentros(claims[11].Value.ToString());
+            await APIReunionService.GetCentros("All");
+            //await APIReunionService.GetCentros(claims[11].Value.ToString());
 
             if (claims[6].Value == "Conversión" | claims[6].Value == "Molinos")
             {
-                await APIDiv1Service.GetEquiposEAM("All");
+                await APIReunionService.GetEquiposEAM("All");
             }
         }
         else
         {
-            await APIDiv1Service.GetCentros(claims[6].Value.ToString());
-            //await APIDiv1Service.GetCentros(claims[11].Value.ToString());
-            await APIDiv1Service.GetEquiposEAM(claims[6].Value.ToString());
+            await APIReunionService.GetCentros(claims[6].Value.ToString());
+            //await APIReunionService.GetCentros(claims[11].Value.ToString());
+            await APIReunionService.GetEquiposEAM(claims[6].Value.ToString());
 
         }
 
@@ -362,7 +362,7 @@
 
                 }
                 //Asigno el id de la division al form
-                foreach (var d in APIDiv1Service.centro)
+                foreach (var d in APIReunionService.centro)
                 {
                     foreach (var f in d.Lineas)
                     {
@@ -404,7 +404,7 @@
                     CambFec.CffecNew = DateTime.Now;
                     CambFec.Cfuser = claims[2].Value + " " + claims[3].Value;
 
-                    await DbDiv1Service.InsertarRegistros(CambFec, CambStat);
+                    await DbReunionService.InsertarRegistros(CambFec, CambStat);
 
                     mensaje = "Registro Exitoso";
                     Reuniondb = new ReuDium();
@@ -463,7 +463,7 @@
         filter = e.Value?.ToString();
         if (filter?.Length > 0)
         {
-            equiposfiltro = APIDiv1Service.equipos.Where(a => a.EcodEquiEam.Contains(filter)).ToList();
+            equiposfiltro = APIReunionService.equipos.Where(a => a.EcodEquiEam.Contains(filter)).ToList();
         }
         else
         {
@@ -485,7 +485,7 @@
     //    if (IdDiv!= 0)
     //    {
      
-    //        await APIDiv1Service.GetLineas(IdDiv.Value);
+    //        await APIReunionService.GetLineas(IdDiv.Value);
    
     //    }
     //}
@@ -496,7 +496,7 @@
         if (IdDiv!= 0)
         {
      
-            await APIDiv1Service.GetLineas(IdDiv.Value);
+            await APIReunionService.GetLineas(IdDiv.Value);
    
         }
     }

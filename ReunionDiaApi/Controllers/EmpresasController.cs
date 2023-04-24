@@ -38,15 +38,50 @@ namespace ReunionDiaApi.Controllers
 
 
 
-        //Obtener lista de centros 
-        [HttpGet("{cent}")]
-        public async Task<ActionResult<List<Linea>>> GetBdDiv(string cent)
+        //Obtener Paises 
+        [HttpGet("Paises")]
+        public async Task<ActionResult<List<Pai>>> GetPais()
         {
-            if (cent == "All")
+
+            pais = await _context.Pais
+           .Where(x => x.Pestado == true)
+           .ToListAsync();
+
+            return Ok(pais);
+        }
+
+
+        //Obtener Paises 
+        [HttpGet("Empresa/{idpais}")]
+        public async Task<ActionResult<List<Empresa>>> GetEmpresas(string idpais)
+        {
+
+            empresa = await _context.Empresas
+           .Where(x => (x.IdPais == int.Parse(idpais)) & (x.Eestado==true))
+           .ToListAsync();
+
+            return Ok(empresa);
+        }
+
+        //Obtener lista de centros y divisiones x empresa o centro
+        [HttpGet("Centro/{cent}")]
+        public async Task<ActionResult<List<Centro>>> GetCentros(string cent)
+        {
+            string cen="";
+            int idempresa=0;
+
+            if (cent.Length > 3)
+            {
+                cen = cent.Substring(0, 3);
+                idempresa = int.Parse(cent.Substring(3));
+            }
+;
+            if (cen== "All")
             {
                 centro = await _context.Centros
                .Include(x => x.Divisions)
-               .ThenInclude(post => post.Lineas)
+               .ThenInclude(post => post.Lineas) // TO DO: eliminar en el codigo
+               .Where(c=>c.IdEmpresaNavigation.IdEmpresa==idempresa)              
                .ToListAsync();
             }
 
@@ -56,7 +91,7 @@ namespace ReunionDiaApi.Controllers
 
                 centro = await _context.Centros
                .Include(x => x.Divisions)
-               //.ThenInclude(post => post.Lineas)
+               .ThenInclude(post => post.Lineas)// TO DO: eliminar en el codigo
                .Where(x => x.IdCentro == centroid)
                .ToListAsync();
             }
@@ -64,10 +99,26 @@ namespace ReunionDiaApi.Controllers
 
             return Ok(centro);
         }
+        //Obtener Lineas 
+        [HttpGet("Lineas/{cent}")]
+        public async Task<ActionResult<List<Linea>>> GetLineas(string division)
+        {
 
+                linea = await _context.Lineas             
+               .Where(x => (x.IdDivision == int.Parse(division))& x.Lestado==true)
+               .ToListAsync();
+
+            return Ok(linea);
+        }
+
+
+        //Obtener Equipos
         [HttpGet("Equipos/{cent}")]
         public async Task<ActionResult<List<EquipoEam>>> EquiposEAM(string cent)
         {
+
+            int idcentro = int.Parse(cent);
+
             if (cent == "All")
             {
                 var result = await _context.EquipoEams
@@ -90,7 +141,7 @@ namespace ReunionDiaApi.Controllers
 
                 var result = await _context.EquipoEams
                  .Include(x => x.IdLineaNavigation)
-                 .Where(x => x.IdLineaNavigation.IdDivisionNavigation.IdCentroNavigation.Cnom == cent && x.EestaEam == true)
+                 .Where(x => x.IdLineaNavigation.IdDivisionNavigation.IdCentro== idcentro && x.EestaEam == true)
                  .Select(p => new
                  {
                      p.EcodEquiEam,

@@ -8,6 +8,7 @@ namespace ReunionWeb.NeoDbs
     /// </summary>
     public partial class Centro
     {
+    
         public Centro()
         {
             Divisions = new HashSet<Division>();
@@ -31,7 +32,6 @@ namespace ReunionWeb.NeoDbs
         /// 0: Inactivo, 1:Activo
         /// </summary>
         public bool Cestado { get; set; }
-
         public virtual Empresa? IdEmpresaNavigation { get; set; }
         public virtual ICollection<Division> Divisions { get; set; }
         public virtual ICollection<Linea> Lineas { get; set; }

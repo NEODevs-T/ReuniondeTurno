@@ -1,7 +1,7 @@
 ﻿@page "/reunion"
 @page "/reunion/{accion}/{division}/{f1}/{f2}/{tipo}"
-@inject IDbDiv1Service DbDiv1Service
-@inject IAPIDiv1Service APIDiv1Service
+@inject IDbReunionService DbReunionService
+@inject IAPIReunionService APIReunionService
 @inject NavigationManager NavigationManager
 @inject AuthenticationStateProvider AuthStateProvider
 @attribute [Authorize(Roles = "Admin,AdminChempro, SupIntendente, Planificador, Mantenimiento, PendientesCalidadSeguridad, PendientesChempro")]
@@ -11,7 +11,7 @@
 
 <BSContainer>
 
-    @if (APIDiv1Service.centro.Count() == 0)
+    @if (APIReunionService.centro.Count() == 0)
     {
 
 
@@ -20,35 +20,35 @@
     else
     {
         <BSRow>
-            <BSCol Column="2">
+            <BSCol Column="3" ColumnSmall="2">
                 <BSLabel>Centro</BSLabel>
-
-                <BSInput InputType="InputType.Select" @bind-Value="Div">
+                <BSInput InputType="InputType.Select" @bind-Value="IdCentro">
                     <option value="">Seleccione</option>
-                    @foreach (var d in APIDiv1Service.centro)
+                    @foreach (var d in APIReunionService.centro)
                     {
-                    <option value="@d.Cnom">@d.Cnom</option>
+                        <option value="@d.IdCentro">@d.Cnom</option>
                     }
-            </BSInput>
+                </BSInput>
+            </BSCol>
 
 
-        </BSCol>
-        <BSCol Column="2">
-            <BSLabel>División</BSLabel>
-            <BSInput InputType="InputType.Select" @bind-Value="Division">
-                <option value="">Seleccione</option>
-                @foreach (var d in APIDiv1Service.centro)
+
+            <BSCol Column="3" ColumnSmall="2">
+                <BSLabel>División</BSLabel>
+                <BSInput InputType="InputType.Select" @bind-Value="IdDiv">
+                    <option value="">Seleccione</option>
+                    @foreach (var d in APIReunionService.centro)
                     {
-                    @foreach (var e in d.Divisions)
+                        @foreach (var e in d.Divisions)
                         {
-                            if (Div == d.Cnom)
+                            if (IdCentro == d.IdCentro)
                             {
-                            <option value="@e.Dnombre">@e.Dnombre</option>
+                                <option value="@e.IdDivision">@e.Dnombre</option>
                             }
                         }
                     }
-            </BSInput>
-        </BSCol>
+                </BSInput>
+            </BSCol>
 
         <BSCol ColumnSmall="1">
             <BSLabel>Código</BSLabel>
@@ -77,7 +77,7 @@
 
 </p>
 
-@if (DbDiv1Service.reudiatablas.Count() > 0 && dataIsLoaded == 2)
+@if (DbReunionService.reudiatablas.Count() > 0 && dataIsLoaded == 2)
 {
     <BSContainer>
 
@@ -108,7 +108,7 @@
                 </BSTR>
             </BSTHead>
             <BSTBody>
-                @foreach (var d in DbDiv1Service.reudiatablas)
+                @foreach (var d in DbReunionService.reudiatablas)
                 {
                     @if (d.Rdstatus != "Listo")
                     {
@@ -171,11 +171,11 @@
         </BSTable>
     </BSContainer>
 }
-else if (dataIsLoaded == 1 && DbDiv1Service.reunionditablas.Count() == 0)
+else if (dataIsLoaded == 1 && DbReunionService.reunionditablas.Count() == 0)
 {
     <p>Cargando...</p>
 }
-else if (dataIsLoaded == 2 && DbDiv1Service.reunionditablas.Count() == 0)
+else if (dataIsLoaded == 2 && DbReunionService.reunionditablas.Count() == 0)
 {
     <p>No hay datos para esta fecha.</p>
 }
@@ -197,8 +197,14 @@ else if (dataIsLoaded == 2 && DbDiv1Service.reunionditablas.Count() == 0)
 
     int dataIsLoaded = 0, filtrocod = 0;
     string ayer = DateTime.Now.AddDays(-1).ToString("yyyyMMdd");
+
+    private int IdCentro { get; set; } //id del Centro
+    private int IdDiv { get; set; } //id de la division
+
     private string Div { get; set; } //Centro
     private string Division { get; set; } //División
+
+
     private string Codigo { get; set; } = "Todo"; //Codigo
     private string Rol { get; set; } = ""; //Rol del usuario
 
@@ -223,14 +229,14 @@ else if (dataIsLoaded == 2 && DbDiv1Service.reunionditablas.Count() == 0)
 
         if (claims[1].Value == "Admin")
         {
-            await APIDiv1Service.GetCentros("All");
+            await APIReunionService.GetCentros("All");
         }
         else
         {
-            await APIDiv1Service.GetCentros(claims[6].Value.ToString());
+            await APIReunionService.GetCentros(claims[6].Value.ToString());
         }
-        await APIDiv1Service.Getksf();
-        await APIDiv1Service.GetResReu();
+        await APIReunionService.Getksf();
+        await APIReunionService.GetResReu();
 
     }
 
@@ -239,7 +245,7 @@ else if (dataIsLoaded == 2 && DbDiv1Service.reunionditablas.Count() == 0)
         if (dataIsLoaded != 1)
         {
             dataIsLoaded = 1;
-            await DbDiv1Service.GetPendientes(Div, Division, DateTime.Now.AddDays(-1), DateTime.Now,"1");
+            await DbReunionService.GetPendientes(IdCentro.ToString(), IdDiv.ToString(), DateTime.Now.AddDays(-1), DateTime.Now, "1");
             dataIsLoaded = 2;
         }
     }
@@ -253,7 +259,7 @@ else if (dataIsLoaded == 2 && DbDiv1Service.reunionditablas.Count() == 0)
         if (accion != null)
         {
             dataIsLoaded = 1;
-            await DbDiv1Service.GetPendientes(accion, division, DateTime.Now.AddDays(-1), DateTime.Now,tipo);
+            await DbReunionService.GetPendientes(accion, division, DateTime.Now.AddDays(-1), DateTime.Now,tipo);
             dataIsLoaded = 2;
         }
 

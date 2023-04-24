@@ -1,7 +1,7 @@
 ﻿@page "/pendientes"
 @page "/pendientes/{accion}/{division}/{f1}/{f2}/{tipo}"
-@inject IDbDiv1Service DbDiv1Service
-@inject IAPIDiv1Service APIDiv1Service
+@inject IDbReunionService DbReunionService
+@inject IAPIReunionService APIReunionService
 @inject NavigationManager NavigationManager
 @inject HttpClient Http
 @inject AuthenticationStateProvider AuthStateProvider
@@ -24,7 +24,7 @@
 
 <BSContainer>
 
-    @if (APIDiv1Service.centro.Count() == 0)
+    @if (APIReunionService.centro.Count() == 0)
     {
         <div class="loader"></div>
     }
@@ -35,31 +35,34 @@
         <BSRow>
             <BSCol Column="3" ColumnSmall="2">
                 <BSLabel>Centro</BSLabel>
-                <BSInput InputType="InputType.Select" @bind-Value="Div">
+                <BSInput InputType="InputType.Select" @bind-Value="IdCentro">
                     <option value="">Seleccione</option>
-                    @foreach (var d in APIDiv1Service.centro)
+                    @foreach (var d in APIReunionService.centro)
                     {
-                    <option value="@d.Cnom">@d.Cnom</option>
+                        <option value="@d.IdCentro">@d.Cnom</option>
                     }
             </BSInput>
         </BSCol>
+        
 
         <BSCol Column="3" ColumnSmall="2">
             <BSLabel>División</BSLabel>
-            <BSInput InputType="InputType.Select" @bind-Value="Division">
+            <BSInput InputType="InputType.Select" @bind-Value="IdDiv">
                 <option value="">Seleccione</option>
-                @foreach (var d in APIDiv1Service.centro)
+                @foreach (var d in APIReunionService.centro)
                     {
                     @foreach (var e in d.Divisions)
                         {
-                            if (Div == d.Cnom)
+                            if (IdCentro == d.IdCentro)
                             {
-                            <option value="@e.Dnombre">@e.Dnombre</option>
+                            <option value="@e.IdDivision">@e.Dnombre</option>
                             }
                         }
                     }
             </BSInput>
-        </BSCol>
+        </BSCol>    
+        
+  
 
         <BSCol Column="3" ColumnSmall="2">
             <BSLabel> Desde</BSLabel>
@@ -134,7 +137,7 @@
 <p></p>
 
 
-@if (DbDiv1Service.reudiatablas.Count() > 0 && dataIsLoaded == 2)
+@if (DbReunionService.reudiatablas.Count() > 0 && dataIsLoaded == 2)
 {
 
 
@@ -160,7 +163,7 @@
             </BSTR>
         </BSTHead>
         <BSTBody>
-            @foreach (var d in DbDiv1Service.reudiatablas)
+            @foreach (var d in DbReunionService.reudiatablas)
             {
                 @if (Codigo == d.RdcodDis | Codigo == "Todo")
                 {
@@ -305,11 +308,11 @@
 
 
 }
-else if (dataIsLoaded == 1 && DbDiv1Service.dbDiv1s.Count() == 0)
+else if (dataIsLoaded == 1 && DbReunionService.reudiatablas.Count() == 0)
 {
     <div class="loader"></div>
 }
-else if (dataIsLoaded == 2 && DbDiv1Service.dbDiv1s.Count() == 0)
+else if (dataIsLoaded == 2 && DbReunionService.reudiatablas.Count() == 0)
 {
     <p>No hay datos para esta fecha.</p>
 }
@@ -330,8 +333,14 @@ else if (dataIsLoaded == 2 && DbDiv1Service.dbDiv1s.Count() == 0)
     int dataIsLoaded = 0;
     string ayer = DateTime.Now.AddDays(-1).ToString("yyyyMMdd"), error;
     private bool data { get; set; } = false; //Centro
-    private string Div { get; set; } //Centro
-    private string Division { get; set; } //División
+
+    private int IdCentro { get; set; } //id del Centro
+    private int IdDiv { get; set; } //id de la division
+
+
+    //private string Div { get; set; } //Centro
+    //private string Division { get; set; } //División
+
     private string Codigo { get; set; } = "Todo"; //Codigo
     private string Status { get; set; } = "Todo"; //Status
     private string UsrAdmin { get; set; } = ""; //permisos de admin
@@ -364,15 +373,15 @@ else if (dataIsLoaded == 2 && DbDiv1Service.dbDiv1s.Count() == 0)
         if (claims[1].Value == "Admin")
         {
             UsrAdmin = claims[1].Value;
-            await APIDiv1Service.GetCentros("All");
+            await APIReunionService.GetCentros("All");
         }
         else
         {
-            await APIDiv1Service.GetCentros(claims[6].Value.ToString());
+            await APIReunionService.GetCentros(claims[6].Value.ToString());
         }
 
-        await APIDiv1Service.Getksf();
-        await APIDiv1Service.GetResReu();
+        await APIReunionService.Getksf();
+        await APIReunionService.GetResReu();
 
     }
 
@@ -382,7 +391,8 @@ else if (dataIsLoaded == 2 && DbDiv1Service.dbDiv1s.Count() == 0)
         {
             dataIsLoaded = 1;
 
-            await DbDiv1Service.GetPendientes(Div, Division, fecha1, fecha2, tipoconsulta);
+            //await DbReunionService.GetPendientes(Div, Division, fecha1, fecha2, tipoconsulta); 
+            await DbReunionService.GetPendientes(IdCentro.ToString(), IdDiv.ToString(), fecha1, fecha2, tipoconsulta);
             dataIsLoaded = 2;
         }
     }
@@ -391,10 +401,10 @@ else if (dataIsLoaded == 2 && DbDiv1Service.dbDiv1s.Count() == 0)
         cargandocambio = false;
         cambiostatuss = new List<CambStat>();
         cambiofechas = new List<CambFec>();
-        await DbDiv1Service.GetCambioStatus(idreu);
-        await DbDiv1Service.GetCambioFecha(idreu);
-        cambiofechas = DbDiv1Service.cambiofecha;
-        cambiostatuss = DbDiv1Service.cambiostatus;
+        await DbReunionService.GetCambioStatus(idreu);
+        await DbReunionService.GetCambioFecha(idreu);
+        cambiofechas = DbReunionService.cambiofecha;
+        cambiostatuss = DbReunionService.cambiostatus;
         
         cargandocambio = true;
 
@@ -425,7 +435,7 @@ else if (dataIsLoaded == 2 && DbDiv1Service.dbDiv1s.Count() == 0)
 
                 tipoconsulta = tipo;
                 dataIsLoaded = 1;
-                await DbDiv1Service.GetPendientes(accion, division, date1, date2, tipo);
+                await DbReunionService.GetPendientes(accion, division, date1, date2, tipo);
                 dataIsLoaded = 2;
 
             }

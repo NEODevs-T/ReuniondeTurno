@@ -1,13 +1,14 @@
-﻿using ReunionWeb.Models;
+﻿//using ReunionWeb.Models;
+using ReunionWeb.DTOs;
 using ReunionWeb.NeoDbs;
 
 namespace ReunionWeb.Services
 {
-    public interface IDbDiv1Service
+    public interface IDbReunionService
     {
 
-        List<BdDiv1> dbDiv1s { get; set; }
-        List<Asistencium> asistencia { get; set; }
+        //List<BdDiv1> dbDiv1s { get; set; }
+        //List<Asistencium> asistencia { get; set; }
 
 
         List<Centro> centros { get; set; }
@@ -24,14 +25,18 @@ namespace ReunionWeb.Services
          List<CargoReu> cargoreuss { get; set; }
          List<CambStat> cambiostatus { get; set; }
          List<CambFec> cambiofecha { get; set; }
-
+         Centro centrodiscrepancia { get; set; }
+        
         Task GetPendientes(string centro, string div, DateTime f1, DateTime f2, string tipo);
         Task GetCambioStatus(int idreu);
         Task GetCambioFecha(int idreu);
         Task<ReuDium> GetDiscrepantacia(int id);
+        Task<CentroDivision> GetCentroDiv(string centro, string division, int tipo);
+
+
         //Task<ReunionDium> GetDiscrepantacia(int id);
-        Task Insertasistencia(Asistencium asistencium);
-       // Task Insertasistencia(Asistencium asistencium);
+        // Task Insertasistencia(Asistencium asistencium);
+        // Task Insertasistencia(Asistencium asistencium);
         Task<int> InsertDiscrepancia(ReuDium discre);
         Task InsertCambioStatus(CambStat status);//Insertar usuario que cambio el status
         Task InsertCambioFec(CambFec cambiofec);//Insertar el usuarrio que cambio la fecha de trabajo.

@@ -1,8 +1,8 @@
 ﻿@page "/asistencia"
 
-@inject IDbDiv1Service DbDiv1Service
+@inject IDbReunionService DbReunionService
 @inject AuthenticationStateProvider AuthStateProvider
-@inject IAPIDiv1Service APIDiv1Service
+@inject IAPIReunionService APIReunionService
 @inject ILocalStorageService LocalStorage
 @attribute [Authorize(Roles = "Admin, AdminChempro, SupIntendente")]
 
@@ -46,7 +46,7 @@
 
 <BSContainer>
 
-    @if (APIDiv1Service.centro.Count() == 0)
+    @if (APIReunionService.centro.Count() == 0)
     {
         <div class="loader"></div>
     }
@@ -60,7 +60,7 @@
 
                 <BSInput InputType="InputType.Select" @bind-Value="Div">
                     <option value="">Seleccione</option>
-                    @foreach (var d in APIDiv1Service.centro)
+                    @foreach (var d in APIReunionService.centro)
                     {
                     <option value="@d.Cnom">@d.Cnom</option>
                     }
@@ -83,7 +83,7 @@
 
 
 
-@if (APIDiv1Service.cargoreus.Count() > 0 && dataIsLoaded == 2)
+@if (APIReunionService.cargoreus.Count() > 0 && dataIsLoaded == 2)
 {
 
     <BSCol Column="6">
@@ -135,11 +135,11 @@
 
 
 }
-else if (APIDiv1Service.cargoreus.Count() == 0 && dataIsLoaded == 2)
+else if (APIReunionService.cargoreus.Count() == 0 && dataIsLoaded == 2)
 {
     <p>No se ha cargado personal a este centro.</p>
 }
-else if (dataIsLoaded == 1 && DbDiv1Service.dbDiv1s.Count() == 0)
+else if (dataIsLoaded == 1 && APIReunionService.cargoreus.Count() == 0)
 {
     <div class="loader"></div>
 }
@@ -188,11 +188,11 @@ else if (dataIsLoaded == 1 && DbDiv1Service.dbDiv1s.Count() == 0)
         await CreateData();
         if (claims[1].Value == "Admin")
         {
-            await APIDiv1Service.GetCentros("All");
+            await APIReunionService.GetCentros("All");
         }
         else
         {
-            await APIDiv1Service.GetCentros(claims[6].Value.ToString());
+            await APIReunionService.GetCentros(claims[6].Value.ToString());
         }
 
 
@@ -205,8 +205,8 @@ else if (dataIsLoaded == 1 && DbDiv1Service.dbDiv1s.Count() == 0)
         if (dataIsLoaded != 1)
         {
             dataIsLoaded = 1;
-            await APIDiv1Service.GetAsistencia(Div);
-            cr = APIDiv1Service.cargoreus;
+            await APIReunionService.GetAsistencia(Div);
+            cr = APIReunionService.cargoreus;
             listaAsistencia = new List<AsistenReu>();
 
             for (var i = 0; i < cr.Count; i++)
@@ -222,7 +222,7 @@ else if (dataIsLoaded == 1 && DbDiv1Service.dbDiv1s.Count() == 0)
             for (var i = 0; i < cr.Count; i++)
             {
 
-                listaAsistencia[i].AridCargoR = APIDiv1Service.cargoreus[i].IdCargoR;
+                listaAsistencia[i].AridCargoR = APIReunionService.cargoreus[i].IdCargoR;
             }
 
 
@@ -240,7 +240,7 @@ else if (dataIsLoaded == 1 && DbDiv1Service.dbDiv1s.Count() == 0)
         {
             if (time == 9)
             {
-                mensaje = await APIDiv1Service.Postasistencia(listaAsistencia);
+                mensaje = await APIReunionService.Postasistencia(listaAsistencia);
                 dataIsLoaded = 0;
                 Show();
             }

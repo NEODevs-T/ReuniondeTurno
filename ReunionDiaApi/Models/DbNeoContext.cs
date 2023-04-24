@@ -31,10 +31,10 @@ namespace ReunionDiaApi.Models
         public virtual DbSet<ReuDium> ReuDia { get; set; } = null!;
         public virtual DbSet<ReunionDium> ReunionDia { get; set; } = null!;
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
+        //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        //{
             
-        }
+        //}
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

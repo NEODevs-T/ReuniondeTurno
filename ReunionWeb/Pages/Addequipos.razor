@@ -1,6 +1,6 @@
 ﻿@page "/addequipo"
-@inject IDbDiv1Service DbDiv1Service
-@inject IAPIDiv1Service APIDiv1Service
+@inject IDbReunionService DbReunionService
+@inject IAPIReunionService APIReunionService
 @inject HttpClient Http
 @inject AuthenticationStateProvider AuthStateProvider
 @inject ILocalStorageService LocalStorage
@@ -15,7 +15,7 @@
 
 
 
-    @if (APIDiv1Service.centro.Count() == 0)
+    @if (APIReunionService.centro.Count() == 0)
 {
     <div class="loader"></div>
 
@@ -40,7 +40,7 @@ else
                         <BSLabel>Centro</BSLabel>
                         <BSInput InputType="InputType.Select" @bind-Value="Centro">
                             <option value="">Seleccione</option>
-                            @foreach (var d in APIDiv1Service.centro)
+                            @foreach (var d in APIReunionService.centro)
                     {
                         <option value="@d.IdCentro">@d.Cnom</option>
                     }
@@ -52,7 +52,7 @@ else
                 <BSLabel>División</BSLabel>
                 <BSInput InputType="InputType.Select" @bind-Value="Division">
                     <option value="">Seleccione</option>
-                    @foreach (var d in APIDiv1Service.centro)
+                    @foreach (var d in APIReunionService.centro)
                     {
                         @foreach (var e in d.Divisions)
                         {
@@ -71,7 +71,7 @@ else
                 <BSLabel>Línea</BSLabel>
                 <BSInput InputType="InputType.Select" @bind-Value="Linea">
                     <option value="">Seleccione...</option>
-                    @foreach (var d in APIDiv1Service.centro)
+                    @foreach (var d in APIReunionService.centro)
                     {
                         @foreach (var e in d.Lineas)
                         {
@@ -173,8 +173,8 @@ else
 
         await CreateData();
 
-        await APIDiv1Service.GetCentros(claims[6].Value.ToString());
-        await APIDiv1Service.GetEquiposEAM(claims[6].Value.ToString());
+        await APIReunionService.GetCentros(claims[6].Value.ToString());
+        await APIReunionService.GetEquiposEAM(claims[6].Value.ToString());
 
 
 
