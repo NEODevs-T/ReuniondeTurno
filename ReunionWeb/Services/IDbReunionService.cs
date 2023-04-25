@@ -7,9 +7,6 @@ namespace ReunionWeb.Services
     public interface IDbReunionService
     {
 
-        //List<BdDiv1> dbDiv1s { get; set; }
-        //List<Asistencium> asistencia { get; set; }
-
 
         List<Centro> centros { get; set; }
          List<Linea> lineas { get; set; }
@@ -34,15 +31,12 @@ namespace ReunionWeb.Services
         Task<CentroDivision> GetCentroDiv(string centro, string division, int tipo);
 
 
-        //Task<ReunionDium> GetDiscrepantacia(int id);
-        // Task Insertasistencia(Asistencium asistencium);
-        // Task Insertasistencia(Asistencium asistencium);
         Task<int> InsertDiscrepancia(ReuDium discre);
         Task InsertCambioStatus(CambStat status);//Insertar usuario que cambio el status
         Task InsertCambioFec(CambFec cambiofec);//Insertar el usuarrio que cambio la fecha de trabajo.
         Task<bool> InsertarRegistros(CambFec cambiofec, CambStat status);//Insertar discrepancias con chismoso(Trazabilidad)
         Task<bool> UpdateDiscrepancia(ReuDium bdDiv1, int id, int tipo, string f1, string f2);
-        //Task UpdateDiscrepancia(ReunionDium bdDiv1, int id, int tipo, string f1, string f2);
+
 
     }
 }

@@ -46,7 +46,7 @@
     </BSCol>
     <BSRow>
 
-        <BSCol Column="3">
+     @*   <BSCol Column="3">
             <BSLabel>Centro</BSLabel>
             <BSInput InputType="InputType.Select" @bind-Value="Reuniondb.Rdcentro">
                 <option value="">Seleccione...</option>
@@ -56,6 +56,18 @@
                 }
             </BSInput>
             <BSFeedback For="@(() => Reuniondb.Rdcentro)" ValidMessage="Correcto." />
+        </BSCol>*@
+        
+        <BSCol Column="3">
+            <BSLabel>Centro</BSLabel>
+            <BSInput InputType="InputType.Select" @bind-Value="IdCent">
+                <option value="">Seleccione...</option>
+                @foreach (var d in APIReunionService.centro)
+                {
+                    <option value="@d.IdCentro">@d.Cnom</option>
+                }
+            </BSInput>
+            <BSFeedback For="@(() => IdCent)" ValidMessage="Correcto." />
         </BSCol>
 
 
@@ -68,12 +80,11 @@
                 <option value="">Seleccione...</option>
                 @foreach (var d in APIReunionService.centro)
                 {
-                    @foreach (var e in d.Divisions)
+                @foreach (var e in d.Divisions.Where(di => di.IdCentro == IdCent))
                     {
-                        if (Reuniondb.Rdcentro == d.Cnom)
-                        {
+                        
                             <option value="@e.IdDivision">@e.Dnombre</option>
-                        }
+                        
                     }
                 }
             </BSInput>
@@ -87,32 +98,18 @@
                 <option value="">Seleccione...</option>
                 @foreach (var d in APIReunionService.centro)
                 {
-                    @foreach (var e in d.Lineas)
+                    @foreach (var e in d.Lineas.Where(li=>li.IdDivision==IdDiv && li.IdDivisionNavigation.IdCentro==IdCent))
                     {
-                        if (IdDiv == e.IdDivisionNavigation.IdDivision)
-                        {
+                       @* if (IdDiv == e.IdDivisionNavigation.IdDivision)
+                        {*@
                             <option value="@e.Lnom">@e.Lnom</option>
-                        }
+                       @* }*@
                     }
                 }
             </BSInput>
             <BSFeedback For="@(() => Reuniondb.Rdarea)" ValidMessage="Correcto." />
         </BSCol>       
-@*        
-        <BSCol Column="3">
-            <BSLabel>Línea</BSLabel>
-            <BSInput InputType="InputType.Select" @bind-Value="Reuniondb.Rdarea">
-                <option value="">Seleccione...</option>
-                @foreach (var d in APIReunionService.lineas)
-                {
 
-                 <option value="@d.Lnom">@d.Lnom</option>
-                  
-                }
-            </BSInput>
-            <BSFeedback For="@(() => Reuniondb.Rdarea)" ValidMessage="Correcto." />
-        </BSCol>
-*@
 
 
 
@@ -280,23 +277,23 @@
 
 @code {
 
-    [CascadingParameter]
-    //private Task<AuthenticationState> authenticationStateTask { get; set; }
+        [CascadingParameter]
+        //private Task<AuthenticationState> authenticationStateTask { get; set; }
 
-    private List<Claim> claims { get; set; }
+        private List<Claim> claims { get; set; }
 
-    private async Task CreateData()
+        private async Task CreateData()
 
-    {
-        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
-        var user = authState.User;
-        claims = Enumerable.ToList(user.Claims);
+        {
+            var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+            var user = authState.User;
+            claims = Enumerable.ToList(user.Claims);
 
-    }
+        }
 
 
-    ReuDium Reuniondb = new ReuDium();
-    Alerts Alertas = new Alerts();
+        ReuDium Reuniondb = new ReuDium();
+        Alerts Alertas = new Alerts();
     private string _message = "";
     private DateTime fechahoy, fechatrabajo = DateTime.Today;
     private string fechahoy2;
@@ -306,6 +303,8 @@
     CambFec CambFec = new CambFec();//Formulario para agregar que usuario hizo el cambio de fecha.
 
 
+    [Required(ErrorMessage = "Seleccione el Centro")]
+    private int? IdCent { get; set; }
     [Required(ErrorMessage = "Seleccione la división.")]
     private int? IdDiv { get; set; }
 
@@ -322,8 +321,8 @@
         await APIReunionService.GetResReu();
         if (claims[1].Value == "Admin")
         {
-           //await APIReunionService.GetCentros("All");
-           await APIReunionService.GetCentrosxEmpresa("All" + claims[10].Value);
+            //await APIReunionService.GetCentros("All");
+            await APIReunionService.GetCentrosxEmpresa("All" + claims[10].Value);
 
 
             if (claims[6].Value == "Conversión" | claims[6].Value == "Molinos")
@@ -362,6 +361,7 @@
                     Reuniondb.RdcodEq = selectedEquipoId;
 
                 }
+                Reuniondb.Rdcentro = APIReunionService.centro.Where(c => c.IdCentro == IdCent).FirstOrDefault(c => c.IdCentro.Equals(IdCent)).Cnom;
                 //Asigno el id de la division al form
                 foreach (var d in APIReunionService.centro)
                 {

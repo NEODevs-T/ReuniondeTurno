@@ -3,7 +3,6 @@ global using Blazored.LocalStorage;
 using BlazorStrap;
 using Microsoft.EntityFrameworkCore;
 using ReunionWeb.Services;
-//using ReunionWeb.Models;
 using ReunionWeb.NeoDbs;
 using ReunionWeb;
 
@@ -17,14 +16,13 @@ builder.Services.AddServerSideBlazor();
 //builder.Services.AddSingleton<APIReunionService>();
 builder.Services.AddHttpClient<IAPIReunionService, APIReunionService>(client =>
 {
-    client.BaseAddress = new Uri("http://operaciones.papeleslatinos.com/ReunionApi/");
+    client.BaseAddress = new Uri("http://neo.paveca.com.ve/ReunionApi/");
 });
 builder.Services.AddScoped<IDbReunionService, DbReunionService>();
 builder.Services.AddScoped<IAPIReunionService, APIReunionService>();
 builder.Services.AddControllersWithViews();
 builder.Services.AddBlazorStrap();
-//builder.Services.AddDbContext<DOC_IngIContext>(options =>
-//    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")), ServiceLifetime.Transient);
+
 
 
 builder.Services.AddDbContext<DbNeoContext>(options =>

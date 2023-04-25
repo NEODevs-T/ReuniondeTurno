@@ -3,9 +3,11 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using ReunionDiaApi.Models;
 using ReunionDiaApi.DTOs;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ReunionDiaApi.Controllers
 {
+    [AllowAnonymous]
     [Route("/[controller]")]
     [ApiController]
     public class EmpresasController : ControllerBase
@@ -36,6 +38,7 @@ namespace ReunionDiaApi.Controllers
         public static List<StatsAsisDto> StatsAsis = new List<StatsAsisDto>();
         public static List<EquipoEam> equipos = new List<EquipoEam>();
         public static List<EquipoEam> equiposlinea = new List<EquipoEam>();
+        public static EquipoDTO equipoinsertar = new EquipoDTO();
 
 
 
@@ -192,7 +195,36 @@ namespace ReunionDiaApi.Controllers
 
             return Ok(linea);
         }
+     
+        [HttpPost("AddEquipo")]
+        public async Task<ActionResult<string>> AddEquipo(EquipoDTO equipo)
+        {
 
+            try
+            {
+                var result = await _context.EquipoEams
+                .Where(x => x.EcodEquiEam == equipo.EcodEquiEam)
+                .FirstOrDefaultAsync();
+                
+                if (result == null)
+                {
+                    //_context.EquipoEams.Add(equipo);
+                    //await _context.SaveChangesAsync();
+
+                    return Ok("Registro Exitoso");
+                }
+                else
+                {
+                    return BadRequest("Ya se registro asistencia");
+                }
+
+            }
+            catch
+            {
+                return BadRequest("Error, intente nuevamente");
+            }
+
+        }
 
         //[HttpGet("EquiposLinea/{Centro}")]
         //public async Task<ActionResult<List<Empresa>>> EquiposLineaEAM(string Centro)

@@ -7,8 +7,7 @@ namespace ReunionWeb.Services
 {
     public interface IAPIReunionService
     {
-        //List<BdDiv1> dbDiv1s { get; set; }
-        //List<Asistencium> asistencia { get; set; }
+
         List<Centro> centro { get; set; }
         List<Linea> lineas { get; set; }
         List<Division> divisions { get; set; }
@@ -36,11 +35,8 @@ namespace ReunionWeb.Services
         Task GetStatsAsist( string div, string f1,string f2);
         Task GetListaAsist( string div, string f1,string f2);
 
-            
-        //Task GetPendientes(string div);
-        //Task<BdDiv1> GetDiscrepantacia(int id);
         Task<string> Postasistencia(List<AsistenReu> asisten);
-        //Task PostDiscrepancia(BdDiv1 bdDiv1);
-        //Task PutDiscrepancia(BdDiv1 bdDiv1, int tipo);
+        Task<string> PostEquipo(EquipoDTO equipo);
+
     }
 }

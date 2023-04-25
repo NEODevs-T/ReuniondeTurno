@@ -26,12 +26,12 @@ else
     {
         <BSInputRadio CheckedValue="@(0)" @bind-Value="tipo" IsToggle="true" Size="Size.ExtraSmall" Color="BSColor.Success" IsOutlined="true">
             Volver
-            <span class="oi oi-people"></span>
+            <span class="oi oi-arrow-circle-left"></span>
         </BSInputRadio>
         <p></p>
         <p></p>
         <div class="contenedor">
-            <BSForm Model="EquipoForm" Class="boxhome" IsRow="true" Gutters="Gutters.Medium" OnSubmit="Insert" OnReset="Reset">
+            <BSForm Model="EquipoForm" Class="boxhome" IsRow="true" Gutters="Gutters.Medium" OnSubmit="SaveEquipo" OnReset="Reset">
                 <DataAnnotationsValidator />
                 <BSCol ColumnMedium="12">
                     @_message
@@ -40,7 +40,7 @@ else
                 <BSRow>
                     <BSCol Column="4" ColumnSmall="2">
                         <BSLabel>Centro</BSLabel>
-                        <BSInput InputType="InputType.Select" @bind-Value="Centro">
+                        <BSInput InputType="InputType.Select" @bind-Value="Centro" >
                             <option value="">Seleccione</option>
                             @foreach (var d in APIReunionService.centro)
                             {
@@ -56,12 +56,9 @@ else
                             <option value="">Seleccione</option>
                             @foreach (var d in APIReunionService.centro)
                             {
-                                @foreach (var e in d.Divisions)
-                                {
-                                    if (e.IdCentro == d.IdCentro)
-                                    {
-                                        <option value="@e.IdDivision">@e.Dnombre</option>
-                                    }
+                               @foreach (var e in d.Divisions.Where(di=>di.IdCentro==Centro))
+                                {                        
+                                    <option value="@e.IdDivision">@e.Dnombre</option>                           
                                 }
                             }
                         </BSInput>
@@ -75,12 +72,9 @@ else
                             <option value="">Seleccione...</option>
                             @foreach (var d in APIReunionService.centro)
                             {
-                                @foreach (var e in d.Lineas)
-                                {
-                                    if (Division == e.IdDivisionNavigation.IdDivision)
-                                    {
-                                        <option value="@e.IdLinea">@e.Lnom</option>
-                                    }
+                                @foreach (var e in d.Lineas.Where(li=>li.IdDivision==Division && li.IdDivisionNavigation.IdCentro==Centro))
+                                {                        
+                                    <option value="@e.IdLinea">@e.Lnom</option>                         
                                 }
                             }
                         </BSInput>
@@ -115,11 +109,9 @@ else
                     <p></p>
                 </BSRow>
                 <BSCol Column="12">
-                    <BSButton Color="BSColor.Success" Size="Size.ExtraSmall" IsSubmit IsOutlined>  GuardarEquipo <span class="oi oi-check"></span></BSButton>
+                    <BSButton Color="BSColor.Success" Size="Size.ExtraSmall" IsSubmit >  Guardar Equipo <span class="oi oi-check"></span></BSButton>
 
-                <BSButton Color="BSColor.Primary" Size="Size.ExtraSmall" IsReset IsOutlined>  Nuevo en Línea</BSButton>
-
-                <BSButton Color="BSColor.Warning" Size="Size.ExtraSmall" IsReset IsOutlined>  Nuevo</BSButton>
+                <BSButton Color="BSColor.Primary" Size="Size.ExtraSmall" IsReset >  Nuevo</BSButton>
 
             </BSCol>
         </BSForm>
@@ -129,14 +121,14 @@ else
     {
         <BSInputRadio CheckedValue="@(0)" @bind-Value="tipo" IsToggle="true" Size="Size.ExtraSmall" Color="BSColor.Success" IsOutlined="true">
             Volver
-            <span class="oi oi-people"></span>
+            <span class="oi oi-arrow-circle-left"></span>
         </BSInputRadio>
         <p></p>
         <p></p>
         <BSRow>
             <BSCol Column="3">
                 <BSLabel>Centro</BSLabel>
-                <BSInput InputType="InputType.Select" @bind-Value="Centro">
+                <BSInput InputType="InputType.Select" @bind-Value="Centro" >
                     <option value="">Seleccione</option>
                     @foreach (var d in APIReunionService.centro)
                     {
@@ -148,18 +140,18 @@ else
 
             <BSCol Column="3" >
                 <BSLabel>División</BSLabel>
-                <BSInput InputType="InputType.Select" @bind-Value="Division">
+                <BSInput InputType="InputType.Select" @bind-Value="Division" >
                     <option value="">Seleccione</option>
+                  
+                    {
                     @foreach (var d in APIReunionService.centro)
                     {
-                        @foreach (var e in d.Divisions)
-                        {
-                            if (e.IdCentro == d.IdCentro)
-                            {
-                                <option value="@e.IdDivision">@e.Dnombre</option>
-                            }
+                        @foreach (var e in d.Divisions.Where(di=>di.IdCentro==Centro))
+                        {                        
+                              <option value="@e.IdDivision">@e.Dnombre</option>                           
                         }
                     }
+                    
                 </BSInput>
                 <BSFeedback For="@(() =>Division)" ValidMessage="Correcto." />
             </BSCol>
@@ -171,12 +163,9 @@ else
                     <option value="">Seleccione...</option>
                     @foreach (var d in APIReunionService.centro)
                     {
-                        @foreach (var e in d.Lineas)
-                        {
-                            if (Division == e.IdDivisionNavigation.IdDivision)
-                            {
-                                <option value="@e.IdLinea">@e.Lnom</option>
-                            }
+                        @foreach (var e in d.Lineas.Where(li=>li.IdDivision==Division && li.IdDivisionNavigation.IdCentro==Centro))
+                        {                        
+                                <option value="@e.IdLinea">@e.Lnom</option>                         
                         }
                     }
                 </BSInput>
@@ -184,14 +173,29 @@ else
 
             </BSCol Colum="3">
             <BSCol>
+                 <BSRow>
                  <BSLabel>Buscar</BSLabel>
-                <button onclick="@Get" class="btn btn-success"><i class="oi oi-pencil"></i></button>
+                 </BSRow>
+                <button onclick="@Get" class="btn btn-success"><i class="oi oi-magnifying-glass"></i></button>
             </BSCol>
-        </BSRow>
-        <p></p>
+            </BSRow>
+            <p></p>
+            <p></p>
+      
 
         @if (APIReunionService.equiposlinea.Count() > 0 && dataIsLoaded == 2)
         {
+                 
+              <BSCol Column="3">
+                <BSLabel>Filtrar Código</BSLabel>
+                <BSInput InputType="InputType.Text" @bind-Value="EquipoFiltro" >
+                   
+                   
+                </BSInput>
+
+            </BSCol Colum="3">
+        
+        <p></p>
             <BSContainer>
 
 
@@ -214,19 +218,63 @@ else
                         </BSTR>
                     </BSTHead>
                     <BSTBody>
-                        @foreach (var d in APIReunionService.equiposlinea)
-                        {
+                        
+                            @if (EquipoFiltro.Length>2)
+                            {
 
-
-                            <BSTR>
-
+                                
+                                    @if(APIReunionService.equiposlinea.Where(a => a.EcodEquiEam.Contains(EquipoFiltro)).Count()==0)
+                                    {
+                                        <p>No hay registros.</p>
+                                    }
+                                    else
+                                    {
+                                         @foreach (var d in  APIReunionService.equiposlinea.Where(a => a.EcodEquiEam.Contains(EquipoFiltro)).ToList())
+                                        {
+                                            <BSTR>
+                                            @*<BSTD>@d.IdEquipo</BSTD>*@
+                                            <BSTD>@d.IdLineaNavigation.IdDivisionNavigation.IdCentroNavigation.Cnom</BSTD>
+                                            <BSTD>@d.IdLineaNavigation.IdDivisionNavigation.Dnombre</BSTD>
+                                            <BSTD>@d.IdLineaNavigation.Lnom</BSTD>
+                                            <BSTD>
+                                                @d.EnombreEam                                    
+                                            </BSTD>
+                                            <BSTD>
+                                                    @d.EcodEquiEam
+                                            </BSTD>
+                                            <BSTD>
+                                                    @d.EdescriEam
+                                            </BSTD>
+                                            <BSTD>
+                                                @if(d.EestaEam==true)
+                                                {
+                                                    <p>Activo</p>
+                                                }
+                                                else
+                                                {
+                                                    <p>Inactivo</p>
+                                                }
+                                            </BSTD>
+                                            <BSTD>
+                                                <button class="btn btn-success"><i class="oi oi-pencil"></i></button>
+                                            </BSTD>
+                                            </BSTR> 
+                                        }
+                                     }
+                              }
+                            
+                            
+                            else               
+                            {
+                                @foreach (var d in APIReunionService.equiposlinea)
+                                {
+                                  <BSTR>
                        @*         <BSTD>@d.IdEquipo</BSTD>*@
                                 <BSTD>@d.IdLineaNavigation.IdDivisionNavigation.IdCentroNavigation.Cnom</BSTD>
                                 <BSTD>@d.IdLineaNavigation.IdDivisionNavigation.Dnombre</BSTD>
                                 <BSTD>@d.IdLineaNavigation.Lnom</BSTD>
                                 <BSTD>
-                                     @d.EnombreEam
-                                    
+                                     @d.EnombreEam                                    
                                 </BSTD>
                                 <BSTD>
                                     @d.EcodEquiEam
@@ -243,19 +291,13 @@ else
                                     {
                                     <p>Inactivo</p>
                                     }
-
                                 </BSTD>
-
                                 <BSTD>
                                     <button class="btn btn-success"><i class="oi oi-pencil"></i></button>
                                 </BSTD>
-
-
                             </BSTR>
-
-
+                            }
                         }
-
 
                     </BSTBody>
 
@@ -276,11 +318,11 @@ else
     {
         <BSInputRadio CheckedValue="@(1)" @bind-Value="tipo" IsToggle="true" Size="Size.ExtraSmall" Color="BSColor.Success" IsOutlined="true">
             Ageregar Equipos
-            <span class="oi oi-people"></span>
+            <span class="oi oi-plus"></span>
         </BSInputRadio>
         <BSInputRadio @bind-Value="tipo" CheckedValue="@(2)" IsToggle="true" Size="Size.ExtraSmall" Color="BSColor.Success" IsOutlined="true">
             Consultar Equipos
-            <span class="oi oi-people"></span>
+            <span class="oi oi-magnifying-glass"></span>
         </BSInputRadio>
     }
 }
@@ -294,11 +336,16 @@ else
     private int Division { get; set; }
     [Required(ErrorMessage = "Seleccione la Línea.")]
     private int Linea { get; set; }
+    private string EquipoFiltro { get; set; } = "";
     private int tipo { get; set; } = 0;
+    private string mensaje = "", result = "";//resultado del save;
+
     int dataIsLoaded = 0;
     string _message;
 
-    EquipoEam EquipoForm = new EquipoEam();
+    EquipoDTO EquipoForm = new EquipoDTO();
+
+    List<EquipoEam> EquipoLista = new List<EquipoEam>();
     private List<Claim> claims { get; set; }
 
     private async Task CreateData()
@@ -322,24 +369,35 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-
         await CreateData();
-
         await APIReunionService.GetCentrosxEmpresa("All" + claims[10].Value);
-
-
-
-
     }
-
-    protected async Task Insert(EditContext e)
+    protected async Task SaveEquipo(EditContext e)
     {
+        if (e.Validate())
+            {
+
+             try
+            {
+                EquipoForm.IdLinea = Linea;
+                mensaje = await APIReunionService.PostEquipo(EquipoForm);
+                //Show();
+            
+             }
+             catch (Exception ex)
+            {
+
+            mensaje = "Error al Insertar los datos, Intente de Nuevo";
+           // Show();
+            }
+            }
     }
+
+
 
     protected async Task Reset()
     {
-        EquipoForm = new EquipoEam();
+        EquipoForm = new EquipoDTO();
         Centro = 0;
-
     }
 }

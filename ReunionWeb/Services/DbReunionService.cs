@@ -11,11 +11,6 @@ namespace ReunionWeb.Services
     public class DbReunionService : IDbReunionService
     {
 
-        //public List<BdDiv1> dbDiv1s { get; set; } = new List<BdDiv1>();
-
-        //public BdDiv1 dbDiv { get; set; } = new BdDiv1();
-        //public List<Asistencium> asistencia { get; set; } = new List<Asistencium>();
-
         public List<Centro> centros { get; set; } = new List<Centro> { };
         public List<Linea> lineas { get; set; } = new List<Linea> { };
         public List<Empresa> empresas { get; set; } = new List<Empresa> { };
@@ -30,24 +25,23 @@ namespace ReunionWeb.Services
         public List<CargoReu> cargoreuss { get; set; } = new List<CargoReu>();
         public List<CambStat> cambiostatus { get; set; } = new List<CambStat>();
         public List<CambFec> cambiofecha { get; set; } = new List<CambFec>();
-       // public Centro centrodiscrepancia { get; set; } = new Centro();
         public Division centrodiscrepancia { get; set; } = new Division();
-        //public CentroDivision centrodiv { get; set; } = new CentroDivision();
+       
 
 
 
 
 
 
-        // private readonly DOC_IngIContext _context;
+
         private readonly DbNeoContext _neocontext;
         private readonly NavigationManager _navigationManager;
 
-        public DbReunionService(/*DOC_IngIContext _IngIContext,*/ NavigationManager navigationManager, DbNeoContext _NeoContext)
+        public DbReunionService(NavigationManager navigationManager, DbNeoContext _NeoContext)
         {
 
             _navigationManager = navigationManager;
-            //_context = _IngIContext;
+            
             _neocontext = _NeoContext;
         }
         //obtener discrepancias para pendientes y reunion 
@@ -266,15 +260,7 @@ namespace ReunionWeb.Services
 
 
 
-        //public async Task Insertasistencia(Asistencium asistencium)
-        //{
-
-        //    _context.Asistencia.Add(asistencium);
-        //    await _context.SaveChangesAsync();
-
-
-        //}
-
+       
 
         public async Task<int> InsertDiscrepancia(ReuDium discre)
         {
