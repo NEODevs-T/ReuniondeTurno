@@ -35,6 +35,7 @@ namespace ReunionDiaApi.Controllers
         public static List<CargoReu> cargoreus = new List<CargoReu>();
         public static List<StatsAsisDto> StatsAsis = new List<StatsAsisDto>();
         public static List<EquipoEam> equipos = new List<EquipoEam>();
+        public static List<EquipoEam> equiposlinea = new List<EquipoEam>();
 
 
 
@@ -157,7 +158,27 @@ namespace ReunionDiaApi.Controllers
 
         }
 
+        [HttpGet("EquiposLinea/{linea}")]
+        public async Task<ActionResult<List<EquipoEam>>> EquiposEAMxLinea(string linea)
+        {
 
+            int idlinea = int.Parse(linea);
+
+
+
+                var result = await _context.EquipoEams
+                 .Include(x => x.IdLineaNavigation)
+                 .Include(x => x.IdLineaNavigation.IdDivisionNavigation)
+                 .Include(x => x.IdLineaNavigation.IdDivisionNavigation.IdCentroNavigation)
+                 .Where(x => x.IdLineaNavigation.IdLinea == idlinea && x.EestaEam == true)
+                 .AsNoTracking()
+                  .ToListAsync();
+
+                return Ok(result);
+            }
+
+
+        
 
 
         [HttpGet("Lineas/{div}")]
@@ -173,19 +194,19 @@ namespace ReunionDiaApi.Controllers
         }
 
 
-        [HttpGet("EquiposLinea/{Centro}")]
-        public async Task<ActionResult<List<Empresa>>> EquiposLineaEAM(string Centro)
-        {
+        //[HttpGet("EquiposLinea/{Centro}")]
+        //public async Task<ActionResult<List<Empresa>>> EquiposLineaEAM(string Centro)
+        //{
 
-            empresa = await _context.Empresas
-            .Include(x => x.IdPaisNavigation)
-            .Include(y => y.Centros)
-            .Where(x => x.Centros.First(i => i.Cnom == Centro).IdEmpresa == x.IdEmpresa)
-            .ToListAsync();
+        //    empresa = await _context.Empresas
+        //    .Include(x => x.IdPaisNavigation)
+        //    .Include(y => y.Centros)
+        //    .Where(x => x.Centros.First(i => i.Cnom == Centro).IdEmpresa == x.IdEmpresa)
+        //    .ToListAsync();
 
 
-            return Ok(empresa);
-        }
+        //    return Ok(empresa);
+        //}
 
 
 

@@ -20,11 +20,14 @@ namespace ReunionWeb.Services
         List<CargoReu> cargoreus { get; set; }
         List<StatsAsisDto> StatsAsisDtos { get; set; }
          List<EquipoEam> equipos { get; set; }
+         List<EquipoEam> equiposlinea { get; set; }
     
 
         Task GetEquiposEAM(string centro);
         Task GetCentros(string centro);
         Task GetCentrosxEmpresa(string centro);
+        Task GetEquiposID(string centro);
+        Task GetEquiposxlinea(string centro);
         Task Getksf();
         Task GetResReu();
         Task GetDivision(string centro, string div);

@@ -27,6 +27,7 @@ namespace ReunionWeb.Services
         public List<CargoReu> cargoreus { get; set; } = new List<CargoReu>();
         public List<StatsAsisDto> StatsAsisDtos { get; set; } = new List<StatsAsisDto>();
         public List<EquipoEam> equipos { get; set; } = new List<EquipoEam>();
+        public List<EquipoEam> equiposlinea { get; set; } = new List<EquipoEam>();
 
         public APIReunionService(HttpClient http, NavigationManager navigationManager)
         {
@@ -37,17 +38,33 @@ namespace ReunionWeb.Services
         //Conversion
         public async Task GetEquiposEAM(string cent)
         {
-                var result = await _http.GetFromJsonAsync<List<EquipoEam>>($"http://neo.paveca.com.ve/ReunionApi/Lineas/Equipos/{cent}");
-            //var result = await _http.GetFromJsonAsync<List<EquipoEam>>($"http://localhost:5258/Lineas/Equipos/{cent}");
+             //var result = await _http.GetFromJsonAsync<List<EquipoEam>>($"http://neo.paveca.com.ve/ReunionApi/Lineas/Equipos/{cent}");
+            var result = await _http.GetFromJsonAsync<List<EquipoEam>>($"http://localhost:5258/Lineas/Equipos/{cent}");
             if (result != null)
                 equipos = result;
+
+        }
+        public async Task GetEquiposID(string cent)
+        {
+             //var result = await _http.GetFromJsonAsync<List<EquipoEam>>($"http://neo.paveca.com.ve/ReunionApi/Lineas/Equipos/{cent}");
+            var result = await _http.GetFromJsonAsync<List<EquipoEam>>($"http://localhost:5258/Empresas/Equipos/{cent}");
+            if (result != null)
+                equipos = result;
+
+        } 
+        public async Task GetEquiposxlinea(string linea)
+        {
+             //var result = await _http.GetFromJsonAsync<List<EquipoEam>>($"http://neo.paveca.com.ve/ReunionApi/Lineas/Equipos/{cent}");
+            var result = await _http.GetFromJsonAsync<List<EquipoEam>>($"http://localhost:5258/Empresas/EquiposLinea/{linea}");
+            if (result != null)
+                equiposlinea = result;
 
         }
 
         public async Task GetCentros(string cent)
         {
-            var result = await _http.GetFromJsonAsync<List<Centro>>($"http://neo.paveca.com.ve/ReunionApi/Lineas/{cent}");
-            //var result = await _http.GetFromJsonAsync<List<Centro>>($"http://localhost:5258/Lineas/{cent}");
+            //var result = await _http.GetFromJsonAsync<List<Centro>>($"http://neo.paveca.com.ve/ReunionApi/Lineas/{cent}");
+            var result = await _http.GetFromJsonAsync<List<Centro>>($"http://localhost:5258/Lineas/{cent}");
             if (result != null)
                 centro = result;
 
@@ -55,8 +72,8 @@ namespace ReunionWeb.Services
 
         public async Task GetCentrosxEmpresa(string cent)
         {
-            var result = await _http.GetFromJsonAsync<List<Centro>>($"http://neo.paveca.com.ve/ReunionApi/Empresas/Centros/{cent}");
-            //var result = await _http.GetFromJsonAsync<List<Centro>>($"http://localhost:5258/Empresas/Centros/{cent}");
+            //var result = await _http.GetFromJsonAsync<List<Centro>>($"http://neo.paveca.com.ve/ReunionApi/Empresas/Centros/{cent}");
+            var result = await _http.GetFromJsonAsync<List<Centro>>($"http://localhost:5258/Empresas/Centros/{cent}");
             if (result != null)
                 centro = result;
 
@@ -78,16 +95,16 @@ namespace ReunionWeb.Services
         }
         public async Task Getksf()
         {
-            var result = await _http.GetFromJsonAsync<List<Ksf>>($"http://neo.paveca.com.ve/ReunionApi/Lineas/Ksf");
-             //var result = await _http.GetFromJsonAsync<List<Ksf>>($"http://localhost:5258/Lineas/Ksf");
+            //var result = await _http.GetFromJsonAsync<List<Ksf>>($"http://neo.paveca.com.ve/ReunionApi/Lineas/Ksf");
+             var result = await _http.GetFromJsonAsync<List<Ksf>>($"http://localhost:5258/Lineas/Ksf");
             if (result != null)
                 ksfs = result;
 
         }
         public async Task GetResReu()
         {
-            var result = await _http.GetFromJsonAsync<List<RespoReu>>($"http://neo.paveca.com.ve/ReunionApi/Lineas/Responsables");
-            //var result = await _http.GetFromJsonAsync<List<RespoReu>>($"http://localhost:5258/Lineas/Responsables");
+            //var result = await _http.GetFromJsonAsync<List<RespoReu>>($"http://neo.paveca.com.ve/ReunionApi/Lineas/Responsables");
+            var result = await _http.GetFromJsonAsync<List<RespoReu>>($"http://localhost:5258/Lineas/Responsables");
             if (result != null)
                 resporeu = result;
 
