@@ -12,11 +12,6 @@ namespace ReunionDiaApi.Controllers
     [ApiController]
     public class EmpresasController : ControllerBase
     {
-    
-
-
-
-
 
         private readonly DbNeoContext _context;
 
@@ -24,6 +19,7 @@ namespace ReunionDiaApi.Controllers
         {
             _context = _DbNeo;
         }
+
         public static List<Centro> centro = new List<Centro> { };
         public static List<Linea> linea = new List<Linea> { };
         public static List<Empresa> empresa = new List<Empresa> { };
@@ -61,7 +57,7 @@ namespace ReunionDiaApi.Controllers
         {
 
             empresa = await _context.Empresas
-           .Where(x => (x.IdPais == int.Parse(idpais)) & (x.Eestado==true))
+           .Where(x => (x.IdPais == int.Parse(idpais)) & (x.Eestado == true))
            .ToListAsync();
 
             return Ok(empresa);
@@ -71,8 +67,8 @@ namespace ReunionDiaApi.Controllers
         [HttpGet("Centros/{cent}")]
         public async Task<ActionResult<List<Centro>>> GetCentros(string cent)
         {
-            string cen="";
-            int idempresa=0;
+            string cen = "";
+            int idempresa = 0;
 
             if (cent.Length > 3)
             {
@@ -80,24 +76,25 @@ namespace ReunionDiaApi.Controllers
                 idempresa = int.Parse(cent.Substring(3));
             }
 ;
-            if (cen== "All")
+            if (cen == "All")
             {
                 centro = await _context.Centros
                .Include(x => x.Divisions)
                .ThenInclude(post => post.Lineas) // TO DO: eliminar en el codigo
-               .Where(c=>c.IdEmpresaNavigation.IdEmpresa==idempresa)              
+               .Where(c => c.IdEmpresaNavigation.IdEmpresa == idempresa)
                .ToListAsync();
             }
 
             else
             {
-                int centroid=int.Parse(cent);
+                int centroid = int.Parse(cent);
 
                 centro = await _context.Centros
                .Include(x => x.Divisions)
                .ThenInclude(post => post.Lineas)// TO DO: eliminar en el codigo
                .Where(x => x.IdCentro == centroid)
                .ToListAsync();
+
             }
 
 
@@ -108,9 +105,9 @@ namespace ReunionDiaApi.Controllers
         public async Task<ActionResult<List<Linea>>> GetLineas(string division)
         {
 
-                linea = await _context.Lineas             
-               .Where(x => (x.IdDivision == int.Parse(division))& x.Lestado==true)
-               .ToListAsync();
+            linea = await _context.Lineas
+           .Where(x => (x.IdDivision == int.Parse(division)) & x.Lestado == true)
+           .ToListAsync();
 
             return Ok(linea);
         }
@@ -145,7 +142,7 @@ namespace ReunionDiaApi.Controllers
 
                 var result = await _context.EquipoEams
                  .Include(x => x.IdLineaNavigation)
-                 .Where(x => x.IdLineaNavigation.IdDivisionNavigation.IdCentro== idcentro && x.EestaEam == true)
+                 .Where(x => x.IdLineaNavigation.IdDivisionNavigation.IdCentro == idcentro && x.EestaEam == true)
                  .Select(p => new
                  {
                      p.EcodEquiEam,
@@ -169,19 +166,19 @@ namespace ReunionDiaApi.Controllers
 
 
 
-                var result = await _context.EquipoEams
-                 .Include(x => x.IdLineaNavigation)
-                 .Include(x => x.IdLineaNavigation.IdDivisionNavigation)
-                 .Include(x => x.IdLineaNavigation.IdDivisionNavigation.IdCentroNavigation)
-                 .Where(x => x.IdLineaNavigation.IdLinea == idlinea)
-                 .AsNoTracking()
-                  .ToListAsync();
+            var result = await _context.EquipoEams
+             .Include(x => x.IdLineaNavigation)
+             .Include(x => x.IdLineaNavigation.IdDivisionNavigation)
+             .Include(x => x.IdLineaNavigation.IdDivisionNavigation.IdCentroNavigation)
+             .Where(x => x.IdLineaNavigation.IdLinea == idlinea)
+             .AsNoTracking()
+              .ToListAsync();
 
-                return Ok(result);
-            }
+            return Ok(result);
+        }
 
 
-        
+
 
 
         [HttpGet("Lineas/{div}")]
@@ -189,65 +186,96 @@ namespace ReunionDiaApi.Controllers
         {
 
             linea = await _context.Lineas
-            .Where(x =>( x.IdCentro==int.Parse(div) & x.Lestado==true))
+            .Where(x => (x.IdCentro == int.Parse(div) & x.Lestado == true))
             .ToListAsync();
 
 
             return Ok(linea);
         }
-     
+
         [HttpPost("AddEquipo")]
         public async Task<ActionResult<string>> AddEquipo(EquipoDTO equipo)
         {
-
-            try
+            if (equipo.IdEquipo == 0)
             {
-                var result = await _context.EquipoEams
-                .Where(x => x.EcodEquiEam == equipo.EcodEquiEam && x.IdLinea==equipo.IdLinea)
-                .AsNoTracking()
-                .FirstOrDefaultAsync();
-                
-                if (result == null)
+                try
                 {
-                    EquipoEam e = new EquipoEam();
+                    var result = await _context.EquipoEams
+                    .Where(x => x.EcodEquiEam == equipo.EcodEquiEam && x.IdLinea == equipo.IdLinea)
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync();
 
-                    e.IdLinea = equipo.IdLinea;
-                    e.EcodEquiEam = equipo.EcodEquiEam;
-                    e.EdescriEam = equipo.EdescriEam;
-                    e.EestaEam = equipo.EestaEam;
-                    e.EnombreEam = equipo.EnombreEam;
+                    if (result == null)
+                    {
+                        EquipoEam e = new EquipoEam();
 
-                    _context.EquipoEams.Add(e);
-                    await _context.SaveChangesAsync();
+                        e.IdLinea = equipo.IdLinea;
+                        e.EcodEquiEam = equipo.EcodEquiEam;
+                        e.EdescriEam = equipo.EdescriEam;
+                        e.EestaEam = equipo.EestaEam;
+                        e.EnombreEam = equipo.EnombreEam;
 
-                    return Ok("Registro Exitoso");
+                        _context.EquipoEams.Add(e);
+                        await _context.SaveChangesAsync();
+
+                        return Ok("Registro Exitoso");
+                    }
+                    else
+                    {
+                        return BadRequest("Ya se registró este código de equipo.");
+                    }
+
                 }
-                else
+                catch
                 {
-                    return BadRequest("Ya se registro este codigo de equipo.");
+                    return BadRequest("Error, intente nuevamente");
                 }
-
             }
-            catch
+            else
             {
-                return BadRequest("Error, intente nuevamente");
+                try
+                {
+                    EquipoEam eq = new EquipoEam();
+                    eq.IdEquipo = equipo.IdEquipo;
+                    eq.IdLinea = equipo.IdLinea;
+                    eq.EcodEquiEam = equipo.EcodEquiEam;
+                    eq.EdescriEam = equipo.EdescriEam;
+                    eq.EestaEam = equipo.EestaEam;
+                    eq.EnombreEam = equipo.EnombreEam;
+
+                    return await UpdateEquipo(eq);
+                    //return Ok("");
+                  
+                }
+                catch
+                {
+                    return BadRequest("Error, intente nuevamente");
+                        
+                }
             }
 
         }
 
-        //[HttpGet("EquiposLinea/{Centro}")]
-        //public async Task<ActionResult<List<Empresa>>> EquiposLineaEAM(string Centro)
-        //{
+        [HttpPost("UpdateEquipo")]
+        public async Task<string> UpdateEquipo(EquipoEam equipo)
+        {
+            try
+            {
+                //No se porque pero asi funciona, no mover 
+                EquipoEam eq = new EquipoEam();
+                eq = equipo;
 
-        //    empresa = await _context.Empresas
-        //    .Include(x => x.IdPaisNavigation)
-        //    .Include(y => y.Centros)
-        //    .Where(x => x.Centros.First(i => i.Cnom == Centro).IdEmpresa == x.IdEmpresa)
-        //    .ToListAsync();
+                _context.Entry(eq).State = EntityState.Modified;
+                await _context.SaveChangesAsync();
+                return "Registro Exitoso";
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
+        }
 
 
-        //    return Ok(empresa);
-        //}
 
 
 
