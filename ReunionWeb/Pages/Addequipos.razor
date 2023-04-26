@@ -383,13 +383,14 @@ else
                 EquipoForm.EestaEam = true;
                 EquipoForm.EcodEquiEam = EquipoForm.EcodEquiEam.Replace(" ", String.Empty);
                 mensaje = await APIReunionService.PostEquipo(EquipoForm);
+                Reset();
                 //Show();
             
              }
              catch (Exception ex)
             {
 
-            mensaje = "Error al Insertar los datos, Intente de Nuevo";
+                mensaje = "Error al Insertar los datos, Intente de Nuevo";
            // Show();
             }
             }

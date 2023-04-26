@@ -203,7 +203,8 @@ namespace ReunionDiaApi.Controllers
             try
             {
                 var result = await _context.EquipoEams
-                .Where(x => x.EcodEquiEam == equipo.EcodEquiEam)
+                .Where(x => x.EcodEquiEam == equipo.EcodEquiEam && x.IdLinea==equipo.IdLinea)
+                .AsNoTracking()
                 .FirstOrDefaultAsync();
                 
                 if (result == null)
@@ -223,7 +224,7 @@ namespace ReunionDiaApi.Controllers
                 }
                 else
                 {
-                    return BadRequest("Ya se registro asistencia");
+                    return BadRequest("Ya se registro este codigo de equipo.");
                 }
 
             }
