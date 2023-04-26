@@ -173,7 +173,7 @@ namespace ReunionDiaApi.Controllers
                  .Include(x => x.IdLineaNavigation)
                  .Include(x => x.IdLineaNavigation.IdDivisionNavigation)
                  .Include(x => x.IdLineaNavigation.IdDivisionNavigation.IdCentroNavigation)
-                 .Where(x => x.IdLineaNavigation.IdLinea == idlinea && x.EestaEam == true)
+                 .Where(x => x.IdLineaNavigation.IdLinea == idlinea)
                  .AsNoTracking()
                   .ToListAsync();
 
@@ -208,8 +208,16 @@ namespace ReunionDiaApi.Controllers
                 
                 if (result == null)
                 {
-                    //_context.EquipoEams.Add(equipo);
-                    //await _context.SaveChangesAsync();
+                    EquipoEam e = new EquipoEam();
+
+                    e.IdLinea = equipo.IdLinea;
+                    e.EcodEquiEam = equipo.EcodEquiEam;
+                    e.EdescriEam = equipo.EdescriEam;
+                    e.EestaEam = equipo.EestaEam;
+                    e.EnombreEam = equipo.EnombreEam;
+
+                    _context.EquipoEams.Add(e);
+                    await _context.SaveChangesAsync();
 
                     return Ok("Registro Exitoso");
                 }

@@ -375,11 +375,13 @@ else
     protected async Task SaveEquipo(EditContext e)
     {
         if (e.Validate())
-            {
+        {
 
-             try
+            try
             {
                 EquipoForm.IdLinea = Linea;
+                EquipoForm.EestaEam = true;
+                EquipoForm.EcodEquiEam = EquipoForm.EcodEquiEam.Replace(" ", String.Empty);
                 mensaje = await APIReunionService.PostEquipo(EquipoForm);
                 //Show();
             
