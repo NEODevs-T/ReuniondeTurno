@@ -121,20 +121,20 @@ namespace ReunionWeb.Services
                 cargoreus = result;
 
         }
-        public async Task GetStatsAsist(string div,string f1, string f2)
+        public async Task GetStatsAsist(string div,string empresa, string f1, string f2)
         {
 
             //var result = await _http.GetFromJsonAsync<List<StatsAsisDto>>($"http://localhost:5258/Lineas/StatsAsis/{div}/{f1}/{f2}");
-            var result = await _http.GetFromJsonAsync<List<StatsAsisDto>>($"http://neo.paveca.com.ve/ReunionApi/Lineas/StatsAsis/{div}/{f1}/{f2}");
+            var result = await _http.GetFromJsonAsync<List<StatsAsisDto>>($"http://neo.paveca.com.ve/ReunionApi/Lineas/StatsAsis/{div}/{empresa}/{f1}/{f2}");
            // var result = await _http.GetFromJsonAsync<List<StatsAsisDto>>($"http://operaciones.papeleslatinos.com/ReunionApi/Lineas/StatsAsis/{div}/{f1}/{f2}");
             if (result != null)
                 StatsAsisDtos = result;
         }
-         public async Task GetListaAsist(string div,string f1, string f2)
+         public async Task GetListaAsist(string div,string empresa, string f1, string f2)
         {
 
             //var result = await _http.GetFromJsonAsync<List<AsistenReu>>($"http://localhost:5258/Lineas/ListaAsis/{div}/{f1}/{f2}");
-            var result = await _http.GetFromJsonAsync<List<AsistenReu>>($"http://neo.paveca.com.ve/ReunionApi/Lineas/ListaAsis/{div}/{f1}/{f2}");
+            var result = await _http.GetFromJsonAsync<List<AsistenReu>>($"http://neo.paveca.com.ve/ReunionApi/Lineas/ListaAsis/{div}/{empresa}/{f1}/{f2}");
             if (result != null)
                 asistenreus = result;
         }

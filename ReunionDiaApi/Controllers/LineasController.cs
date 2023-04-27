@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using ReunionDiaApi.Models;
 using ReunionDiaApi.DTOs;
+using System.Runtime.ConstrainedExecution;
 
 namespace ReunionDiaApi.Controllers
 {
@@ -154,8 +155,8 @@ namespace ReunionDiaApi.Controllers
         }
 
         //Obtener asistencia en porcentaje
-        [HttpGet("StatsAsis/{cent}/{f1}/{f2}")]
-        public async Task<ActionResult<List<StatsAsisDto>>> GetStatsAsis(string cent, string f1, string f2)
+        [HttpGet("StatsAsis/{cent}/{empresa}/{f1}/{f2}")]
+        public async Task<ActionResult<List<StatsAsisDto>>> GetStatsAsis(string cent, string empresa, string f1, string f2)
         {
 
             string[] fecha1 = f1.Split('-');
@@ -186,8 +187,8 @@ namespace ReunionDiaApi.Controllers
             else
             {
                 var result = await _context.AsistenReus
-               .Include(x => x.AridCargoRNavigation)
-               .Where(x => (x.Arfecha.Value.Date >= date1 & x.Arfecha.Value.Date <= date2) && x.Ararea == cent)
+                .Include(x => x.AridCargoRNavigation)
+               .Where(x => (x.Arfecha.Value.Date >= date1 & x.Arfecha.Value.Date <= date2) && x.Ararea == cent && x.AridCargoRNavigation.Crempresa==empresa)
                .GroupBy(x => x.AridCargoRNavigation.Crnombre)
                .Select(a => new
                {
@@ -204,8 +205,8 @@ namespace ReunionDiaApi.Controllers
         }
 
         //Obtener asistencia por dia
-        [HttpGet("ListaAsis/{cent}/{f1}/{f2}")]
-        public async Task<ActionResult<List<AsistenReu>>> GetListaAsis(string cent, string f1, string f2)
+        [HttpGet("ListaAsis/{cent}/{empresa}/{f1}/{f2}")]
+        public async Task<ActionResult<List<AsistenReu>>> GetListaAsis(string cent, string empresa, string f1, string f2)
         {
 
             string[] fecha1 = f1.Split('-');
@@ -232,7 +233,7 @@ namespace ReunionDiaApi.Controllers
             {
                 var result = await _context.AsistenReus
                .Include(x => x.AridCargoRNavigation)
-               .Where(x => (x.Arfecha.Value.Date >= date1 & x.Arfecha.Value.Date <= date2) && x.Ararea == cent)
+               .Where(x => (x.Arfecha.Value.Date >= date1 & x.Arfecha.Value.Date <= date2) && x.Ararea == cent && x.AridCargoRNavigation.Crempresa == empresa)
                .ToListAsync();
 
                 return Ok(result);

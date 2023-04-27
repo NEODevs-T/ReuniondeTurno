@@ -82,7 +82,7 @@
         </BSCol>
 
         <BSCol Column="2">
-            <BSLabel>Días Feriados</BSLabel>
+            <BSLabel>Días Feriados/Libres</BSLabel>
             <BSInput InputType="InputType.Number" @bind-Value="feriados" />
         </BSCol>
 
@@ -312,8 +312,8 @@ else if (dataIsLoaded == 1 && APIReunionService.cargoreus.Count() == 0)
         if (dataIsLoaded != 1)
         {
             dataIsLoaded = 1;
-            await APIReunionService.GetListaAsist(Div, f1, f2);
-            await APIReunionService.GetStatsAsist(Div, f1, f2);
+            await APIReunionService.GetListaAsist(Div, claims[5].Value,f1, f2);
+            await APIReunionService.GetStatsAsist(Div, claims[5].Value,f1, f2);
             porasis = APIReunionService.StatsAsisDtos;
             dias = dias - feriados;
 
