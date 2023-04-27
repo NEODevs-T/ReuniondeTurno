@@ -207,7 +207,7 @@ else if (dataIsLoaded == 1 && APIReunionService.cargoreus.Count() == 0)
         if (dataIsLoaded != 1)
         {
             dataIsLoaded = 1;
-            await APIReunionService.GetAsistencia(Div);
+            await APIReunionService.GetAsistencia(Div, claims[5].Value);
             cr = APIReunionService.cargoreus;
             listaAsistencia = new List<AsistenReu>();
 

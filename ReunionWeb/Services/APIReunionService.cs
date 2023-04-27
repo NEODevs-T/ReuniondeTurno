@@ -113,10 +113,10 @@ namespace ReunionWeb.Services
        
 
 
-        public async Task GetAsistencia(string div)
+        public async Task GetAsistencia(string div, string empresa)
         {
-            var result = await _http.GetFromJsonAsync<List<CargoReu>>($"http://neo.paveca.com.ve/ReunionApi/Lineas/Asistencia/{div}");
-           // var result = await _http.GetFromJsonAsync<List<CargoReu>>($"http://operaciones.papeleslatinos.com/ReunionApi/Lineas/Asistencia/{div}");
+             var result = await _http.GetFromJsonAsync<List<CargoReu>>($"http://neo.paveca.com.ve/ReunionApi/Lineas/Asistencia/{div}/{empresa}");
+            //var result = await _http.GetFromJsonAsync<List<CargoReu>>($"http://localhost:5258/Lineas/Asistencia/{div}/{empresa}");
             if (result != null)
                 cargoreus = result;
 

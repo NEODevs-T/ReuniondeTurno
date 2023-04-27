@@ -114,13 +114,12 @@ namespace ReunionDiaApi.Controllers
             return Ok(linea);
         }
 
-        [HttpGet("Asistencia/{div}")]
-        public async Task<ActionResult<List<AsistenReu>>> GetAsistencia(string div)
+        [HttpGet("Asistencia/{centro}/{empresa}")]
+        public async Task<ActionResult<List<AsistenReu>>> GetAsistencia(string centro, string empresa)
         {
 
             cargoreus = await _context.CargoReus
-                .Where(a => a.Cearea == div & a.Cresta==true)
-
+                .Where(a => a.Cearea == centro & a.Crempresa== empresa& a.Cresta==true)
                 .ToListAsync();
 
             return Ok(cargoreus);
