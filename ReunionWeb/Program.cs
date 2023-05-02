@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using ReunionWeb.Services;
 using ReunionWeb.NeoDbs;
 using ReunionWeb;
+using Radzen;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -20,6 +21,7 @@ builder.Services.AddHttpClient<IAPIReunionService, APIReunionService>(client =>
 });
 builder.Services.AddScoped<IDbReunionService, DbReunionService>();
 builder.Services.AddScoped<IAPIReunionService, APIReunionService>();
+builder.Services.AddScoped<DialogService>();//para calendario de radzen
 builder.Services.AddControllersWithViews();
 builder.Services.AddBlazorStrap();
 
