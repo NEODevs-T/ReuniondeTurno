@@ -25,6 +25,7 @@ namespace ReunionWeb.Services
         public List<CargoReu> cargoreuss { get; set; } = new List<CargoReu>();
         public List<CambStat> cambiostatus { get; set; } = new List<CambStat>();
         public List<CambFec> cambiofecha { get; set; } = new List<CambFec>();
+        public List<CalendarioTrabajoDTO> calentrabajo { get; set; } = new List<CalendarioTrabajoDTO>();
         public Division centrodiscrepancia { get; set; } = new Division();
        
 
@@ -258,9 +259,10 @@ namespace ReunionWeb.Services
 
         }
 
-
-
        
+
+
+
 
         public async Task<int> InsertDiscrepancia(ReuDium discre)
         {

@@ -1,16 +1,179 @@
 @page "/calendario"
 @inject DialogService DialogService
+@inject IDbReunionService DbReunionService
+@inject IAPIReunionService APIReunionService
+@inject NavigationManager NavigationManager
+@inject HttpClient Http
+@inject AuthenticationStateProvider AuthStateProvider
+@inject ILocalStorageService LocalStorage
 
 
-<RadzenScheduler Data="@data" TItem="DataItem" StartProperty="Start" SelectedIndex="1" style="height: 768px;" EndProperty="End" TextProperty="Text">
-    <RadzenDayView />
-    <RadzenWeekView />
-    <RadzenMonthView />
-    <RadzenYearView />
-</RadzenScheduler>
+<BSContainer>
+
+    @if (APIReunionService.centro.Count() == 0)
+    {
+
+
+        <div class="loader"></div>
+    }
+    else
+    {
+        <BSRow>
+            <BSCol Column="3" ColumnSmall="2">
+                <BSLabel>Centro</BSLabel>
+                <BSInput InputType="InputType.Select" @bind-Value="IdCentro">
+                    <option value="">Seleccione</option>
+                    @foreach (var d in APIReunionService.centro)
+                    {
+                        <option value="@d.IdCentro">@d.Cnom</option>
+                    }
+                </BSInput>
+            </BSCol>
+
+
+
+            <BSCol Column="3" ColumnSmall="2">
+                <BSLabel>División</BSLabel>
+                <BSInput InputType="InputType.Select" @bind-Value="IdDiv">
+                    <option>Seleccione</option>
+                    @foreach (var d in APIReunionService.centro)
+                    {
+                        @foreach (var e in d.Divisions)
+                        {
+                            if (IdCentro == d.IdCentro)
+                            {
+                                <option value="@e.IdDivision">@e.Dnombre</option>
+                            }
+                        }
+                    }
+                    <option value="0">Todo</option>
+                </BSInput>
+            </BSCol>
+
+
+            <BSCol ColumnSmall="2">
+                <BSRow>
+                    <BSLabel>Aceptar</BSLabel>
+                </BSRow>
+                <BSButton IsOutlined Color="BSColor.Success" Size="Size.ExtraSmall" @onclick="(() => Get(IdCentro,IdDiv))"> Consultar <span class="oi oi-check"></span></BSButton>
+                </BSCol>
+
+                </BSRow>
+    }
+
+</BSContainer>
+
+<p>
+
+</p>
+@if (APIReunionService.calentrabajo.Count() > 0 && dataIsLoaded == 2)
+{
+
+    <RadzenScheduler Data="@data" TItem="DataItem" StartProperty="Start"  SelectedIndex="2" style="height: 630px;" EndProperty="End"  TodayText="Hoy"  TextProperty="Text">
+        <RadzenDayView  Text="Día"  />
+        <RadzenWeekView Text="Semana" />
+        <RadzenMonthView Text="Mes" />
+        <RadzenYearView Text="Año" />
+    </RadzenScheduler>
+}
+
+else if (dataIsLoaded == 1 && APIReunionService.calentrabajo.Count() == 0)
+{
+    <div class="loader"></div>
+}
+else if (dataIsLoaded == 2 && APIReunionService.calentrabajo.Count() == 0)
+{
+    <p>No hay datos para esta fecha.</p>
+}
+
 
 
 @code {
+    private List<Claim> claims { get; set; }
+
+    private int IdCentro { get; set; } //id del Centro
+    private int IdDiv { get; set; } //id de la division
+    private int dataIsLoaded { get; set; } //verificar si cargo la lista
+
+    DataItem[] data;
+
+    private async Task CreateData()
+
+    {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        claims = Enumerable.ToList(user.Claims);
+
+    }
+    protected override async Task OnInitializedAsync()
+    {
+
+        await CreateData();
+
+        if (claims[1].Value == "Admin")
+        {
+
+            await APIReunionService.GetCentrosxEmpresa("All" + claims[10].Value);
+
+        }
+        else
+        {
+
+            await APIReunionService.GetCentrosxEmpresa(claims[11].Value);
+
+        }
+
+        await APIReunionService.Getksf();
+        await APIReunionService.GetResReu();
+
+    }
+
+    protected async Task Get(int IdCentro, int IdDiv)
+    {
+        string centro = "", division = "";
+
+        centro = APIReunionService.centro.Where(c => c.IdCentro == IdCentro).FirstOrDefault(c => c.IdCentro.Equals(IdCentro)).Cnom;
+        if (IdDiv == 0)
+        {
+            division = "All";
+        }
+        else
+        {
+            foreach (var d in APIReunionService.centro)
+            {
+                foreach (var f in d.Lineas)
+                {
+                    if (IdDiv == f.IdDivisionNavigation.IdDivision)
+                    {
+                        division = f.IdDivisionNavigation.Dnombre;
+                    }
+                }
+            }
+        }
+
+        if (dataIsLoaded != 1)
+        {
+            dataIsLoaded = 1;
+            await APIReunionService.GetTrabajosCalendario(claims[9].Value.ToString(), centro, division);
+            data = new DataItem[APIReunionService.calentrabajo.Count()];
+
+            for (int i = 0; i < data.Count(); i++)
+            {
+                data[i] = new DataItem
+                {
+                    Start = APIReunionService.calentrabajo[i].RdfecTra,
+                        End = APIReunionService.calentrabajo[i].RdfecTra.AddMinutes((APIReunionService.calentrabajo[i].Rdtiempo is null) ? 0:(double.Parse(APIReunionService.calentrabajo[i].Rdtiempo))),
+                        Text = APIReunionService.calentrabajo[i].Responsable + " - "+APIReunionService.calentrabajo[i].Rddisc + " - " + APIReunionService.calentrabajo[i].RdcodEq
+                    };
+            }
+
+
+            
+            dataIsLoaded = 2;
+        }
+    }
+
+
     class DataItem
     {
         public DateTime Start { get; set; }
@@ -18,19 +181,23 @@
         public string Text { get; set; }
     }
 
-    DataItem[] data = new DataItem[]
-    {
-      new DataItem
-      {
-        Start = DateTime.Today,
-        End = DateTime.Today.AddDays(1),
-        Text = "Birthday"
-      },
-       new DataItem
-      {
-        Start = DateTime.Today,
-        End = DateTime.Today.AddDays(1),
-        Text = "Birthday"
-      }
-    };
+
+    //DataItem[] data = new DataItem[]
+    //      {
+
+
+    //  new DataItem
+    //  {
+    //    Start = DateTime.Today,
+    //    End = DateTime.Today.AddDays(1),
+    //    Text = "Birthday"
+    //  },
+    //   new DataItem
+    //  {
+    //    Start = DateTime.Today,
+    //    End = DateTime.Today.AddDays(1),
+    //    Text = "Birthday"
+    //  }
+    //      };
+
 }

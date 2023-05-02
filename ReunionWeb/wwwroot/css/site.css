@@ -96,6 +96,27 @@ a, .btn-link {
         animation: jump7456 0.5s linear infinite;
     }
 
+/*RADZEN SCHEDULER es EL CALENDARIO*/
+.rz-scheduler-nav-views button {
+    background: #3CAD49 !important;
+}
+
+    .rz-scheduler-nav-views button span{
+        color: white;
+    }
+.rz-event-content {
+    background-image: linear-gradient(to right,#79B943,#3CAD49, #00A23B ) !important;
+}
+.rz-today {
+    background-image: linear-gradient(to right,#79B943,#3CAD49 ) !important;
+    color:white;
+}
+.rz-has-appointments
+{
+     background-image: linear-gradient(to right,#3CAD49, #00A23B ) !important;
+}
+/* FIN RADZEN SCHEDULER es EL CALENDARIO*/
+
 @keyframes jump7456 {
     15% {
         border-bottom-right-radius: 3px;

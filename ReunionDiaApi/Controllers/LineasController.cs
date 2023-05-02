@@ -300,7 +300,54 @@ namespace ReunionDiaApi.Controllers
 
         }
 
+        //Obtener trabajos pendientes para el calendario
+        [HttpGet("TrabajosCalendario/{pais}/{centro}/{division}")]
+        public async Task<ActionResult<List<CalendarioTrabajoDTO>>> GetTrabajosCalendario(string pais,string centro, string division)
+        {
 
+            if (division == "All")
+            {
+                var list = await _context.ReuDia
+                      .Include(x => x.IdResReuNavigation)
+                        .Where(d => (d.Rdstatus == "Pendiente/Responsable" | d.Rdstatus == "Pendiente") & (d.IdPais == int.Parse(pais)) & (d.Rdcentro == centro))
+                        .Select(rd => new
+                        {
+                            IdReuDia = rd.IdReuDia,
+                            RdcodEq = rd.RdcodEq,
+                            Rddisc = rd.Rddisc,
+                            Rdodt = rd.Rdodt,
+                            Rdtiempo = rd.Rdtiempo,
+                            RdfecTra = rd.RdfecTra,
+                            Responsable = rd.IdResReuNavigation.Rrnombre
+
+                        })
+                        .AsNoTracking()
+                        .ToListAsync();
+                return Ok(list);
+            }
+            else
+            {
+                var list = await _context.ReuDia
+                      .Include(x => x.IdResReuNavigation)
+                        .Where(d => (d.Rdstatus == "Pendiente/Responsable" | d.Rdstatus == "Pendiente") & (d.IdPais == int.Parse(pais)) & (d.Rdcentro == centro) & (d.Rddiv == division))
+                        .Select(rd => new
+                        {
+                            IdReuDia = rd.IdReuDia,
+                            RdcodEq = rd.RdcodEq,
+                            Rddisc = rd.Rddisc,
+                            Rdodt = rd.Rdodt,
+                            Rdtiempo = rd.Rdtiempo,
+                            RdfecTra = rd.RdfecTra,
+                            Responsable = rd.IdResReuNavigation.Rrnombre
+
+                        })
+                        .AsNoTracking()
+                        .ToListAsync();
+                return Ok(list);
+            }
+
+          
+        }
 
 
     }

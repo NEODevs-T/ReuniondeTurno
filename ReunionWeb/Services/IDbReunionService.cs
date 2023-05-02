@@ -23,12 +23,14 @@ namespace ReunionWeb.Services
          List<CambStat> cambiostatus { get; set; }
          List<CambFec> cambiofecha { get; set; }
          Division centrodiscrepancia { get; set; }
+
         
         Task GetPendientes(string centro, string div, DateTime f1, DateTime f2, string tipo);
         Task GetCambioStatus(int idreu);
         Task GetCambioFecha(int idreu);
         Task<ReuDium> GetDiscrepantacia(int id);
         Task<CentroDivision> GetCentroDiv(string centro, string division, int tipo);
+
 
 
         Task<int> InsertDiscrepancia(ReuDium discre);

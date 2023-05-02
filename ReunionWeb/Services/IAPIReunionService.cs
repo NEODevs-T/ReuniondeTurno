@@ -20,7 +20,7 @@ namespace ReunionWeb.Services
         List<StatsAsisDto> StatsAsisDtos { get; set; }
          List<EquipoEam> equipos { get; set; }
          List<EquipoEam> equiposlinea { get; set; }
-    
+        List<CalendarioTrabajoDTO> calentrabajo { get; set; }
 
         Task GetEquiposEAM(string centro);
         Task GetCentros(string centro);
@@ -34,7 +34,7 @@ namespace ReunionWeb.Services
         Task GetLineas( int div);
         Task GetStatsAsist( string div, string empresa, string f1,string f2);
         Task GetListaAsist( string div, string empresa, string f1,string f2);
-
+        Task GetTrabajosCalendario(string pais, string centro, string division);
         Task<string> Postasistencia(List<AsistenReu> asisten);
         Task<string> PostEquipo(EquipoDTO equipo);
 

@@ -1,4 +1,4 @@
-namespace ReunionWeb.DTOs
+namespace ReunionDiaApi.DTOs
 {
     public class CalendarioTrabajoDTO
     {
@@ -9,6 +9,7 @@ namespace ReunionWeb.DTOs
         public string? Rdtiempo { get; set; }
         public DateTime RdfecTra { get; set; }
         public string? Responsable { get; set; }
+
 
 
     }
