@@ -115,8 +115,26 @@ a, .btn-link {
 {
      background-image: linear-gradient(to right,#3CAD49, #00A23B ) !important;
 }
-/* FIN RADZEN SCHEDULER es EL CALENDARIO*/
 
+.rz-event-list-btn {
+    visibility: hidden !important;
+}
+.rz-scheduler a.rz-event-list-btn {
+    color: rgb(0, 120, 83) !important;
+}
+.rz-event-list-btn:before {
+    content: "Mostrar todos." !important;
+    color: rgb(0, 120, 83) !important;
+    visibility: visible !important;
+}
+/*.rz-event-list {
+    visibility: hidden !important;
+}
+    .rz-event-list:before {
+        content: "No hay trabajos para esta fecha." !important;
+    }*/
+
+/* FIN RADZEN SCHEDULER es EL CALENDARIO*/
 @keyframes jump7456 {
     15% {
         border-bottom-right-radius: 3px;

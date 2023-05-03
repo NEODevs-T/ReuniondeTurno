@@ -12,8 +12,6 @@
 
     @if (APIReunionService.centro.Count() == 0)
     {
-
-
         <div class="loader"></div>
     }
     else
@@ -28,6 +26,8 @@
                         <option value="@d.IdCentro">@d.Cnom</option>
                     }
                 </BSInput>
+                <BSValidationSummary />
+                 <BSFeedback For="@(() => IdCentro)" ValidMessage="Correcto." />
             </BSCol>
 
 
@@ -48,6 +48,7 @@
                     }
                     <option value="0">Todo</option>
                 </BSInput>
+                 <BSFeedback For="@(() => IdDiv)" ValidMessage="Correcto." />
             </BSCol>
 
 
@@ -69,7 +70,7 @@
 @if (APIReunionService.calentrabajo.Count() > 0 && dataIsLoaded == 2)
 {
 
-    <RadzenScheduler Data="@data" TItem="DataItem" StartProperty="Start"  SelectedIndex="2" style="height: 630px;" EndProperty="End"  TodayText="Hoy"  TextProperty="Text">
+    <RadzenScheduler Data="@data" TItem="DataItem" StartProperty="Start"   SelectedIndex="2" style="height: 630px;" EndProperty="End"  TodayText="Hoy"  TextProperty="Text">
         <RadzenDayView  Text="Día"  />
         <RadzenWeekView Text="Semana" />
         <RadzenMonthView Text="Mes" />
@@ -91,7 +92,10 @@ else if (dataIsLoaded == 2 && APIReunionService.calentrabajo.Count() == 0)
 @code {
     private List<Claim> claims { get; set; }
 
+
+    [Required(ErrorMessage = "Seleccione el Centro")]
     private int IdCentro { get; set; } //id del Centro
+    [Required(ErrorMessage = "Seleccione la división.")]
     private int IdDiv { get; set; } //id de la division
     private int dataIsLoaded { get; set; } //verificar si cargo la lista
 
@@ -131,45 +135,51 @@ else if (dataIsLoaded == 2 && APIReunionService.calentrabajo.Count() == 0)
     protected async Task Get(int IdCentro, int IdDiv)
     {
         string centro = "", division = "";
-
-        centro = APIReunionService.centro.Where(c => c.IdCentro == IdCentro).FirstOrDefault(c => c.IdCentro.Equals(IdCentro)).Cnom;
-        if (IdDiv == 0)
+        if (IdCentro>0)
         {
-            division = "All";
-        }
-        else
-        {
-            foreach (var d in APIReunionService.centro)
+            centro = APIReunionService.centro.Where(c => c.IdCentro == IdCentro).FirstOrDefault(c => c.IdCentro.Equals(IdCentro)).Cnom;
+            if (IdDiv == 0)
             {
-                foreach (var f in d.Lineas)
+                division = "All";
+            }
+            else
+            {
+                foreach (var d in APIReunionService.centro)
                 {
-                    if (IdDiv == f.IdDivisionNavigation.IdDivision)
+                    foreach (var f in d.Divisions)
                     {
-                        division = f.IdDivisionNavigation.Dnombre;
+                        if (IdDiv == f.IdDivision)
+                        {
+                            division = f.Dnombre;
+                        }
                     }
                 }
             }
-        }
 
-        if (dataIsLoaded != 1)
-        {
-            dataIsLoaded = 1;
-            await APIReunionService.GetTrabajosCalendario(claims[9].Value.ToString(), centro, division);
-            data = new DataItem[APIReunionService.calentrabajo.Count()];
-
-            for (int i = 0; i < data.Count(); i++)
+            if (dataIsLoaded != 1)
             {
-                data[i] = new DataItem
+                dataIsLoaded = 1;
+                await APIReunionService.GetTrabajosCalendario(claims[9].Value.ToString(), centro, division);
+                data = new DataItem[APIReunionService.calentrabajo.Count()];
+
+                for (int i = 0; i < data.Count(); i++)
                 {
-                    Start = APIReunionService.calentrabajo[i].RdfecTra,
-                        End = APIReunionService.calentrabajo[i].RdfecTra.AddMinutes((APIReunionService.calentrabajo[i].Rdtiempo is null) ? 0:(double.Parse(APIReunionService.calentrabajo[i].Rdtiempo))),
+                    DateTime Inicio = new DateTime(APIReunionService.calentrabajo[i].RdfecTra.Year, APIReunionService.calentrabajo[i].RdfecTra.Month, APIReunionService.calentrabajo[i].RdfecTra.Day, 08, 00, 00);
+                    DateTime Final = Inicio.AddMinutes((APIReunionService.calentrabajo[i].Rdtiempo is null) ? 0 : (double.Parse(APIReunionService.calentrabajo[i].Rdtiempo)));
+                    data[i] = new DataItem
+                {
+                        
+                        Start= Inicio,
+                        End=Final,
                         Text = APIReunionService.calentrabajo[i].Responsable + " - "+APIReunionService.calentrabajo[i].Rddisc + " - " + APIReunionService.calentrabajo[i].RdcodEq
-                    };
+
+                };
             }
 
 
             
             dataIsLoaded = 2;
+        }
         }
     }
 
