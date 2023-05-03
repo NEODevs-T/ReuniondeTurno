@@ -240,7 +240,7 @@ else if (dataIsLoaded == 1 && APIReunionService.cargoreus.Count() == 0)
         int time = int.Parse(DateTime.Now.ToString("hh"));
         try
         {
-            if (time == 9)
+            if (time > 7 &time < 11)
             {
                 mensaje = await APIReunionService.Postasistencia(listaAsistencia);
                 dataIsLoaded = 0;
@@ -248,7 +248,7 @@ else if (dataIsLoaded == 1 && APIReunionService.cargoreus.Count() == 0)
             }
             else
             {
-                mensaje = "Solo se puede registrar a las 9:00 am";
+                mensaje = "Solo se puede registrar en horario de reunión";
                 dataIsLoaded = 0;
                 Show();
             }
