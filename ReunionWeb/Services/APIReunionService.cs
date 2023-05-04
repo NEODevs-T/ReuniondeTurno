@@ -165,6 +165,14 @@ namespace ReunionWeb.Services
             if (result != null)
                 calentrabajo = result;
         }
+        
+        public async Task GetEquiposCentro(string centro)
+        {
+            //var result = await _http.GetFromJsonAsync<List<CalendarioTrabajoDTO>>($"http://localhost:5258/Lineas/Lineas/TrabajosCalendario/pais/{centro}/{division}");
+            var result = await _http.GetFromJsonAsync<List<EquipoEam>>($"http://neo.paveca.com.ve/ReunionApi/Empresas/Equipos/{centro}");
+            if (result != null)
+                equiposlinea = result;
+        }
 
 
 

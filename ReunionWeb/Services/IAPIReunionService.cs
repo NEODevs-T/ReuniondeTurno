@@ -22,7 +22,8 @@ namespace ReunionWeb.Services
          List<EquipoEam> equiposlinea { get; set; }
         List<CalendarioTrabajoDTO> calentrabajo { get; set; }
 
-        Task GetEquiposEAM(string centro);
+        Task GetEquiposEAM(string centro);//api en lineas
+        Task GetEquiposCentro(string centro);//api en empresa
         Task GetCentros(string centro);
         Task GetCentrosxEmpresa(string centro);
         Task GetEquiposID(string centro);

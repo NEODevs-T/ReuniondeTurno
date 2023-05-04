@@ -146,8 +146,16 @@
             <BSTR>
 
                 @*<BSTD>Id</BSTD>*@
+                @*Centro para validar el comedor*@
+                @if(CentroComedor==11)
+                {
+                    <BSTD>N. Equipo</BSTD>
+                }
+                else
+                {
                 <BSTD>Área</BSTD>
                 <BSTD>Ksf</BSTD>
+                }
                 <BSTD>C. Equipo</BSTD>
                 <BSTD ColSpan="4">Discrepancia</BSTD>
                 <BSTD>Código</BSTD>
@@ -171,8 +179,23 @@
                     {
                         <BSTR>
                             @*<BSTD>@d.IdReuDia</BSTD>*@
-                            <BSTD>@d.Rdarea</BSTD>
-                            <BSTD>@d.IdksfNavigation.KsfNombre</BSTD>
+                            @*Centro para validar el comedor*@
+                            @if (CentroComedor == 11)
+                            {
+                                @foreach (var eq in APIReunionService.equiposlinea)
+                                {
+                                  if(eq.EcodEquiEam==d.RdcodEq)
+                                    {
+                                        <BSTD>@eq.EnombreEam</BSTD>
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                <BSTD>@d.Rdarea</BSTD>
+                                <BSTD>@d.IdksfNavigation.KsfNombre</BSTD>
+                            }
+                            
                             <BSTD>@d.RdcodEq</BSTD>
                             <BSTD ColSpan="4">@d.Rddisc.ToUpperInvariant()</BSTD>
                             <BSTD>@d.RdcodDis</BSTD>
@@ -337,6 +360,7 @@ else if (dataIsLoaded == 2 && DbReunionService.reudiatablas.Count() == 0)
     private int IdCentro { get; set; } //id del Centro
     private int IdDiv { get; set; } //id de la division
 
+    private int CentroComedor;//Variable para verificar si es el comedor venezuela;
 
     //private string Div { get; set; } //Centro
     //private string Division { get; set; } //División
@@ -383,7 +407,13 @@ else if (dataIsLoaded == 2 && DbReunionService.reudiatablas.Count() == 0)
             await APIReunionService.GetCentrosxEmpresa(claims[11].Value);
 
         }
-
+        //Si es el comedor busca los equipos 
+        if(claims[11].Value=="11")
+        {
+            CentroComedor = int.Parse(claims[11].Value);
+            await APIReunionService.GetEquiposCentro(claims[11].Value);
+        }
+        
         await APIReunionService.Getksf();
         await APIReunionService.GetResReu();
 
