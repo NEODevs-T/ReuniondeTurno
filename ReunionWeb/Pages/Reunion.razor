@@ -133,14 +133,29 @@
                                 @*Centro para validar el comedor*@
                                 @if (CentroComedor == 11)
                                 {
-                                    @foreach (var eq in APIReunionService.equiposlinea)
+                                    @if (APIReunionService.equiposlinea.Any(e => e.EcodEquiEam == d.RdcodEq) is true)
                                     {
-                                        if (eq.EcodEquiEam == d.RdcodEq)
+
+
+                                        @foreach (var eq in APIReunionService.equiposlinea)
                                         {
-                                            <BSTD>@eq.EnombreEam</BSTD>
+
+                                            if (eq.EcodEquiEam == d.RdcodEq)
+                                            {
+                                                <BSTD>@eq.EnombreEam</BSTD>
+                                               
+                                            }
+
+
                                         }
                                     }
-                                }
+                                    else
+                                    {
+                                        <BSTD>No hay desctripción.</BSTD>
+                                        
+                                    }
+
+                }
                                 else
                                 {   
                                   @*  <BSTD>@d.Rddiv</BSTD>*@
@@ -270,6 +285,7 @@ else if (dataIsLoaded == 2 && DbReunionService.reunionditablas.Count() == 0)
         {
             CentroComedor = int.Parse(claims[11].Value);
             await APIReunionService.GetEquiposCentro(claims[11].Value);
+
         }
         await APIReunionService.Getksf();
         await APIReunionService.GetResReu();

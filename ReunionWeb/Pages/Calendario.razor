@@ -1,4 +1,5 @@
 @page "/calendario"
+@using Radzen.Blazor.Rendering;
 @inject DialogService DialogService
 @inject IDbReunionService DbReunionService
 @inject IAPIReunionService APIReunionService
@@ -70,10 +71,11 @@
 @if (APIReunionService.calentrabajo.Count() > 0 && dataIsLoaded == 2)
 {
 
-    <RadzenScheduler Data="@data" TItem="DataItem" StartProperty="Start"   SelectedIndex="2" style="height: 630px;" EndProperty="End"  TodayText="Hoy"  TextProperty="Text">
+    <RadzenScheduler Data="@data" TItem="DataItem"  StartProperty ="Start" SelectedIndex="1" style="height: 630px;" EndProperty="End" TodayText="Hoy" TextProperty="Text" AppointmentRender=@OnAppointmentRender>
         <RadzenDayView  Text="Día"  />
         <RadzenWeekView Text="Semana" />
         <RadzenMonthView Text="Mes" />
+        <RadzenYearPlannerView Text="Planifcación"/>
         <RadzenYearView Text="Año" />
     </RadzenScheduler>
 }
@@ -168,21 +170,37 @@ else if (dataIsLoaded == 2 && APIReunionService.calentrabajo.Count() == 0)
                     DateTime Final = Inicio.AddMinutes((APIReunionService.calentrabajo[i].Rdtiempo is null) ? 0 : (double.Parse(APIReunionService.calentrabajo[i].Rdtiempo)));
                     data[i] = new DataItem
                 {
-                        
+
                         Start= Inicio,
                         End=Final,
                         Text = APIReunionService.calentrabajo[i].Responsable + " - "+APIReunionService.calentrabajo[i].Rddisc + " - " + APIReunionService.calentrabajo[i].RdcodEq
 
                 };
+                    if(data[i].End<DateTime.Today)
+                    {
+                        data[i].Text = "Vencido " + data[i].Text;
+                    }
+
+                }
+
+
+                dataIsLoaded = 2;
             }
-
-
-            
-            dataIsLoaded = 2;
-        }
         }
     }
-
+  
+    void OnAppointmentRender(SchedulerAppointmentRenderEventArgs<DataItem> args)
+    {
+        // Never call StateHasChanged in AppointmentRender - would lead to infinite loop
+        //for (int i = 0; i < data.Count(); i++)
+        //{
+            if (args.Data.Text.Substring(0, 7) == "Vencido")
+            {
+                args.Attributes["style"] = "background: red !important";
+            }
+        //}
+        
+    }
 
     class DataItem
     {

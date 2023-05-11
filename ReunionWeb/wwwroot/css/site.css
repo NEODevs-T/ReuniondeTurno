@@ -123,7 +123,7 @@ a, .btn-link {
     color: rgb(0, 120, 83) !important;
 }
 .rz-event-list-btn:before {
-    content: "Mostrar todos." !important;
+    content: "Todo" !important;
     color: rgb(0, 120, 83) !important;
     visibility: visible !important;
 }
