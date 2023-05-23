@@ -135,6 +135,10 @@ a, .btn-link {
     }*/
 
 /* FIN RADZEN SCHEDULER es EL CALENDARIO*/
+
+.carousel-control-next-icon, .carousel-control-prev-icon, .carousel-indicators [data-bs-target] {
+    background-color: rgb(0, 120, 83, 0.76) !important;
+}
 @keyframes jump7456 {
     15% {
         border-bottom-right-radius: 3px;

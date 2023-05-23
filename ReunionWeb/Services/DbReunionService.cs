@@ -58,6 +58,7 @@ namespace ReunionWeb.Services
             string centro = centrodiv.Cnom;
             string div = centrodiv.Dnombre;
 
+        
 
             //tipo 0 Pendientes para 
 
@@ -144,7 +145,8 @@ namespace ReunionWeb.Services
             {
                 _neocontext.Entry(bdDiscrep).State = EntityState.Modified;
                 await _neocontext.SaveChangesAsync();
-                //TODO pasar el tipo, para saber si bsco por fecha de trabajo o reunion
+                reudiatablas = null;
+                bdDiscrep = null;
 
                 if (tipo == 0)
                 {
