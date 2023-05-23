@@ -404,6 +404,7 @@ else if (dataIsLoaded == 2 && DbReunionService.reudiatablas.Count() == 0)
 
     protected override async Task OnInitializedAsync()
     {
+        await base.OnInitializedAsync();
         fecha1 = DateTime.Now;
         fecha2 = DateTime.Now;
         await CreateData();
@@ -430,6 +431,7 @@ else if (dataIsLoaded == 2 && DbReunionService.reudiatablas.Count() == 0)
         
         await APIReunionService.Getksf();
         await APIReunionService.GetResReu();
+        DbReunionService.reudiatablas = new List<ReuDium>();
 
     }
 

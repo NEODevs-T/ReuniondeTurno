@@ -502,19 +502,23 @@
 
     async Task Back()
     {
-        CentroDivision centrodiv= await DbReunionService.GetCentroDiv(DiscForm.Rdcentro, DiscForm.Rddiv, 1);
+        string backcentro = DiscForm.Rdcentro;
+        string backdiv = DiscForm.Rddiv;
+
+        CentroDivision centrodiv = await DbReunionService.GetCentroDiv(backcentro, backdiv, 1);
+       
         if (tipo == 0)
         {
             
-            NavigationManager.NavigateTo($"pendientes/{centrodiv.IdCentro}/{centrodiv.IdDivision}/{f1}/{f2}/{tipo}");
+            NavigationManager.NavigateTo($"pendientes/{centrodiv.IdCentro}/{centrodiv.IdDivision}/{f1}/{f2}/{tipo}", forceLoad: true);
         }
         else if (tipo == 2)
         {
-            NavigationManager.NavigateTo($"pendientes/{centrodiv.IdCentro}/{centrodiv.IdDivision}/{f1}/{f2}/{tipo}");
+            NavigationManager.NavigateTo($"pendientes/{centrodiv.IdCentro}/{centrodiv.IdDivision}/{f1}/{f2}/{tipo}", forceLoad: true);
         }
         else
         {
-            NavigationManager.NavigateTo($"reunion/{centrodiv.IdCentro}/{centrodiv.IdDivision}/{f1}/{f2}/{tipo}");
+            NavigationManager.NavigateTo($"reunion/{centrodiv.IdCentro}/{centrodiv.IdDivision}/{f1}/{f2}/{tipo}", forceLoad: true);
         }
     }
     async Task Editar()

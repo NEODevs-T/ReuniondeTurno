@@ -58,7 +58,7 @@ namespace ReunionWeb.Services
             string centro = centrodiv.Cnom;
             string div = centrodiv.Dnombre;
 
-        
+            reudiatablas = new List<ReuDium> ();
 
             //tipo 0 Pendientes para 
 
@@ -145,7 +145,7 @@ namespace ReunionWeb.Services
             {
                 _neocontext.Entry(bdDiscrep).State = EntityState.Modified;
                 await _neocontext.SaveChangesAsync();
-                reudiatablas = null;
+                reudiatablas = new List<ReuDium>();
                 bdDiscrep = null;
 
                 if (tipo == 0)
