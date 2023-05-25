@@ -134,7 +134,7 @@ namespace ReunionWeb.Services
         public async Task GetListaAsist(string div, string empresa, string f1, string f2)
         {
 
-            //var result = await _http.GetFromJsonAsync<List<AsistenReu>>($"http://localhost:5258/Lineas/ListaAsis/{div}/{f1}/{f2}");
+            //var result = await _http.GetFromJsonAsync<List<AsistenReu>>($"http://localhost:5258/Lineas/ListaAsis/{div}/{empresa}/{f1}/{f2}");
             var result = await _http.GetFromJsonAsync<List<AsistenReu>>($"http://neo.paveca.com.ve/ReunionApi/Lineas/ListaAsis/{div}/{empresa}/{f1}/{f2}");
             if (result != null)
                 asistenreus = result;

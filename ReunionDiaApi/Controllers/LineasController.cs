@@ -121,6 +121,7 @@ namespace ReunionDiaApi.Controllers
 
             cargoreus = await _context.CargoReus
                 .Where(a => a.Cearea == centro & a.Crempresa== empresa& a.Cresta==true)
+                .OrderByDescending(a=>a.Crnombre)
                 .ToListAsync();
 
             return Ok(cargoreus);

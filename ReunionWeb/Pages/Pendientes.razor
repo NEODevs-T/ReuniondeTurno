@@ -171,7 +171,17 @@
             </BSTR>
         </BSTHead>
         <BSTBody>
-            @foreach (var d in DbReunionService.reudiatablas)
+            @if(UsrRol=="Calidad" | UsrRol=="Seguridad")
+            {
+                listareu = DbReunionService.reudiatablas.Where(r => r.IdResReuNavigation.Rrnombre.StartsWith(UsrRol)).ToList();
+            }
+            else
+            {
+                listareu = DbReunionService.reudiatablas;
+
+            }
+@*            @foreach (var d in DbReunionService.reudiatablas)*@
+            @foreach (var d in listareu)
             {
                 @if (Codigo == d.RdcodDis | Codigo == "Todo")
                 {
@@ -382,11 +392,13 @@ else if (dataIsLoaded == 2 && DbReunionService.reudiatablas.Count() == 0)
     private string Codigo { get; set; } = "Todo"; //Codigo
     private string Status { get; set; } = "Todo"; //Status
     private string UsrAdmin { get; set; } = ""; //permisos de admin
+    private string UsrRol { get; set; } = ""; //rol para filtrar 
     private bool cargandocambio { get; set; } = false; //para cargar los datos del trazabilidad
     private string tipoconsulta { get; set; } = "0"; //1-fecha de reuinion 0 fecha trabajo 
 
     public DateTime fecha1;
     public DateTime fecha2;
+    List<ReuDium> listareu = new List<ReuDium>();//filtar los responsables
     List<CambFec> cambiofechas = new List<CambFec>();
     List<CambStat> cambiostatuss = new List<CambStat>();
 
@@ -409,19 +421,24 @@ else if (dataIsLoaded == 2 && DbReunionService.reudiatablas.Count() == 0)
         fecha2 = DateTime.Now;
         await CreateData();
 
-        if (claims[1].Value == "Admin")
+        if ( claims[1].Value == "Admin" | claims[1].Value == "SuperAdmin")
         {
             UsrAdmin = claims[1].Value;
-            //await APIReunionService.GetCentros("All");
             await APIReunionService.GetCentrosxEmpresa("All" + claims[10].Value);
 
         }
+        else if (claims[1].Value == "SupIntendenteGeneral" )
+        {
+            UsrAdmin = claims[1].Value;
+            await APIReunionService.GetCentrosxEmpresa(claims[11].Value);
+        }
         else
         {
-            //await APIReunionService.GetCentros(claims[6].Value.ToString());
+            UsrRol = claims[1].Value;
             await APIReunionService.GetCentrosxEmpresa(claims[11].Value);
 
         }
+
         //Si es el comedor busca los equipos 
         if(claims[11].Value=="11")
         {
