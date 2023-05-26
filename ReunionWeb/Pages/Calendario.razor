@@ -116,7 +116,7 @@ else if (dataIsLoaded == 2 && APIReunionService.calentrabajo.Count() == 0)
 
         await CreateData();
 
-        if (claims[1].Value == "Admin")
+        if (claims[1].Value == "Admin" | claims[1].Value == "SuperAdmin")
         {
 
             await APIReunionService.GetCentrosxEmpresa("All" + claims[10].Value);
@@ -173,7 +173,7 @@ else if (dataIsLoaded == 2 && APIReunionService.calentrabajo.Count() == 0)
 
                         Start= Inicio,
                         End=Final,
-                        Text = APIReunionService.calentrabajo[i].Responsable + " - "+APIReunionService.calentrabajo[i].Rddisc + " - " + APIReunionService.calentrabajo[i].RdcodEq
+                        Text = APIReunionService.calentrabajo[i].Responsable + " - " +APIReunionService.calentrabajo[i].Responsable + " - "+APIReunionService.calentrabajo[i].Rddisc.Substring(0,30) + " - " + APIReunionService.calentrabajo[i].RdcodEq
 
                 };
                     if(data[i].End<DateTime.Today)

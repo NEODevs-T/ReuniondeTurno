@@ -270,7 +270,7 @@ else if (dataIsLoaded == 2 && DbReunionService.reunionditablas.Count() == 0)
         Rol = claims[1].Value;
 
 
-        if (claims[1].Value == "Admin")
+        if (claims[1].Value == "Admin" | claims[1].Value == "SuperAdmin")
         {
            // await APIReunionService.GetCentros("All");
             await APIReunionService.GetCentrosxEmpresa("All" + claims[10].Value);

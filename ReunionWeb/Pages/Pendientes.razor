@@ -171,7 +171,7 @@
             </BSTR>
         </BSTHead>
         <BSTBody>
-            @if(UsrRol=="Calidad" | UsrRol=="Seguridad")
+            @if (UsrRol == "Calidad" | UsrRol == "Seguridad" | UsrRol.Substring(0,4)=="Mtto")
             {
                 listareu = DbReunionService.reudiatablas.Where(r => r.IdResReuNavigation.Rrnombre.StartsWith(UsrRol)).ToList();
             }

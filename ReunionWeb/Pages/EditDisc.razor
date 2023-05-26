@@ -227,7 +227,7 @@
 
                 @if (APIReunionService.resporeu.Count() > 0)
                 {
-                    if (planificador == "Admin" | planificador == "Planificador")
+                    if (planificador == "Admin" | planificador == "Planificador" | planificador == "SuperAdmin")
                     {
                         <BSCol Column="2">
                             <BSLabel>ODT</BSLabel>
@@ -328,7 +328,7 @@
 
                 <BSInput InputType="InputType.Text" hidden @bind-Value="DiscForm.Rdtiempo" />
 
-                @if (planificador == "Admin" | planificador == "Planificador")
+                @if (planificador == "Admin" | planificador == "Planificador" | planificador=="SuperAdmin")
                 {
                     <BSCol Column="2">
                         <BSLabel>Fecha del Trabajo</BSLabel>
@@ -373,7 +373,7 @@
 
                 @if (APIReunionService.resporeu.Count() > 0)
                 {
-                    if (planificador == "Admin" | planificador == "Planificador")
+                    if (planificador == "Admin" | planificador == "Planificador" | planificador == "SuperAdmin")
                     {
                         <BSCol ColumnSmall="2">
                             <BSLabel>Status</BSLabel>
@@ -418,7 +418,7 @@
                     }
 
 
-                    if (planificador == "Admin" | planificador == "Planificador")
+                    if (planificador == "Admin" | planificador == "Planificador" | planificador == "SuperAdmin")
                     {
                         <BSCol Column="2">
                             <BSLabel>ODT</BSLabel>

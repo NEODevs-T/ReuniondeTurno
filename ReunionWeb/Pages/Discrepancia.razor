@@ -319,7 +319,7 @@
         await CreateData();
         await APIReunionService.Getksf();
         await APIReunionService.GetResReu();
-        if (claims[1].Value == "Admin")
+        if (claims[1].Value == "Admin" | claims[1].Value == "SuperAdmin")
         {
             //await APIReunionService.GetCentros("All");
             await APIReunionService.GetCentrosxEmpresa("All" + claims[10].Value);

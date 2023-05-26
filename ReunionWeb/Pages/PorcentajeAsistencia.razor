@@ -275,7 +275,7 @@ else if (dataIsLoaded == 1 && APIReunionService.cargoreus.Count() == 0)
     {
 
         await CreateData();
-        if (claims[1].Value == "Admin")
+        if (claims[1].Value == "Admin" | claims[1].Value == "SuperAdmin")
         {
             //await APIReunionService.GetCentros("All");
             await APIReunionService.GetCentrosxEmpresa("All" + claims[10].Value);
