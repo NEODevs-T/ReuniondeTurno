@@ -173,7 +173,7 @@ else if (dataIsLoaded == 2 && APIReunionService.calentrabajo.Count() == 0)
 
                         Start= Inicio,
                         End=Final,
-                        Text = APIReunionService.calentrabajo[i].Responsable + " - " +APIReunionService.calentrabajo[i].Responsable + " - "+APIReunionService.calentrabajo[i].Rddisc.Substring(0,30) + " - " + APIReunionService.calentrabajo[i].RdcodEq
+                            Text = APIReunionService.calentrabajo[i].Linea + " - " + APIReunionService.calentrabajo[i].Responsable + " - " + ((APIReunionService.calentrabajo[i].Rddisc.Length < 30) ? APIReunionService.calentrabajo[i].Rddisc : APIReunionService.calentrabajo[i].Rddisc.Substring(0,30)+"...") + " - " + APIReunionService.calentrabajo[i].RdcodEq
 
                 };
                     if(data[i].End<DateTime.Today)

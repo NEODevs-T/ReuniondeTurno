@@ -319,7 +319,8 @@ namespace ReunionDiaApi.Controllers
                             Rdodt = rd.Rdodt,
                             Rdtiempo = rd.Rdtiempo,
                             RdfecTra = rd.RdfecTra,
-                            Responsable = rd.IdResReuNavigation.Rrnombre
+                            Responsable = rd.IdResReuNavigation.Rrnombre,
+                            Linea = rd.Rdarea
 
                         })
                         .AsNoTracking()
@@ -339,7 +340,8 @@ namespace ReunionDiaApi.Controllers
                             Rdodt = rd.Rdodt,
                             Rdtiempo = rd.Rdtiempo,
                             RdfecTra = rd.RdfecTra,
-                            Responsable = rd.IdResReuNavigation.Rrnombre
+                            Responsable = rd.IdResReuNavigation.Rrnombre,
+                            Linea = rd.Rdarea
 
                         })
                         .AsNoTracking()

@@ -9,6 +9,7 @@ namespace ReunionDiaApi.DTOs
         public string? Rdtiempo { get; set; }
         public DateTime RdfecTra { get; set; }
         public string? Responsable { get; set; }
+        public string? Linea { get; set; }
 
 
 

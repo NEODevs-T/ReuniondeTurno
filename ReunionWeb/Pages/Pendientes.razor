@@ -171,7 +171,8 @@
             </BSTR>
         </BSTHead>
         <BSTBody>
-            @if (UsrRol == "Calidad" | UsrRol == "Seguridad" | UsrRol.Substring(0,4)=="Mtto")
+@*            @if (UsrRol == "Calidad" | UsrRol == "Seguridad" | UsrRol.Substring(0,4).ToString()=="Mtto")*@
+            @if (UsrRol == "Calidad" | UsrRol == "Seguridad" | UsrRol=="Mtto")
             {
                 listareu = DbReunionService.reudiatablas.Where(r => r.IdResReuNavigation.Rrnombre.StartsWith(UsrRol)).ToList();
             }
@@ -434,7 +435,15 @@ else if (dataIsLoaded == 2 && DbReunionService.reudiatablas.Count() == 0)
         }
         else
         {
-            UsrRol = claims[1].Value;
+            if(claims[1].Value=="Mantenimiento")
+            {
+                UsrRol = "Mtto";
+            }
+            else
+            {
+                UsrRol = claims[1].Value;
+            }
+            
             await APIReunionService.GetCentrosxEmpresa(claims[11].Value);
 
         }
