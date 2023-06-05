@@ -434,7 +434,7 @@ else if (dataIsLoaded == 2 && DbReunionService.reudiatablas.Count() == 0)
             UsrAdmin = claims[1].Value;
             await APIReunionService.GetCentrosxEmpresa(claims[11].Value);
         }
-        else if (claims[1].Value == "Planificador" )
+        else if (claims[1].Value == "Planificador" | claims[1].Value == "SupIntendente" )
         {
             await APIReunionService.GetCentrosxEmpresa(claims[11].Value);
         }

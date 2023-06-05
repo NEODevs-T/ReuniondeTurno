@@ -121,6 +121,7 @@
             <BSTBody>
                 @foreach (var d in DbReunionService.reudiatablas)
                 {
+                    //@if (d.Rdstatus != "Listo" & d.RdfecTra<=DateTime.Today)
                     @if (d.Rdstatus != "Listo")
                     {
                         @if (Codigo == d.RdcodDis | Codigo == "Todo")

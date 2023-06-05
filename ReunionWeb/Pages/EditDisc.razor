@@ -212,15 +212,15 @@
                         {
                             <option value="Revisar">Revisar</option>
                         }
-                        @if(DiscForm.Rdodt is not null)
+                        @if (DiscForm.Rdodt is not null)
                         {
                             <option value="Pendiente/Responsable">Pendiente/Responsable</option>
                         }
                         else
                         {
-                           <option value="Pendiente">Pendiente</option>
+                            <option value="Pendiente">Pendiente</option>
                         }
-                     
+
                         <BSFeedback For="@(() => DiscForm.Rdstatus)" ValidMessage="Correcto." />
                     </BSInput>
                 </BSCol>
@@ -328,7 +328,7 @@
 
                 <BSInput InputType="InputType.Text" hidden @bind-Value="DiscForm.Rdtiempo" />
 
-                @if (planificador == "Admin" | planificador == "Planificador" | planificador=="SuperAdmin")
+                @if (planificador == "Admin" | planificador == "Planificador" | planificador == "SuperAdmin")
                 {
                     <BSCol Column="2">
                         <BSLabel>Fecha del Trabajo</BSLabel>
@@ -381,40 +381,55 @@
                                 <option value="">Seleccione...</option>
                                 @if (tipo == 0 | tipo == 2)
                                 {
-                            <option value="Listo">Listo</option>
-                            <option value="Pendiente/Responsable">Pendiente/Responsable</option>
+                                    <option value="Listo">Listo</option>
+                                    <option value="Pendiente/Responsable">Pendiente/Responsable</option>
 
                                 }
                                 else
                                 {
-                            <option value="Revisar">Revisar</option>
+                                    <option value="Revisar">Revisar</option>
                                 }
 
-                        <option value="Pendiente">Pendiente</option>
-                        <BSFeedback For="@(() => DiscForm.Rdstatus)" ValidMessage="Correcto." />
-                    </BSInput>
-                </BSCol>
+                                <option value="Pendiente">Pendiente</option>
+                                <BSFeedback For="@(() => DiscForm.Rdstatus)" ValidMessage="Correcto." />
+                            </BSInput>
+                        </BSCol>
                     }
 
                     else
                     {
-                        <BSCol ColumnSmall="2">
-                            <BSLabel>Status</BSLabel>
-                            <BSInput InputType="InputType.Select" @bind-Value="DiscForm.Rdstatus">
-                                <option value="">Seleccione...</option>
-                                @if (tipo == 0 | tipo == 2)
-                                {
-                            <option value="Listo">Listo</option>
-                                }
-                                else
-                                {
-                            <option value="Revisar">Revisar</option>
-                                }
+                        if (DiscForm.Rdstatus == "Cerrado")
+                        {
+                            <BSCol ColumnSmall="2">
+                                <BSLabel>Status</BSLabel>
+                                <BSInput InputType="InputType.Select" @bind-Value="DiscForm.Rdstatus">
+                                    <option value="Cerrado">Cerrado</option>
+                                   
+                                    <BSFeedback For="@(() => DiscForm.Rdstatus)" ValidMessage="Correcto." />
+                                </BSInput>
+                            </BSCol>
+                        }
+                        else
+                        {
+                            <BSCol ColumnSmall="2">
+                                <BSLabel>Status</BSLabel>
+                                <BSInput InputType="InputType.Select" @bind-Value="DiscForm.Rdstatus">
+                                    <option value="">Seleccione...</option>
+                                    @if (tipo == 0 | tipo == 2)
+                                    {
+                                        <option value="Listo">Listo</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="Revisar">Revisar</option>
+                                    }
 
-                        <option value="Pendiente">Pendiente</option>
-                        <BSFeedback For="@(() => DiscForm.Rdstatus)" ValidMessage="Correcto." />
-                    </BSInput>
-                </BSCol>
+                                    <option value="Pendiente">Pendiente</option>
+                                    <BSFeedback For="@(() => DiscForm.Rdstatus)" ValidMessage="Correcto." />
+                                </BSInput>
+                            </BSCol>
+                        }
+
                     }
 
 
@@ -506,10 +521,10 @@
         string backdiv = DiscForm.Rddiv;
 
         CentroDivision centrodiv = await DbReunionService.GetCentroDiv(backcentro, backdiv, 1);
-       
+
         if (tipo == 0)
         {
-            
+
             NavigationManager.NavigateTo($"pendientes/{centrodiv.IdCentro}/{centrodiv.IdDivision}/{f1}/{f2}/{tipo}", forceLoad: true);
         }
         else if (tipo == 2)
@@ -548,8 +563,8 @@
         }
         catch (Exception ex)
         {
-            
+
         }
 
     }
-    }
+}
