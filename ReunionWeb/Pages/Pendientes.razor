@@ -6,6 +6,7 @@
 @inject HttpClient Http
 @inject AuthenticationStateProvider AuthStateProvider
 @inject ILocalStorageService LocalStorage
+@inject IJSRuntime IJS
 
 
 <AuthorizeView Roles="Admin">
@@ -41,94 +42,104 @@
                     {
                         <option value="@d.IdCentro">@d.Cnom</option>
                     }
-            </BSInput>
-        </BSCol>
-        
+                </BSInput>
+            </BSCol>
 
-        <BSCol Column="3" ColumnSmall="2">
-            <BSLabel>División</BSLabel>
-            <BSInput InputType="InputType.Select" @bind-Value="IdDiv">
-                <option value="">Seleccione</option>
-                @foreach (var d in APIReunionService.centro)
+
+            <BSCol Column="3" ColumnSmall="2">
+                <BSLabel>División</BSLabel>
+                <BSInput InputType="InputType.Select" @bind-Value="IdDiv">
+                    <option value="">Seleccione</option>
+                    @foreach (var d in APIReunionService.centro)
                     {
-                    @foreach (var e in d.Divisions)
+                        @foreach (var e in d.Divisions)
                         {
                             if (IdCentro == d.IdCentro)
                             {
-                            <option value="@e.IdDivision">@e.Dnombre</option>
+                                <option value="@e.IdDivision">@e.Dnombre</option>
                             }
                         }
                     }
-            </BSInput>
-        </BSCol>    
-        
-  
+                </BSInput>
+            </BSCol>
 
-        <BSCol Column="3" ColumnSmall="2">
-            <BSLabel> Desde</BSLabel>
-            <BSInput InputType="InputType.Date" @bind-Value="fecha1" />
-        </BSCol>
 
-        <BSCol Column="3" ColumnSmall="2">
-            <BSLabel>Hasta</BSLabel>
-            <BSInput InputType="InputType.Date" @bind-Value="fecha2" />
-        </BSCol>
 
-        <BSCol ColumnSmall="1" Column="2">
-            <BSLabel>Código</BSLabel>
-            <BSInput InputType="InputType.Select" @bind-Value="Codigo">
-                <option value="Todo">Todo</option>
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-            </BSInput>
-        </BSCol>
+            <BSCol Column="3" ColumnSmall="2">
+                <BSLabel> Desde</BSLabel>
+                <BSInput InputType="InputType.Date" @bind-Value="fecha1" />
+            </BSCol>
 
-        <BSCol ColumnSmall="1" Column="2">
-            <BSLabel>Estado</BSLabel>
-            <BSInput InputType="InputType.Select" @bind-Value="Status">
-                <option value="Todo">Todo</option>
-                <option value="Pendiente">Pendiente</option>
-                <option value="Pendiente/Responsable">Pendiente/Responsable</option>
-                <option value="Listo">Listo</option>
-                <option value="Cerrado">Cerrado</option>
-            </BSInput>
-        </BSCol>
+            <BSCol Column="3" ColumnSmall="2">
+                <BSLabel>Hasta</BSLabel>
+                <BSInput InputType="InputType.Date" @bind-Value="fecha2" />
+            </BSCol>
 
-    </BSRow>
+            <BSCol ColumnSmall="1" Column="2">
+                <BSLabel>Código</BSLabel>
+                <BSInput InputType="InputType.Select" @bind-Value="Codigo">
+                    <option value="Todo">Todo</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                </BSInput>
+            </BSCol>
+
+            <BSCol ColumnSmall="1" Column="2">
+                <BSLabel>Estado</BSLabel>
+                <BSInput InputType="InputType.Select" @bind-Value="Status">
+                    <option value="Todo">Todo</option>
+                    <option value="Pendiente">Pendiente</option>
+                    <option value="Pendiente/Responsable">Pendiente/Responsable</option>
+                    <option value="Listo">Listo</option>
+                    <option value="Cerrado">Cerrado</option>
+                </BSInput>
+            </BSCol>
+
+        </BSRow>
         <p>
         </p>
         <BSRow>
 
             <BSCol ColumnSmall="2" Column="1">
-                  <BSRow>
-                      <BSLabel>  Filtro Fecha de Trabajo</BSLabel>
-                   </BSRow>
-                    <BSInputRadio CheckedValue="@("0")" @bind-Value="tipoconsulta" IsToggle="true" Size="Size.ExtraSmall" Color="BSColor.Success" IsOutlined="true">
-                        Fecha Trabajo
-                        <span class="oi oi-cog"></span>
-                    </BSInputRadio>
+                <BSRow>
+                    <BSLabel>  Filtro Fecha de Trabajo</BSLabel>
+                </BSRow>
+                <BSInputRadio CheckedValue="@("0")" @bind-Value="tipoconsulta" IsToggle="true" Size="Size.ExtraSmall" Color="BSColor.Success" IsOutlined="true">
+                    Fecha Trabajo
+                    <span class="oi oi-cog"></span>
+                </BSInputRadio>
             </BSCol>
 
-              <BSCol ColumnSmall="2" Column="1">
-                   <BSRow>
-                   <BSLabel>  Filtro Fecha de Reunión</BSLabel>
-                   </BSRow>
-                    <BSInputRadio CheckedValue="@("2")" @bind-Value="tipoconsulta" IsToggle="true" Size="Size.ExtraSmall" Color="BSColor.Success" IsOutlined="true">
-                        Fecha Reunión
-                         <span class="oi oi-people"></span>
-                    </BSInputRadio>
-                </BSCol>
-         
+            <BSCol ColumnSmall="2" Column="1">
+                <BSRow>
+                    <BSLabel>  Filtro Fecha de Reunión</BSLabel>
+                </BSRow>
+                <BSInputRadio CheckedValue="@("2")" @bind-Value="tipoconsulta" IsToggle="true" Size="Size.ExtraSmall" Color="BSColor.Success" IsOutlined="true">
+                    Fecha Reunión
+                    <span class="oi oi-people"></span>
+                </BSInputRadio>
+            </BSCol>
+
 
             <BSCol ColumnSmall="2" Column="2">
                 <BSRow>
                     <BSLabel>Buscar</BSLabel>
                 </BSRow>
                 <BSButton IsOutlined Color="BSColor.Success" Size="Size.ExtraSmall" @onclick="Get">  Consultar <span class="oi oi-check"></span></BSButton>
-            </BSCol>
+                </BSCol>
+                @if (DbReunionService.reudiatablas.Count() > 0 && dataIsLoaded == 2)
+            {
+                <BSCol ColumnSmall="2">
+                    <BSRow>
+                        <BSLabel>Imprimir</BSLabel>
+                    </BSRow>
+                    <BSButton IsOutlined Color="BSColor.Success" Size="Size.ExtraSmall" @onclick="PrintDocument">  <span class="oi oi-print"></span></BSButton>
+                </BSCol>
+
+            }
         </BSRow>
     }
 
@@ -147,14 +158,14 @@
 
                 @*<BSTD>Id</BSTD>*@
                 @*Centro para validar el comedor*@
-                @if(CentroComedor==11)
+                @if (CentroComedor == 11)
                 {
                     <BSTD>N. Equipo</BSTD>
                 }
                 else
                 {
-                <BSTD>Área</BSTD>
-                <BSTD>Ksf</BSTD>
+                    <BSTD>Área</BSTD>
+                    <BSTD>Ksf</BSTD>
                 }
                 <BSTD>C. Equipo</BSTD>
                 <BSTD ColSpan="4">Discrepancia</BSTD>
@@ -171,9 +182,9 @@
             </BSTR>
         </BSTHead>
         <BSTBody>
-@*            @if (UsrRol == "Calidad" | UsrRol == "Seguridad" | UsrRol.Substring(0,4).ToString()=="Mtto")
-            @if (UsrRol == "Calidad" | UsrRol == "Seguridad" | UsrRol=="Mtto")*@
-            @if (UsrRol !="")
+            @*            @if (UsrRol == "Calidad" | UsrRol == "Seguridad" | UsrRol.Substring(0,4).ToString()=="Mtto")
+        @if (UsrRol == "Calidad" | UsrRol == "Seguridad" | UsrRol=="Mtto")*@
+            @if (UsrRol != "")
             {
                 listareu = DbReunionService.reudiatablas.Where(r => r.IdResReuNavigation.Rrnombre.StartsWith(UsrRol)).ToList();
             }
@@ -182,7 +193,7 @@
                 listareu = DbReunionService.reudiatablas;
 
             }
-@*            @foreach (var d in DbReunionService.reudiatablas)*@
+            @*            @foreach (var d in DbReunionService.reudiatablas)*@
             @foreach (var d in listareu)
             {
                 @if (Codigo == d.RdcodDis | Codigo == "Todo")
@@ -221,7 +232,7 @@
                                 <BSTD>@d.Rdarea</BSTD>
                                 <BSTD>@d.IdksfNavigation.KsfNombre</BSTD>
                             }
-                            
+
                             <BSTD>@d.RdcodEq</BSTD>
                             <BSTD ColSpan="4">@d.Rddisc.ToUpperInvariant()</BSTD>
                             <BSTD>@d.RdcodDis</BSTD>
@@ -394,9 +405,9 @@ else if (dataIsLoaded == 2 && DbReunionService.reudiatablas.Count() == 0)
     private string Codigo { get; set; } = "Todo"; //Codigo
     private string Status { get; set; } = "Todo"; //Status
     private string UsrAdmin { get; set; } = ""; //permisos de admin
-    private string UsrRol { get; set; } = ""; //rol para filtrar 
+    private string UsrRol { get; set; } = ""; //rol para filtrar
     private bool cargandocambio { get; set; } = false; //para cargar los datos del trazabilidad
-    private string tipoconsulta { get; set; } = "0"; //1-fecha de reuinion 0 fecha trabajo 
+    private string tipoconsulta { get; set; } = "0"; //1-fecha de reuinion 0 fecha trabajo
 
     public DateTime fecha1;
     public DateTime fecha2;
@@ -423,24 +434,24 @@ else if (dataIsLoaded == 2 && DbReunionService.reudiatablas.Count() == 0)
         fecha2 = DateTime.Now;
         await CreateData();
 
-        if ( claims[1].Value == "Admin" | claims[1].Value == "SuperAdmin")
+        if (claims[1].Value == "Admin" | claims[1].Value == "SuperAdmin")
         {
             UsrAdmin = claims[1].Value;
             await APIReunionService.GetCentrosxEmpresa("All" + claims[10].Value);
 
         }
-        else if (claims[1].Value == "SupIntendenteGeneral" )
+        else if (claims[1].Value == "SupIntendenteGeneral")
         {
             UsrAdmin = claims[1].Value;
             await APIReunionService.GetCentrosxEmpresa(claims[11].Value);
         }
-        else if (claims[1].Value == "Planificador" | claims[1].Value == "SupIntendente" )
+        else if (claims[1].Value == "Planificador" | claims[1].Value == "SupIntendente")
         {
             await APIReunionService.GetCentrosxEmpresa(claims[11].Value);
         }
         else
         {
-            if(claims[1].Value=="Mantenimiento")
+            if (claims[1].Value == "Mantenimiento")
             {
                 UsrRol = "Mtto";
             }
@@ -448,18 +459,18 @@ else if (dataIsLoaded == 2 && DbReunionService.reudiatablas.Count() == 0)
             {
                 UsrRol = claims[1].Value;
             }
-            
+
             await APIReunionService.GetCentrosxEmpresa(claims[11].Value);
 
         }
 
-        //Si es el comedor busca los equipos 
-        if(claims[11].Value=="11")
+        //Si es el comedor busca los equipos
+        if (claims[11].Value == "11")
         {
             CentroComedor = int.Parse(claims[11].Value);
             await APIReunionService.GetEquiposCentro(claims[11].Value);
         }
-        
+
         await APIReunionService.Getksf();
         await APIReunionService.GetResReu();
         DbReunionService.reudiatablas = new List<ReuDium>();
@@ -472,7 +483,7 @@ else if (dataIsLoaded == 2 && DbReunionService.reudiatablas.Count() == 0)
         {
             dataIsLoaded = 1;
 
-            //await DbReunionService.GetPendientes(Div, Division, fecha1, fecha2, tipoconsulta); 
+            //await DbReunionService.GetPendientes(Div, Division, fecha1, fecha2, tipoconsulta);
             await DbReunionService.GetPendientes(IdCentro.ToString(), IdDiv.ToString(), fecha1, fecha2, tipoconsulta);
             dataIsLoaded = 2;
         }
@@ -486,7 +497,7 @@ else if (dataIsLoaded == 2 && DbReunionService.reudiatablas.Count() == 0)
         await DbReunionService.GetCambioFecha(idreu);
         cambiofechas = DbReunionService.cambiofecha;
         cambiostatuss = DbReunionService.cambiostatus;
-        
+
         cargandocambio = true;
 
     }
@@ -528,6 +539,9 @@ else if (dataIsLoaded == 2 && DbReunionService.reudiatablas.Count() == 0)
 
     }
 
-
-
+    public async Task PrintDocument()
+    {
+        //NavigationManager.NavigateTo($"TablaReunion/{IdCentro.ToString()}/{IdDiv.ToString()}/{DateTime.Now.AddDays(-1).ToString("dd-MM-yyyy")}/{DateTime.Now.ToString("dd-MM-yyyy")}/1", forceLoad: true);
+        await IJS.InvokeAsync<object>("open", new object[] { $"/Prints/TablaPendientes/{IdCentro.ToString()}/{IdDiv.ToString()}/{fecha1.ToString("dd-MM-yyyy")}/{fecha2.ToString("dd-MM-yyyy")}/{tipoconsulta}", "_blank" });
     }
+}

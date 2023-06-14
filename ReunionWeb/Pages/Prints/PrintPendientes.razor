@@ -1,0 +1,264 @@
+﻿@layout EmptyLayout
+@page "/Prints/TablaPendientes"
+@page "/Prints/TablaPendientes/{accion}/{division}/{f1}/{f2}/{tipo}"
+
+@inject IDbReunionService DbReunionService
+@inject IAPIReunionService APIReunionService
+@inject AuthenticationStateProvider AuthStateProvider
+@inject ILocalStorageService LocalStorage
+<BSRow>
+            <BSCol ColumnSmall="1" Column="2">
+                <BSLabel>Código</BSLabel>
+                <BSInput InputType="InputType.Select" @bind-Value="Codigo">
+                    <option value="Todo">Todo</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                </BSInput>
+            </BSCol>
+
+            <BSCol ColumnSmall="1" Column="2">
+                <BSLabel>Estado</BSLabel>
+                <BSInput InputType="InputType.Select" @bind-Value="Status">
+                    <option value="Todo">Todo</option>
+                    <option value="Pendiente">Pendiente</option>
+                    <option value="Pendiente/Responsable">Pendiente/Responsable</option>
+                    <option value="Listo">Listo</option>
+                    <option value="Cerrado">Cerrado</option>
+                </BSInput>
+            </BSCol>
+
+        </BSRow>
+<p></p>
+<body>
+@if (DbReunionService.reudiatablas.Count() > 0 && dataIsLoaded == 2)
+{
+
+
+    <BSTable  IsStriped="true" IsBordered="true">
+        <BSTHead Class="cabecera">
+            <BSTR>
+
+                @*<BSTD>Id</BSTD>*@
+                @*Centro para validar el comedor*@
+                @if (CentroComedor == 11)
+                {
+                    <BSTD>N. Equipo</BSTD>
+                }
+                else
+                {
+                    <BSTD>Área</BSTD>
+                    <BSTD>Ksf</BSTD>
+                }
+                <BSTD>C. Equipo</BSTD>
+                <BSTD ColSpan="4">Discrepancia</BSTD>
+                <BSTD>Código</BSTD>
+                <BSTD>Plan de Acción</BSTD>
+                <BSTD>Tiempo</BSTD>
+                <BSTD>Responsable</BSTD>
+                <BSTD>Status</BSTD>
+                <BSTD>ODT</BSTD>
+                <BSTD>Fecha de Reunión</BSTD> @*Fecha del dia de reunion*@
+                <BSTD>Fecha del Trabajo</BSTD>@*Fecha de listo el trabajo*@
+               
+
+            </BSTR>
+        </BSTHead>
+        <BSTBody>
+            @*            @if (UsrRol == "Calidad" | UsrRol == "Seguridad" | UsrRol.Substring(0,4).ToString()=="Mtto")
+        @if (UsrRol == "Calidad" | UsrRol == "Seguridad" | UsrRol=="Mtto")*@
+            @if (UsrRol != "")
+            {
+                listareu = DbReunionService.reudiatablas.Where(r => r.IdResReuNavigation.Rrnombre.StartsWith(UsrRol)).ToList();
+            }
+            else
+            {
+                listareu = DbReunionService.reudiatablas;
+
+            }
+            @*            @foreach (var d in DbReunionService.reudiatablas)*@
+            @foreach (var d in listareu)
+            {
+                @if (Codigo == d.RdcodDis | Codigo == "Todo")
+                {
+                    @if (Status == d.Rdstatus | Status == "Todo")
+                    {
+                        <BSTR>
+                            @*<BSTD>@d.IdReuDia</BSTD>*@
+                            @*Centro para validar el comedor*@
+                            @if (CentroComedor == 11)
+                            {
+                                @if (APIReunionService.equiposlinea.Any(e => e.EcodEquiEam == d.RdcodEq) is true)
+                                {
+
+
+                                    @foreach (var eq in APIReunionService.equiposlinea)
+                                    {
+
+                                        if (eq.EcodEquiEam == d.RdcodEq)
+                                        {
+                                            <BSTD>@eq.EnombreEam</BSTD>
+
+                                        }
+
+
+                                    }
+                                }
+                                else
+                                {
+                                    <BSTD>No hay desctripción.</BSTD>
+
+                                }
+                            }
+                            else
+                            {
+                                <BSTD>@d.Rdarea</BSTD>
+                                <BSTD>@d.IdksfNavigation.KsfNombre</BSTD>
+                            }
+
+                            <BSTD>@d.RdcodEq</BSTD>
+                            <BSTD ColSpan="4">@d.Rddisc.ToUpperInvariant()</BSTD>
+                            <BSTD>@d.RdcodDis</BSTD>
+                            <BSTD Class="textotabla">@d.RdplanAcc</BSTD>
+                            <BSTD>@d.Rdtiempo</BSTD>
+                            @if (@d.IdResReuNavigation.Rrnombre == "Por Definir")
+                            {
+                                <BSTD Class="Definir">@d.IdResReuNavigation.Rrnombre </BSTD>
+                            }
+                            else
+                            {
+                                <BSTD>@d.IdResReuNavigation.Rrnombre </BSTD>
+                            }
+
+                            @if (@d.Rdstatus == "Listo")
+                            {
+                                <BSTD Class="listo">@d.Rdstatus</BSTD>
+                            }
+                            else if (@d.Rdstatus == "Cerrado")
+                            {
+                                <BSTD Class="Cerrado">@d.Rdstatus</BSTD>
+                            }
+                            else
+                            {
+                                <BSTD Class="pendiente">@d.Rdstatus</BSTD>
+                            }
+                            <BSTD>@d.Rdodt</BSTD>
+                            <BSTD>@d.RdfecReu.ToString("dd/MM/yyyy")</BSTD>
+                            <BSTD>@d.RdfecTra.ToString("dd/MM/yyyy")</BSTD>
+     
+                        </BSTR>
+
+                    }
+                }
+
+
+
+            }
+
+
+        </BSTBody>
+
+    </BSTable>
+    }
+    <button type="button" onclick="window.print()" class="btn btn-success"><span class="oi oi-print"></span></button>
+</body>
+
+@code {
+    [Parameter]
+    public string? accion { get; set; }//centro
+    [Parameter]
+    public string? division { get; set; }//division
+    [Parameter]
+    public string? f1 { get; set; }
+    [Parameter]
+    public string? f2 { get; set; }
+    [Parameter]
+    public string? tipo { get; set; }
+
+    int dataIsLoaded = 0;
+    int CentroComedor = 0;
+
+    private string Codigo { get; set; } = "Todo"; //Codigo
+    private string Status { get; set; } = "Todo"; //Status
+    private string UsrAdmin { get; set; } = ""; //permisos de admin
+    private string UsrRol { get; set; } = ""; //rol para filtrar
+    List<ReuDium> listareu = new List<ReuDium>();//filtar los responsables
+
+    private List<Claim> claims { get; set; }
+
+    private async Task CreateData()
+
+    {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        claims = Enumerable.ToList(user.Claims);
+
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+       
+
+
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await CreateData();
+
+        if (claims[1].Value == "Admin" | claims[1].Value == "SuperAdmin")
+        {
+            UsrAdmin = claims[1].Value;
+
+
+        }
+        else if (claims[1].Value == "SupIntendenteGeneral")
+        {
+            UsrAdmin = claims[1].Value;
+
+        }
+
+        else
+        {
+            if (claims[1].Value == "Mantenimiento")
+            {
+                UsrRol = "Mtto";
+            }
+            else
+            {
+                UsrRol = claims[1].Value;
+            }
+
+
+        }
+
+        //Si es el comedor busca los equipos
+        if (claims[11].Value == "11")
+        {
+            CentroComedor = int.Parse(claims[11].Value);
+
+        }
+
+
+
+        if (accion != null)
+        {
+            string[] fec1 = f1.Split('-');
+            string[] fec2 = f2.Split('-');
+
+            //año, mes dia
+            DateTime date1 = new DateTime(int.Parse(fec1[2]), int.Parse(fec1[1]), int.Parse(fec1[0]));
+            DateTime date2 = new DateTime(int.Parse(fec2[2]), int.Parse(fec2[1]), int.Parse(fec2[0]));
+
+            dataIsLoaded = 1;
+            await DbReunionService.GetPendientes(accion, division, date1, date2, tipo);
+            dataIsLoaded = 2;
+
+        }
+
+    }
+}
