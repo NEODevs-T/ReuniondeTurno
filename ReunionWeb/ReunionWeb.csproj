@@ -34,4 +34,8 @@
     <ProjectReference Include="..\ReunionDiaApi\ReunionDiaApi.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Pages\Prints\" />
+  </ItemGroup>
+
 </Project>

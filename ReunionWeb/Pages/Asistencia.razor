@@ -158,7 +158,7 @@ else if (dataIsLoaded == 1 && APIReunionService.cargoreus.Count() == 0)
     private Alerts Alertas = new Alerts();
     private string mensaje = "", result = "";//resultado del save;
     int dataIsLoaded = 0;
-   // private string RadioValue { get; set; }
+    // private string RadioValue { get; set; }
     private string Div { get; set; }
     private List<AsistenReu> listaAsistencia { get; set; }
 
@@ -238,13 +238,40 @@ else if (dataIsLoaded == 1 && APIReunionService.cargoreus.Count() == 0)
     {
 
         int time = int.Parse(DateTime.Now.ToString("hh"));
+        bool validar = true;//chequar si marcaron suplente pero no asistente
+        int conteo = 0;//chequar si se dejaron tosos en null
         try
         {
             if (time > 7 &time < 11)
             {
-                mensaje = await APIReunionService.Postasistencia(listaAsistencia);
-                dataIsLoaded = 0;
-                Show();
+                foreach (var item in listaAsistencia)
+                {
+                    if(item.ArAsistente==0 & item.ArSuplente==1)
+                    {
+                        validar = false;
+                    }
+                    if(item.ArAsistente==0)
+                    {
+                        conteo++;
+                    }
+                }
+                if (validar==false )
+                {
+                   mensaje = "Si hay un suplente debe marcar la asistencia.";
+                    Show();
+                }
+                else if (conteo == listaAsistencia.Count)
+                {
+                    mensaje = "Todos los cargos estan inasistentes.";
+                    Show();
+                }
+                else
+                {
+                    mensaje = await APIReunionService.Postasistencia(listaAsistencia);
+                    dataIsLoaded = 0;
+                    Show(); 
+                }
+
             }
             else
             {
@@ -255,7 +282,6 @@ else if (dataIsLoaded == 1 && APIReunionService.cargoreus.Count() == 0)
         }
         catch (Exception ex)
         {
-
             mensaje = "Error al Insertar los datos, Intente de Nuevo";
             Show();
         }

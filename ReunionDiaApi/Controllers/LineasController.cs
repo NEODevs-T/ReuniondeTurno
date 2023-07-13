@@ -261,13 +261,13 @@ namespace ReunionDiaApi.Controllers
         [HttpPost("Asistencia")]
         public async Task<ActionResult<string>> SaveAsistencia(List<AsistenReu> list)
         {
-            DateTime d=DateTime.Now;
+            DateTime d=DateTime.Today;
 
             try
             {
                 var result = await _context.AsistenReus
                 .Include(x => x.AridCargoRNavigation)
-                .Where(x => x.Arfecha == d && x.Ararea == list[0].Ararea)
+                .Where(x => x.Arfecha >= d && x.Ararea == list[0].Ararea)
                 .FirstOrDefaultAsync();
                 if (result == null)
                 {
