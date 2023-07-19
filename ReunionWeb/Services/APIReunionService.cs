@@ -146,7 +146,7 @@ namespace ReunionWeb.Services
         public async Task<string> Postasistencia(List<AsistenReu> asisten)
         {
             var result = await _http.PostAsJsonAsync("http://neo.paveca.com.ve/ReunionApi/Lineas/Asistencia", asisten);
-            //var result = await _http.PostAsJsonAsync("http://localhost:5258/Lineas/Asistencia", asisten);
+           // var result = await _http.PostAsJsonAsync("http://localhost:5258/Lineas/Asistencia", asisten);
             var msj = await result.Content.ReadAsStringAsync();
             return msj;
         }

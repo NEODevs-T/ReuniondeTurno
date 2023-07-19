@@ -134,10 +134,10 @@ namespace ReunionWeb.NeoDbs
 
                 entity.ToTable("CargoReu");
 
-                entity.Property(e => e.Cearea)
+                entity.Property(e => e.Crarea)
                     .HasMaxLength(50)
                     .IsUnicode(false)
-                    .HasColumnName("CEArea");
+                    .HasColumnName("CRArea");
 
                 entity.Property(e => e.Crempresa)
                     .HasMaxLength(50)
@@ -150,6 +150,10 @@ namespace ReunionWeb.NeoDbs
                     .HasMaxLength(50)
                     .IsUnicode(false)
                     .HasColumnName("CRNombre");
+
+                entity.Property(e => e.CRBloque)
+                   .HasColumnType("int")
+                   .HasColumnName("CRBloque");
             });
 
             modelBuilder.Entity<Centro>(entity =>

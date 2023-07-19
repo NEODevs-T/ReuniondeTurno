@@ -85,6 +85,13 @@
 
 @if (APIReunionService.cargoreus.Count() > 0 && dataIsLoaded == 2)
 {
+    @if (listaAsistencia.Where(c => c.AridCargoRNavigation.CRBloque == 1).Count() > 0)
+    {
+        <BSCol Column="4">
+            <BSLabel>Bloque: @bloque</BSLabel>
+            <BSInput InputType="InputType.Range" step="1" min="1" max="3" @bind-Value="bloque" />
+        </BSCol>
+    }
 
     <BSCol Column="6">
         <BSTable IsResponsive="true" IsStriped="true" IsBordered="true">
@@ -99,11 +106,41 @@
                 </BSTR>
             </BSTHead>
             <BSTBody>
-                @foreach (var d in listaAsistencia)
+                @if (listaAsistencia.Where(c=>c.AridCargoRNavigation.CRBloque ==1).Count()>0)
                 {
+                   
+                    @foreach (var d in listaAsistencia.Where(c => c.AridCargoRNavigation.CRBloque == bloque))
+                    {
 
 
-                    <BSTR>
+                        <BSTR>
+
+                            <BSTD>@d.AridCargoRNavigation.Crnombre</BSTD>
+                            <BSTD>
+                                <div Class="@BS.Form_Check @BS.Form_Switch">
+                                    <BSInputCheckbox CheckedValue="@(1)" Color="BSColor.Success" @bind-Value="d.ArAsistente" />
+                                    <BSLabel IsCheckLabel="true">
+
+                                    </BSLabel>
+                                </div>
+                            </BSTD>
+                            <BSTD>
+                                <div Class="@BS.Form_Check">
+                                    <BSInputCheckbox CheckedValue="@(1)" @bind-Value="d.ArSuplente" />
+
+                                </div>
+                            </BSTD>
+
+                        </BSTR>
+                    }
+                }
+                else
+                {
+                    @foreach (var d in listaAsistencia)
+                    {
+
+
+                        <BSTR>
 
                         <BSTD>@d.AridCargoRNavigation.Crnombre</BSTD>
                         <BSTD>
@@ -122,7 +159,7 @@
                         </BSTD>
 
                     </BSTR>
-
+                    }
 
                 }
 
@@ -160,6 +197,7 @@ else if (dataIsLoaded == 1 && APIReunionService.cargoreus.Count() == 0)
     int dataIsLoaded = 0;
     // private string RadioValue { get; set; }
     private string Div { get; set; }
+    private int bloque { get; set; } = 1;//Indica el Bloque de reunion a llenar asistencia
     private List<AsistenReu> listaAsistencia { get; set; }
 
     private bool _buttonDisabled = true;

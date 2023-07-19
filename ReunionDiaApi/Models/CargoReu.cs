@@ -14,7 +14,8 @@ namespace ReunionDiaApi.Models
         public string Crnombre { get; set; } = null!;
         public bool Cresta { get; set; }
         public string Crempresa { get; set; } = null!;
-        public string? Cearea { get; set; }
+        public string? Crarea { get; set; }
+        public int CRBloque { get; set; }
 
         public virtual ICollection<AsistenReu> AsistenReus { get; set; }
     }

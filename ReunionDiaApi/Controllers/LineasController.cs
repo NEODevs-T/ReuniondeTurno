@@ -120,7 +120,7 @@ namespace ReunionDiaApi.Controllers
         {
 
             cargoreus = await _context.CargoReus
-                .Where(a => a.Cearea == centro & a.Crempresa== empresa& a.Cresta==true)
+                .Where(a => a.Crarea == centro & a.Crempresa== empresa & a.Cresta==true)
                 .OrderByDescending(a=>a.Crnombre)
                 .ToListAsync();
 
@@ -267,7 +267,7 @@ namespace ReunionDiaApi.Controllers
             {
                 var result = await _context.AsistenReus
                 .Include(x => x.AridCargoRNavigation)
-                .Where(x => x.Arfecha >= d && x.Ararea == list[0].Ararea)
+                .Where(x => (x.Arfecha >= d) && (x.Ararea == list[0].Ararea) & (x.AridCargoRNavigation.Crempresa == list[0].AridCargoRNavigation.Crempresa) & (x.AridCargoRNavigation.CRBloque == list[0].AridCargoRNavigation.CRBloque))
                 .FirstOrDefaultAsync();
                 if (result == null)
                 {
@@ -290,7 +290,7 @@ namespace ReunionDiaApi.Controllers
                 }
                 else
                 {
-                    return BadRequest("Ya se registro asistencia");
+                    return BadRequest("Ya se registró asistencia");
                 }
 
             }

@@ -66,33 +66,33 @@
                     <option value="">Seleccione</option>
                     @foreach (var d in APIReunionService.centro)
                     {
-                    <option value="@d.Cnom">@d.Cnom</option>
+                        <option value="@d.Cnom">@d.Cnom</option>
                     }
-            </BSInput>
-        </BSCol>
+                </BSInput>
+            </BSCol>
 
-        <BSCol Column="2">
-            <BSLabel>Fecha Inicial</BSLabel>
-            <BSInput InputType="InputType.Date" @bind-Value="fecha1" />
-        </BSCol>
+            <BSCol Column="2">
+                <BSLabel>Fecha Inicial</BSLabel>
+                <BSInput InputType="InputType.Date" @bind-Value="fecha1" />
+            </BSCol>
 
-        <BSCol Column="2">
-            <BSLabel>Fecha Final</BSLabel>
-            <BSInput InputType="InputType.Date" @bind-Value="fecha2" />
-        </BSCol>
+            <BSCol Column="2">
+                <BSLabel>Fecha Final</BSLabel>
+                <BSInput InputType="InputType.Date" @bind-Value="fecha2" />
+            </BSCol>
 
-        <BSCol Column="2">
-            <BSLabel>Días Feriados/Libres</BSLabel>
-            <BSInput InputType="InputType.Number" @bind-Value="feriados" />
-        </BSCol>
+            <BSCol Column="2">
+                <BSLabel>Días Feriados/Libres</BSLabel>
+                <BSInput InputType="InputType.Number" @bind-Value="feriados" />
+            </BSCol>
 
-        <BSCol Column="3">
-            <BSRow><BSLabel> Buscar</BSLabel></BSRow>
-            <BSButton IsOutlined Color="BSColor.Success" Size="Size.ExtraSmall" @onclick="Get">   Estadísticas  <span class="oi oi-check"></span></BSButton>
-        </BSCol>
+            <BSCol Column="3">
+                <BSRow><BSLabel> Buscar</BSLabel></BSRow>
+                <BSButton IsOutlined Color="BSColor.Success" Size="Size.ExtraSmall" @onclick="Get">   Estadísticas  <span class="oi oi-check"></span></BSButton>
+                </BSCol>
 
 
-    </BSRow>
+                </BSRow>
 
     }
 
@@ -110,7 +110,7 @@
 
     <p></p>
     <BSRow>
-    <BSCol ColumnSmall="6" Column="3">
+        <BSCol ColumnSmall="6" Column="3">
 
 
             <BSInputRadio CheckedValue="@(0)" @bind-Value="Lista" IsToggle="true" Size="Size.ExtraSmall" Color="BSColor.Success" IsOutlined="true">
@@ -123,11 +123,19 @@
                 <span class="oi oi-list"></span>
             </BSInputRadio>
 
-    </BSCol>
+        </BSCol>
     </BSRow>
     <p></p>
     if (Lista == 0)
     {
+        @if (APIReunionService.asistenreus.Where(c => c.AridCargoRNavigation.CRBloque == 1).Count() > 0)
+        {
+            <BSCol Column="4">
+                <BSLabel>Bloque: @bloque</BSLabel>
+
+                <BSInput InputType="InputType.Range" step="1" min="1" max="3" @bind-Value="bloque" @oninput="Porcentaje" />
+            </BSCol>
+        }
         <BSCol Column="6">
             <BSTable IsResponsive="true" IsStriped="true" IsBordered="true">
                 <BSTHead Class="cabecera">
@@ -143,18 +151,26 @@
                 <BSTBody>
                     @foreach (var d in porasis)
                     {
-
-
                         <BSTR>
+                            @if (APIReunionService.asistenreus.Where(c => c.AridCargoRNavigation.CRBloque == 1).Count() > 0)
+                            {
+                                @if ((APIReunionService.asistenreus.FirstOrDefault(c => c.AridCargoRNavigation.Crnombre == d.Cargo).AridCargoRNavigation.CRBloque) == bloque)
+                                {
+                                    <BSTD>@d.Cargo</BSTD>
+                                    <BSTD>@d.Asistencias</BSTD>
+                                    <BSTD>@d.Total %</BSTD>
+                                }
+                            }
+                            else
+                            {
 
-                            <BSTD>@d.Cargo</BSTD>
-                            <BSTD>@d.Asistencias</BSTD>
-                            <BSTD>@d.Total %</BSTD>
+                                <BSTD>@d.Cargo</BSTD>
+                                <BSTD>@d.Asistencias</BSTD>
+                                <BSTD>@d.Total %</BSTD>
 
+                            }
 
                         </BSTR>
-
-
                     }
 
 
@@ -168,7 +184,14 @@
         </BSCol>
     }
     else
-    {
+    {        @if (APIReunionService.asistenreus.Where(c => c.AridCargoRNavigation.CRBloque == 1).Count() > 0)
+        {
+            <BSCol Column="4">
+                <BSLabel>Bloque: @bloque</BSLabel>
+
+                <BSInput InputType="InputType.Range" step="1" min="1" max="3" @bind-Value="bloque" @oninput="Porcentaje" />
+            </BSCol>
+        }
         <BSCol Column="10">
             <BSTable IsResponsive="true" IsStriped="true" IsBordered="true">
                 <BSTHead Class="cabecera">
@@ -189,28 +212,57 @@
 
                         <BSTR>
 
-                            <BSTD>@d.Arfecha</BSTD>
-                            <BSTD>@d.AridCargoRNavigation.Crnombre</BSTD>
-
-                            @if (@d.ArAsistente == 1)
+                            @if (APIReunionService.asistenreus.Where(c => c.AridCargoRNavigation.CRBloque == 1).Count() > 0)
                             {
-                                <BSTD>Asistió </BSTD>
+                                @if ((APIReunionService.asistenreus.FirstOrDefault(c => c.AridCargoR == d.AridCargoR).AridCargoRNavigation.CRBloque) == bloque)
+                                {
+                                    <BSTD>@d.Arfecha</BSTD>
+                                    <BSTD>@d.AridCargoRNavigation.Crnombre</BSTD>
+
+                                    @if (@d.ArAsistente == 1)
+                                    {
+                                        <BSTD>Asistió </BSTD>
+                                    }
+                                    else
+                                    {
+                                        <BSTD>Ausente</BSTD>
+                                    }
+
+
+                                    @if (@d.ArSuplente == 1)
+                                    {
+                                        <BSTD>Suplencia</BSTD>
+                                    }
+                                    else
+                                    {
+                                        <BSTD>-</BSTD>
+                                    }
+                                }
                             }
                             else
                             {
-                                <BSTD>Ausente</BSTD>
-                            }
+                                <BSTD>@d.Arfecha</BSTD>
+                                <BSTD>@d.AridCargoRNavigation.Crnombre</BSTD>
+
+                                @if (@d.ArAsistente == 1)
+                                {
+                                    <BSTD>Asistió </BSTD>
+                                }
+                                else
+                                {
+                                    <BSTD>Ausente</BSTD>
+                                }
 
 
-                            @if (@d.ArSuplente == 1)
-                            {
-                                <BSTD>Suplencia</BSTD>
+                                @if (@d.ArSuplente == 1)
+                                {
+                                    <BSTD>Suplencia</BSTD>
+                                }
+                                else
+                                {
+                                    <BSTD>-</BSTD>
+                                }
                             }
-                            else
-                            {
-                                <BSTD>-</BSTD>
-                            }
-
 
 
                         </BSTR>
@@ -249,6 +301,7 @@ else if (dataIsLoaded == 1 && APIReunionService.cargoreus.Count() == 0)
     private string Div { get; set; }
     private int feriados { get; set; } = 0;
     private int Lista { get; set; } = 0;
+    private int bloque { get; set; } = 1;
     private DateTime fecha1 = DateTime.Now;
     private DateTime fecha2 = DateTime.Now;
     double asistotal = 0;
@@ -291,29 +344,81 @@ else if (dataIsLoaded == 1 && APIReunionService.cargoreus.Count() == 0)
 
     }
 
+    protected int GetDias()
+    {
+        int diascount = 0;
+        DateTime inicio = fecha1, hasta = fecha2;
+
+        while (inicio <= hasta)
+        {
+            if (inicio.DayOfWeek != DayOfWeek.Saturday && inicio.DayOfWeek != DayOfWeek.Sunday)
+                diascount++;
+            inicio = inicio.AddDays(1);
+        }
+        return diascount;
+    }
+
+    protected async Task Porcentaje()
+    {
+        DateTime inicio = fecha1, hasta = fecha2;
+        dias = GetDias();
+        asistotal = 0;
+        int filtrocount = 0;
+        if (dataIsLoaded != 1)
+        {
+            dataIsLoaded = 1;
+            await APIReunionService.GetListaAsist(Div, claims[5].Value, f1, f2);
+            await APIReunionService.GetStatsAsist(Div, claims[5].Value, f1, f2);
+            porasis = APIReunionService.StatsAsisDtos;
+            dias = dias - feriados;
+
+            foreach (var a in porasis)
+            {
+                if (APIReunionService.asistenreus.Where(c => c.AridCargoRNavigation.CRBloque == bloque).Count() > 0)
+                {
+                    filtrocount++;
+                    a.Total = Math.Round((a.Asistencias / dias) * 100);
+                    asistotal = asistotal + a.Total;
+                }
+            }
+
+            if (porasis.Count == filtrocount)
+            {
+                asistotal = Math.Round(asistotal / porasis.Count);
+            }
+
+            else
+            {
+                asistotal = Math.Round(asistotal / (porasis.Count - filtrocount));
+            }
+            dataIsLoaded = 2;
+
+        }
+
+    }
     protected async Task Get()
     {
         f1 = fecha1.ToString("dd-MM-yyyy");
         f2 = fecha2.ToString("dd-MM-yyyy");
 
         DateTime inicio = fecha1, hasta = fecha2;
-        dias = 0;
+        dias = GetDias();
         asistotal = 0;
 
-        while (inicio <= hasta)
-        {
+        //while (inicio <= hasta)
+        //{
 
-            if (inicio.DayOfWeek != DayOfWeek.Saturday && inicio.DayOfWeek != DayOfWeek.Sunday)
-                dias++;
+        //    if (inicio.DayOfWeek != DayOfWeek.Saturday && inicio.DayOfWeek != DayOfWeek.Sunday)
+        //        dias++;
 
-            inicio = inicio.AddDays(1);
-        }
+        //    inicio = inicio.AddDays(1);
+        //}
 
         if (dataIsLoaded != 1)
         {
             dataIsLoaded = 1;
-            await APIReunionService.GetListaAsist(Div, claims[5].Value,f1, f2);
-            await APIReunionService.GetStatsAsist(Div, claims[5].Value,f1, f2);
+            await APIReunionService.GetListaAsist(Div, claims[5].Value, f1, f2);
+            await APIReunionService.GetStatsAsist(Div, claims[5].Value, f1, f2);
             porasis = APIReunionService.StatsAsisDtos;
             dias = dias - feriados;
 
@@ -347,4 +452,4 @@ else if (dataIsLoaded == 1 && APIReunionService.cargoreus.Count() == 0)
     {
         _buttonDisabled = false;
     }
-    }
+}
