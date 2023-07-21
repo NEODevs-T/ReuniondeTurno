@@ -46,18 +46,18 @@
     </BSCol>
     <BSRow>
 
-     @*   <BSCol Column="3">
-            <BSLabel>Centro</BSLabel>
-            <BSInput InputType="InputType.Select" @bind-Value="Reuniondb.Rdcentro">
-                <option value="">Seleccione...</option>
-                @foreach (var d in APIReunionService.centro)
-                {
-                    <option value="@d.Cnom">@d.Cnom</option>
-                }
-            </BSInput>
-            <BSFeedback For="@(() => Reuniondb.Rdcentro)" ValidMessage="Correcto." />
+        @*   <BSCol Column="3">
+        <BSLabel>Centro</BSLabel>
+        <BSInput InputType="InputType.Select" @bind-Value="Reuniondb.Rdcentro">
+        <option value="">Seleccione...</option>
+        @foreach (var d in APIReunionService.centro)
+        {
+        <option value="@d.Cnom">@d.Cnom</option>
+        }
+        </BSInput>
+        <BSFeedback For="@(() => Reuniondb.Rdcentro)" ValidMessage="Correcto." />
         </BSCol>*@
-        
+
         <BSCol Column="3">
             <BSLabel>Centro</BSLabel>
             <BSInput InputType="InputType.Select" @bind-Value="IdCent">
@@ -75,16 +75,16 @@
         <BSCol Column="2">
             <BSLabel>Division</BSLabel>
             <BSInput InputType="InputType.Select" @bind-Value="IdDiv">
-           @* <BSInput InputType="InputType.Select" @onchange=BuscarLineas @bind-Value="IdDiv">*@
+                @* <BSInput InputType="InputType.Select" @onchange=BuscarLineas @bind-Value="IdDiv">*@
 
                 <option value="">Seleccione...</option>
                 @foreach (var d in APIReunionService.centro)
                 {
-                @foreach (var e in d.Divisions.Where(di => di.IdCentro == IdCent))
+                    @foreach (var e in d.Divisions.Where(di => di.IdCentro == IdCent))
                     {
-                        
-                            <option value="@e.IdDivision">@e.Dnombre</option>
-                        
+
+                        <option value="@e.IdDivision">@e.Dnombre</option>
+
                     }
                 }
             </BSInput>
@@ -98,17 +98,17 @@
                 <option value="">Seleccione...</option>
                 @foreach (var d in APIReunionService.centro)
                 {
-                    @foreach (var e in d.Lineas.Where(li=>li.IdDivision==IdDiv && li.IdDivisionNavigation.IdCentro==IdCent))
+                    @foreach (var e in d.Lineas.Where(li => li.IdDivision == IdDiv && li.IdDivisionNavigation.IdCentro == IdCent))
                     {
-                       @* if (IdDiv == e.IdDivisionNavigation.IdDivision)
-                        {*@
-                            <option value="@e.Lnom">@e.Lnom</option>
-                       @* }*@
+                        @* if (IdDiv == e.IdDivisionNavigation.IdDivision)
+                {*@
+                        <option value="@e.Lnom">@e.Lnom</option>
+                        @* }*@
                     }
                 }
             </BSInput>
             <BSFeedback For="@(() => Reuniondb.Rdarea)" ValidMessage="Correcto." />
-        </BSCol>       
+        </BSCol>
 
 
 
@@ -133,38 +133,38 @@
 
 
         </BSCol>
-        @if (APIReunionService.centro.Count > 0 &   tipoequipo == "0")
+        @if (APIReunionService.centro.Count > 0 & tipoequipo == "0")
         {
-          @*  @if (Reuniondb.Rdcentro == "Conversión" | Reuniondb.Rdcentro == "Molinos")*@
-                @if (Reuniondb.Rdcentro != "Chempro" )
-                {
-                    <BSCol Column="4">
-                        <BSLabel>C. Equipo</BSLabel>
-                        <BSInput InputType="InputType.Select" @bind-Value="Reuniondb.RdcodEq">
+            @*  @if (Reuniondb.Rdcentro == "Conversión" | Reuniondb.Rdcentro == "Molinos")*@
+            @if (Reuniondb.Rdcentro != "Chempro")
+            {
+                <BSCol Column="4">
+                    <BSLabel>C. Equipo</BSLabel>
+                    <BSInput InputType="InputType.Select" @bind-Value="Reuniondb.RdcodEq">
 
-                            <option value="">Seleccione...</option>
-                            @foreach (var d in APIReunionService.equipos)
+                        <option value="">Seleccione...</option>
+                        @foreach (var d in APIReunionService.equipos)
+                        {
+                            if (Reuniondb.Rdarea == d.IdLineaNavigation.Lnom)
                             {
-                                if (Reuniondb.Rdarea == d.IdLineaNavigation.Lnom)
-                                {
-                                    <option value="@d.EcodEquiEam">@d.EcodEquiEam - @d.EnombreEam</option>
-                                }
+                                <option value="@d.EcodEquiEam">@d.EcodEquiEam - @d.EnombreEam</option>
                             }
+                        }
 
 
-                        </BSInput>
-                        <BSFeedback For="@(() => Reuniondb.RdcodEq)" ValidMessage="Correcto." />
-                    </BSCol>
+                    </BSInput>
+                    <BSFeedback For="@(() => Reuniondb.RdcodEq)" ValidMessage="Correcto." />
+                </BSCol>
 
-                }
-                else
-                {
-                    <BSCol Column="4">
-                        <BSLabel>C. Equipo</BSLabel>
-                        <BSInput InputType="InputType.Text" @bind-Value="Reuniondb.RdcodEq" />
-                        <BSFeedback For="@(() => Reuniondb.RdcodEq)" ValidMessage="Correcto." />
-                    </BSCol>
-                }
+            }
+            else
+            {
+                <BSCol Column="4">
+                    <BSLabel>C. Equipo</BSLabel>
+                    <BSInput InputType="InputType.Text" @bind-Value="Reuniondb.RdcodEq" />
+                    <BSFeedback For="@(() => Reuniondb.RdcodEq)" ValidMessage="Correcto." />
+                </BSCol>
+            }
         }
         else if (APIReunionService.centro.Count > 0 & tipoequipo == "1")
         {
@@ -277,23 +277,23 @@
 
 @code {
 
-        [CascadingParameter]
-        //private Task<AuthenticationState> authenticationStateTask { get; set; }
+    [CascadingParameter]
+    //private Task<AuthenticationState> authenticationStateTask { get; set; }
 
-        private List<Claim> claims { get; set; }
+    private List<Claim> claims { get; set; }
 
-        private async Task CreateData()
+    private async Task CreateData()
 
-        {
-            var authState = await AuthStateProvider.GetAuthenticationStateAsync();
-            var user = authState.User;
-            claims = Enumerable.ToList(user.Claims);
+    {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        claims = Enumerable.ToList(user.Claims);
 
-        }
+    }
 
 
-        ReuDium Reuniondb = new ReuDium();
-        Alerts Alertas = new Alerts();
+    ReuDium Reuniondb = new ReuDium();
+    Alerts Alertas = new Alerts();
     private string _message = "";
     private DateTime fechahoy, fechatrabajo = DateTime.Today;
     private string fechahoy2;
@@ -327,16 +327,17 @@
             //await APIReunionService.GetCentrosxEmpresa("All4");
 
 
-            if (claims[6].Value == "Conversión" | claims[6].Value == "Molinos")
-            {
-                await APIReunionService.GetEquiposEAM("All");
-            }
+            //if (claims[6].Value == "Conversión" | claims[6].Value == "Molinos")
+            //{
+                await APIReunionService.GetEquiposEAM("All" + claims[10].Value);
+            //}
         }
         else
         {
-            //await APIReunionService.GetCentros(claims[6].Value.ToString());
+            
             await APIReunionService.GetCentrosxEmpresa(claims[11].Value);
-            await APIReunionService.GetEquiposEAM(claims[6].Value.ToString());
+           // await APIReunionService.GetEquiposEAM(claims[6].Value.ToString());
+            await APIReunionService.GetEquiposEAM(claims[11].Value.ToString());
 
         }
 
@@ -483,24 +484,24 @@
     }
     //protected async Task BuscarLineas(EventArgs e)
     //{
-       
+
 
     //    if (IdDiv!= 0)
     //    {
-     
+
     //        await APIReunionService.GetLineas(IdDiv.Value);
-   
+
     //    }
     //}
-      protected async Task BuscarLineas(ChangeEventArgs e)
+    protected async Task BuscarLineas(ChangeEventArgs e)
     {
 
 
-        if (IdDiv!= 0)
+        if (IdDiv != 0)
         {
-     
+
             await APIReunionService.GetLineas(IdDiv.Value);
-   
+
         }
     }
 }

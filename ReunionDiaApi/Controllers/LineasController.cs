@@ -62,11 +62,19 @@ namespace ReunionDiaApi.Controllers
         [HttpGet("Equipos/{cent}")]
         public async Task<ActionResult<List<EquipoEam>>> EquiposEAM(string cent)
         {
-            if (cent == "All")
+            string cen = "";
+            int idempresa = 0;
+            if (cent.Length > 3)
+            {
+                cen = cent.Substring(0, 3);
+                idempresa = int.Parse(cent.Substring(3));
+            }
+
+            if (cen == "All")
             {
                 var result = await _context.EquipoEams
                  .Include(x => x.IdLineaNavigation)
-                 .Where(x => x.EestaEam == true)
+                 .Where(x => x.EestaEam == true & x.IdLineaNavigation.IdCentroNavigation.IdEmpresaNavigation.IdEmpresa==idempresa)
                  .Select(p => new
                  {
                      p.EcodEquiEam,
@@ -80,15 +88,12 @@ namespace ReunionDiaApi.Controllers
             }
             else
             {
-                //equipos = await _context.EquipoEams
-                //.Include(x => x.IdLineaNavigation)
-                //.ThenInclude(y => y.IdDivisionNavigation)
-                //.Where(x => x.IdLineaNavigation.IdDivisionNavigation.IdCentroNavigation.Cnom == cent)
-                //.ToListAsync();
+
 
                 var result = await _context.EquipoEams
                  .Include(x => x.IdLineaNavigation)
-                 .Where(x => x.IdLineaNavigation.IdDivisionNavigation.IdCentroNavigation.Cnom == cent && x.EestaEam == true)
+                 //.Where(x => x.IdLineaNavigation.IdDivisionNavigation.IdCentroNavigation.Cnom == cent && x.EestaEam == true)
+                 .Where(x => x.IdLineaNavigation.IdDivisionNavigation.IdCentro == int.Parse(cent) && x.EestaEam == true)
                  .Select(p => new 
                  {
                      p.EcodEquiEam, 
