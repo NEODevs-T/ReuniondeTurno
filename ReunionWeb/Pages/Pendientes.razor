@@ -21,7 +21,7 @@
 </AuthorizeView>
 
 @error
-<h3>Pendientes y Listos</h3>
+<h3>Asuntos</h3>
 
 <BSContainer>
 
@@ -64,7 +64,7 @@
             </BSCol>
 
 
-
+@*
             <BSCol Column="3" ColumnSmall="2">
                 <BSLabel> Desde</BSLabel>
                 <BSInput InputType="InputType.Date" @bind-Value="fecha1" />
@@ -73,7 +73,7 @@
             <BSCol Column="3" ColumnSmall="2">
                 <BSLabel>Hasta</BSLabel>
                 <BSInput InputType="InputType.Date" @bind-Value="fecha2" />
-            </BSCol>
+            </BSCol>*@
 
             <BSCol ColumnSmall="1" Column="2">
                 <BSLabel>Código</BSLabel>
@@ -87,9 +87,10 @@
                 </BSInput>
             </BSCol>
 
-            <BSCol ColumnSmall="1" Column="2">
+            <BSCol ColumnSmall="2" Column="3">
                 <BSLabel>Estado</BSLabel>
                 <BSInput InputType="InputType.Select" @bind-Value="Status">
+                    <option value="Total Pendiente">Total Pendiente</option>
                     <option value="Todo">Todo</option>
                     <option value="Pendiente">Pendiente</option>
                     <option value="Pendiente/Responsable">Pendiente/Responsable</option>
@@ -193,13 +194,15 @@
                 listareu = DbReunionService.reudiatablas;
 
             }
+            
             @*            @foreach (var d in DbReunionService.reudiatablas)*@
             @foreach (var d in listareu)
             {
                 @if (Codigo == d.RdcodDis | Codigo == "Todo")
                 {
-                    @if (Status == d.Rdstatus | Status == "Todo")
+                @if (Status == d.Rdstatus | Status == "Todo" | Status == "Total Pendiente" & (d.Rdstatus == "Pendiente" | d.Rdstatus=="Pendiente/Responsable"))
                     {
+
                         <BSTR>
                             @*<BSTD>@d.IdReuDia</BSTD>*@
                             @*Centro para validar el comedor*@
@@ -238,6 +241,7 @@
                             <BSTD>@d.RdcodDis</BSTD>
                             <BSTD Class="textotabla">@d.RdplanAcc</BSTD>
                             <BSTD>@d.Rdtiempo</BSTD>
+
                             @if (@d.IdResReuNavigation.Rrnombre == "Por Definir")
                             {
                                 <BSTD Class="Definir">@d.IdResReuNavigation.Rrnombre </BSTD>
@@ -403,7 +407,7 @@ else if (dataIsLoaded == 2 && DbReunionService.reudiatablas.Count() == 0)
     //private string Division { get; set; } //División
 
     private string Codigo { get; set; } = "Todo"; //Codigo
-    private string Status { get; set; } = "Todo"; //Status
+    private string Status { get; set; } = "Total Pendiente"; //Status
     private string UsrAdmin { get; set; } = ""; //permisos de admin
     private string UsrRol { get; set; } = ""; //rol para filtrar
     private bool cargandocambio { get; set; } = false; //para cargar los datos del trazabilidad
@@ -448,6 +452,11 @@ else if (dataIsLoaded == 2 && DbReunionService.reudiatablas.Count() == 0)
         else if (claims[1].Value == "Planificador" | claims[1].Value == "SupIntendente")
         {
             await APIReunionService.GetCentrosxEmpresa(claims[11].Value);
+        }
+        else if (claims[1].Value == "MttoAdmin")
+        {
+            UsrRol = "Mtto";
+            await APIReunionService.GetCentrosxEmpresa("All" + claims[10].Value);
         }
         else
         {

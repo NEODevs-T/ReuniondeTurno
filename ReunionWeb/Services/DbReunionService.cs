@@ -60,8 +60,8 @@ namespace ReunionWeb.Services
 
             reudiatablas = new List<ReuDium> ();
 
-            //tipo 0 Pendientes para 
-
+            
+            // Es Reunión
             if (tipo == "1")
             {
 
@@ -75,23 +75,28 @@ namespace ReunionWeb.Services
                 .OrderByDescending(b => b.RdfecReu)
                 .ToListAsync();
             }
+
+            //tipo 0 Pendientes para 
             else if (tipo == "0")
             {
                 reudiatablas = await _neocontext.ReuDia
                 //.Where(a =>  (a.Div == centro & a.Division==div ) | (a.Div == centro & a.Division == div & (a.Fecha>= f1 & a.Fecha <= f2)))
-                .Where(a => (a.Rdcentro == centro & a.Rddiv == div & (a.RdfecTra >= f1 & a.RdfecTra <= f2)))
+                //.Where(a => (a.Rdcentro == centro & a.Rddiv == div & (a.RdfecTra >= f1 & a.RdfecTra <= f2)))
+                .Where(a => (a.Rdcentro == centro & a.Rddiv == div ))
                 .Include(b => b.IdksfNavigation)
                 .Include(b => b.IdResReuNavigation)
                 .OrderByDescending(b => b.RdfecReu)
                 .ToListAsync();
             }
+            //Fecha de trabajo
             else if (tipo == "2")
             {
                 reudiatablas = await _neocontext.ReuDia
-                .Where(a => (a.Rdcentro == centro & a.Rddiv == div & (a.RdfecReu >= f1 & a.RdfecReu <= f2)))
+                //.Where(a => (a.Rdcentro == centro & a.Rddiv == div & (a.RdfecReu >= f1 & a.RdfecReu <= f2)))
+                .Where(a => (a.Rdcentro == centro & a.Rddiv == div ))
                 .Include(b => b.IdksfNavigation)
                 .Include(b => b.IdResReuNavigation)
-                .OrderByDescending(b => b.RdfecReu)
+                .OrderByDescending(b => b.RdfecTra)
                 .ToListAsync();
             }
 
@@ -137,7 +142,7 @@ namespace ReunionWeb.Services
             bdDiscrep.IdResReu = d.IdResReu;
             bdDiscrep.Rdstatus = d.Rdstatus;
             bdDiscrep.Rdtiempo = d.Rdtiempo;
-            //bdDiscrep.IdPais = d.IdPais;
+            bdDiscrep.IdPais = d.IdPais;
             //bdDiscrep.RdnumDis = d.RdnumDis;
             //bdDiscrep.Rdobs = d.Rdobs;
 

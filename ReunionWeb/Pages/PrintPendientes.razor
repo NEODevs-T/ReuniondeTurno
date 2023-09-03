@@ -22,6 +22,7 @@
             <BSCol ColumnSmall="1" Column="2">
                 <BSLabel>Estado</BSLabel>
                 <BSInput InputType="InputType.Select" @bind-Value="Status">
+                    <option value="Total Pendiente">Total Pendiente</option>
                     <option value="Todo">Todo</option>
                     <option value="Pendiente">Pendiente</option>
                     <option value="Pendiente/Responsable">Pendiente/Responsable</option>
@@ -83,7 +84,7 @@
             {
                 @if (Codigo == d.RdcodDis | Codigo == "Todo")
                 {
-                    @if (Status == d.Rdstatus | Status == "Todo")
+                        @if (Status == d.Rdstatus | Status == "Todo" | Status == "Total Pendiente" & (d.Rdstatus == "Pendiente" | d.Rdstatus == "Pendiente/Responsable"))
                     {
                         <BSTR>
                             @*<BSTD>@d.IdReuDia</BSTD>*@
@@ -181,7 +182,7 @@
     int CentroComedor = 0;
 
     private string Codigo { get; set; } = "Todo"; //Codigo
-    private string Status { get; set; } = "Todo"; //Status
+    private string Status { get; set; } = "Total Pendiente"; //Status
     private string UsrAdmin { get; set; } = ""; //permisos de admin
     private string UsrRol { get; set; } = ""; //rol para filtrar
     List<ReuDium> listareu = new List<ReuDium>();//filtar los responsables
@@ -216,7 +217,7 @@
 
 
         }
-        else if (claims[1].Value == "SupIntendenteGeneral")
+        else if (claims[1].Value == "SupIntendenteGeneral" | claims[1].Value == "SupIntendente")
         {
             UsrAdmin = claims[1].Value;
 

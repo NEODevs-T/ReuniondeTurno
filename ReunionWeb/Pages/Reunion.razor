@@ -6,7 +6,7 @@
 @inject AuthenticationStateProvider AuthStateProvider
 @inject IJSRuntime IJS
 
-@attribute [Authorize(Roles = "Admin,AdminChempro, SupIntendente,SupIntendenteGeneral,SuperAdmin, Planificador, Mantenimiento,Calidad,Seguridad,Efluentes, PendientesChempro")]
+@attribute [Authorize(Roles = "Admin,AdminChempro, SupIntendente,SupIntendenteGeneral,SuperAdmin, Planificador, Mantenimiento,Calidad,Seguridad,Efluentes, PendientesChempro, MttoAdmin")]
 
 <h3>Formato de Reunión</h3>
 
@@ -286,7 +286,7 @@ else if (dataIsLoaded == 2 && DbReunionService.reunionditablas.Count() == 0)
         Rol = claims[1].Value;
 
 
-        if (claims[1].Value == "Admin" | claims[1].Value == "SuperAdmin")
+        if (claims[1].Value == "Admin" | claims[1].Value == "SuperAdmin"| claims[1].Value=="MttoAdmin")
         {
             // await APIReunionService.GetCentros("All");
             await APIReunionService.GetCentrosxEmpresa("All" + claims[10].Value);

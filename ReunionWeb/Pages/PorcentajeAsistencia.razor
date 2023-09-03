@@ -5,7 +5,7 @@
 @inject HttpClient Http
 @inject AuthenticationStateProvider AuthStateProvider
 @inject ILocalStorageService LocalStorage
-@attribute [Authorize(Roles = "Admin, AdminChempro, SupIntendente, SupIntendenteGeneral, SuperAdmin")]
+@attribute [Authorize(Roles = "Admin, AdminChempro, SupIntendente, SupIntendenteGeneral, SuperAdmin, MttoAdmin")]
 
 
 
@@ -328,7 +328,7 @@ else if (dataIsLoaded == 1 && APIReunionService.cargoreus.Count() == 0)
     {
 
         await CreateData();
-        if (claims[1].Value == "Admin" | claims[1].Value == "SuperAdmin")
+        if (claims[1].Value == "Admin" | claims[1].Value == "SuperAdmin" | claims[1].Value == "MttoAdmin")
         {
             //await APIReunionService.GetCentros("All");
             await APIReunionService.GetCentrosxEmpresa("All" + claims[10].Value);
@@ -364,6 +364,8 @@ else if (dataIsLoaded == 1 && APIReunionService.cargoreus.Count() == 0)
         dias = GetDias();
         asistotal = 0;
         int filtrocount = 0;
+        int bloquetotal;
+
         if (dataIsLoaded != 1)
         {
             dataIsLoaded = 1;
@@ -374,23 +376,40 @@ else if (dataIsLoaded == 1 && APIReunionService.cargoreus.Count() == 0)
 
             foreach (var a in porasis)
             {
+
                 if (APIReunionService.asistenreus.Where(c => c.AridCargoRNavigation.CRBloque == bloque).Count() > 0)
                 {
-                    filtrocount++;
-                    a.Total = Math.Round((a.Asistencias / dias) * 100);
-                    asistotal = asistotal + a.Total;
+                    //if (APIReunionService.asistenreus.Where(c => c.AridCargoRNavigation.Crnombre == a.Cargo).Count() > 0 & APIReunionService.asistenreus.FirstOrDefault(c=>c.AridCargoRNavigation.Crnombre==a.Cargo).AridCargoRNavigation.CRBloque==bloque)
+                    if (APIReunionService.asistenreus.FirstOrDefault(c=>c.AridCargoRNavigation.Crnombre==a.Cargo).AridCargoRNavigation.CRBloque==bloque)
+                    {
+                        filtrocount++;
+                        a.Total = Math.Round((a.Asistencias / dias) * 100);
+                        asistotal = asistotal + a.Total;
+
+                    }
+                   
                 }
             }
+            bloquetotal = APIReunionService.asistenreus.Where(c => c.AridCargoRNavigation.CRBloque == bloque).Count();
 
-            if (porasis.Count == filtrocount)
+            if (bloquetotal == 0)
             {
                 asistotal = Math.Round(asistotal / porasis.Count);
             }
-
             else
             {
-                asistotal = Math.Round(asistotal / (porasis.Count - filtrocount));
+                asistotal = Math.Round(asistotal / (bloquetotal));
             }
+
+            //if (porasis.Count == filtrocount)
+            //{
+            //    asistotal = Math.Round(asistotal / porasis.Count);
+            //}
+
+            //else
+            //{
+            //    asistotal = Math.Round(asistotal / (porasis.Count - filtrocount));
+            //}
             dataIsLoaded = 2;
 
         }
@@ -430,6 +449,10 @@ else if (dataIsLoaded == 1 && APIReunionService.cargoreus.Count() == 0)
             asistotal = Math.Round((asistotal / porasis.Count));
             dataIsLoaded = 2;
 
+            if (APIReunionService.asistenreus.Where(c => c.AridCargoRNavigation.CRBloque == bloque).Count() > 0)
+            {
+                await Porcentaje();
+            }
         }
     }
 

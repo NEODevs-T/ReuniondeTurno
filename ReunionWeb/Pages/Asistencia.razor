@@ -18,7 +18,7 @@
                 @mensaje
             </BSAlert>
         }
-        else if (@mensaje == "Error al Insertar los datos, Intente de Nuevo" | mensaje == "Seleccione el area." | mensaje == "Solo se puede registrar a las 9:00 am")
+        else if (@mensaje == "Error al Insertar los datos, Intente de Nuevo" | mensaje == "Seleccione el area." | mensaje == "Solo se puede registrar en horario disponible")
         {
 
             <BSAlert Color="BSColor.Warning" IsDismissible="true" HasIcon="true" @ref="_alertRef" Dismissed="Dismissed">
@@ -97,12 +97,9 @@
         <BSTable IsResponsive="true" IsStriped="true" IsBordered="true">
             <BSTHead Class="cabecera">
                 <BSTR>
-
-
                     <BSTD>Personal</BSTD>
                     <BSTD>Presencia</BSTD>
                     <BSTD>Suplencia</BSTD>
-
                 </BSTR>
             </BSTHead>
             <BSTBody>
@@ -280,7 +277,7 @@ else if (dataIsLoaded == 1 && APIReunionService.cargoreus.Count() == 0)
         int conteo = 0;//chequar si se dejaron tosos en null
         try
         {
-            if (time > 7 &time < 11)
+            if ((claims[4].Value == "Venezuela" & time > 8 & time < 10) | (claims[4].Value == "Colombia" & time > 8 & time < 11) | (claims[4].Value == "Guatemala" & time > 9 & time < 13))
             {
                 foreach (var item in listaAsistencia)
                 {

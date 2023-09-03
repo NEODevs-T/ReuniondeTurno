@@ -116,7 +116,7 @@ else if (dataIsLoaded == 2 && APIReunionService.calentrabajo.Count() == 0)
 
         await CreateData();
 
-        if (claims[1].Value == "Admin" | claims[1].Value == "SuperAdmin")
+        if (claims[1].Value == "Admin" | claims[1].Value == "SuperAdmin" | claims[1].Value == "MttoAdmin")
         {
 
             await APIReunionService.GetCentrosxEmpresa("All" + claims[10].Value);
