@@ -1,0 +1,341 @@
+﻿@page "/historicos"
+
+@inject IDbReunionService DbReunionService
+@inject IAPIReunionService APIReunionService
+
+@inject NavigationManager NavigationManager
+@inject HttpClient Http
+@inject AuthenticationStateProvider AuthStateProvider
+@inject ILocalStorageService LocalStorage
+<h3>Históricos</h3>
+
+
+<BSContainer>
+
+    @if (APIReunionService.centro.Count() == 0)
+    {
+        <div class="loader"></div>
+    }
+    else
+    {
+
+
+        <BSRow>
+            <BSCol Column="3" ColumnSmall="2">
+                <BSLabel>Centro</BSLabel>
+                <BSInput InputType="InputType.Select" @bind-Value="IdCentro">
+                    <option value="">Seleccione</option>
+                    @foreach (var d in APIReunionService.centro)
+                    {
+                        <option value="@d.IdCentro">@d.Cnom</option>
+                    }
+                </BSInput>
+            </BSCol>
+
+
+            <BSCol Column="3" ColumnSmall="2">
+                <BSLabel>División</BSLabel>
+                <BSInput InputType="InputType.Select" @bind-Value="IdDiv">
+                    <option value="">Seleccione</option>
+                    @foreach (var d in APIReunionService.centro)
+                    {
+                        @foreach (var e in d.Divisions)
+                        {
+                            if (IdCentro == d.IdCentro)
+                            {
+                                <option value="@e.IdDivision">@e.Dnombre</option>
+                            }
+                        }
+                    }
+                </BSInput>
+            </BSCol>
+
+
+
+            <BSCol Column="3" ColumnSmall="2">
+                <BSLabel> Desde</BSLabel>
+                <BSInput InputType="InputType.Date" @bind-Value="fecha1" />
+            </BSCol>
+
+            <BSCol Column="3" ColumnSmall="2">
+                <BSLabel>Hasta</BSLabel>
+                <BSInput InputType="InputType.Date" @bind-Value="fecha2" />
+            </BSCol>
+
+            <BSCol ColumnSmall="1" Column="2">
+                <BSLabel>Código</BSLabel>
+                <BSInput InputType="InputType.Select" @bind-Value="Codigo">
+                    <option value="Todo">Todo</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                </BSInput>
+            </BSCol>
+
+            <BSCol ColumnSmall="2" Column="3">
+                <BSLabel>Estado</BSLabel>
+                <BSInput InputType="InputType.Select" @bind-Value="Status">
+                    <option value="Total Pendiente">Total Pendiente</option>
+                    <option value="Todo">Todo</option>
+                    <option value="Pendiente">Pendiente</option>
+                    <option value="Pendiente/Responsable">Pendiente/Responsable</option>
+                    <option value="Listo">Listo</option>
+                    <option value="Cerrado">Cerrado</option>
+                </BSInput>
+            </BSCol>
+
+        </BSRow>
+        <p>
+        </p>
+        <BSRow>
+
+            <BSCol ColumnSmall="2" Column="1">
+                <BSRow>
+                    <BSLabel>  Filtro Fecha de Trabajo</BSLabel>
+                </BSRow>
+                <BSInputRadio CheckedValue="@("2")" @bind-Value="tipoconsulta" IsToggle="true" Size="Size.ExtraSmall" Color="BSColor.Success" IsOutlined="true">
+                    Fecha Trabajo
+                    <span class="oi oi-cog"></span>
+                </BSInputRadio>
+            </BSCol>
+
+            <BSCol ColumnSmall="2" Column="1">
+                <BSRow>
+                    <BSLabel>  Filtro Fecha de Reunión</BSLabel>
+                </BSRow>
+                <BSInputRadio CheckedValue="@("0")" @bind-Value="tipoconsulta" IsToggle="true" Size="Size.ExtraSmall" Color="BSColor.Success" IsOutlined="true">
+                    Fecha Reunión
+                    <span class="oi oi-people"></span>
+                </BSInputRadio>
+            </BSCol>
+
+            <BSCol ColumnSmall="2" Column="2">
+                <BSRow>
+                    <BSLabel>Buscar</BSLabel>
+                </BSRow>
+                <BSButton IsOutlined Color="BSColor.Success" Size="Size.ExtraSmall" OnClick="Get">  Consultar <span class="oi oi-check"></span></BSButton>
+                </BSCol>
+
+                </BSRow>
+    }
+
+</BSContainer>
+
+<p></p>
+@*<RadzenButton ButtonStyle="ButtonStyle.Success" Icon="add_circle_outline" class="mt-2 mb-4" Text="Nuevo Puesto" Click="@InsertRow" Disabled=@(puestoToInsert != null || puestoToUpdate != null) />
+*@
+@if (tabla.Count() > 0 && dataIsLoaded == 2)
+{
+
+    <RadzenDataGrid @ref="@ReuTabla" Data="@tabla" class="rz-shadow-2" AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="true" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="30" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
+                TItem="ReuDium" LogicalFilterOperator="LogicalFilterOperator.Or" OrOperatorText="O" AndOperatorText="Y" EqualsText="Igual a" EditMode="DataGridEditMode.Single" ColumnWidth="200px">
+        <Columns>
+            @*
+        <RadzenDataGridColumn TItem="ReuDium" Title="Centro" Frozen="true" Property="Rdcentro" Width="80px">
+        <Template>
+        @context.Rdcentro
+        </Template>
+
+        </RadzenDataGridColumn>
+
+        <RadzenDataGridColumn TItem="ReuDium" Title="División" Frozen="true" Property="Rddiv" Width="80px">
+        <Template>
+        @context.Rddiv
+        </Template>
+        </RadzenDataGridColumn>*@
+
+            <RadzenDataGridColumn TItem="ReuDium" Title="#" Frozen="true" Width="35px"  Filterable=false>
+                <Template>
+
+                    @(tabla.IndexOf(context) + 1)
+                </Template>
+            </RadzenDataGridColumn>
+                      <RadzenDataGridColumn TItem="ReuDium" Title="Línea" Frozen="true" Property="Rdarea" Width="80px">
+                <Template>
+                    @context.Rdarea
+                </Template>
+            </RadzenDataGridColumn>
+
+
+
+            <RadzenDataGridColumn TItem="ReuDium" Title="Equipo" Frozen="true" Property="RdcodEq" Width="80px">
+                <Template>
+                    @context.RdcodEq
+                </Template>
+            </RadzenDataGridColumn>
+
+            <RadzenDataGridColumn TItem="ReuDium" Title="KSF" Property="IdksfNavigation.KsfNombre" Width="80px">
+                <Template>
+                    @context.IdksfNavigation.KsfNombre
+                </Template>
+            </RadzenDataGridColumn>
+
+            <RadzenDataGridColumn TItem="ReuDium" Title="Discrepancia" Property="Rddisc" Width="220px">
+                <Template>
+                    @context.Rddisc
+                </Template>
+            </RadzenDataGridColumn>
+
+            <RadzenDataGridColumn TItem="ReuDium" Title="Código" Property="RdcodDis" Width="60px">
+                <Template>
+                    @context.RdcodDis
+                </Template>
+            </RadzenDataGridColumn>
+
+            <RadzenDataGridColumn TItem="ReuDium" Title="Acción" Property="RdplanAcc" Width="200px">
+                <Template>
+                    @context.RdplanAcc
+                </Template>
+            </RadzenDataGridColumn>
+
+            <RadzenDataGridColumn TItem="ReuDium" Title="Tiempo" Property="Rdtiempo" Width="60px">
+                <Template>
+                    @context.Rdtiempo
+                </Template>
+            </RadzenDataGridColumn>
+
+            <RadzenDataGridColumn TItem="ReuDium" Title="Responsable" Property="IdResReuNavigation.Rrnombre" Width="100px">
+                <Template>
+                    @context.IdResReuNavigation.Rrnombre
+                </Template>
+            </RadzenDataGridColumn>
+
+            <RadzenDataGridColumn TItem="ReuDium" Title="Estado" Property="Rdstatus" Width="90px">
+                <Template>
+                    @context.Rdstatus
+                </Template>
+            </RadzenDataGridColumn>
+
+            <RadzenDataGridColumn TItem="ReuDium" Title="F. Reunión" Property="RdfecReu" Width="90px">
+                <Template>
+                    @context.RdfecReu.ToString("yyyy/MM/dd")
+                </Template>
+            </RadzenDataGridColumn>
+
+            <RadzenDataGridColumn TItem="ReuDium" Title="F. Trabajo" Property="RdfecTra" Width="90px">
+                <Template>
+                    @context.RdfecTra.ToString("yyyy/MM/dd")
+                </Template>
+            </RadzenDataGridColumn>
+
+
+
+        </Columns>
+    </RadzenDataGrid>
+}
+else if (dataIsLoaded == 1 && tabla.Count() == 0)
+{
+    <div class="loader"></div>
+}
+else if (dataIsLoaded == 2 && tabla.Count() == 0)
+{
+    <p>No hay datos para esta fecha.</p>
+}
+@code {
+    RadzenDataGrid<ReuDium> ReuTabla;
+    List<ReuDium> tabla = new List<ReuDium>();
+
+    int dataIsLoaded = 0;
+    string ayer = DateTime.Now.AddDays(-1).ToString("yyyyMMdd"), error;
+    private bool data { get; set; } = false; //Centro
+
+    private int IdCentro { get; set; } //id del Centro
+    private int IdDiv { get; set; } //id de la division
+
+    private int CentroComedor;//Variable para verificar si es el comedor venezuela;
+
+    //private string Div { get; set; } //Centro
+    //private string Division { get; set; } //División
+
+    private string Codigo { get; set; } = "Todo"; //Codigo
+    private string Status { get; set; } = "Total Pendiente"; //Status
+    private string UsrAdmin { get; set; } = ""; //permisos de admin
+    private string UsrRol { get; set; } = ""; //rol para filtrar
+    private bool cargandocambio { get; set; } = false; //para cargar los datos del trazabilidad
+    private string tipoconsulta { get; set; } = "0"; //1-fecha de reuinion 0 fecha trabajo
+    private List<Claim> claims { get; set; }
+    public DateTime fecha1;
+    public DateTime fecha2;
+
+
+    private async Task CreateData()
+
+    {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        claims = Enumerable.ToList(user.Claims);
+
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        fecha1 = DateTime.Now;
+        fecha2 = DateTime.Now;
+        await CreateData();
+
+        if (claims[1].Value == "Admin" | claims[1].Value == "SuperAdmin")
+        {
+            UsrAdmin = claims[1].Value;
+            await APIReunionService.GetCentrosxEmpresa("All" + claims[10].Value);
+
+        }
+        else if (claims[1].Value == "SupIntendenteGeneral")
+        {
+            UsrAdmin = claims[1].Value;
+            await APIReunionService.GetCentrosxEmpresa(claims[11].Value);
+        }
+        else if (claims[1].Value == "Planificador" | claims[1].Value == "SupIntendente")
+        {
+            await APIReunionService.GetCentrosxEmpresa(claims[11].Value);
+        }
+        else if (claims[1].Value == "MttoAdmin")
+        {
+            UsrRol = "Mtto";
+            await APIReunionService.GetCentrosxEmpresa("All" + claims[10].Value);
+        }
+        else
+        {
+            if (claims[1].Value == "Mantenimiento")
+            {
+                UsrRol = "Mtto";
+            }
+            else
+            {
+                UsrRol = claims[1].Value;
+            }
+
+            await APIReunionService.GetCentrosxEmpresa(claims[11].Value);
+
+        }
+
+        //Si es el comedor busca los equipos
+        if (claims[11].Value == "11")
+        {
+            CentroComedor = int.Parse(claims[11].Value);
+            await APIReunionService.GetEquiposCentro(claims[11].Value);
+        }
+
+        IdCentro = int.Parse(claims[10].Value);
+        IdDiv = int.Parse(claims[12].Value);
+
+        await APIReunionService.Getksf();
+        await APIReunionService.GetResReu();
+        DbReunionService.reudiatablas = new List<ReuDium>();
+
+
+    }
+
+    protected async Task Get()
+    {
+        if (dataIsLoaded != 1)
+        {
+            dataIsLoaded = 1;
+            tabla = await DbReunionService.GetHistoricos(IdCentro.ToString(), IdDiv.ToString(), fecha1, fecha2, tipoconsulta, Status);
+            dataIsLoaded = 2;
+        }
+    }
+}
+

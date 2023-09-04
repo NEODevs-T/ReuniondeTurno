@@ -161,7 +161,7 @@
         if (accion != null)
         {
             dataIsLoaded = 1;
-            await DbReunionService.GetPendientes(accion, division, DateTime.Now.AddDays(-1), DateTime.Now, tipo);
+            await DbReunionService.GetPendientes(accion, division, DateTime.Now.AddDays(-1), DateTime.Now, tipo,"Reunion");
             dataIsLoaded = 2;
         }
 

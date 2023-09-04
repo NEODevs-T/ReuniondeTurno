@@ -27,7 +27,7 @@ namespace ReunionWeb.Services
         public List<CambFec> cambiofecha { get; set; } = new List<CambFec>();
         public List<CalendarioTrabajoDTO> calentrabajo { get; set; } = new List<CalendarioTrabajoDTO>();
         public Division centrodiscrepancia { get; set; } = new Division();
-       
+
 
 
 
@@ -42,11 +42,11 @@ namespace ReunionWeb.Services
         {
 
             _navigationManager = navigationManager;
-            
+
             _neocontext = _NeoContext;
         }
         //obtener discrepancias para pendientes y reunion 
-        public async Task GetPendientes(string idcentro, string iddiv, DateTime f1, DateTime f2, string tipo)
+        public async Task GetPendientes(string idcentro, string iddiv, DateTime f1, DateTime f2, string tipo, string estado)
         {
 
 
@@ -58,9 +58,9 @@ namespace ReunionWeb.Services
             string centro = centrodiv.Cnom;
             string div = centrodiv.Dnombre;
 
-            reudiatablas = new List<ReuDium> ();
+            reudiatablas = new List<ReuDium>();
 
-            
+
             // Es Reunión
             if (tipo == "1")
             {
@@ -79,31 +79,176 @@ namespace ReunionWeb.Services
             //tipo 0 Pendientes para 
             else if (tipo == "0")
             {
-                reudiatablas = await _neocontext.ReuDia
-                //.Where(a =>  (a.Div == centro & a.Division==div ) | (a.Div == centro & a.Division == div & (a.Fecha>= f1 & a.Fecha <= f2)))
-                //.Where(a => (a.Rdcentro == centro & a.Rddiv == div & (a.RdfecTra >= f1 & a.RdfecTra <= f2)))
-                .Where(a => (a.Rdcentro == centro & a.Rddiv == div ))
-                .Include(b => b.IdksfNavigation)
-                .Include(b => b.IdResReuNavigation)
-                .OrderByDescending(b => b.RdfecReu)
-                .ToListAsync();
+
+
+                if (estado == "Total Pendiente")
+                {
+                    reudiatablas = await _neocontext.ReuDia
+                   //.Where(a => (a.Rdcentro == centro & a.Rddiv == div & (a.RdfecReu >= f1 & a.RdfecReu <= f2)))
+                   .Where(a => (a.Rdcentro == centro & a.Rddiv == div) & (a.Rdstatus == "Pendiente" | a.Rdstatus == "Pendiente/Responsable"))
+                   .Include(b => b.IdksfNavigation)
+                   .Include(b => b.IdResReuNavigation)
+                    .OrderByDescending(b => b.RdfecReu)
+                   .ToListAsync();
+                }
+
+                else if (estado == "Todo")
+                {
+                    reudiatablas = await _neocontext.ReuDia
+                    //.Where(a => (a.Rdcentro == centro & a.Rddiv == div & (a.RdfecReu >= f1 & a.RdfecReu <= f2)))
+                    .Where(a => (a.Rdcentro == centro & a.Rddiv == div))
+                    .Include(b => b.IdksfNavigation)
+                    .Include(b => b.IdResReuNavigation)
+                    .OrderByDescending(b => b.RdfecReu)
+                    .Take(250)
+                    .ToListAsync();
+                }
+
+                else
+                {
+                    reudiatablas = await _neocontext.ReuDia
+                  //.Where(a => (a.Rdcentro == centro & a.Rddiv == div & (a.RdfecReu >= f1 & a.RdfecReu <= f2)))
+                  .Where(a => (a.Rdcentro == centro & a.Rddiv == div) & (a.Rdstatus == estado))
+                  .Include(b => b.IdksfNavigation)
+                  .Include(b => b.IdResReuNavigation)
+                  .OrderByDescending(b => b.RdfecReu)
+                  .Take(50)
+                  .ToListAsync();
+                }
             }
             //Fecha de trabajo
             else if (tipo == "2")
             {
-                reudiatablas = await _neocontext.ReuDia
-                //.Where(a => (a.Rdcentro == centro & a.Rddiv == div & (a.RdfecReu >= f1 & a.RdfecReu <= f2)))
-                .Where(a => (a.Rdcentro == centro & a.Rddiv == div ))
-                .Include(b => b.IdksfNavigation)
-                .Include(b => b.IdResReuNavigation)
-                .OrderByDescending(b => b.RdfecTra)
-                .ToListAsync();
+                if (estado == "Total Pendiente")
+                {
+                    reudiatablas = await _neocontext.ReuDia
+                   //.Where(a => (a.Rdcentro == centro & a.Rddiv == div & (a.RdfecReu >= f1 & a.RdfecReu <= f2)))
+                   .Where(a => (a.Rdcentro == centro & a.Rddiv == div) & (a.Rdstatus == "Pendiente" | a.Rdstatus == "Pendiente/Responsable"))
+                   .Include(b => b.IdksfNavigation)
+                   .Include(b => b.IdResReuNavigation)
+                   .OrderByDescending(b => b.RdfecTra)
+                   .ToListAsync();
+                }
+
+                else if (estado == "Todo")
+                {
+                    reudiatablas = await _neocontext.ReuDia
+                    //.Where(a => (a.Rdcentro == centro & a.Rddiv == div & (a.RdfecReu >= f1 & a.RdfecReu <= f2)))
+                    .Where(a => (a.Rdcentro == centro & a.Rddiv == div))
+                    .Include(b => b.IdksfNavigation)
+                    .Include(b => b.IdResReuNavigation)
+                    .OrderByDescending(b => b.RdfecTra)
+                    .Take(250)
+                    .ToListAsync();
+                }
+
+                else
+                {
+                    reudiatablas = await _neocontext.ReuDia
+                  //.Where(a => (a.Rdcentro == centro & a.Rddiv == div & (a.RdfecReu >= f1 & a.RdfecReu <= f2)))
+                  .Where(a => (a.Rdcentro == centro & a.Rddiv == div) & (a.Rdstatus == estado))
+                  .Include(b => b.IdksfNavigation)
+                  .Include(b => b.IdResReuNavigation)
+                  .OrderByDescending(b => b.RdfecTra)
+                  .Take(50)
+                  .ToListAsync();
+                }
+
             }
 
         }
 
+        //historicos
+        public async Task<List<ReuDium>> GetHistoricos(string idcentro, string iddiv, DateTime f1, DateTime f2, string tipo, string estado)
+        {
+
+
+            //Consultar nombre del centro y division  para insertarlos
+            CentroDivision centrodiv = new CentroDivision();
+            centrodiv = await GetCentroDiv(idcentro, iddiv, 0);
+
+
+            string centro = centrodiv.Cnom;
+            string div = centrodiv.Dnombre;
+
+            reudiatablas = new List<ReuDium>();
+
+            if (tipo == "2")
+            {
+                if (estado == "Total Pendiente")
+                {
+                    reudiatablas = await _neocontext.ReuDia
+                    .Where(a => (a.Rdcentro == centro & a.Rddiv == div & (a.Rdstatus == "Pendiente" | a.Rdstatus == "Pendiente/Responsable") && (a.RdfecTra >= f1 & a.RdfecTra <= f2)))
+                    .Include(b => b.IdksfNavigation)
+                    .Include(b => b.IdResReuNavigation)
+                    .AsNoTracking()
+                    .ToListAsync();
+                }
+
+                else if (estado == "Todo")
+                {
+                    reudiatablas = await _neocontext.ReuDia
+                    .Where(a => (a.Rdcentro == centro & a.Rddiv == div) && (a.RdfecTra >= f1 & a.RdfecTra <= f2))
+                    .Include(b => b.IdksfNavigation)
+                    .Include(b => b.IdResReuNavigation)
+                    .Take(300)
+                    .AsNoTracking()
+                    .ToListAsync();
+                }
+
+                else
+                {
+                    reudiatablas = await _neocontext.ReuDia
+                  //.Where(a => (a.Rdcentro == centro & a.Rddiv == div & (a.RdfecReu >= f1 & a.RdfecReu <= f2)))
+                  .Where(a => (a.Rdcentro == centro & a.Rddiv == div) & (a.Rdstatus == estado) && (a.RdfecTra >= f1 & a.RdfecTra <= f2))
+                  .Include(b => b.IdksfNavigation)
+                  .Include(b => b.IdResReuNavigation)
+                  .AsNoTracking()
+                  .Take(50)
+                  .ToListAsync();
+                }
+            }
+            else
+            {
+                if (estado == "Total Pendiente")
+                {
+                    reudiatablas = await _neocontext.ReuDia
+                    .Where(a => (a.Rdcentro == centro & a.Rddiv == div & (a.Rdstatus == "Pendiente" | a.Rdstatus == "Pendiente/Responsable") && (a.RdfecReu >= f1 & a.RdfecReu <= f2)))
+                    .Include(b => b.IdksfNavigation)
+                    .Include(b => b.IdResReuNavigation)
+                    .AsNoTracking()
+                    .ToListAsync();
+                }
+
+                else if (estado == "Todo")
+                {
+                    reudiatablas = await _neocontext.ReuDia
+                    .Where(a => (a.Rdcentro == centro & a.Rddiv == div) && (a.RdfecReu >= f1 & a.RdfecReu <= f2))
+                    .Include(b => b.IdksfNavigation)
+                    .Include(b => b.IdResReuNavigation)
+                    .Take(300)
+                    .AsNoTracking()
+                    .ToListAsync();
+                }
+
+                else
+                {
+                    reudiatablas = await _neocontext.ReuDia
+                  //.Where(a => (a.Rdcentro == centro & a.Rddiv == div & (a.RdfecReu >= f1 & a.RdfecReu <= f2)))
+                  .Where(a => (a.Rdcentro == centro & a.Rddiv == div) & (a.Rdstatus == estado) && (a.RdfecReu >= f1 & a.RdfecReu <= f2))
+                  .Include(b => b.IdksfNavigation)
+                  .Include(b => b.IdResReuNavigation)
+                  .AsNoTracking()
+                  .Take(50)
+                  .ToListAsync();
+                }
+            }
+
+            return reudiatablas;
+        }
+
         //Update Discrepancia
-        public async Task<bool> UpdateDiscrepancia(ReuDium d, int id, int tipo, string f1, string f2)
+        public async Task<bool> UpdateDiscrepancia(ReuDium d, int id, int tipo, string f1, string f2, string estado)
         {
             string div = "", centro = "";
             // DateTime f1= DateTime.Now;
@@ -112,10 +257,10 @@ namespace ReunionWeb.Services
             {
                 //Consultar nombre del centro y division pra retornar el id en pendientes
                 CentroDivision centrodiv = new CentroDivision();
-                 centrodiv = await GetCentroDiv(d.Rdcentro, d.Rddiv, 1);
+                centrodiv = await GetCentroDiv(d.Rdcentro, d.Rddiv, 1);
                 centro = centrodiv.IdCentro.ToString();
                 div = centrodiv.IdDivision.ToString();
-                
+
             }
 
             ReuDium bdDiscrep = new ReuDium();
@@ -155,15 +300,15 @@ namespace ReunionWeb.Services
 
                 if (tipo == 0)
                 {
-                    _navigationManager.NavigateTo($"pendientes/{centro}/{div}/{f1}/{f2}/{tipo}");
+                    _navigationManager.NavigateTo($"pendientes/{centro}/{div}/{f1}/{f2}/{tipo}/{estado}");
                 }
                 else if (tipo == 1)
                 {
-                    _navigationManager.NavigateTo($"reunion/{centro}/{div}/{f1}/{f2}/{tipo}");
+                    _navigationManager.NavigateTo($"reunion/{centro}/{div}/{f1}/{f2}/{tipo}/Reunion");
                 }
                 else if (tipo == 2)
                 {
-                    _navigationManager.NavigateTo($"pendientes/{centro}/{div}/{f1}/{f2}/{tipo}");
+                    _navigationManager.NavigateTo($"pendientes/{centro}/{div}/{f1}/{f2}/{tipo}/{estado}");
                 }
 
                 return true;
@@ -183,37 +328,12 @@ namespace ReunionWeb.Services
             CentroDivision CD = new CentroDivision();
             if (tipo == 0)
             {
-             
+
 
 
                 centrodiscrepancia = await _neocontext.Divisions
                     .Include(c => c.IdCentroNavigation)
                     .Where(d => d.IdDivision == int.Parse(division))
-                    .Select(di=> new Division
-                    {
-                        IdDivision=di.IdDivision,
-                        Dnombre=di.Dnombre,
-                        IdCentroNavigation = di.IdCentroNavigation
-                    })
-                    .AsNoTracking()
-                    .FirstOrDefaultAsync();
-
-
-
-                CD.IdCentro = centrodiscrepancia.IdCentroNavigation.IdCentro;
-                CD.IdDivision = centrodiscrepancia.IdDivision;
-                CD.Cnom = centrodiscrepancia.IdCentroNavigation.Cnom;
-                CD.Dnombre = centrodiscrepancia.Dnombre;
-            }
-
-            else if(tipo==1)
-            {
-              
-
-
-                centrodiscrepancia = await _neocontext.Divisions
-                    .Include(c => c.IdCentroNavigation)
-                    .Where(d => d.Dnombre ==division && d.IdCentroNavigation.Cnom==centro )
                     .Select(di => new Division
                     {
                         IdDivision = di.IdDivision,
@@ -230,10 +350,35 @@ namespace ReunionWeb.Services
                 CD.Cnom = centrodiscrepancia.IdCentroNavigation.Cnom;
                 CD.Dnombre = centrodiscrepancia.Dnombre;
             }
-  
-            
+
+            else if (tipo == 1)
+            {
+
+
+
+                centrodiscrepancia = await _neocontext.Divisions
+                    .Include(c => c.IdCentroNavigation)
+                    .Where(d => d.Dnombre == division && d.IdCentroNavigation.Cnom == centro)
+                    .Select(di => new Division
+                    {
+                        IdDivision = di.IdDivision,
+                        Dnombre = di.Dnombre,
+                        IdCentroNavigation = di.IdCentroNavigation
+                    })
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync();
+
+
+
+                CD.IdCentro = centrodiscrepancia.IdCentroNavigation.IdCentro;
+                CD.IdDivision = centrodiscrepancia.IdDivision;
+                CD.Cnom = centrodiscrepancia.IdCentroNavigation.Cnom;
+                CD.Dnombre = centrodiscrepancia.Dnombre;
+            }
+
+
             return CD;
-         }
+        }
 
         //Consultas para los cambios de estatus en una discrepancia
         public async Task GetCambioStatus(int idreu)
@@ -266,7 +411,7 @@ namespace ReunionWeb.Services
 
         }
 
-       
+
 
 
 

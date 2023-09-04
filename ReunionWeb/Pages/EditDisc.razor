@@ -1,4 +1,4 @@
-﻿@page "/EditDisc/{id:int}/{tipo:int}/{f1}/{f2}"
+﻿@page "/EditDisc/{id:int}/{tipo:int}/{f1}/{f2}/{est}"
 @inject IDbReunionService DbReunionService
 @inject IAPIReunionService APIReunionService
 @inject NavigationManager NavigationManager
@@ -517,7 +517,9 @@
     [Parameter]
     public string? f1 { get; set; }
     [Parameter]
-    public string? f2 { get; set; }
+    public string? f2 { get; set; }    
+    [Parameter]
+    public string? est { get; set; }
 
     string _message = "", mensaje = "Ocurrió un error al registrar la información. Intente de nuevo";
     bool cambio = true;
@@ -571,15 +573,15 @@
         if (tipo == 0)
         {
 
-            NavigationManager.NavigateTo($"pendientes/{centrodiv.IdCentro}/{centrodiv.IdDivision}/{f1}/{f2}/{tipo}", forceLoad: true);
+            NavigationManager.NavigateTo($"pendientes/{centrodiv.IdCentro}/{centrodiv.IdDivision}/{f1}/{f2}/{tipo}/{est}", forceLoad: true);
         }
         else if (tipo == 2)
         {
-            NavigationManager.NavigateTo($"pendientes/{centrodiv.IdCentro}/{centrodiv.IdDivision}/{f1}/{f2}/{tipo}", forceLoad: true);
+            NavigationManager.NavigateTo($"pendientes/{centrodiv.IdCentro}/{centrodiv.IdDivision}/{f1}/{f2}/{tipo}/{est}", forceLoad: true);
         }
         else
         {
-            NavigationManager.NavigateTo($"reunion/{centrodiv.IdCentro}/{centrodiv.IdDivision}/{f1}/{f2}/{tipo}", forceLoad: true);
+            NavigationManager.NavigateTo($"reunion/{centrodiv.IdCentro}/{centrodiv.IdDivision}/{f1}/{f2}/{tipo}/{est}", forceLoad: true);
         }
     }
     async Task Editar()
@@ -596,7 +598,7 @@
                 else
                 {
                   
-                    cambio = await DbReunionService.UpdateDiscrepancia(DiscForm, (int)Id, (int)tipo, f1, f2);
+                    cambio = await DbReunionService.UpdateDiscrepancia(DiscForm, (int)Id, (int)tipo, f1, f2, est);
 
                     if (camStat != DiscForm.Rdstatus & cambio == true)
                     {

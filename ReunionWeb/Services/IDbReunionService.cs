@@ -25,7 +25,8 @@ namespace ReunionWeb.Services
          Division centrodiscrepancia { get; set; }
 
         
-        Task GetPendientes(string centro, string div, DateTime f1, DateTime f2, string tipo);
+        Task GetPendientes(string centro, string div, DateTime f1, DateTime f2, string tipo, string estado);
+        Task<List<ReuDium>> GetHistoricos(string centro, string div, DateTime f1, DateTime f2, string tipo, string estado);
         Task GetCambioStatus(int idreu);
         Task GetCambioFecha(int idreu);
         Task<ReuDium> GetDiscrepantacia(int id);
@@ -37,7 +38,7 @@ namespace ReunionWeb.Services
         Task InsertCambioStatus(CambStat status);//Insertar usuario que cambio el status
         Task InsertCambioFec(CambFec cambiofec);//Insertar el usuarrio que cambio la fecha de trabajo.
         Task<bool> InsertarRegistros(CambFec cambiofec, CambStat status);//Insertar discrepancias con chismoso(Trazabilidad)
-        Task<bool> UpdateDiscrepancia(ReuDium bdDiv1, int id, int tipo, string f1, string f2);
+        Task<bool> UpdateDiscrepancia(ReuDium bdDiv1, int id, int tipo, string f1, string f2, string estdo);
 
 
     }

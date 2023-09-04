@@ -34,6 +34,17 @@ a, .btn-link {
     background-color: rgb(23, 194, 42, 0.58) !important;
 }
 
+th {
+    font-family: Tahoma !important;
+    background-color: #00A23B !important;
+    color: azure !important;
+    border: 0.1px !important;
+}
+.rz-column-title-content {
+    color: white !important;
+    font-family: Tahoma !important;
+    font-weight: bold !important;
+}
 .Cerrado {
     background-color: rgb(0, 120, 83, 0.71) !important;
 }

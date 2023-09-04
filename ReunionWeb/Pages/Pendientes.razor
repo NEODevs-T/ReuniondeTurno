@@ -1,5 +1,5 @@
 ﻿@page "/pendientes"
-@page "/pendientes/{accion}/{division}/{f1}/{f2}/{tipo}"
+@page "/pendientes/{accion}/{division}/{f1}/{f2}/{tipo}/{est}"
 @inject IDbReunionService DbReunionService
 @inject IAPIReunionService APIReunionService
 @inject NavigationManager NavigationManager
@@ -108,7 +108,7 @@
                 <BSRow>
                     <BSLabel>  Filtro Fecha de Trabajo</BSLabel>
                 </BSRow>
-                <BSInputRadio CheckedValue="@("0")" @bind-Value="tipoconsulta" IsToggle="true" Size="Size.ExtraSmall" Color="BSColor.Success" IsOutlined="true">
+                <BSInputRadio CheckedValue="@("2")" @bind-Value="tipoconsulta" IsToggle="true" Size="Size.ExtraSmall" Color="BSColor.Success" IsOutlined="true">
                     Fecha Trabajo
                     <span class="oi oi-cog"></span>
                 </BSInputRadio>
@@ -118,7 +118,7 @@
                 <BSRow>
                     <BSLabel>  Filtro Fecha de Reunión</BSLabel>
                 </BSRow>
-                <BSInputRadio CheckedValue="@("2")" @bind-Value="tipoconsulta" IsToggle="true" Size="Size.ExtraSmall" Color="BSColor.Success" IsOutlined="true">
+                <BSInputRadio CheckedValue="@("0")" @bind-Value="tipoconsulta" IsToggle="true" Size="Size.ExtraSmall" Color="BSColor.Success" IsOutlined="true">
                     Fecha Reunión
                     <span class="oi oi-people"></span>
                 </BSInputRadio>
@@ -200,8 +200,8 @@
             {
                 @if (Codigo == d.RdcodDis | Codigo == "Todo")
                 {
-                @if (Status == d.Rdstatus | Status == "Todo" | Status == "Total Pendiente" & (d.Rdstatus == "Pendiente" | d.Rdstatus=="Pendiente/Responsable"))
-                    {
+               @* @if (Status == d.Rdstatus | Status == "Todo" | Status == "Total Pendiente" & (d.Rdstatus == "Pendiente" | d.Rdstatus=="Pendiente/Responsable"))
+                    {*@
 
                         <BSTR>
                             @*<BSTD>@d.IdReuDia</BSTD>*@
@@ -282,7 +282,7 @@
                         </BSTR>
 
                     }
-                }
+              @*  }*@
 
 
 
@@ -392,7 +392,9 @@ else if (dataIsLoaded == 2 && DbReunionService.reudiatablas.Count() == 0)
     [Parameter]
     public string? f2 { get; set; }
     [Parameter]
-    public string? tipo { get; set; }
+    public string? tipo { get; set; }  
+    [Parameter]
+    public string? est { get; set; }
 
     int dataIsLoaded = 0;
     string ayer = DateTime.Now.AddDays(-1).ToString("yyyyMMdd"), error;
@@ -478,11 +480,15 @@ else if (dataIsLoaded == 2 && DbReunionService.reudiatablas.Count() == 0)
         {
             CentroComedor = int.Parse(claims[11].Value);
             await APIReunionService.GetEquiposCentro(claims[11].Value);
-        }
+        }     
+        
+        IdCentro =int.Parse( claims[10].Value);
+        IdDiv =int.Parse( claims[12].Value);
 
         await APIReunionService.Getksf();
         await APIReunionService.GetResReu();
         DbReunionService.reudiatablas = new List<ReuDium>();
+  
 
     }
 
@@ -493,7 +499,7 @@ else if (dataIsLoaded == 2 && DbReunionService.reudiatablas.Count() == 0)
             dataIsLoaded = 1;
 
             //await DbReunionService.GetPendientes(Div, Division, fecha1, fecha2, tipoconsulta);
-            await DbReunionService.GetPendientes(IdCentro.ToString(), IdDiv.ToString(), fecha1, fecha2, tipoconsulta);
+            await DbReunionService.GetPendientes(IdCentro.ToString(), IdDiv.ToString(), fecha1, fecha2, tipoconsulta, Status);
             dataIsLoaded = 2;
         }
     }
@@ -514,7 +520,7 @@ else if (dataIsLoaded == 2 && DbReunionService.reudiatablas.Count() == 0)
 
     void Editar(int id)
     {
-        NavigationManager.NavigateTo($"EditDisc/{id}/{tipoconsulta}/{fecha1.ToString("dd-MM-yyyy")}/{fecha2.ToString("dd-MM-yyyy")}");
+        NavigationManager.NavigateTo($"EditDisc/{id}/{tipoconsulta}/{fecha1.ToString("dd-MM-yyyy")}/{fecha2.ToString("dd-MM-yyyy")}/{Status}");
 
     }
 
@@ -533,10 +539,11 @@ else if (dataIsLoaded == 2 && DbReunionService.reudiatablas.Count() == 0)
                 DateTime date2 = new DateTime(int.Parse(fec2[2]), int.Parse(fec2[1]), int.Parse(fec2[0]));
                 fecha1 = date1;
                 fecha2 = date2;
-
+                IdCentro = int.Parse(accion);
+                IdDiv = int.Parse(division);
                 tipoconsulta = tipo;
                 dataIsLoaded = 1;
-                await DbReunionService.GetPendientes(accion, division, date1, date2, tipo);
+                await DbReunionService.GetPendientes(accion, division, date1, date2, tipo, est);
                 dataIsLoaded = 2;
 
             }
@@ -551,6 +558,6 @@ else if (dataIsLoaded == 2 && DbReunionService.reudiatablas.Count() == 0)
     public async Task PrintDocument()
     {
         //NavigationManager.NavigateTo($"TablaReunion/{IdCentro.ToString()}/{IdDiv.ToString()}/{DateTime.Now.AddDays(-1).ToString("dd-MM-yyyy")}/{DateTime.Now.ToString("dd-MM-yyyy")}/1", forceLoad: true);
-        await IJS.InvokeAsync<object>("open", new object[] { $"TablaPendientes/{IdCentro.ToString()}/{IdDiv.ToString()}/{fecha1.ToString("dd-MM-yyyy")}/{fecha2.ToString("dd-MM-yyyy")}/{tipoconsulta}", "_blank" });
+        await IJS.InvokeAsync<object>("open", new object[] { $"TablaPendientes/{IdCentro.ToString()}/{IdDiv.ToString()}/{fecha1.ToString("dd-MM-yyyy")}/{fecha2.ToString("dd-MM-yyyy")}/{tipoconsulta}/{Status}", "_blank" });
     }
 }

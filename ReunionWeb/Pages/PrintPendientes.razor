@@ -1,6 +1,6 @@
 ﻿@layout EmptyLayout
 @page "/TablaPendientes"
-@page "/TablaPendientes/{accion}/{division}/{f1}/{f2}/{tipo}"
+@page "/TablaPendientes/{accion}/{division}/{f1}/{f2}/{tipo}/{est}"
 
 @inject IDbReunionService DbReunionService
 @inject IAPIReunionService APIReunionService
@@ -177,6 +177,8 @@
     public string? f2 { get; set; }
     [Parameter]
     public string? tipo { get; set; }
+    [Parameter]
+    public string? est { get; set; }
 
     int dataIsLoaded = 0;
     int CentroComedor = 0;
@@ -256,7 +258,7 @@
             DateTime date2 = new DateTime(int.Parse(fec2[2]), int.Parse(fec2[1]), int.Parse(fec2[0]));
 
             dataIsLoaded = 1;
-            await DbReunionService.GetPendientes(accion, division, date1, date2, tipo);
+            await DbReunionService.GetPendientes(accion, division, date1, date2, tipo, est);
             dataIsLoaded = 2;
 
         }

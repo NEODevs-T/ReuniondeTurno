@@ -1,5 +1,5 @@
 ﻿@page "/reunion"
-@page "/reunion/{accion}/{division}/{f1}/{f2}/{tipo}"
+@page "/reunion/{accion}/{division}/{f1}/{f2}/{tipo}/{est}"
 @inject IDbReunionService DbReunionService
 @inject IAPIReunionService APIReunionService
 @inject NavigationManager NavigationManager
@@ -250,7 +250,9 @@ else if (dataIsLoaded == 2 && DbReunionService.reunionditablas.Count() == 0)
     [Parameter]
     public string? f2 { get; set; }
     [Parameter]
-    public string? tipo { get; set; }
+    public string? tipo { get; set; }   
+    [Parameter]
+    public string? est { get; set; }
 
 
     int dataIsLoaded = 0, filtrocod = 0;
@@ -303,6 +305,8 @@ else if (dataIsLoaded == 2 && DbReunionService.reunionditablas.Count() == 0)
             await APIReunionService.GetEquiposCentro(claims[11].Value);
 
         }
+        IdCentro = int.Parse(claims[10].Value);
+        IdDiv = int.Parse(claims[12].Value);
         await APIReunionService.Getksf();
         await APIReunionService.GetResReu();
 
@@ -313,13 +317,13 @@ else if (dataIsLoaded == 2 && DbReunionService.reunionditablas.Count() == 0)
         if (dataIsLoaded != 1)
         {
             dataIsLoaded = 1;
-            await DbReunionService.GetPendientes(IdCentro.ToString(), IdDiv.ToString(), DateTime.Now.AddDays(-1), DateTime.Now, "1");
+            await DbReunionService.GetPendientes(IdCentro.ToString(), IdDiv.ToString(), DateTime.Now.AddDays(-1), DateTime.Now, "1", "Reunion");
             dataIsLoaded = 2;
         }
     }
     void Editar(int id)
     {
-        NavigationManager.NavigateTo($"EditDisc/{id}/1/{DateTime.Now.AddDays(-1).ToString("dd-MM-yyyy")}/{DateTime.Now.ToString("dd-MM-yyyy")}");
+        NavigationManager.NavigateTo($"EditDisc/{id}/1/{DateTime.Now.AddDays(-1).ToString("dd-MM-yyyy")}/{DateTime.Now.ToString("dd-MM-yyyy")}/Reunion");
 
     }
     protected override async Task OnParametersSetAsync()
@@ -327,7 +331,9 @@ else if (dataIsLoaded == 2 && DbReunionService.reunionditablas.Count() == 0)
         if (accion != null)
         {
             dataIsLoaded = 1;
-            await DbReunionService.GetPendientes(accion, division, DateTime.Now.AddDays(-1), DateTime.Now, tipo);
+            IdCentro = int.Parse(accion);
+            IdDiv = int.Parse(division);
+            await DbReunionService.GetPendientes(accion, division, DateTime.Now.AddDays(-1), DateTime.Now, tipo, "Reunion");
             dataIsLoaded = 2;
         }
 
