@@ -589,7 +589,7 @@
         try
         {
             mensaje = "";
-            if (DiscForm.RdfecTra >= DiscForm.RdfecReu)
+            if (DiscForm.RdfecTra >= DiscForm.RdfecReu & (int)tipo == 1 | (int)tipo == 0 | (int)tipo == 2)
             {
                 if (CambiosFecha.Count() >= 3 & camFec != DiscForm.RdfecTra ){
 

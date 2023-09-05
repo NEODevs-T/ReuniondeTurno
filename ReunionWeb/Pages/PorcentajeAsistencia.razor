@@ -133,8 +133,10 @@
             <BSCol Column="4">
                 <BSLabel>Bloque: @bloque</BSLabel>
 
-                <BSInput InputType="InputType.Range" step="1" min="1" max="3" @bind-Value="bloque" @oninput="Porcentaje" />
-            </BSCol>
+                <BSInput InputType="InputType.Range" step="1" min="1" max="3" @bind-Value="bloque" /><BSButton IsOutlined Color="BSColor.Success" Size="Size.ExtraSmall" @onclick="Porcentaje">   Obtener Porcentajes  <span class="oi oi-check"></span></BSButton>
+              
+            </BSCol>  
+            <p></p>
         }
         <BSCol Column="6">
             <BSTable IsResponsive="true" IsStriped="true" IsBordered="true">
@@ -149,13 +151,17 @@
                     </BSTR>
                 </BSTHead>
                 <BSTBody>
+                    
+           
                     @foreach (var d in porasis)
                     {
                         <BSTR>
                             @if (APIReunionService.asistenreus.Where(c => c.AridCargoRNavigation.CRBloque == 1).Count() > 0)
                             {
+                                
                                 @if ((APIReunionService.asistenreus.FirstOrDefault(c => c.AridCargoRNavigation.Crnombre == d.Cargo).AridCargoRNavigation.CRBloque) == bloque)
                                 {
+                                    
                                     <BSTD>@d.Cargo</BSTD>
                                     <BSTD>@d.Asistencias</BSTD>
                                     <BSTD>@d.Total %</BSTD>
@@ -189,7 +195,7 @@
             <BSCol Column="4">
                 <BSLabel>Bloque: @bloque</BSLabel>
 
-                <BSInput InputType="InputType.Range" step="1" min="1" max="3" @bind-Value="bloque" @oninput="Porcentaje" />
+                <BSInput InputType="InputType.Range" step="1" min="1" max="3" @bind-Value="bloque"  />
             </BSCol>
         }
         <BSCol Column="10">
@@ -304,7 +310,7 @@ else if (dataIsLoaded == 1 && APIReunionService.cargoreus.Count() == 0)
     private int bloque { get; set; } = 1;
     private DateTime fecha1 = DateTime.Now;
     private DateTime fecha2 = DateTime.Now;
-    double asistotal = 0;
+    public double asistotal { get; set; } = 0;
     int dias = 0;
 
     private bool _buttonDisabled = true;
@@ -360,6 +366,7 @@ else if (dataIsLoaded == 1 && APIReunionService.cargoreus.Count() == 0)
 
     protected async Task Porcentaje()
     {
+       
         DateTime inicio = fecha1, hasta = fecha2;
         dias = GetDias();
         asistotal = 0;
@@ -387,9 +394,10 @@ else if (dataIsLoaded == 1 && APIReunionService.cargoreus.Count() == 0)
                         asistotal = asistotal + a.Total;
 
                     }
-                   
+
                 }
             }
+
             bloquetotal = APIReunionService.asistenreus.Where(c => c.AridCargoRNavigation.CRBloque == bloque).Count();
 
             if (bloquetotal == 0)
@@ -401,15 +409,6 @@ else if (dataIsLoaded == 1 && APIReunionService.cargoreus.Count() == 0)
                 asistotal = Math.Round(asistotal / (bloquetotal));
             }
 
-            //if (porasis.Count == filtrocount)
-            //{
-            //    asistotal = Math.Round(asistotal / porasis.Count);
-            //}
-
-            //else
-            //{
-            //    asistotal = Math.Round(asistotal / (porasis.Count - filtrocount));
-            //}
             dataIsLoaded = 2;
 
         }
@@ -451,8 +450,10 @@ else if (dataIsLoaded == 1 && APIReunionService.cargoreus.Count() == 0)
 
             if (APIReunionService.asistenreus.Where(c => c.AridCargoRNavigation.CRBloque == bloque).Count() > 0)
             {
+               
                 await Porcentaje();
             }
+            
         }
     }
 
