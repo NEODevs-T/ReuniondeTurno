@@ -62,18 +62,36 @@
                     }
                 </BSInput>
             </BSCol>
+            @if (DbReunionService.reudiatablas.Count() > 0 && dataIsLoaded == 2)
+            {
+                <BSCol Column="3" ColumnSmall="2">
+                    <BSLabel>Línea</BSLabel>
+                    <BSInput InputType="InputType.Select" @bind-Value="NombreLinea">
+                        <option value="Todo">Todo</option>
+                        @foreach (var d in APIReunionService.centro)
+                        {
+                            @foreach (var e in d.Lineas)
+                            {
+                                if (IdDiv == e.IdDivision)
+                                {
+                                    <option value="@e.Lnom">@e.Lnom</option>
+                                }
+                            }
+                        }
+                    </BSInput>
+                </BSCol>
+            }
 
+            @*
+        <BSCol Column="3" ColumnSmall="2">
+        <BSLabel> Desde</BSLabel>
+        <BSInput InputType="InputType.Date" @bind-Value="fecha1" />
+        </BSCol>
 
-@*
-            <BSCol Column="3" ColumnSmall="2">
-                <BSLabel> Desde</BSLabel>
-                <BSInput InputType="InputType.Date" @bind-Value="fecha1" />
-            </BSCol>
-
-            <BSCol Column="3" ColumnSmall="2">
-                <BSLabel>Hasta</BSLabel>
-                <BSInput InputType="InputType.Date" @bind-Value="fecha2" />
-            </BSCol>*@
+        <BSCol Column="3" ColumnSmall="2">
+        <BSLabel>Hasta</BSLabel>
+        <BSInput InputType="InputType.Date" @bind-Value="fecha2" />
+        </BSCol>*@
 
             <BSCol ColumnSmall="1" Column="2">
                 <BSLabel>Código</BSLabel>
@@ -138,7 +156,7 @@
                         <BSLabel>Imprimir</BSLabel>
                     </BSRow>
                     <BSButton IsOutlined Color="BSColor.Success" Size="Size.ExtraSmall" @onclick="PrintDocument">  <span class="oi oi-print"></span></BSButton>
-                </BSCol>
+                    </BSCol>
 
             }
         </BSRow>
@@ -194,15 +212,16 @@
                 listareu = DbReunionService.reudiatablas;
 
             }
-            
+
             @*            @foreach (var d in DbReunionService.reudiatablas)*@
             @foreach (var d in listareu)
             {
                 @if (Codigo == d.RdcodDis | Codigo == "Todo")
                 {
-               @* @if (Status == d.Rdstatus | Status == "Todo" | Status == "Total Pendiente" & (d.Rdstatus == "Pendiente" | d.Rdstatus=="Pendiente/Responsable"))
-                    {*@
-
+                    @* @if (Status == d.Rdstatus | Status == "Todo" | Status == "Total Pendiente" & (d.Rdstatus == "Pendiente" | d.Rdstatus=="Pendiente/Responsable"))
+        {*@
+                    @if (NombreLinea == "Todo" | NombreLinea == d.Rdarea)
+                    {
                         <BSTR>
                             @*<BSTD>@d.IdReuDia</BSTD>*@
                             @*Centro para validar el comedor*@
@@ -282,7 +301,8 @@
                         </BSTR>
 
                     }
-              @*  }*@
+                }
+                @*  }*@
 
 
 
@@ -392,7 +412,7 @@ else if (dataIsLoaded == 2 && DbReunionService.reudiatablas.Count() == 0)
     [Parameter]
     public string? f2 { get; set; }
     [Parameter]
-    public string? tipo { get; set; }  
+    public string? tipo { get; set; }
     [Parameter]
     public string? est { get; set; }
 
@@ -402,6 +422,7 @@ else if (dataIsLoaded == 2 && DbReunionService.reudiatablas.Count() == 0)
 
     private int IdCentro { get; set; } //id del Centro
     private int IdDiv { get; set; } //id de la division
+    private string NombreLinea { get; set; } = "Todo";//id de la linea
 
     private int CentroComedor;//Variable para verificar si es el comedor venezuela;
 
@@ -438,9 +459,9 @@ else if (dataIsLoaded == 2 && DbReunionService.reudiatablas.Count() == 0)
         await base.OnInitializedAsync();
         fecha1 = DateTime.Now;
         fecha2 = DateTime.Now;
-        await CreateData();    
-        IdCentro =int.Parse( claims[10].Value);
-        IdDiv =int.Parse( claims[12].Value);
+        await CreateData();
+        IdCentro = int.Parse(claims[10].Value);
+        IdDiv = int.Parse(claims[12].Value);
 
         if (claims[1].Value == "Admin" | claims[1].Value == "SuperAdmin")
         {
@@ -482,14 +503,14 @@ else if (dataIsLoaded == 2 && DbReunionService.reudiatablas.Count() == 0)
         {
             CentroComedor = int.Parse(claims[11].Value);
             await APIReunionService.GetEquiposCentro(claims[11].Value);
-        }     
-        
-   
+        }
+
+
 
         await APIReunionService.Getksf();
         await APIReunionService.GetResReu();
         DbReunionService.reudiatablas = new List<ReuDium>();
-  
+
 
     }
 

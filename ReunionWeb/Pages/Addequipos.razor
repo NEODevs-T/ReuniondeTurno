@@ -129,6 +129,7 @@ else
                         <BSCol Column="6">
                             <BSLabel>Descripción</BSLabel>
                             <BSInput InputType="InputType.TextArea" @bind-Value="EquipoForm.EdescriEam" />
+                            <BSFeedback For="@(() => EquipoForm.EdescriEam)" ValidMessage="Correcto." />
                         </BSCol>
                     </BSRow>
                     <p></p>

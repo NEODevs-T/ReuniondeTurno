@@ -40,9 +40,7 @@ namespace ReunionWeb.Services
 
         public DbReunionService(NavigationManager navigationManager, DbNeoContext _NeoContext)
         {
-
             _navigationManager = navigationManager;
-
             _neocontext = _NeoContext;
         }
         //obtener discrepancias para pendientes y reunion 

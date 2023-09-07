@@ -167,7 +167,7 @@ else if (dataIsLoaded == 2 && APIReunionService.calentrabajo.Count() == 0)
                 for (int i = 0; i < data.Count(); i++)
                 {
                     DateTime Inicio = new DateTime(APIReunionService.calentrabajo[i].RdfecTra.Year, APIReunionService.calentrabajo[i].RdfecTra.Month, APIReunionService.calentrabajo[i].RdfecTra.Day, 08, 00, 00);
-                    DateTime Final = Inicio.AddMinutes((APIReunionService.calentrabajo[i].Rdtiempo is null) ? 0 : (double.Parse(APIReunionService.calentrabajo[i].Rdtiempo)));
+                    DateTime Final = Inicio.AddHours((APIReunionService.calentrabajo[i].Rdtiempo is null) ? 0 : (double.Parse(APIReunionService.calentrabajo[i].Rdtiempo)));
                     data[i] = new DataItem
                 {
 

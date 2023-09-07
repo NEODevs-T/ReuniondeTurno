@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace ReunionWeb.NeoDbs
 {
@@ -18,34 +19,42 @@ namespace ReunionWeb.NeoDbs
         /// Id del pais
         /// </summary>
         public int IdPais { get; set; }
+        [Required(ErrorMessage = "Campo Responsable Requerido.")]
         public int IdResReu { get; set; }
         /// <summary>
         /// Id del afectado
         /// </summary>
+        [Required(ErrorMessage = "Campo KSF Requerido.")]
         public int Idksf { get; set; }
         /// <summary>
         /// centro o planta
         /// </summary>
+
         public string? Rdcentro { get; set; }
         /// <summary>
         /// Division
         /// </summary>
+
         public string? Rddiv { get; set; }
         /// <summary>
         /// Lineas o maquinas.
         /// </summary>
+     
         public string? Rdarea { get; set; }
         /// <summary>
         /// Codigo del equipo
         /// </summary>
+        [Required(ErrorMessage = "Campo C. Equipo Requerido.")]
         public string? RdcodEq { get; set; }
         /// <summary>
         /// Descripción de la discrepancia
         /// </summary>
+        [Required(ErrorMessage = "Campo Discrepancia Requerido.")]
         public string? Rddisc { get; set; }
         /// <summary>
         /// Codigo del estado de la discrepancia.
         /// </summary>
+       
         public string? RdcodDis { get; set; }
         /// <summary>
         /// Plan de acción.
@@ -58,6 +67,7 @@ namespace ReunionWeb.NeoDbs
         /// <summary>
         /// Estado de las discrepancia
         /// </summary>
+        [Required(ErrorMessage = "Campo Estado Requerido.")]
         public string? Rdstatus { get; set; }
         /// <summary>
         /// orden de trabajo
