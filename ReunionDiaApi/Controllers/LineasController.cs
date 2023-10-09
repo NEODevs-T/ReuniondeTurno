@@ -154,8 +154,9 @@ namespace ReunionDiaApi.Controllers
 
 
             resporeu = await _context.RespoReus
-                .Where(a => a.Rresta == true)
+                .Where(a => a.Rresta == true )
                 .ToListAsync();
+            
 
             return Ok(resporeu);
         }

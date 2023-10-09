@@ -27,6 +27,18 @@
             <BSAlert Color="BSColor.Danger" IsDismissible="true" HasIcon="true" @ref="Alertas._alertRef" Dismissed="Alertas.Dismissed">
                 @mensaje
             </BSAlert>
+        }       
+        @if (mensaje == "No se puede cerrar sin Plan de Acción.")
+        {
+            <BSAlert Color="BSColor.Danger" IsDismissible="true" HasIcon="true" @ref="Alertas._alertRef" Dismissed="Alertas.Dismissed">
+                @mensaje
+            </BSAlert>
+        }
+        @if (mensaje == "Ocurrió un error recargue la página.")
+        {
+            <BSAlert Color="BSColor.Danger" IsDismissible="true" HasIcon="true" @ref="Alertas._alertRef" Dismissed="Alertas.Dismissed">
+                @mensaje
+            </BSAlert>
         }
     </BSCol>
 </div>
@@ -160,7 +172,7 @@
                         <option value="">Seleccione...</option>
                         @foreach (var d in APIReunionService.resporeu)
                         {
-                            <option value="@d.IdResReu">@d.Rrnombre</option>
+                            <option value="@d.IdResReu">@d.Rrnombre @d.Rrdesc</option>
                         }
                     </BSInput>
                     <BSFeedback For="@(() => DiscForm.IdResReu)" ValidMessage="Correcto." />
@@ -364,7 +376,7 @@
                         <option value="">Seleccione...</option>
                         @foreach (var d in APIReunionService.resporeu)
                         {
-                            <option value="@d.IdResReu">@d.Rrnombre</option>
+                            <option value="@d.IdResReu">@d.Rrnombre @d.Rrdesc</option>
                         }
                     </BSInput>
 
@@ -482,7 +494,7 @@
 
 @if (CambiosFecha.Count() > 0)
 {
-    <p> Cambios de  Fecha de Trabajo Restantes: @(3 - CambiosFecha.Count()) </p>
+    <p> Cambios de  Fecha de Trabajo Restantes: @(4 - CambiosFecha.Count()) </p>
     <div style="width: 40vw;">
         <BSTable IsResponsive="true" IsStriped="true" IsBordered="true">
             <BSTHead Class="cabecera">
@@ -589,11 +601,16 @@
         try
         {
             mensaje = "";
+
             if (DiscForm.RdfecTra >= DiscForm.RdfecReu & (int)tipo == 1 | (int)tipo == 0 | (int)tipo == 2)
             {
                 if (CambiosFecha.Count() >= 3 & camFec != DiscForm.RdfecTra ){
 
                     mensaje = "Alcanzó el límite de cambios de Fecha de Trabajo.";
+                }
+                else if (String.IsNullOrEmpty(DiscForm.RdplanAcc) & DiscForm.Rdstatus == "Cerrado")
+                {
+                    mensaje = "No se puede cerrar sin Plan de Acción.";
                 }
                 else
                 {
@@ -628,7 +645,8 @@
         }
         catch (Exception ex)
         {
-
+            mensaje = "Ocurrió un error recargue la página.";
+           
         }
 
     }

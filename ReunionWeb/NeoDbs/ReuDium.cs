@@ -59,11 +59,11 @@ namespace ReunionWeb.NeoDbs
         /// <summary>
         /// Plan de acción.
         /// </summary>
-        public string? RdplanAcc { get; set; }
+        public string? RdplanAcc { get; set; } = null!;
         /// <summary>
         /// Tiempo de reparación de la discrepancia.
         /// </summary>
-        public string? Rdtiempo { get; set; }
+        public string? Rdtiempo { get; set; } = null!;
         /// <summary>
         /// Estado de las discrepancia
         /// </summary>

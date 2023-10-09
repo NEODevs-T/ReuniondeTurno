@@ -12,6 +12,8 @@ namespace ReunionDiaApi.Models
 
         public int IdResReu { get; set; }
         public string Rrnombre { get; set; } = null!;
+        public string? Rrdesc { get; set; } = null!;
+
         public bool Rresta { get; set; }
 
         public virtual ICollection<ReuDium> ReuDia { get; set; }

@@ -350,6 +350,11 @@ namespace ReunionDiaApi.Models
                     .HasMaxLength(50)
                     .IsUnicode(false)
                     .HasColumnName("RRNombre");
+
+                entity.Property(e => e.Rrdesc)
+                    .HasMaxLength(100)
+                    .IsUnicode(false)
+                    .HasColumnName("RRDesc");
             });
 
             modelBuilder.Entity<ReuDium>(entity =>

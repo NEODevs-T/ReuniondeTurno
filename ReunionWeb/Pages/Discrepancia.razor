@@ -254,7 +254,7 @@
 
                 @foreach (var d in APIReunionService.resporeu)
                 {
-                    <option value="@d.IdResReu">@d.Rrnombre</option>
+                    <option value="@d.IdResReu">@d.Rrnombre @d.Rrdesc</option>
                 }
             </BSInput>
             <BSFeedback For="@(() => Reuniondb.IdResReu)" ValidMessage="Correcto." />

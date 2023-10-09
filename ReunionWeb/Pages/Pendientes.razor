@@ -111,7 +111,7 @@
                     <option value="Total Pendiente">Total Pendiente</option>
                     <option value="Todo">Todo</option>
                     <option value="Pendiente">Pendiente</option>
-                    <option value="Pendiente/Responsable">Pendiente/Responsable</option>
+                    <option value="Pendiente-Responsable">Pendiente/Responsable</option>
                     <option value="Listo">Listo</option>
                     <option value="Cerrado">Cerrado</option>
                 </BSInput>
@@ -151,6 +151,22 @@
                 </BSCol>
                 @if (DbReunionService.reudiatablas.Count() > 0 && dataIsLoaded == 2)
             {
+
+                
+                    <BSCol Column="3" ColumnSmall="2">
+                        <BSLabel>Responsable</BSLabel>
+                        <BSInput InputType="InputType.Select" @bind-Value="idrespo">
+                            <option value=0>Todo</option>
+                            @foreach (var d in APIReunionService.resporeu)
+                            {
+
+                                <option value="@d.IdResReu">@d.Rrnombre</option>
+
+                            }
+                        </BSInput>
+                    </BSCol>
+                
+
                 <BSCol ColumnSmall="2">
                     <BSRow>
                         <BSLabel>Imprimir</BSLabel>
@@ -222,6 +238,8 @@
         {*@
                     @if (NombreLinea == "Todo" | NombreLinea == d.Rdarea)
                     {
+                        @if(idrespo==0 | idrespo==d.IdResReu)
+                        {
                         <BSTR>
                             @*<BSTD>@d.IdReuDia</BSTD>*@
                             @*Centro para validar el comedor*@
@@ -299,7 +317,7 @@
                                 </BSRow>
                             </BSTD>
                         </BSTR>
-
+                        }
                     }
                 }
                 @*  }*@
@@ -435,6 +453,7 @@ else if (dataIsLoaded == 2 && DbReunionService.reudiatablas.Count() == 0)
     private string UsrRol { get; set; } = ""; //rol para filtrar
     private bool cargandocambio { get; set; } = false; //para cargar los datos del trazabilidad
     private string tipoconsulta { get; set; } = "0"; //1-fecha de reuinion 0 fecha trabajo
+    private int idrespo { get; set; }  //responsable a filtar
 
     public DateTime fecha1;
     public DateTime fecha2;
