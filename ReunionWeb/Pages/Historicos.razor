@@ -324,7 +324,7 @@ else if (dataIsLoaded == 2 && tabla.Count() == 0)
             await APIReunionService.GetEquiposCentro(claims[11].Value);
         }
 
-        IdCentro = int.Parse(claims[10].Value);
+        IdCentro = int.Parse(claims[11].Value);
         IdDiv = int.Parse(claims[12].Value);
 
         await APIReunionService.Getksf();

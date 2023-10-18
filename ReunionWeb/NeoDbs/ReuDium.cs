@@ -19,6 +19,8 @@ namespace ReunionWeb.NeoDbs
         /// Id del pais
         /// </summary>
         public int IdPais { get; set; }
+        public int IdEmpresa { get; set; }
+
         [Required(ErrorMessage = "Campo Responsable Requerido.")]
         public int IdResReu { get; set; }
         /// <summary>
@@ -91,6 +93,7 @@ namespace ReunionWeb.NeoDbs
         public string? Rdobs { get; set; }
 
         public virtual Pai IdPaisNavigation { get; set; } = null!;
+        public virtual Empresa IdEmpresaNavigation { get; set; } = null!;
         public virtual RespoReu IdResReuNavigation { get; set; } = null!;
         public virtual Ksf IdksfNavigation { get; set; } = null!;
         public virtual ICollection<CambStat> CambStats { get; set; }

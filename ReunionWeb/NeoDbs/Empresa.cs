@@ -13,5 +13,6 @@ namespace ReunionWeb.NeoDbs
 
         public virtual Pai IdPaisNavigation { get; set; } = null!;
         public virtual ICollection<Centro> Centros { get; set; }
+        public virtual ICollection<ReuDium> ReuDia { get; set; }
     }
 }

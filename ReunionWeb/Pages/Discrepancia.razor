@@ -351,7 +351,10 @@
         try
         {
             Reuniondb.Rdstatus = "Pendiente";
-            Reuniondb.IdPais = int.Parse(claims[9].Value);
+            //Reuniondb.IdPais = int.Parse(claims[9].Value);
+            //Reuniondb.IdEmpresa = int.Parse(claims[10].Value);
+            Reuniondb.IdPais = int.Parse(claims.FirstOrDefault(c => c.Type == "IdPais")?.Value);
+            Reuniondb.IdEmpresa = int.Parse(claims.FirstOrDefault(c => c.Type == "IdEmpresa")?.Value);
 
             if (e.Validate())
             {

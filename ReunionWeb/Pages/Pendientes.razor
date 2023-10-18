@@ -453,7 +453,7 @@ else if (dataIsLoaded == 2 && DbReunionService.reudiatablas.Count() == 0)
     private string UsrRol { get; set; } = ""; //rol para filtrar
     private bool cargandocambio { get; set; } = false; //para cargar los datos del trazabilidad
     private string tipoconsulta { get; set; } = "0"; //1-fecha de reuinion 0 fecha trabajo
-    private int idrespo { get; set; }  //responsable a filtar
+    private int idrespo { get; set; }  //responsable a filtarint.Parse(claims[9].Value)
 
     public DateTime fecha1;
     public DateTime fecha2;
@@ -479,49 +479,52 @@ else if (dataIsLoaded == 2 && DbReunionService.reudiatablas.Count() == 0)
         fecha1 = DateTime.Now;
         fecha2 = DateTime.Now;
         await CreateData();
-        IdCentro = int.Parse(claims[10].Value);
-        IdDiv = int.Parse(claims[12].Value);
+        //IdCentro = int.Parse(claims[11].Value);
+        //IdDiv = int.Parse(claims[12].Value); 
 
-        if (claims[1].Value == "Admin" | claims[1].Value == "SuperAdmin")
+        IdCentro = int.Parse(claims.FirstOrDefault(c => c.Type.Contains("IdCentro"))?.Value);
+        IdDiv = int.Parse(claims.FirstOrDefault(c => c.Type.Contains("IdDiv"))?.Value);
+
+        if (claims.FirstOrDefault(c => c.Type.Contains("role"))?.Value == "Admin" | claims.FirstOrDefault(c => c.Type.Contains("role"))?.Value == "SuperAdmin")
         {
-            UsrAdmin = claims[1].Value;
-            await APIReunionService.GetCentrosxEmpresa("All" + claims[10].Value);
+            UsrAdmin = claims.FirstOrDefault(c => c.Type.Contains("role"))?.Value;
+            await APIReunionService.GetCentrosxEmpresa("All" + claims.FirstOrDefault(c => c.Type.Contains("IdEmpresa"))?.Value);
 
         }
-        else if (claims[1].Value == "SupIntendenteGeneral")
+        else if (claims.FirstOrDefault(c => c.Type.Contains("role"))?.Value == "SupIntendenteGeneral")
         {
-            UsrAdmin = claims[1].Value;
-            await APIReunionService.GetCentrosxEmpresa(claims[11].Value);
+            UsrAdmin = claims.FirstOrDefault(c => c.Type.Contains("role"))?.Value;
+            await APIReunionService.GetCentrosxEmpresa(claims.FirstOrDefault(c => c.Type.Contains("IdCentro"))?.Value);
         }
-        else if (claims[1].Value == "Planificador" | claims[1].Value == "SupIntendente")
+        else if (claims.FirstOrDefault(c => c.Type.Contains("role"))?.Value == "Planificador" | claims.FirstOrDefault(c => c.Type.Contains("role"))?.Value == "SupIntendente")
         {
-            await APIReunionService.GetCentrosxEmpresa(claims[11].Value);
+            await APIReunionService.GetCentrosxEmpresa(claims.FirstOrDefault(c => c.Type.Contains("IdCentro"))?.Value);
         }
-        else if (claims[1].Value == "MttoAdmin")
+        else if (claims.FirstOrDefault(c => c.Type.Contains("role"))?.Value == "MttoAdmin")
         {
             UsrRol = "Mtto";
-            await APIReunionService.GetCentrosxEmpresa("All" + claims[10].Value);
+            await APIReunionService.GetCentrosxEmpresa("All" + claims.FirstOrDefault(c => c.Type.Contains("IdEmpresa"))?.Value);
         }
         else
         {
-            if (claims[1].Value == "Mantenimiento")
+            if (claims.FirstOrDefault(c => c.Type.Contains("role"))?.Value == "Mantenimiento")
             {
                 UsrRol = "Mtto";
             }
             else
             {
-                UsrRol = claims[1].Value;
+                UsrRol = claims.FirstOrDefault(c => c.Type.Contains("role"))?.Value;
             }
 
-            await APIReunionService.GetCentrosxEmpresa(claims[11].Value);
+            await APIReunionService.GetCentrosxEmpresa(claims.FirstOrDefault(c => c.Type.Contains("IdCentro"))?.Value);
 
         }
 
         //Si es el comedor busca los equipos
-        if (claims[11].Value == "11")
+        if (claims.FirstOrDefault(c => c.Type.Contains("IdCentro"))?.Value == "11")
         {
-            CentroComedor = int.Parse(claims[11].Value);
-            await APIReunionService.GetEquiposCentro(claims[11].Value);
+            CentroComedor = int.Parse(claims.FirstOrDefault(c => c.Type.Contains("IdCentro"))?.Value);
+            await APIReunionService.GetEquiposCentro(claims.FirstOrDefault(c => c.Type.Contains("IdCentro"))?.Value);
         }
 
 

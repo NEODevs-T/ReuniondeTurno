@@ -34,7 +34,7 @@ namespace ReunionWeb.NeoDbs
 
         //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         //{
-          
+
         //}
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -53,7 +53,7 @@ namespace ReunionWeb.NeoDbs
                     .HasMaxLength(50)
                     .IsUnicode(false)
                     .HasColumnName("ARArea");
-            
+
 
                 entity.Property(e => e.Arfecha)
                     .HasColumnType("datetime")
@@ -203,7 +203,7 @@ namespace ReunionWeb.NeoDbs
 
                 entity.Property(e => e.Dnombre)
                     .HasMaxLength(500)
-                    .IsUnicode(false) 
+                    .IsUnicode(false)
                     .HasColumnName("DNombre");
 
                 entity.HasOne(d => d.IdCentroNavigation)
@@ -359,6 +359,7 @@ namespace ReunionWeb.NeoDbs
                 entity.Property(e => e.IdReuDia).HasComment("id tabla");
 
                 entity.Property(e => e.IdPais).HasComment("Id del pais");
+                entity.Property(e => e.IdEmpresa);
 
                 entity.Property(e => e.Idksf).HasComment("Id del afectado");
 
@@ -462,6 +463,19 @@ namespace ReunionWeb.NeoDbs
                     .HasForeignKey(d => d.Idksf)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_ReuDia_KSF");
+
+                //entity.HasOne(d => d.IdksfNavigation)
+                //    .WithMany(p => p.ReuDia)
+                //    .HasForeignKey(d => d.Idksf)
+                //    .OnDelete(DeleteBehavior.ClientSetNull)
+                //    .HasConstraintName("FK_ReuDia_KSF");
+                
+                entity.HasOne(d => d.IdEmpresaNavigation)
+                    .WithMany(p => p.ReuDia)
+                    .HasForeignKey(d => d.IdEmpresa)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_ReuDia_Empresa");
+
             });
 
             modelBuilder.Entity<ReunionDium>(entity =>

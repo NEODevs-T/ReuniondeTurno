@@ -71,11 +71,12 @@ namespace ReunionWeb.Services
                 .Where(a => (a.Rdcentro == centro & a.Rddiv == div & (a.Rdstatus != "Listo" & a.Rdstatus != "Cerrado") && (a.RdfecReu >= f1 & a.RdfecReu <= f2)))
                 .Include(b => b.IdksfNavigation)
                 .Include(b => b.IdResReuNavigation)
+                .Include(b => b.IdEmpresaNavigation)
                 .OrderByDescending(b => b.RdfecReu)
                 .ToListAsync();
             }
 
-            //tipo 0 Pendientes para 
+            //tipo 0 Pendientes para fecha reunion
             else if (tipo == "0")
             {
 
@@ -86,7 +87,7 @@ namespace ReunionWeb.Services
                    //.Where(a => (a.Rdcentro == centro & a.Rddiv == div & (a.RdfecReu >= f1 & a.RdfecReu <= f2)))
                    .Where(a => (a.Rdcentro == centro & a.Rddiv == div) & (a.Rdstatus == "Pendiente" | a.Rdstatus == "Pendiente/Responsable"))
                    .Include(b => b.IdksfNavigation)
-                   .Include(b => b.IdResReuNavigation)
+                   .Include(b => b.IdResReuNavigation)                 
                    .OrderByDescending(b => b.RdfecReu)
                    .ToListAsync();
                 }
@@ -95,7 +96,8 @@ namespace ReunionWeb.Services
                 {
                     reudiatablas = await _neocontext.ReuDia
                     //.Where(a => (a.Rdcentro == centro & a.Rddiv == div & (a.RdfecReu >= f1 & a.RdfecReu <= f2)))
-                    .Where(a => (a.Rdcentro == centro & a.Rddiv == div) & (a.RdplanAcc != null))
+                    //.Where(a => (a.Rdcentro == centro & a.Rddiv == div) & (a.RdplanAcc != null))
+                    .Where(a => (a.Rdcentro == centro & a.Rddiv == div))
                     .Include(b => b.IdksfNavigation)
                     .Include(b => b.IdResReuNavigation)
                     .OrderByDescending(b => b.RdfecReu)
@@ -118,7 +120,8 @@ namespace ReunionWeb.Services
                 {
                     reudiatablas = await _neocontext.ReuDia
                   //.Where(a => (a.Rdcentro == centro & a.Rddiv == div & (a.RdfecReu >= f1 & a.RdfecReu <= f2)))
-                  .Where(a => (a.Rdcentro == centro & a.Rddiv == div) & (a.Rdstatus == estado) & (a.RdplanAcc !=  null))
+                  //.Where(a => (a.Rdcentro == centro & a.Rddiv == div) & (a.Rdstatus == estado) & (a.RdplanAcc != null))
+                  .Where(a => (a.Rdcentro == centro & a.Rddiv == div) & (a.Rdstatus == estado))
                   .Include(b => b.IdksfNavigation)
                   .Include(b => b.IdResReuNavigation)
                   .OrderByDescending(b => b.RdfecReu)
@@ -144,7 +147,8 @@ namespace ReunionWeb.Services
                 {
                     reudiatablas = await _neocontext.ReuDia
                     //.Where(a => (a.Rdcentro == centro & a.Rddiv == div & (a.RdfecReu >= f1 & a.RdfecReu <= f2)))
-                    .Where(a => (a.Rdcentro == centro & a.Rddiv == div) & (a.RdplanAcc != null))
+                    //.Where(a => (a.Rdcentro == centro & a.Rddiv == div) & (a.RdplanAcc != null))
+                    .Where(a => (a.Rdcentro == centro & a.Rddiv == div))
                     .Include(b => b.IdksfNavigation)
                     .Include(b => b.IdResReuNavigation)
                     .OrderByDescending(b => b.RdfecTra)
@@ -154,7 +158,7 @@ namespace ReunionWeb.Services
                 else if (estado == "Pendiente-Responsable")
                 {
                     reudiatablas = await _neocontext.ReuDia
-                    .Where(a => (a.Rdcentro == centro & a.Rddiv == div)  && (a.Rdstatus == "Pendiente/Responsable"))
+                    .Where(a => (a.Rdcentro == centro & a.Rddiv == div) && (a.Rdstatus == "Pendiente/Responsable"))
                     .Include(b => b.IdksfNavigation)
                     .Include(b => b.IdResReuNavigation)
                     .OrderByDescending(b => b.RdfecTra)
@@ -166,7 +170,8 @@ namespace ReunionWeb.Services
                 {
                     reudiatablas = await _neocontext.ReuDia
                   //.Where(a => (a.Rdcentro == centro & a.Rddiv == div & (a.RdfecReu >= f1 & a.RdfecReu <= f2)))
-                  .Where(a => (a.Rdcentro == centro & a.Rddiv == div) & (a.Rdstatus == estado) & (a.RdplanAcc != null))
+                  //.Where(a => (a.Rdcentro == centro & a.Rddiv == div) & (a.Rdstatus == estado) & (a.RdplanAcc != null))
+                  .Where(a => (a.Rdcentro == centro & a.Rddiv == div) & (a.Rdstatus == estado))
                   .Include(b => b.IdksfNavigation)
                   .Include(b => b.IdResReuNavigation)
                   .OrderByDescending(b => b.RdfecTra)
@@ -195,6 +200,8 @@ namespace ReunionWeb.Services
 
             if (tipo == "2")
             {
+
+
                 if (estado == "Total Pendiente")
                 {
                     reudiatablas = await _neocontext.ReuDia
@@ -203,6 +210,7 @@ namespace ReunionWeb.Services
                     .Include(b => b.IdResReuNavigation)
                     .AsNoTracking()
                     .ToListAsync();
+
                 }
 
                 else if (estado == "Todo")
@@ -328,6 +336,7 @@ namespace ReunionWeb.Services
             bdDiscrep.Rdstatus = d.Rdstatus;
             bdDiscrep.Rdtiempo = d.Rdtiempo;
             bdDiscrep.IdPais = d.IdPais;
+            bdDiscrep.IdEmpresa = d.IdEmpresa;
             //bdDiscrep.RdnumDis = d.RdnumDis;
             //bdDiscrep.Rdobs = d.Rdobs;
 
@@ -450,10 +459,6 @@ namespace ReunionWeb.Services
             return disc;
 
         }
-
-
-
-
 
 
         public async Task<int> InsertDiscrepancia(ReuDium discre)
