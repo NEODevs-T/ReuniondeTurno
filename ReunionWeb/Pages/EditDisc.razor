@@ -1,4 +1,5 @@
 ﻿@page "/EditDisc/{id:int}/{tipo:int}/{f1}/{f2}/{est}"
+@inject NotificationService NotificationService
 @inject IDbReunionService DbReunionService
 @inject IAPIReunionService APIReunionService
 @inject NavigationManager NavigationManager
@@ -9,12 +10,7 @@
 <div>
     <BSCol Column="4">
 
-        @if (cambio == false)
-        {
-            <BSAlert Color="BSColor.Danger" IsDismissible="true" HasIcon="true" @ref="Alertas._alertRef" Dismissed="Alertas.Dismissed">
-                @mensaje
-            </BSAlert>
-        }
+       
 
         @if (mensaje == "La fecha de trabajo no puede ser menor a la fecha de reunión.")
         {
@@ -40,6 +36,7 @@
                 @mensaje
             </BSAlert>
         }
+
     </BSCol>
 </div>
 
@@ -226,7 +223,7 @@
                 <BSCol ColumnSmall="2">
                     <BSLabel>Status</BSLabel>
                     <BSInput InputType="InputType.Select" @bind-Value="DiscForm.Rdstatus">
-                        <option value="">Seleccione...</option>
+                        
                         @if (tipo == 0 | tipo == 2)
                         {
                             <option value="Listo">Listo</option>
@@ -403,7 +400,7 @@
                         <BSCol ColumnSmall="2">
                             <BSLabel>Status</BSLabel>
                             <BSInput InputType="InputType.Select" @bind-Value="DiscForm.Rdstatus">
-                                <option value="">Seleccione...</option>
+                              
                                 @if (tipo == 0 | tipo == 2)
                                 {
                                     <option value="Listo">Listo</option>
@@ -439,7 +436,7 @@
                             <BSCol ColumnSmall="2">
                                 <BSLabel>Status</BSLabel>
                                 <BSInput InputType="InputType.Select" @bind-Value="DiscForm.Rdstatus">
-                                    <option value="">Seleccione...</option>
+                                    
                                     @if (tipo == 0 | tipo == 2)
                                     {
                                         <option value="Listo">Listo</option>
@@ -602,7 +599,7 @@
         {
             mensaje = "";
 
-            if (DiscForm.RdfecTra >= DiscForm.RdfecReu & (int)tipo == 1 | (int)tipo == 0 | (int)tipo == 2)
+            if (DiscForm.RdfecTra.Date >= DiscForm.RdfecReu.Date & (int)tipo == 1 | (int)tipo == 0 | (int)tipo == 2)
             {
                 if (CambiosFecha.Count() >= 3 & camFec != DiscForm.RdfecTra ){
 
@@ -614,7 +611,8 @@
                 }
                 else
                 {
-                  
+
+                    //cambio = false;
                     cambio = await DbReunionService.UpdateDiscrepancia(DiscForm, (int)Id, (int)tipo, f1, f2, est);
 
                     if (camStat != DiscForm.Rdstatus & cambio == true)
@@ -637,17 +635,47 @@
                     }
                 }
             }
+
             else
             {
+
                 mensaje = "La fecha de trabajo no puede ser menor a la fecha de reunión.";
+
+            }
+
+            if (cambio ==false)
+            {
+                
+             
+                NotificationService.Notify(new NotificationMessage
+                    {
+                        Severity = NotificationSeverity.Warning,
+                        Style = " position: relative;",
+                        Duration = 5000,
+                        Summary = "Falló el registro, intente de nuevo.",
+                        Detail = ""
+                    });
+                   
+               
             }
 
         }
         catch (Exception ex)
         {
-            mensaje = "Ocurrió un error recargue la página.";
-           
+            mensaje = "";
+
+            NotificationService.Notify(new NotificationMessage
+                {
+                    Severity = NotificationSeverity.Warning,
+                    Style = " position: relative;",
+                    Duration = 5000,
+                    Summary = "Ocurrió un error inesperado.",
+                    Detail = "Por favor,  recargue la página."
+                });
         }
 
     }
+
+
+    
 }

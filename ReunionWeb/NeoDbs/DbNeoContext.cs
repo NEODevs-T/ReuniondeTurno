@@ -446,11 +446,11 @@ namespace ReunionWeb.NeoDbs
                     .HasColumnName("RDTiempo")
                     .HasComment("Tiempo de reparación de la discrepancia.");
 
-                entity.HasOne(d => d.IdPaisNavigation)
-                    .WithMany(p => p.ReuDia)
-                    .HasForeignKey(d => d.IdPais)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_ReuDia_Pais");
+                //entity.HasOne(d => d.IdPaisNavigation)
+                //    .WithMany(p => p.ReuDia)
+                //    .HasForeignKey(d => d.IdPais)
+                //    .OnDelete(DeleteBehavior.ClientSetNull)
+                //    .HasConstraintName("FK_ReuDia_Pais");
 
                 entity.HasOne(d => d.IdResReuNavigation)
                     .WithMany(p => p.ReuDia)
@@ -464,12 +464,7 @@ namespace ReunionWeb.NeoDbs
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_ReuDia_KSF");
 
-                //entity.HasOne(d => d.IdksfNavigation)
-                //    .WithMany(p => p.ReuDia)
-                //    .HasForeignKey(d => d.Idksf)
-                //    .OnDelete(DeleteBehavior.ClientSetNull)
-                //    .HasConstraintName("FK_ReuDia_KSF");
-                
+     
                 entity.HasOne(d => d.IdEmpresaNavigation)
                     .WithMany(p => p.ReuDia)
                     .HasForeignKey(d => d.IdEmpresa)

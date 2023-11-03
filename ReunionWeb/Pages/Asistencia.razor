@@ -231,7 +231,7 @@ else if (dataIsLoaded == 1 && APIReunionService.cargoreus.Count() == 0)
             //await APIReunionService.GetCentros(claims[6].Value.ToString());
             await APIReunionService.GetCentrosxEmpresa(claims[11].Value);
         }
-
+        Div = claims.FirstOrDefault(c => c.Type.Contains("Centro"))?.Value;
 
 
 

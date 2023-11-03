@@ -46,18 +46,7 @@
     </BSCol>
     <BSRow>
 
-        @*   <BSCol Column="3">
-        <BSLabel>Centro</BSLabel>
-        <BSInput InputType="InputType.Select" @bind-Value="Reuniondb.Rdcentro">
-        <option value="">Seleccione...</option>
-        @foreach (var d in APIReunionService.centro)
-        {
-        <option value="@d.Cnom">@d.Cnom</option>
-        }
-        </BSInput>
-        <BSFeedback For="@(() => Reuniondb.Rdcentro)" ValidMessage="Correcto." />
-        </BSCol>*@
-
+    
         <BSCol Column="3">
             <BSLabel>Centro</BSLabel>
             <BSInput InputType="InputType.Select" @bind-Value="IdCent">
@@ -67,7 +56,7 @@
                     <option value="@d.IdCentro">@d.Cnom</option>
                 }
             </BSInput>
-            <BSFeedback For="@(() => IdCent)" ValidMessage="Correcto." />
+           @* <BSFeedback For="@(() => IdCent)" ValidMessage="Correcto." />*@
         </BSCol>
 
 
@@ -75,7 +64,7 @@
         <BSCol Column="2">
             <BSLabel>Division</BSLabel>
             <BSInput InputType="InputType.Select" @bind-Value="IdDiv">
-                @* <BSInput InputType="InputType.Select" @onchange=BuscarLineas @bind-Value="IdDiv">*@
+              
 
                 <option value="">Seleccione...</option>
                 @foreach (var d in APIReunionService.centro)
@@ -88,7 +77,7 @@
                     }
                 }
             </BSInput>
-            <BSFeedback For="@(() => IdDiv)" ValidMessage="Correcto." />
+           @* <BSFeedback For="@(() => IdDiv)" ValidMessage="Correcto." />*@
         </BSCol>
 
 
@@ -100,14 +89,13 @@
                 {
                     @foreach (var e in d.Lineas.Where(li => li.IdDivision == IdDiv && li.IdDivisionNavigation.IdCentro == IdCent))
                     {
-                        @* if (IdDiv == e.IdDivisionNavigation.IdDivision)
-                {*@
+                      
                         <option value="@e.Lnom">@e.Lnom</option>
-                        @* }*@
+                       
                     }
                 }
             </BSInput>
-            <BSFeedback For="@(() => Reuniondb.Rdarea)" ValidMessage="Correcto." />
+           @* <BSFeedback For="@(() => Reuniondb.Rdarea)" ValidMessage="Correcto." />*@
         </BSCol>
 
 
@@ -135,7 +123,7 @@
         </BSCol>
         @if (APIReunionService.centro.Count > 0 & tipoequipo == "0")
         {
-            @*  @if (Reuniondb.Rdcentro == "Conversión" | Reuniondb.Rdcentro == "Molinos")*@
+          
             @if (Reuniondb.Rdcentro != "Chempro")
             {
                 <BSCol Column="4">
@@ -153,7 +141,7 @@
 
 
                     </BSInput>
-                    <BSFeedback For="@(() => Reuniondb.RdcodEq)" ValidMessage="Correcto." />
+                   @* <BSFeedback For="@(() => Reuniondb.RdcodEq)" ValidMessage="Correcto." />*@
                 </BSCol>
 
             }
@@ -162,7 +150,7 @@
                 <BSCol Column="4">
                     <BSLabel>C. Equipo</BSLabel>
                     <BSInput InputType="InputType.Text" @bind-Value="Reuniondb.RdcodEq" />
-                    <BSFeedback For="@(() => Reuniondb.RdcodEq)" ValidMessage="Correcto." />
+                    @*<BSFeedback For="@(() => Reuniondb.RdcodEq)" ValidMessage="Correcto." />*@
                 </BSCol>
             }
         }
@@ -205,10 +193,7 @@
             <BSFeedback For="@(() => Reuniondb.RdcodEq)" ValidMessage="Correcto." />*@
             </BSCol>
         }
-        @*  else if (APIReunionService.centro.Count == 0 & tipoequipo == "1")
-        {
-        <p>No se encuentran equipos, cambie a campo de texto.</p>
-        }*@
+      
 
 
         <BSCol Column="2">
@@ -223,7 +208,7 @@
                 }
 
             </BSInput>
-            <BSFeedback For="@(() => Reuniondb.Idksf)" ValidMessage="Correcto." />
+            @*<BSFeedback For="@(() => Reuniondb.Idksf)" ValidMessage="Correcto." />*@
         </BSCol>
 
 
@@ -233,7 +218,7 @@
         <BSCol Column="6">
             <BSLabel>Discrepancia</BSLabel>
             <BSInput InputType="InputType.Text" @bind-Value="Reuniondb.Rddisc" />
-            <BSFeedback For="@(() => Reuniondb.Rddisc)" ValidMessage="Correcto." />
+            @*<BSFeedback For="@(() => Reuniondb.Rddisc)" ValidMessage="Correcto." />*@
         </BSCol>
 
 
@@ -257,7 +242,7 @@
                     <option value="@d.IdResReu">@d.Rrnombre @d.Rrdesc</option>
                 }
             </BSInput>
-            <BSFeedback For="@(() => Reuniondb.IdResReu)" ValidMessage="Correcto." />
+           @* <BSFeedback For="@(() => Reuniondb.IdResReu)" ValidMessage="Correcto." />*@
         </BSCol>
 
     </BSRow>
@@ -340,7 +325,8 @@
             await APIReunionService.GetEquiposEAM(claims[11].Value.ToString());
 
         }
-
+        IdCent = int.Parse(claims.FirstOrDefault(c => c.Type.Contains("IdCentro"))?.Value);
+        IdDiv = int.Parse(claims.FirstOrDefault(c => c.Type.Contains("IdDiv"))?.Value);
 
     }
 
@@ -356,17 +342,18 @@
             Reuniondb.IdPais = int.Parse(claims.FirstOrDefault(c => c.Type == "IdPais")?.Value);
             Reuniondb.IdEmpresa = int.Parse(claims.FirstOrDefault(c => c.Type == "IdEmpresa")?.Value);
 
-            if (e.Validate())
-            {
-                Reuniondb.RdfecReu = (fechahoy = DateTime.Now);
-                Reuniondb.RdfecTra = fechatrabajo;
-
                 //Guara cod equipo si es por la lista
                 if (tipoequipo == "1")
                 {
                     Reuniondb.RdcodEq = selectedEquipoId;
 
                 }
+
+            if (e.Validate())
+            {
+                Reuniondb.RdfecReu = (fechahoy = DateTime.Now);
+                Reuniondb.RdfecTra = fechatrabajo;
+
                 Reuniondb.Rdcentro = APIReunionService.centro.Where(c => c.IdCentro == IdCent).FirstOrDefault(c => c.IdCentro.Equals(IdCent)).Cnom;
                 //Asigno el id de la division al form
                 foreach (var d in APIReunionService.centro)

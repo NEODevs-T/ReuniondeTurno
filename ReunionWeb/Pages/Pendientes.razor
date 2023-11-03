@@ -20,7 +20,7 @@
     </Authorized>
 </AuthorizeView>
 
-@error
+
 <h3>Asuntos</h3>
 
 <BSContainer>
@@ -30,14 +30,14 @@
         <div class="loader"></div>
     }
     else
-    {
+    {@error
 
 
         <BSRow>
             <BSCol Column="3" ColumnSmall="2">
                 <BSLabel>Centro</BSLabel>
                 <BSInput InputType="InputType.Select" @bind-Value="IdCentro">
-                    <option value="">Seleccione</option>
+                    <option value=0>Seleccione</option>
                     @foreach (var d in APIReunionService.centro)
                     {
                         <option value="@d.IdCentro">@d.Cnom</option>
@@ -49,7 +49,7 @@
             <BSCol Column="3" ColumnSmall="2">
                 <BSLabel>División</BSLabel>
                 <BSInput InputType="InputType.Select" @bind-Value="IdDiv">
-                    <option value="">Seleccione</option>
+                    <option value=0>Seleccione</option>
                     @foreach (var d in APIReunionService.centro)
                     {
                         @foreach (var e in d.Divisions)
@@ -538,14 +538,29 @@ else if (dataIsLoaded == 2 && DbReunionService.reudiatablas.Count() == 0)
 
     protected async Task Get()
     {
-        if (dataIsLoaded != 1)
+        if (IdCentro != 0 & IdDiv != 0)
         {
-            dataIsLoaded = 1;
+            error = null;
+            if (dataIsLoaded != 1)
+            {
+                dataIsLoaded = 1;
 
-            //await DbReunionService.GetPendientes(Div, Division, fecha1, fecha2, tipoconsulta);
-            await DbReunionService.GetPendientes(IdCentro.ToString(), IdDiv.ToString(), fecha1, fecha2, tipoconsulta, Status);
-            dataIsLoaded = 2;
+                //await DbReunionService.GetPendientes(Div, Division, fecha1, fecha2, tipoconsulta);
+                await DbReunionService.GetPendientes(IdCentro.ToString(), IdDiv.ToString(), fecha1, fecha2, tipoconsulta, Status);
+                dataIsLoaded = 2;
+                IdCentro = 0;
+                IdDiv = 0;
+            }
+            
         }
+        else
+        {
+            error = "Seleccione los valores en las listas*";
+        }
+    } 
+    protected  void DivReset()
+    {
+        IdDiv = 0;
     }
     protected async Task GetHistory(int idreu)
     {

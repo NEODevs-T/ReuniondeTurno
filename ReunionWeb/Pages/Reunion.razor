@@ -6,7 +6,7 @@
 @inject AuthenticationStateProvider AuthStateProvider
 @inject IJSRuntime IJS
 
-@attribute [Authorize(Roles = "Admin,AdminChempro, SupIntendente,SupIntendenteGeneral,SuperAdmin, Planificador, Mantenimiento,Calidad,Seguridad,Efluentes, PendientesChempro, MttoAdmin")]
+@*@attribute [Authorize(Roles = "Admin,AdminChempro, SupIntendente,SupIntendenteGeneral,SuperAdmin, Planificador, Mantenimiento,Calidad,Seguridad,Efluentes, PendientesChempro, MttoAdmin")]*@
 
 <h3>Formato de Reunión</h3>
 
@@ -21,6 +21,7 @@
     }
     else
     {
+        @error
         <BSRow>
             <BSCol Column="3" ColumnSmall="2">
                 <BSLabel>Centro</BSLabel>
@@ -257,6 +258,7 @@ else if (dataIsLoaded == 2 && DbReunionService.reunionditablas.Count() == 0)
 
     int dataIsLoaded = 0, filtrocod = 0;
     string ayer = DateTime.Now.AddDays(-1).ToString("yyyyMMdd");
+    string error;
 
     private int IdCentro { get; set; } //id del Centro
     private int IdDiv { get; set; } //id de la division
@@ -314,11 +316,21 @@ else if (dataIsLoaded == 2 && DbReunionService.reunionditablas.Count() == 0)
 
     protected async Task Get()
     {
-        if (dataIsLoaded != 1)
+        if (IdCentro != 0 & IdDiv != 0)
         {
-            dataIsLoaded = 1;
-            await DbReunionService.GetPendientes(IdCentro.ToString(), IdDiv.ToString(), DateTime.Now.AddDays(-1), DateTime.Now, "1", "Reunion");
-            dataIsLoaded = 2;
+            error = null;
+            if (dataIsLoaded != 1)
+            {
+                dataIsLoaded = 1;
+                await DbReunionService.GetPendientes(IdCentro.ToString(), IdDiv.ToString(), DateTime.Now.AddDays(-1), DateTime.Now, "1", "Reunion");
+                dataIsLoaded = 2;
+            }
+        }
+        else
+        {
+       
+                error = "Seleccione los valores en las listas*";
+            
         }
     }
     void Editar(int id)

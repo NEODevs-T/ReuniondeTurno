@@ -64,16 +64,30 @@ namespace ReunionWeb.Services
             if (tipo == "1")
             {
 
+                if (DateTime.Today.DayOfWeek == DayOfWeek.Monday)
+                {
 
+                    reudiatablas = await _neocontext.ReuDia
+                    //.Where(a =>  (a.Div == centro & a.Division==div ) | (a.Div == centro & a.Division == div & (a.Fecha>= f1 & a.Fecha <= f2)))
+                    .Where(a => (a.Rdcentro == centro & a.Rddiv == div & (a.Rdstatus != "Listo" & a.Rdstatus != "Cerrado") && (a.RdfecReu >= f1.AddDays(-3) & a.RdfecReu <= f2)))
+                    .Include(b => b.IdksfNavigation)
+                    .Include(b => b.IdResReuNavigation)
+                    .Include(b => b.IdEmpresaNavigation)
+                    .OrderByDescending(b => b.RdfecReu)
+                    .ToListAsync();
+                }
+                else
+                {
 
-                reudiatablas = await _neocontext.ReuDia
-                //.Where(a =>  (a.Div == centro & a.Division==div ) | (a.Div == centro & a.Division == div & (a.Fecha>= f1 & a.Fecha <= f2)))
-                .Where(a => (a.Rdcentro == centro & a.Rddiv == div & (a.Rdstatus != "Listo" & a.Rdstatus != "Cerrado") && (a.RdfecReu >= f1 & a.RdfecReu <= f2)))
-                .Include(b => b.IdksfNavigation)
-                .Include(b => b.IdResReuNavigation)
-                .Include(b => b.IdEmpresaNavigation)
-                .OrderByDescending(b => b.RdfecReu)
-                .ToListAsync();
+                    reudiatablas = await _neocontext.ReuDia
+                    //.Where(a =>  (a.Div == centro & a.Division==div ) | (a.Div == centro & a.Division == div & (a.Fecha>= f1 & a.Fecha <= f2)))
+                    .Where(a => (a.Rdcentro == centro & a.Rddiv == div & (a.Rdstatus != "Listo" & a.Rdstatus != "Cerrado") && (a.RdfecReu >= f1 & a.RdfecReu <= f2)))
+                    .Include(b => b.IdksfNavigation)
+                    .Include(b => b.IdResReuNavigation)
+                    .Include(b => b.IdEmpresaNavigation)
+                    .OrderByDescending(b => b.RdfecReu)
+                    .ToListAsync();
+                }
             }
 
             //tipo 0 Pendientes para fecha reunion
@@ -87,7 +101,7 @@ namespace ReunionWeb.Services
                    //.Where(a => (a.Rdcentro == centro & a.Rddiv == div & (a.RdfecReu >= f1 & a.RdfecReu <= f2)))
                    .Where(a => (a.Rdcentro == centro & a.Rddiv == div) & (a.Rdstatus == "Pendiente" | a.Rdstatus == "Pendiente/Responsable"))
                    .Include(b => b.IdksfNavigation)
-                   .Include(b => b.IdResReuNavigation)                 
+                   .Include(b => b.IdResReuNavigation)
                    .OrderByDescending(b => b.RdfecReu)
                    .ToListAsync();
                 }
@@ -488,8 +502,6 @@ namespace ReunionWeb.Services
 
             return await _neocontext.SaveChangesAsync() > 0;
         }
-
-
 
     }
 }

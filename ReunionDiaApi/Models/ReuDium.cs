@@ -81,7 +81,7 @@ namespace ReunionDiaApi.Models
         /// </summary>
         public string? Rdobs { get; set; }
 
-        public virtual Pai IdPaisNavigation { get; set; } = null!;
+        //public virtual Pai IdPaisNavigation { get; set; } = null!;
         public virtual RespoReu IdResReuNavigation { get; set; } = null!;
         public virtual Empresa IdEmpresaNavigation { get; set; } = null!;
         public virtual Ksf IdksfNavigation { get; set; } = null!;

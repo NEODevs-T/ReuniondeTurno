@@ -147,6 +147,14 @@ th {
 
 /* FIN RADZEN SCHEDULER es EL CALENDARIO*/
 
+/*notificación radzen*/
+.rz-notification-message.rz-growl {
+    position: fixed !important;
+    width: 35% !important;
+    bottom: unset !important;
+    right: 40% !important;
+    top: 0px !important;
+}
 .carousel-control-next-icon, .carousel-control-prev-icon, .carousel-indicators [data-bs-target] {
     background-color: rgb(0, 120, 83, 0.76) !important;
 }
