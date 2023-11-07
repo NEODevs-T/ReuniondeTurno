@@ -13,37 +13,6 @@
 <h3>Porcentaje de Asistencia</h3>
 <p></p>
 
-<div>
-    <BSCol Column="4">
-
-        @if (@mensaje == "Registro Exitoso")
-        {
-            <BSAlert Color="BSColor.Success" IsDismissible="true" HasIcon="true" @ref="_alertRef" Dismissed="Dismissed">
-                @mensaje
-            </BSAlert>
-        }
-        else if (@mensaje == "Error al Insertar los datos, Intente de Nuevo" | mensaje == "Seleccione el area." | mensaje == "Solo se puede registrar a las 9:00 am")
-        {
-
-            <BSAlert Color="BSColor.Warning" IsDismissible="true" HasIcon="true" @ref="_alertRef" Dismissed="Dismissed">
-                @mensaje
-            </BSAlert>
-
-        }
-        else if (@mensaje != "")
-        {
-            <BSAlert Color="BSColor.Danger" IsDismissible="true" HasIcon="true" @ref="_alertRef" Dismissed="Alertas.Dismissed">
-                @mensaje
-            </BSAlert>
-        }
-
-    </BSCol>
-</div>
-
-<p></p>
-
-
-<p></p>
 
 
 
@@ -134,8 +103,8 @@
                 <BSLabel>Bloque: @bloque</BSLabel>
 
                 <BSInput InputType="InputType.Range" step="1" min="1" max="3" @bind-Value="bloque" /><BSButton IsOutlined Color="BSColor.Success" Size="Size.ExtraSmall" @onclick="Porcentaje">   Obtener Porcentajes  <span class="oi oi-check"></span></BSButton>
-              
-            </BSCol>  
+
+                </BSCol>
             <p></p>
         }
         <BSCol Column="6">
@@ -151,17 +120,17 @@
                     </BSTR>
                 </BSTHead>
                 <BSTBody>
-                    
-           
+
+
                     @foreach (var d in porasis)
                     {
                         <BSTR>
                             @if (APIReunionService.asistenreus.Where(c => c.AridCargoRNavigation.CRBloque == 1).Count() > 0)
                             {
-                                
+
                                 @if ((APIReunionService.asistenreus.FirstOrDefault(c => c.AridCargoRNavigation.Crnombre == d.Cargo).AridCargoRNavigation.CRBloque) == bloque)
                                 {
-                                    
+
                                     <BSTD>@d.Cargo</BSTD>
                                     <BSTD>@d.Asistencias</BSTD>
                                     <BSTD>@d.Total %</BSTD>
@@ -195,7 +164,7 @@
             <BSCol Column="4">
                 <BSLabel>Bloque: @bloque</BSLabel>
 
-                <BSInput InputType="InputType.Range" step="1" min="1" max="3" @bind-Value="bloque"  />
+                <BSInput InputType="InputType.Range" step="1" min="1" max="3" @bind-Value="bloque" />
             </BSCol>
         }
         <BSCol Column="10">
@@ -301,7 +270,7 @@ else if (dataIsLoaded == 1 && APIReunionService.cargoreus.Count() == 0)
     private List<AsistenReu> listaasistencia = new List<AsistenReu>();
 
 
-    private Alerts Alertas = new Alerts();
+
     int dataIsLoaded = 0;
     private string mensaje = "", f1 = "", f2 = "";
     private string Div { get; set; }
@@ -313,8 +282,6 @@ else if (dataIsLoaded == 1 && APIReunionService.cargoreus.Count() == 0)
     public double asistotal { get; set; } = 0;
     int dias = 0;
 
-    private bool _buttonDisabled = true;
-    private BSAlert? _alertRef;
 
 
 
@@ -334,17 +301,17 @@ else if (dataIsLoaded == 1 && APIReunionService.cargoreus.Count() == 0)
     {
 
         await CreateData();
-        if (claims[1].Value == "Admin" | claims[1].Value == "SuperAdmin" | claims[1].Value == "MttoAdmin")
+        if (claims.FirstOrDefault(c => c.Type.Contains("role"))?.Value == "Admin" | claims.FirstOrDefault(c => c.Type.Contains("role"))?.Value == "SuperAdmin" | claims.FirstOrDefault(c => c.Type.Contains("role"))?.Value == "MttoAdmin")
         {
-            //await APIReunionService.GetCentros("All");
-            await APIReunionService.GetCentrosxEmpresa("All" + claims[10].Value);
+
+            await APIReunionService.GetCentrosxEmpresa("All" + claims.FirstOrDefault(c => c.Type.Contains("IdEmpresa"))?.Value);
         }
         else
         {
-            //await APIReunionService.GetCentros(claims[6].Value.ToString());
-            await APIReunionService.GetCentrosxEmpresa(claims[11].Value);
-        }
 
+            await APIReunionService.GetCentrosxEmpresa(claims.FirstOrDefault(c => c.Type.Contains("IdCentro"))?.Value);
+        }
+        Div = claims.FirstOrDefault(c => c.Type.Contains("Centro"))?.Value;
 
 
 
@@ -366,7 +333,7 @@ else if (dataIsLoaded == 1 && APIReunionService.cargoreus.Count() == 0)
 
     protected async Task Porcentaje()
     {
-       
+
         DateTime inicio = fecha1, hasta = fecha2;
         dias = GetDias();
         asistotal = 0;
@@ -387,7 +354,7 @@ else if (dataIsLoaded == 1 && APIReunionService.cargoreus.Count() == 0)
                 if (APIReunionService.asistenreus.Where(c => c.AridCargoRNavigation.CRBloque == bloque).Count() > 0)
                 {
                     //if (APIReunionService.asistenreus.Where(c => c.AridCargoRNavigation.Crnombre == a.Cargo).Count() > 0 & APIReunionService.asistenreus.FirstOrDefault(c=>c.AridCargoRNavigation.Crnombre==a.Cargo).AridCargoRNavigation.CRBloque==bloque)
-                    if (APIReunionService.asistenreus.FirstOrDefault(c=>c.AridCargoRNavigation.Crnombre==a.Cargo).AridCargoRNavigation.CRBloque==bloque)
+                    if (APIReunionService.asistenreus.FirstOrDefault(c => c.AridCargoRNavigation.Crnombre == a.Cargo).AridCargoRNavigation.CRBloque == bloque)
                     {
                         filtrocount++;
                         a.Total = Math.Round((a.Asistencias / dias) * 100);
@@ -423,14 +390,6 @@ else if (dataIsLoaded == 1 && APIReunionService.cargoreus.Count() == 0)
         dias = GetDias();
         asistotal = 0;
 
-        //while (inicio <= hasta)
-        //{
-
-        //    if (inicio.DayOfWeek != DayOfWeek.Saturday && inicio.DayOfWeek != DayOfWeek.Sunday)
-        //        dias++;
-
-        //    inicio = inicio.AddDays(1);
-        //}
 
         if (dataIsLoaded != 1)
         {
@@ -450,30 +409,14 @@ else if (dataIsLoaded == 1 && APIReunionService.cargoreus.Count() == 0)
 
             if (APIReunionService.asistenreus.Where(c => c.AridCargoRNavigation.CRBloque == bloque).Count() > 0)
             {
-               
+
                 await Porcentaje();
             }
-            
+
         }
     }
 
 
 
 
-
-
-
-
-
-
-    private void Show()
-    {
-        _buttonDisabled = true;
-        _alertRef?.Open();
-    }
-
-    private void Dismissed()
-    {
-        _buttonDisabled = false;
-    }
 }

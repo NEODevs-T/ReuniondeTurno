@@ -4,38 +4,13 @@
 @inject HttpClient Http
 @inject AuthenticationStateProvider AuthStateProvider
 @inject ILocalStorageService LocalStorage
-@attribute [Authorize(Roles = "Admin, AdminChempro")]
+@inject NotificationService NotificationService
+
+
+@attribute [Authorize(Roles = "Admin, AdminChempro,SuperAdmin")]
 
 <h3>Códigos de Equipos </h3>
-<p>
 
-</p>
-
-
-<div>
-    <BSCol Column="4">
-
-        @if (@mensaje == "Registro Exitoso")
-        {
-            <BSAlert Color="BSColor.Success" IsDismissible="true" HasIcon="true" @ref="Alertas._alertRef" Dismissed="Alertas.Dismissed">
-                @mensaje
-            </BSAlert>
-        }
-        else if (@mensaje == "Ya se registró este código de equipo." | mensaje == "Error al Insertar los datos, Intente de Nuevo")
-        {
-            <BSAlert Color="BSColor.Warning" IsDismissible="true" HasIcon="true" @ref="Alertas._alertRefWar" Dismissed="Alertas.Dismissed">
-                @mensaje
-            </BSAlert>
-        }
-        else if (@mensaje != "")
-        {
-            <BSAlert Color="BSColor.Warning" IsDismissible="true" HasIcon="true" @ref="Alertas._alertRefErr" Dismissed="Alertas.Dismissed">
-                @mensaje
-            </BSAlert>
-        }
-
-    </BSCol>
-</div>
 
 <p></p>
 
@@ -460,7 +435,8 @@ else
 
     int dataIsLoaded = 0;
     string _message;
-    Alerts Alertas = new Alerts();
+    //Alerts Alertas = new Alerts();
+    private NotifiRadzen Notificar = new NotifiRadzen();//Logic para crear las noyificaciones radzen
 
     EquipoDTO EquipoForm = new EquipoDTO();
     List<EquipoEam> EquipoLista = new List<EquipoEam>();
@@ -501,15 +477,23 @@ else
                 EquipoForm.EestaEam = true;
                 EquipoForm.EcodEquiEam = EquipoForm.EcodEquiEam.Replace(" ", String.Empty);
                 mensaje = await APIReunionService.PostEquipo(EquipoForm);
+            
+                    if (mensaje == "Registro Exitoso")
+                    {
+                        NotificationService.Notify(Notificar.Notificacion("exito", mensaje, ""));
+                    }
+                    else 
+                    {
+                         NotificationService.Notify(Notificar.Notificacion("advertencia", "Atención", mensaje));
+                    }
                 Reset();
-                Alertas.Show();
+                
 
             }
             catch (Exception ex)
             {
-
-                mensaje = "Error al Insertar los datos, Intente de Nuevo";
-                Alertas.Show();
+                 NotificationService.Notify(Notificar.Notificacion("error", "Error al Insertar los datos, Intente de Nuevo", ex.Message));
+               
             }
         }
     }
@@ -535,13 +519,21 @@ else
             eq.EnombreEam = equipo.EnombreEam;
 
             mensaje = await APIReunionService.PostEquipo(eq);
-            Alertas.Show();
+
+             if (mensaje == "Registro Exitoso")
+                    {
+                        NotificationService.Notify(Notificar.Notificacion("exito", mensaje, ""));
+                    }
+                    else 
+                    {
+                         NotificationService.Notify(Notificar.Notificacion("advertencia", "Atención", mensaje));
+                    }
+           
             idequipoeditar = 0;
         }
         catch (Exception ex)
         {
-             mensaje = "Error al Insertar los datos, Intente de Nuevo";
-             Alertas.Show();
+            NotificationService.Notify(Notificar.Notificacion("error", "Error al Insertar los datos, Intente de Nuevo", ex.Message));
         }
 
     }

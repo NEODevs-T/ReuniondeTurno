@@ -6,35 +6,12 @@
 @inject HttpClient Http
 @inject AuthenticationStateProvider AuthStateProvider
 @inject ILocalStorageService LocalStorage
+@inject NotificationService NotificationService
+
 @attribute [Authorize(Roles = "Admin, AdminChempro, SupIntendente, SupIntendenteGeneral,SuperAdmin")]
 
 
 <h3>Discrepancias</h3>
-
-<div>
-    <BSCol Column="4">
-
-        @if (@mensaje == "Registro Exitoso")
-        {
-            <BSAlert Color="BSColor.Success" IsDismissible="true" HasIcon="true" @ref="Alertas._alertRef" Dismissed="Alertas.Dismissed">
-                @mensaje
-            </BSAlert>
-        }
-        else if (@mensaje == "Error de conexión, Intente de nuevo " | mensaje == "Seleccione el area." | mensaje == "Seleccione la division." | mensaje == "Llene la discrepancia" | mensaje == "Seleccione status" | mensaje == "Seleccione responsable")
-        {
-            <BSAlert Color="BSColor.Warning" IsDismissible="true" HasIcon="true" @ref="Alertas._alertRefWar" Dismissed="Alertas.Dismissed">
-                @mensaje
-            </BSAlert>
-        }
-        else if (@mensaje != "")
-        {
-            <BSAlert Color="BSColor.Warning" IsDismissible="true" HasIcon="true" @ref="Alertas._alertRefErr" Dismissed="Alertas.Dismissed">
-                @mensaje
-            </BSAlert>
-        }
-
-    </BSCol>
-</div>
 
 <p></p>
 
@@ -97,9 +74,6 @@
             </BSInput>
            @* <BSFeedback For="@(() => Reuniondb.Rdarea)" ValidMessage="Correcto." />*@
         </BSCol>
-
-
-
 
     </BSRow>
     <p></p>
@@ -230,8 +204,6 @@
     <BSRow>
         <p></p>
 
-
-
         <BSCol ColumnSmall="2">
             <BSLabel>Responsable</BSLabel>
             <BSInput InputType="InputType.Select" @bind-Value="Reuniondb.IdResReu">
@@ -278,7 +250,8 @@
 
 
     ReuDium Reuniondb = new ReuDium();
-    Alerts Alertas = new Alerts();
+
+    private NotifiRadzen Notificar = new NotifiRadzen();//Logic para crear las noyificaciones radzen
     private string _message = "";
     private DateTime fechahoy, fechatrabajo = DateTime.Today;
     private string fechahoy2;
@@ -306,22 +279,15 @@
         await APIReunionService.GetResReu();
         if (claims[1].Value == "Admin" | claims[1].Value == "SuperAdmin")
         {
-            //await APIReunionService.GetCentros("All");
+           
             await APIReunionService.GetCentrosxEmpresa("All" + claims[10].Value);
-            //await APIReunionService.GetCentrosxEmpresa("All3");
-            //await APIReunionService.GetCentrosxEmpresa("All4");
-
-
-            //if (claims[6].Value == "Conversión" | claims[6].Value == "Molinos")
-            //{
                 await APIReunionService.GetEquiposEAM("All" + claims[10].Value);
-            //}
+           
         }
         else
         {
             
-            await APIReunionService.GetCentrosxEmpresa(claims[11].Value);
-           // await APIReunionService.GetEquiposEAM(claims[6].Value.ToString());
+            await APIReunionService.GetCentrosxEmpresa(claims[11].Value);      
             await APIReunionService.GetEquiposEAM(claims[11].Value.ToString());
 
         }
@@ -337,8 +303,6 @@
         try
         {
             Reuniondb.Rdstatus = "Pendiente";
-            //Reuniondb.IdPais = int.Parse(claims[9].Value);
-            //Reuniondb.IdEmpresa = int.Parse(claims[10].Value);
             Reuniondb.IdPais = int.Parse(claims.FirstOrDefault(c => c.Type == "IdPais")?.Value);
             Reuniondb.IdEmpresa = int.Parse(claims.FirstOrDefault(c => c.Type == "IdEmpresa")?.Value);
 
@@ -371,19 +335,27 @@
                 {
 
                     mensaje = "Seleccione el area.";
+                     NotificationService.Notify(Notificar.Notificacion("advertencia", mensaje, ""));
+           
                 }
                 else if (Reuniondb.Rddiv is null)
                 {
                     mensaje = "Seleccione la division.";
+                    NotificationService.Notify(Notificar.Notificacion("advertencia", mensaje, ""));
+
                 }
                 else if (Reuniondb.Rddisc is null)
                 {
                     mensaje = "Llene la discrepancia";
+                                         NotificationService.Notify(Notificar.Notificacion("advertencia", mensaje, ""));
+
                 }
 
                 else if (Reuniondb.Rdstatus is null)
                 {
                     mensaje = "Seleccione status";
+                    NotificationService.Notify(Notificar.Notificacion("advertencia", mensaje, ""));
+
                 }
                 else
                 {
@@ -408,7 +380,8 @@
                     equiposfiltro = null;
                     selectedEquipoName = selectedEquipoId = null;
                     fechatrabajo = DateTime.Today;
-                    Alertas.Show();
+
+                    NotificationService.Notify(Notificar.Notificacion("exito", mensaje, ""));
 
                     //await Reset();
                     //Reuniondb = new BdDiv1();
@@ -420,15 +393,13 @@
         }
         catch (Microsoft.EntityFrameworkCore.DbUpdateException ex)
         {
-            mensaje = "Error de conexión de datos. Intente de nuevo ";
-            Alertas.Show();
-
+            NotificationService.Notify(Notificar.Notificacion("advertencia", "Error de conexión", "Error de conexión de datos.Intente de nuevo "));
 
         }
         catch (Exception ex)
         {
-            mensaje = "Error inesperado. " + ex.Message;
-            Alertas.Show();
+            NotificationService.Notify(Notificar.Notificacion("error", "Error inesperado.",  ex.Message));
+           
         }
 
 
@@ -472,17 +443,7 @@
         selectedEquipoName = equiposfiltro!.First(c => c.EcodEquiEam.Equals(selectedEquipoId)).EnombreEam;
         equiposfiltro = null;
     }
-    //protected async Task BuscarLineas(EventArgs e)
-    //{
 
-
-    //    if (IdDiv!= 0)
-    //    {
-
-    //        await APIReunionService.GetLineas(IdDiv.Value);
-
-    //    }
-    //}
     protected async Task BuscarLineas(ChangeEventArgs e)
     {
 

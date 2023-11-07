@@ -7,39 +7,6 @@
 @inject ILocalStorageService LocalStorage
 
 <h3>Editar Discrepancia</h3>
-<div>
-    <BSCol Column="4">
-
-       
-
-        @if (mensaje == "La fecha de trabajo no puede ser menor a la fecha de reunión.")
-        {
-            <BSAlert Color="BSColor.Danger" IsDismissible="true" HasIcon="true" @ref="Alertas._alertRef" Dismissed="Alertas.Dismissed">
-                @mensaje
-            </BSAlert>
-        }
-        @if(mensaje=="Alcanzó el límite de cambios de Fecha de Trabajo.")
-        {
-            <BSAlert Color="BSColor.Danger" IsDismissible="true" HasIcon="true" @ref="Alertas._alertRef" Dismissed="Alertas.Dismissed">
-                @mensaje
-            </BSAlert>
-        }       
-        @if (mensaje == "No se puede cerrar sin Plan de Acción.")
-        {
-            <BSAlert Color="BSColor.Danger" IsDismissible="true" HasIcon="true" @ref="Alertas._alertRef" Dismissed="Alertas.Dismissed">
-                @mensaje
-            </BSAlert>
-        }
-        @if (mensaje == "Ocurrió un error recargue la página.")
-        {
-            <BSAlert Color="BSColor.Danger" IsDismissible="true" HasIcon="true" @ref="Alertas._alertRef" Dismissed="Alertas.Dismissed">
-                @mensaje
-            </BSAlert>
-        }
-
-    </BSCol>
-</div>
-
 
 <h4></h4>
 <AuthorizeView Roles="Admin,AdminChempro, SupIntendente">
@@ -223,7 +190,7 @@
                 <BSCol ColumnSmall="2">
                     <BSLabel>Status</BSLabel>
                     <BSInput InputType="InputType.Select" @bind-Value="DiscForm.Rdstatus">
-                        
+
                         @if (tipo == 0 | tipo == 2)
                         {
                             <option value="Listo">Listo</option>
@@ -400,7 +367,7 @@
                         <BSCol ColumnSmall="2">
                             <BSLabel>Status</BSLabel>
                             <BSInput InputType="InputType.Select" @bind-Value="DiscForm.Rdstatus">
-                              
+
                                 @if (tipo == 0 | tipo == 2)
                                 {
                                     <option value="Listo">Listo</option>
@@ -436,7 +403,7 @@
                             <BSCol ColumnSmall="2">
                                 <BSLabel>Status</BSLabel>
                                 <BSInput InputType="InputType.Select" @bind-Value="DiscForm.Rdstatus">
-                                    
+
                                     @if (tipo == 0 | tipo == 2)
                                     {
                                         <option value="Listo">Listo</option>
@@ -506,11 +473,11 @@
                 @foreach (var d in CambiosFecha)
                 {
                     <BSTR>
-                        <BSTD>@(CambiosFecha.IndexOf(d)+1)</BSTD>
-                        <BSTD>@d.Cffec.ToString("yyyy/MM/dd")</BSTD>
-                        <BSTD>@d.CffecNew.ToString("yyyy/MM/dd")</BSTD>
-                        <BSTD>@d.Cfuser</BSTD>
-                    </BSTR>
+                        <BSTD>@(CambiosFecha.IndexOf(d) + 1)</BSTD>
+                            <BSTD>@d.Cffec.ToString("yyyy/MM/dd")</BSTD>
+                            <BSTD>@d.CffecNew.ToString("yyyy/MM/dd")</BSTD>
+                            <BSTD>@d.Cfuser</BSTD>
+                        </BSTR>
                 }
             </BSTBody>
         </BSTable>
@@ -526,11 +493,11 @@
     [Parameter]
     public string? f1 { get; set; }
     [Parameter]
-    public string? f2 { get; set; }    
+    public string? f2 { get; set; }
     [Parameter]
     public string? est { get; set; }
 
-    string _message = "", mensaje = "Ocurrió un error al registrar la información. Intente de nuevo";
+    string _message = "";
     bool cambio = true;
 
     ReuDium DiscForm = new ReuDium();//Formulario para editar, la discrepancia
@@ -539,7 +506,7 @@
 
     List<CambFec> CambiosFecha = new List<CambFec>();//Lista para  cambio de fecha.
 
-    private Alerts Alertas = new Alerts();
+    private NotifiRadzen Notificar = new NotifiRadzen();//Logic para crear las noyificaciones radzen
 
     private DateTime fechahoy, fechatrabajo = DateTime.Today;
     private string fechahoy2, Emp = "";//Empresa
@@ -597,22 +564,23 @@
     {
         try
         {
-            mensaje = "";
+
 
             if (DiscForm.RdfecTra.Date >= DiscForm.RdfecReu.Date & (int)tipo == 1 | (int)tipo == 0 | (int)tipo == 2)
             {
-                if (CambiosFecha.Count() >= 3 & camFec != DiscForm.RdfecTra ){
-
-                    mensaje = "Alcanzó el límite de cambios de Fecha de Trabajo.";
+                if (CambiosFecha.Count() >= 3 & camFec != DiscForm.RdfecTra)
+                {
+                    NotificationService.Notify(Notificar.Notificacion("error", "Atención", "Alcanzó el límite de cambios de Fecha de Trabajo."));
                 }
                 else if (String.IsNullOrEmpty(DiscForm.RdplanAcc) & DiscForm.Rdstatus == "Cerrado")
                 {
-                    mensaje = "No se puede cerrar sin Plan de Acción.";
+                    NotificationService.Notify(Notificar.Notificacion("advertencia", "Atención", "No se puede cerrar sin Plan de Acción."));
                 }
                 else
                 {
 
                     //cambio = false;
+
                     cambio = await DbReunionService.UpdateDiscrepancia(DiscForm, (int)Id, (int)tipo, f1, f2, est);
 
                     if (camStat != DiscForm.Rdstatus & cambio == true)
@@ -638,44 +606,26 @@
 
             else
             {
-
-                mensaje = "La fecha de trabajo no puede ser menor a la fecha de reunión.";
+                NotificationService.Notify(Notificar.Notificacion("advertencia", "Revise los datos", "La fecha de trabajo no puede ser menor a la fecha de reunión."));
 
             }
 
-            if (cambio ==false)
+            if (cambio == false)
             {
-                
-             
-                NotificationService.Notify(new NotificationMessage
-                    {
-                        Severity = NotificationSeverity.Warning,
-                        Style = " position: relative;",
-                        Duration = 5000,
-                        Summary = "Falló el registro, intente de nuevo.",
-                        Detail = ""
-                    });
-                   
-               
+                NotificationService.Notify(Notificar.Notificacion("advertencia", "Falló el registro, intente de nuevo.", "Si el problema persiste,  recargue la página."));
+
             }
 
         }
         catch (Exception ex)
         {
-            mensaje = "";
 
-            NotificationService.Notify(new NotificationMessage
-                {
-                    Severity = NotificationSeverity.Warning,
-                    Style = " position: relative;",
-                    Duration = 5000,
-                    Summary = "Ocurrió un error inesperado.",
-                    Detail = "Por favor,  recargue la página."
-                });
+            NotificationService.Notify(Notificar.Notificacion("error", "Ocurrió un error inesperado.", "Por favor,  recargue la página."));//LLamar notificacion con el objeto de logic
+
         }
 
     }
 
 
-    
+
 }

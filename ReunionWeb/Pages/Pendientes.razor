@@ -30,11 +30,12 @@
         <div class="loader"></div>
     }
     else
-    {@error
+    {
+        @error
 
 
         <BSRow>
-            <BSCol Column="3" ColumnSmall="2">
+            <BSCol Column="3">
                 <BSLabel>Centro</BSLabel>
                 <BSInput InputType="InputType.Select" @bind-Value="IdCentro">
                     <option value=0>Seleccione</option>
@@ -46,7 +47,7 @@
             </BSCol>
 
 
-            <BSCol Column="3" ColumnSmall="2">
+            <BSCol Column="3">
                 <BSLabel>División</BSLabel>
                 <BSInput InputType="InputType.Select" @bind-Value="IdDiv">
                     <option value=0>Seleccione</option>
@@ -64,7 +65,7 @@
             </BSCol>
             @if (DbReunionService.reudiatablas.Count() > 0 && dataIsLoaded == 2)
             {
-                <BSCol Column="3" ColumnSmall="2">
+                <BSCol Column="3">
                     <BSLabel>Línea</BSLabel>
                     <BSInput InputType="InputType.Select" @bind-Value="NombreLinea">
                         <option value="Todo">Todo</option>
@@ -80,32 +81,9 @@
                         }
                     </BSInput>
                 </BSCol>
+
             }
-
-            @*
-        <BSCol Column="3" ColumnSmall="2">
-        <BSLabel> Desde</BSLabel>
-        <BSInput InputType="InputType.Date" @bind-Value="fecha1" />
-        </BSCol>
-
-        <BSCol Column="3" ColumnSmall="2">
-        <BSLabel>Hasta</BSLabel>
-        <BSInput InputType="InputType.Date" @bind-Value="fecha2" />
-        </BSCol>*@
-
-            <BSCol ColumnSmall="1" Column="2">
-                <BSLabel>Código</BSLabel>
-                <BSInput InputType="InputType.Select" @bind-Value="Codigo">
-                    <option value="Todo">Todo</option>
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                    <option value="4">4</option>
-                    <option value="5">5</option>
-                </BSInput>
-            </BSCol>
-
-            <BSCol ColumnSmall="2" Column="3">
+            <BSCol Column="3">
                 <BSLabel>Estado</BSLabel>
                 <BSInput InputType="InputType.Select" @bind-Value="Status">
                     <option value="Total Pendiente">Total Pendiente</option>
@@ -117,14 +95,38 @@
                 </BSInput>
             </BSCol>
 
+
+            
+            @*
+        <BSCol Column="3" ColumnSmall="2">
+        <BSLabel> Desde</BSLabel>
+        <BSInput InputType="InputType.Date" @bind-Value="fecha1" />
+        </BSCol>
+
+        <BSCol Column="3" ColumnSmall="2">
+        <BSLabel>Hasta</BSLabel>
+        <BSInput InputType="InputType.Date" @bind-Value="fecha2" />
+        </BSCol>*@
         </BSRow>
-        <p>
-        </p>
+        <p></p>
         <BSRow>
 
-            <BSCol ColumnSmall="2" Column="1">
+            <BSCol Column="3">
+                <BSLabel>Código</BSLabel>
+                <BSInput InputType="InputType.Select" @bind-Value="Codigo">
+                    <option value="Todo">Todo</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                </BSInput>
+            </BSCol>
+          
+
+            <BSCol Column="3">
                 <BSRow>
-                    <BSLabel>  Filtro Fecha de Trabajo</BSLabel>
+                    <BSLabel>  Ordenar </BSLabel>
                 </BSRow>
                 <BSInputRadio CheckedValue="@("2")" @bind-Value="tipoconsulta" IsToggle="true" Size="Size.ExtraSmall" Color="BSColor.Success" IsOutlined="true">
                     Fecha Trabajo
@@ -132,9 +134,9 @@
                 </BSInputRadio>
             </BSCol>
 
-            <BSCol ColumnSmall="2" Column="1">
+            <BSCol Column="3">
                 <BSRow>
-                    <BSLabel>  Filtro Fecha de Reunión</BSLabel>
+                    <BSLabel>  Ordenar</BSLabel>
                 </BSRow>
                 <BSInputRadio CheckedValue="@("0")" @bind-Value="tipoconsulta" IsToggle="true" Size="Size.ExtraSmall" Color="BSColor.Success" IsOutlined="true">
                     Fecha Reunión
@@ -143,31 +145,34 @@
             </BSCol>
 
 
-            <BSCol ColumnSmall="2" Column="2">
+            <BSCol Column="3">
                 <BSRow>
                     <BSLabel>Buscar</BSLabel>
                 </BSRow>
                 <BSButton IsOutlined Color="BSColor.Success" Size="Size.ExtraSmall" @onclick="Get">  Consultar <span class="oi oi-check"></span></BSButton>
                 </BSCol>
-                @if (DbReunionService.reudiatablas.Count() > 0 && dataIsLoaded == 2)
+    </BSRow>
+        <p></p>
+        <BSRow>
+            @if (DbReunionService.reudiatablas.Count() > 0 && dataIsLoaded == 2)
             {
 
-                
-                    <BSCol Column="3" ColumnSmall="2">
-                        <BSLabel>Responsable</BSLabel>
-                        <BSInput InputType="InputType.Select" @bind-Value="idrespo">
-                            <option value=0>Todo</option>
-                            @foreach (var d in APIReunionService.resporeu)
-                            {
 
-                                <option value="@d.IdResReu">@d.Rrnombre</option>
+                <BSCol Column="3">
+                    <BSLabel>Responsable</BSLabel>
+                    <BSInput InputType="InputType.Select" @bind-Value="idrespo">
+                        <option value=0>Todo</option>
+                        @foreach (var d in APIReunionService.resporeu)
+                        {
 
-                            }
-                        </BSInput>
-                    </BSCol>
-                
+                            <option value="@d.IdResReu">@d.Rrnombre</option>
 
-                <BSCol ColumnSmall="2">
+                        }
+                    </BSInput>
+                </BSCol>
+
+
+                <BSCol Column="2">
                     <BSRow>
                         <BSLabel>Imprimir</BSLabel>
                     </BSRow>
@@ -185,9 +190,9 @@
 
 @if (DbReunionService.reudiatablas.Count() > 0 && dataIsLoaded == 2)
 {
+    
 
-
-    <BSTable IsResponsive="true" IsStriped="true" IsBordered="true">
+    <BSTable  IsStriped="true" IsBordered="true">
         <BSTHead Class="cabecera">
             <BSTR>
 
@@ -238,85 +243,85 @@
         {*@
                     @if (NombreLinea == "Todo" | NombreLinea == d.Rdarea)
                     {
-                        @if(idrespo==0 | idrespo==d.IdResReu)
+                        @if (idrespo == 0 | idrespo == d.IdResReu)
                         {
-                        <BSTR>
-                            @*<BSTD>@d.IdReuDia</BSTD>*@
-                            @*Centro para validar el comedor*@
-                            @if (CentroComedor == 11)
-                            {
-                                @if (APIReunionService.equiposlinea.Any(e => e.EcodEquiEam == d.RdcodEq) is true)
+                            <BSTR>
+                                @*<BSTD>@d.IdReuDia</BSTD>*@
+                                @*Centro para validar el comedor*@
+                                @if (CentroComedor == 11)
                                 {
-
-
-                                    @foreach (var eq in APIReunionService.equiposlinea)
+                                    @if (APIReunionService.equiposlinea.Any(e => e.EcodEquiEam == d.RdcodEq) is true)
                                     {
 
-                                        if (eq.EcodEquiEam == d.RdcodEq)
+
+                                        @foreach (var eq in APIReunionService.equiposlinea)
                                         {
-                                            <BSTD>@eq.EnombreEam</BSTD>
+
+                                            if (eq.EcodEquiEam == d.RdcodEq)
+                                            {
+                                                <BSTD>@eq.EnombreEam</BSTD>
+
+                                            }
+
 
                                         }
-
+                                    }
+                                    else
+                                    {
+                                        <BSTD>No hay desctripción.</BSTD>
 
                                     }
                                 }
                                 else
                                 {
-                                    <BSTD>No hay desctripción.</BSTD>
-
+                                    <BSTD>@d.Rdarea</BSTD>
+                                    <BSTD>@d.IdksfNavigation.KsfNombre</BSTD>
                                 }
-                            }
-                            else
-                            {
-                                <BSTD>@d.Rdarea</BSTD>
-                                <BSTD>@d.IdksfNavigation.KsfNombre</BSTD>
-                            }
 
-                            <BSTD>@d.RdcodEq</BSTD>
-                            <BSTD ColSpan="4">@d.Rddisc.ToUpperInvariant()</BSTD>
-                            <BSTD>@d.RdcodDis</BSTD>
-                            <BSTD Class="textotabla">@d.RdplanAcc</BSTD>
-                            <BSTD>@d.Rdtiempo</BSTD>
+                                <BSTD>@d.RdcodEq</BSTD>
+                                <BSTD ColSpan="4">@d.Rddisc.ToUpperInvariant()</BSTD>
+                                <BSTD>@d.RdcodDis</BSTD>
+                                <BSTD Class="textotabla">@d.RdplanAcc</BSTD>
+                                <BSTD>@d.Rdtiempo</BSTD>
 
-                            @if (@d.IdResReuNavigation.Rrnombre == "Por Definir")
-                            {
-                                <BSTD Class="Definir">@d.IdResReuNavigation.Rrnombre </BSTD>
-                            }
-                            else
-                            {
-                                <BSTD>@d.IdResReuNavigation.Rrnombre </BSTD>
-                            }
+                                @if (@d.IdResReuNavigation.Rrnombre == "Por Definir")
+                                {
+                                    <BSTD Class="Definir">@d.IdResReuNavigation.Rrnombre </BSTD>
+                                }
+                                else
+                                {
+                                    <BSTD>@d.IdResReuNavigation.Rrnombre </BSTD>
+                                }
 
-                            @if (@d.Rdstatus == "Listo")
-                            {
-                                <BSTD Class="listo">@d.Rdstatus</BSTD>
-                            }
-                            else if (@d.Rdstatus == "Cerrado")
-                            {
-                                <BSTD Class="Cerrado">@d.Rdstatus</BSTD>
-                            }
-                            else
-                            {
-                                <BSTD Class="pendiente">@d.Rdstatus</BSTD>
-                            }
-                            <BSTD>@d.Rdodt</BSTD>
-                            <BSTD>@d.RdfecReu.ToString("dd/MM/yyyy")</BSTD>
-                            <BSTD>@d.RdfecTra.ToString("dd/MM/yyyy")</BSTD>
-                            <BSTD>
-                                <BSRow>
-                                    <BSCol>
-                                        <button class="btn btn-success" @onclick="(() => Editar(d.IdReuDia))"><i class="oi oi-pencil"></i></button>
-                                    </BSCol>
-                                    <BSCol>
-                                        @if (UsrAdmin != "")
-                                        {
-                                            <BSButton Color="BSColor.Primary" IsOutlined @onclick="(() => GetHistory(d.IdReuDia))" Target="History"><i class="oi oi-eye"></i></BSButton>
-                                        }
-                                    </BSCol>
-                                </BSRow>
-                            </BSTD>
-                        </BSTR>
+                                @if (@d.Rdstatus == "Listo")
+                                {
+                                    <BSTD Class="listo">@d.Rdstatus</BSTD>
+                                }
+                                else if (@d.Rdstatus == "Cerrado")
+                                {
+                                    <BSTD Class="Cerrado">@d.Rdstatus</BSTD>
+                                }
+                                else
+                                {
+                                    <BSTD Class="pendiente">@d.Rdstatus</BSTD>
+                                }
+                                <BSTD>@d.Rdodt</BSTD>
+                                <BSTD>@d.RdfecReu.ToString("dd/MM/yyyy")</BSTD>
+                                <BSTD>@d.RdfecTra.ToString("dd/MM/yyyy")</BSTD>
+                                <BSTD>
+                                    <BSRow>
+                                        <BSCol>
+                                            <button class="btn btn-success" @onclick="(() => Editar(d.IdReuDia))"><i class="oi oi-pencil"></i></button>
+                                        </BSCol>
+                                        <BSCol>
+                                            @if (UsrAdmin != "")
+                                            {
+                                                <BSButton Color="BSColor.Primary" IsOutlined @onclick="(() => GetHistory(d.IdReuDia))" Target="History"><i class="oi oi-eye"></i></BSButton>
+                                            }
+                                        </BSCol>
+                                    </BSRow>
+                                </BSTD>
+                            </BSTR>
                         }
                     }
                 }
@@ -444,8 +449,6 @@ else if (dataIsLoaded == 2 && DbReunionService.reudiatablas.Count() == 0)
 
     private int CentroComedor;//Variable para verificar si es el comedor venezuela;
 
-    //private string Div { get; set; } //Centro
-    //private string Division { get; set; } //División
 
     private string Codigo { get; set; } = "Todo"; //Codigo
     private string Status { get; set; } = "Total Pendiente"; //Status
@@ -480,7 +483,7 @@ else if (dataIsLoaded == 2 && DbReunionService.reudiatablas.Count() == 0)
         fecha2 = DateTime.Now;
         await CreateData();
         //IdCentro = int.Parse(claims[11].Value);
-        //IdDiv = int.Parse(claims[12].Value); 
+        //IdDiv = int.Parse(claims[12].Value);
 
         IdCentro = int.Parse(claims.FirstOrDefault(c => c.Type.Contains("IdCentro"))?.Value);
         IdDiv = int.Parse(claims.FirstOrDefault(c => c.Type.Contains("IdDiv"))?.Value);
@@ -548,17 +551,17 @@ else if (dataIsLoaded == 2 && DbReunionService.reudiatablas.Count() == 0)
                 //await DbReunionService.GetPendientes(Div, Division, fecha1, fecha2, tipoconsulta);
                 await DbReunionService.GetPendientes(IdCentro.ToString(), IdDiv.ToString(), fecha1, fecha2, tipoconsulta, Status);
                 dataIsLoaded = 2;
-                IdCentro = 0;
-                IdDiv = 0;
+                //IdCentro = 0;
+                //IdDiv = 0;
             }
-            
+
         }
         else
         {
             error = "Seleccione los valores en las listas*";
         }
-    } 
-    protected  void DivReset()
+    }
+    protected void DivReset()
     {
         IdDiv = 0;
     }
