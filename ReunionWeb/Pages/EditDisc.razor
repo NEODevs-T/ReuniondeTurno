@@ -20,7 +20,7 @@
             </BSCol>
             <BSRow>
 
-                <BSCol Column="3">
+                <BSCol Column="2">
                     <BSLabel>Centro</BSLabel>
                     <BSInput InputType="InputType.Text" IsDisabled @bind-Value="DiscForm.Rdcentro" />
 
@@ -43,7 +43,7 @@
                 </BSCol>
 
 
-                <BSCol Column="2">
+                <BSCol Column="3">
                     <BSLabel>Ksf</BSLabel>
                     <BSInput InputType="InputType.Select" @bind-Value="DiscForm.Idksf">
 
@@ -57,7 +57,7 @@
                     <BSFeedback For="@(() => DiscForm.Idksf)" ValidMessage="Correcto." />
                 </BSCol>
 
-                <BSCol Column="2">
+                <BSCol Column="3">
                     <BSLabel>C. Equipo</BSLabel>
                     <BSInput InputType="InputType.Text" @bind-Value="DiscForm.RdcodEq" ValidateOnInput="true" />
                     <BSFeedback For="@(() => DiscForm.RdcodEq)" ValidMessage="Correcto." />
@@ -136,8 +136,9 @@
                         <option value="">Seleccione...</option>
                         @foreach (var d in APIReunionService.resporeu)
                         {
-                            <option value="@d.IdResReu">@d.Rrnombre @d.Rrdesc</option>
+                            <option value="@d.IdResReu">@d.Rrnombre</option>
                         }
+                    
                     </BSInput>
                     <BSFeedback For="@(() => DiscForm.IdResReu)" ValidMessage="Correcto." />
                 </BSCol>
@@ -340,7 +341,7 @@
                         <option value="">Seleccione...</option>
                         @foreach (var d in APIReunionService.resporeu)
                         {
-                            <option value="@d.IdResReu">@d.Rrnombre @d.Rrdesc</option>
+                            <option value="@d.IdResReu">@d.Rrnombre</option>
                         }
                     </BSInput>
 
@@ -537,6 +538,7 @@
 
         await APIReunionService.Getksf();
         await APIReunionService.GetResReu();
+        APIReunionService.resporeu = APIReunionService.resporeu.Where(a => a.Rrdesc == claims.FirstOrDefault(c => c.Type.Contains("Empresa"))?.Value | string.IsNullOrEmpty(a.Rrdesc)).ToList();
     }
 
     async Task Back()

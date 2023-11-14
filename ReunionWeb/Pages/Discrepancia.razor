@@ -17,7 +17,7 @@
 
 <BSForm Model="Reuniondb" Class="boxhome" IsRow="true" Gutters="Gutters.Medium" OnSubmit="Insert" OnReset="Reset">
     <DataAnnotationsValidator />
-    <BSCol ColumnMedium="12">
+    <BSCol ColumnMedium="8">
         @_message
         <BSValidationSummary />
     </BSCol>
@@ -38,7 +38,7 @@
 
 
 
-        <BSCol Column="2">
+        <BSCol Column="3">
             <BSLabel>Division</BSLabel>
             <BSInput InputType="InputType.Select" @bind-Value="IdDiv">
               
@@ -79,7 +79,7 @@
     <p></p>
     <BSRow>
 
-        <BSCol Column="1">
+        <BSCol Column="2">
             <BSRow>
                 <BSLabel>Filtrar: </BSLabel>
             </BSRow>
@@ -170,7 +170,7 @@
       
 
 
-        <BSCol Column="2">
+        <BSCol Column="3">
             <BSLabel>Ksf</BSLabel>
 
             <BSInput InputType="InputType.Select" @bind-Value="Reuniondb.Idksf">
@@ -189,7 +189,7 @@
     </BSRow>
     <p></p>
     <BSRow>
-        <BSCol Column="6">
+        <BSCol Column="9">
             <BSLabel>Discrepancia</BSLabel>
             <BSInput InputType="InputType.Text" @bind-Value="Reuniondb.Rddisc" />
             @*<BSFeedback For="@(() => Reuniondb.Rddisc)" ValidMessage="Correcto." />*@
@@ -204,14 +204,14 @@
     <BSRow>
         <p></p>
 
-        <BSCol ColumnSmall="2">
+        <BSCol Column="3">
             <BSLabel>Responsable</BSLabel>
             <BSInput InputType="InputType.Select" @bind-Value="Reuniondb.IdResReu">
                 <option value="">Seleccione...</option>
 
                 @foreach (var d in APIReunionService.resporeu)
                 {
-                    <option value="@d.IdResReu">@d.Rrnombre @d.Rrdesc</option>
+                    <option value="@d.IdResReu">@d.Rrnombre</option>
                 }
             </BSInput>
            @* <BSFeedback For="@(() => Reuniondb.IdResReu)" ValidMessage="Correcto." />*@
@@ -279,21 +279,22 @@
         await APIReunionService.GetResReu();
         if (claims[1].Value == "Admin" | claims[1].Value == "SuperAdmin")
         {
-           
+
             await APIReunionService.GetCentrosxEmpresa("All" + claims[10].Value);
-                await APIReunionService.GetEquiposEAM("All" + claims[10].Value);
-           
+            await APIReunionService.GetEquiposEAM("All" + claims[10].Value);
+
         }
         else
         {
-            
+
             await APIReunionService.GetCentrosxEmpresa(claims[11].Value);      
             await APIReunionService.GetEquiposEAM(claims[11].Value.ToString());
 
         }
         IdCent = int.Parse(claims.FirstOrDefault(c => c.Type.Contains("IdCentro"))?.Value);
         IdDiv = int.Parse(claims.FirstOrDefault(c => c.Type.Contains("IdDiv"))?.Value);
-
+       
+        APIReunionService.resporeu=APIReunionService.resporeu.Where(a => a.Rrdesc == claims.FirstOrDefault(c => c.Type.Contains("Empresa"))?.Value | string.IsNullOrEmpty(a.Rrdesc)).ToList();
     }
 
     protected async Task Insert(EditContext e)
@@ -428,7 +429,7 @@
         filter = e.Value?.ToString();
         if (filter?.Length > 0)
         {
-            equiposfiltro = APIReunionService.equipos.Where(a => a.EcodEquiEam.Contains(filter)).ToList();
+            equiposfiltro = APIReunionService.equipos.Where(a => a.EcodEquiEam.Contains(filter) | a.EnombreEam.Contains(filter.ToUpper())).ToList();
         }
         else
         {
