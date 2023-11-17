@@ -14,7 +14,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 builder.Services.AddHttpClient();
 builder.Services.AddServerSideBlazor();
-//builder.Services.AddSingleton<APIReunionService>();
+
 builder.Services.AddHttpClient<IAPIReunionService, APIReunionService>(client =>
 {
     client.BaseAddress = new Uri("http://neo.paveca.com.ve/ReunionApi/");
