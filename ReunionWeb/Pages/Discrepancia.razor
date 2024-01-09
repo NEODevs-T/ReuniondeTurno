@@ -33,7 +33,7 @@
                     <option value="@d.IdCentro">@d.Cnom</option>
                 }
             </BSInput>
-           @* <BSFeedback For="@(() => IdCent)" ValidMessage="Correcto." />*@
+          
         </BSCol>
 
 
@@ -54,7 +54,7 @@
                     }
                 }
             </BSInput>
-           @* <BSFeedback For="@(() => IdDiv)" ValidMessage="Correcto." />*@
+         
         </BSCol>
 
 
@@ -72,7 +72,7 @@
                     }
                 }
             </BSInput>
-           @* <BSFeedback For="@(() => Reuniondb.Rdarea)" ValidMessage="Correcto." />*@
+          
         </BSCol>
 
     </BSRow>
@@ -115,7 +115,7 @@
 
 
                     </BSInput>
-                   @* <BSFeedback For="@(() => Reuniondb.RdcodEq)" ValidMessage="Correcto." />*@
+               
                 </BSCol>
 
             }
@@ -124,7 +124,7 @@
                 <BSCol Column="4">
                     <BSLabel>C. Equipo</BSLabel>
                     <BSInput InputType="InputType.Text" @bind-Value="Reuniondb.RdcodEq" />
-                    @*<BSFeedback For="@(() => Reuniondb.RdcodEq)" ValidMessage="Correcto." />*@
+                  
                 </BSCol>
             }
         }
@@ -163,8 +163,7 @@
                         @selectedEquipoName - <strong>@selectedEquipoId</strong>
                     </p>
                 }
-                @*            <BSInput InputType="InputType.Text" @bind-Value="Reuniondb.RdcodEq" />
-            <BSFeedback For="@(() => Reuniondb.RdcodEq)" ValidMessage="Correcto." />*@
+              
             </BSCol>
         }
       
@@ -182,7 +181,7 @@
                 }
 
             </BSInput>
-            @*<BSFeedback For="@(() => Reuniondb.Idksf)" ValidMessage="Correcto." />*@
+          
         </BSCol>
 
 
@@ -192,14 +191,11 @@
         <BSCol Column="9">
             <BSLabel>Discrepancia</BSLabel>
             <BSInput InputType="InputType.Text" @bind-Value="Reuniondb.Rddisc" />
-            @*<BSFeedback For="@(() => Reuniondb.Rddisc)" ValidMessage="Correcto." />*@
+         
         </BSCol>
-
-
     </BSRow>
 
     <p></p>
-
 
     <BSRow>
         <p></p>
@@ -214,11 +210,10 @@
                     <option value="@d.IdResReu">@d.Rrnombre</option>
                 }
             </BSInput>
-           @* <BSFeedback For="@(() => Reuniondb.IdResReu)" ValidMessage="Correcto." />*@
+       
         </BSCol>
 
     </BSRow>
-
 
 
     <p></p>
@@ -227,7 +222,6 @@
     <BSCol Column="12">
         <BSButton Color="BSColor.Success" Size="Size.ExtraSmall" IsSubmit>  Guardar <span class="oi oi-check"></span></BSButton>
         <BSButton Color="BSColor.Primary" Size="Size.ExtraSmall" IsReset>  Nuevo </BSButton>
-
     </BSCol>
 </BSForm>
 
