@@ -29,12 +29,10 @@ namespace ReunionDiaApi.Models
         public virtual DbSet<Pai> Pais { get; set; } = null!;
         public virtual DbSet<RespoReu> RespoReus { get; set; } = null!;
         public virtual DbSet<ReuDium> ReuDia { get; set; } = null!;
-        public virtual DbSet<ReunionDium> ReunionDia { get; set; } = null!;
 
-        //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        //{
-            
-        //}
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -72,8 +70,6 @@ namespace ReunionDiaApi.Models
 
                 entity.ToTable("CambFec");
 
-                entity.Property(e => e.IdCambFec).ValueGeneratedOnAdd();
-
                 entity.Property(e => e.Cffec)
                     .HasColumnType("datetime")
                     .HasColumnName("CFFec");
@@ -87,15 +83,11 @@ namespace ReunionDiaApi.Models
                     .IsUnicode(false)
                     .HasColumnName("CFUser");
 
-                entity.Property(e => e.IdReuDia)
-                    .HasMaxLength(10)
-                    .IsFixedLength();
-
-                entity.HasOne(d => d.IdCambFecNavigation)
-                    .WithOne(p => p.CambFec)
-                    .HasForeignKey<CambFec>(d => d.IdCambFec)
+                entity.HasOne(d => d.IdReuDiaNavigation)
+                    .WithMany(p => p.CambFecs)
+                    .HasForeignKey(d => d.IdReuDia)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_CambFec_ReuDia");
+                    .HasConstraintName("FK_CambFec_ReuDia1");
             });
 
             modelBuilder.Entity<CambStat>(entity =>
@@ -136,7 +128,7 @@ namespace ReunionDiaApi.Models
                     .IsUnicode(false)
                     .HasColumnName("CRArea");
 
- 
+                entity.Property(e => e.CRBloque).HasColumnName("CRBloque");
 
                 entity.Property(e => e.Crempresa)
                     .HasMaxLength(50)
@@ -149,10 +141,6 @@ namespace ReunionDiaApi.Models
                     .HasMaxLength(50)
                     .IsUnicode(false)
                     .HasColumnName("CRNombre");
-
-                entity.Property(e => e.CRBloque)
-                   .HasColumnType("int")
-                   .HasColumnName("CRBloque");
             });
 
             modelBuilder.Entity<Centro>(entity =>
@@ -247,16 +235,18 @@ namespace ReunionDiaApi.Models
                     .IsUnicode(false)
                     .HasColumnName("ECodEquiEAM");
 
+                entity.Property(e => e.EdescriEam)
+                    .IsUnicode(false)
+                    .HasColumnName("EDescriEAM");
+
+                entity.Property(e => e.EestaEam)
+                    .HasColumnName("EEstaEAM")
+                    .HasDefaultValueSql("((1))");
+
                 entity.Property(e => e.EnombreEam)
                     .HasMaxLength(200)
                     .IsUnicode(false)
                     .HasColumnName("ENombreEAM");
-
-                entity.Property(e => e.EdescriEam)
-                 .IsUnicode(false)
-                 .HasColumnName("EDescriEAM");
-
-                entity.Property(e => e.EestaEam).HasColumnName("EEstaEAM");
 
                 entity.HasOne(d => d.IdLineaNavigation)
                     .WithMany(p => p.EquipoEams)
@@ -291,7 +281,8 @@ namespace ReunionDiaApi.Models
                 entity.Property(e => e.LcenCos)
                     .HasMaxLength(50)
                     .IsUnicode(false)
-                    .HasColumnName("LCenCos");
+                    .HasColumnName("LCenCos")
+                    .HasDefaultValueSql("((0))");
 
                 entity.Property(e => e.Ldetalle)
                     .HasMaxLength(2000)
@@ -318,7 +309,7 @@ namespace ReunionDiaApi.Models
                     .WithMany(p => p.Lineas)
                     .HasForeignKey(d => d.IdCentro)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_Linea_Centro");
+                    .HasConstraintName("FK_Linea_Centro1");
 
                 entity.HasOne(d => d.IdDivisionNavigation)
                     .WithMany(p => p.Lineas)
@@ -344,17 +335,17 @@ namespace ReunionDiaApi.Models
 
                 entity.ToTable("RespoReu");
 
+                entity.Property(e => e.Rrdesc)
+                    .HasMaxLength(100)
+                    .IsUnicode(false)
+                    .HasColumnName("RRDesc");
+
                 entity.Property(e => e.Rresta).HasColumnName("RREsta");
 
                 entity.Property(e => e.Rrnombre)
                     .HasMaxLength(50)
                     .IsUnicode(false)
                     .HasColumnName("RRNombre");
-
-                entity.Property(e => e.Rrdesc)
-                    .HasMaxLength(100)
-                    .IsUnicode(false)
-                    .HasColumnName("RRDesc");
             });
 
             modelBuilder.Entity<ReuDium>(entity =>
@@ -363,8 +354,9 @@ namespace ReunionDiaApi.Models
 
                 entity.Property(e => e.IdReuDia).HasComment("id tabla");
 
+                entity.Property(e => e.IdEmpresa).HasDefaultValueSql("((1))");
+
                 entity.Property(e => e.IdPais).HasComment("Id del pais");
-                entity.Property(e => e.IdEmpresa);
 
                 entity.Property(e => e.Idksf).HasComment("Id del afectado");
 
@@ -450,11 +442,10 @@ namespace ReunionDiaApi.Models
                     .HasColumnName("RDTiempo")
                     .HasComment("Tiempo de reparación de la discrepancia.");
 
-                //entity.HasOne(d => d.IdPaisNavigation)
-                //    .WithMany(p => p.ReuDia)
-                //    .HasForeignKey(d => d.IdPais)
-                //    .OnDelete(DeleteBehavior.ClientSetNull)
-                //    .HasConstraintName("FK_ReuDia_Pais");
+                entity.HasOne(d => d.IdEmpresaNavigation)
+                    .WithMany(p => p.ReuDia)
+                    .HasForeignKey(d => d.IdEmpresa)
+                    .HasConstraintName("FK_ReuDia_Empresa");
 
                 entity.HasOne(d => d.IdResReuNavigation)
                     .WithMany(p => p.ReuDia)
@@ -467,86 +458,6 @@ namespace ReunionDiaApi.Models
                     .HasForeignKey(d => d.Idksf)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_ReuDia_KSF");
-
-                entity.HasOne(d => d.IdEmpresaNavigation)
-                 .WithMany(p => p.ReuDia)
-                 .HasForeignKey(d => d.IdEmpresa)
-                 .OnDelete(DeleteBehavior.ClientSetNull)
-                 .HasConstraintName("FK_ReuDia_Empresa");
-            });
-
-            modelBuilder.Entity<ReunionDium>(entity =>
-            {
-                entity.Property(e => e.Id).HasColumnName("ID");
-
-                entity.Property(e => e.AfectadoKsf)
-                    .HasMaxLength(50)
-                    .IsUnicode(false);
-
-                entity.Property(e => e.Area)
-                    .HasMaxLength(50)
-                    .IsUnicode(false);
-
-                entity.Property(e => e.Codigo)
-                    .HasMaxLength(50)
-                    .IsUnicode(false);
-
-                entity.Property(e => e.CodigoEquipo)
-                    .HasMaxLength(50)
-                    .IsUnicode(false)
-                    .HasColumnName("Codigo_equipo");
-
-                entity.Property(e => e.Discrepancia)
-                    .HasMaxLength(250)
-                    .IsUnicode(false);
-
-                entity.Property(e => e.Div)
-                    .HasMaxLength(50)
-                    .IsUnicode(false);
-
-                entity.Property(e => e.Division)
-                    .HasMaxLength(50)
-                    .IsUnicode(false);
-
-                entity.Property(e => e.Fecha).HasColumnType("date");
-
-                entity.Property(e => e.Fecha2)
-                    .HasMaxLength(50)
-                    .IsUnicode(false);
-
-                entity.Property(e => e.FechaTrab)
-                    .HasColumnType("date")
-                    .HasColumnName("Fecha_trab");
-
-                entity.Property(e => e.FechaTrab1)
-                    .HasMaxLength(50)
-                    .IsUnicode(false)
-                    .HasColumnName("Fecha_trab1");
-
-                entity.Property(e => e.OrdenTrabajo)
-                    .HasMaxLength(50)
-                    .IsUnicode(false);
-
-                entity.Property(e => e.PlanDeAccion)
-                    .HasMaxLength(100)
-                    .IsUnicode(false)
-                    .HasColumnName("Plan_de_accion");
-
-                entity.Property(e => e.Produfin)
-                    .HasMaxLength(50)
-                    .IsUnicode(false);
-
-                entity.Property(e => e.Responsable)
-                    .HasMaxLength(50)
-                    .IsUnicode(false);
-
-                entity.Property(e => e.Status)
-                    .HasMaxLength(50)
-                    .IsUnicode(false);
-
-                entity.Property(e => e.Tiempo)
-                    .HasMaxLength(50)
-                    .IsUnicode(false);
             });
 
             OnModelCreatingPartial(modelBuilder);

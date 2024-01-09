@@ -40,50 +40,50 @@ namespace ReunionDiaApi.Controllers
 
 
 
-        //Obtener los datos de la discrepancia a editar
-        [HttpGet("discrepancia/{id}")]
-        public async Task<ActionResult<List<ReunionDium>>> GetEditDiscrepancia(int id)
-        {
-            var disc = await _Neocontext.ReunionDia
-                .FirstOrDefaultAsync(h => h.Id == id);
+        ////Obtener los datos de la discrepancia a editar
+        //[HttpGet("discrepancia/{id}")]
+        //public async Task<ActionResult<List<ReunionDium>>> GetEditDiscrepancia(int id)
+        //{
+        //    var disc = await _Neocontext.ReunionDia
+        //        .FirstOrDefaultAsync(h => h.Id == id);
 
-            if (disc == null)
-            {
-                return NotFound("No se encontro registro");
-            }
-            return Ok(disc);
-        }
-
-
-
-        private async Task<List<ReunionDium>> GetDiscrencacias(string div)
-        {
-
-            string f1 = DateTime.Now.AddDays(-1).ToString("yyyMMdd");
-            string f2 = DateTime.Now.ToString("yyyMMdd");
-            return await _Neocontext.ReunionDia
-             .Where(a => a.Fecha2 == f1 && a.Div == div || a.Fecha2 == f2 && a.Div == div)
-             .OrderByDescending(b => b.Id)
-              .ToListAsync();
-        }
+        //    if (disc == null)
+        //    {
+        //        return NotFound("No se encontro registro");
+        //    }
+        //    return Ok(disc);
+        //}
 
 
 
-        [HttpPost("Discrep")]
-        public async Task<ActionResult<List<ReunionDium>>> InsertDiscrepancia(ReunionDium reudia)
-        {
-            try
-            {
-                _Neocontext.ReunionDia.Add(reudia);
-                await _Neocontext.SaveChangesAsync();
-                return Ok();
-            }
-            catch
-            {
-                return BadRequest();
-            }
+        //private async Task<List<ReunionDium>> GetDiscrencacias(string div)
+        //{
 
-        }
+        //    string f1 = DateTime.Now.AddDays(-1).ToString("yyyMMdd");
+        //    string f2 = DateTime.Now.ToString("yyyMMdd");
+        //    return await _Neocontext.ReunionDia
+        //     .Where(a => a.Fecha2 == f1 && a.Div == div || a.Fecha2 == f2 && a.Div == div)
+        //     .OrderByDescending(b => b.Id)
+        //      .ToListAsync();
+        //}
+
+
+
+        //[HttpPost("Discrep")]
+        //public async Task<ActionResult<List<ReunionDium>>> InsertDiscrepancia(ReunionDium reudia)
+        //{
+        //    try
+        //    {
+        //        _Neocontext.ReunionDia.Add(reudia);
+        //        await _Neocontext.SaveChangesAsync();
+        //        return Ok();
+        //    }
+        //    catch
+        //    {
+        //        return BadRequest();
+        //    }
+
+        //}
 
 
     }

@@ -8,6 +8,7 @@ namespace ReunionDiaApi.Models
         public Empresa()
         {
             Centros = new HashSet<Centro>();
+            ReuDia = new HashSet<ReuDium>();
         }
 
         public int IdEmpresa { get; set; }
@@ -19,6 +20,5 @@ namespace ReunionDiaApi.Models
         public virtual Pai IdPaisNavigation { get; set; } = null!;
         public virtual ICollection<Centro> Centros { get; set; }
         public virtual ICollection<ReuDium> ReuDia { get; set; }
-
     }
 }

@@ -9,17 +9,6 @@
 @inject IJSRuntime IJS
 
 
-<AuthorizeView Roles="Admin">
-
-    <NotAuthorized>
-
-    </NotAuthorized>
-
-    <Authorized>
-
-    </Authorized>
-</AuthorizeView>
-
 
 <h3>Asuntos</h3>
 
@@ -115,11 +104,11 @@
                 <BSLabel>Código</BSLabel>
                 <BSInput InputType="InputType.Select" @bind-Value="Codigo">
                     <option value="Todo">Todo</option>
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                    <option value="4">4</option>
-                    <option value="5">5</option>
+                    <option value="1">1- En Curso</option>
+                    <option value="2">2- Próxima Parada</option>
+                    <option value="3">3- Falta Repuesto</option>
+                    <option value="4">4- Falta de Personal</option>
+                    <option value="5">5- Eq. no Disponible</option>
                 </BSInput>
             </BSCol>
           
@@ -135,9 +124,7 @@
             </BSCol>
 
             <BSCol Column="3">
-                <BSRow>
-                    <BSLabel>  Ordenar</BSLabel>
-                </BSRow>
+                <BSLabel>  Ordenar </BSLabel>
                 <BSInputRadio CheckedValue="@("0")" @bind-Value="tipoconsulta" IsToggle="true" Size="Size.ExtraSmall" Color="BSColor.Success" IsOutlined="true">
                     Fecha Reunión
                     <span class="oi oi-people"></span>
@@ -150,14 +137,16 @@
                     <BSLabel>Buscar</BSLabel>
                 </BSRow>
                 <BSButton IsOutlined Color="BSColor.Success" Size="Size.ExtraSmall" @onclick="Get">  Consultar <span class="oi oi-check"></span></BSButton>
-                </BSCol>
-    </BSRow>
+             </BSCol>
+
+           
+        </BSRow>
         <p></p>
+
+        @*Filltros extra*@
         <BSRow>
             @if (DbReunionService.reudiatablas.Count() > 0 && dataIsLoaded == 2)
             {
-
-
                 <BSCol Column="3">
                     <BSLabel>Responsable</BSLabel>
                     <BSInput InputType="InputType.Select" @bind-Value="idrespo">
@@ -171,13 +160,34 @@
                     </BSInput>
                 </BSCol>
 
+                <BSCol Column="3">
+                    <BSLabel>ODT</BSLabel>
+                    <BSInput InputType="InputType.Text" @bind-Value="BuscarOdt" />
+
+                </BSCol>
+
+                <BSCol Column="3">
+                    <BSLabel>Ksf</BSLabel>
+
+                    <BSInput InputType="InputType.Select" @bind-Value="IdKsf">
+
+                        <option value="0">Todo</option>
+                        @foreach (var d in APIReunionService.ksfs)
+                        {
+                            <option value="@d.Idksf">@d.KsfNombre</option>
+                        }
+
+                    </BSInput>
+                    @*<BSFeedback For="@(() => Reuniondb.Idksf)" ValidMessage="Correcto." />*@
+                </BSCol>
+
 
                 <BSCol Column="2">
                     <BSRow>
                         <BSLabel>Imprimir</BSLabel>
                     </BSRow>
                     <BSButton IsOutlined Color="BSColor.Success" Size="Size.ExtraSmall" @onclick="PrintDocument">  <span class="oi oi-print"></span></BSButton>
-                    </BSCol>
+                </BSCol>
 
             }
         </BSRow>
@@ -252,7 +262,6 @@
                                 {
                                     @if (APIReunionService.equiposlinea.Any(e => e.EcodEquiEam == d.RdcodEq) is true)
                                     {
-
 
                                         @foreach (var eq in APIReunionService.equiposlinea)
                                         {
@@ -445,7 +454,9 @@ else if (dataIsLoaded == 2 && DbReunionService.reudiatablas.Count() == 0)
 
     private int IdCentro { get; set; } //id del Centro
     private int IdDiv { get; set; } //id de la division
+    private int IdKsf { get; set; } //id del Ksf
     private string NombreLinea { get; set; } = "Todo";//id de la linea
+    private string BuscarOdt { get; set; } = "";//Odt
 
     private int CentroComedor;//Variable para verificar si es el comedor venezuela;
 
@@ -534,8 +545,8 @@ else if (dataIsLoaded == 2 && DbReunionService.reudiatablas.Count() == 0)
 
         await APIReunionService.Getksf();
         await APIReunionService.GetResReu();
+        APIReunionService.resporeu = APIReunionService.resporeu.Where(a => a.Rrdesc == claims.FirstOrDefault(c => c.Type.Contains("Empresa"))?.Value | string.IsNullOrEmpty(a.Rrdesc)).ToList();
         DbReunionService.reudiatablas = new List<ReuDium>();
-
 
     }
 
