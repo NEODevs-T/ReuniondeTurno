@@ -34,9 +34,7 @@
                 </BSInput>
             </BSCol>
 
-
-
-            <BSCol Column="3" ColumnSmall="2">
+            <BSCol Column="3" >
                 <BSLabel>División</BSLabel>
                 <BSInput InputType="InputType.Select" @bind-Value="IdDiv">
                     <option value="">Seleccione</option>
@@ -53,18 +51,18 @@
                 </BSInput>
             </BSCol>
 
-            <BSCol ColumnSmall="1">
+            <BSCol Column="3">
                 <BSLabel>Código</BSLabel>
                 <BSInput InputType="InputType.Select" @bind-Value="Codigo">
                     <option value="Todo">Todo</option>
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                    <option value="4">4</option>
-                    <option value="5">5</option>
+                    <option value="1">1- En Curso</option>
+                    <option value="2">2- Próxima Parada</option>
+                    <option value="3">3- Falta Repuesto</option>
+                    <option value="4">4- Falta de Personal</option>
+                    <option value="5">5- Eq. no Disponible</option>
                 </BSInput>
             </BSCol>
-            <BSCol ColumnSmall="2">
+            <BSCol Column="2">
                 <BSRow>
                     <BSLabel>Aceptar</BSLabel>
                 </BSRow>
@@ -78,44 +76,27 @@
                     </BSRow>
                     <BSButton IsOutlined Color="BSColor.Success" Size="Size.ExtraSmall" @onclick="PrintDocument">  <span class="oi oi-print"></span></BSButton>
                     </BSCol>
-
             }
-
-
         </BSRow>
     }
 
 </BSContainer>
 
 <p>
-
 </p>
 
 @if (DbReunionService.reudiatablas.Count() > 0 && dataIsLoaded == 2)
 {
-   
     <BSContainer>
-
 
         <BSTable IsResponsive="true" IsStriped="true" IsBordered="true">
             <BSTHead Class="cabecera">
                 <BSTR>
 
                     @*<BSTD>Id</BSTD>*@
-                    @*Centro para validar el comedor*@
-                    @if (CentroComedor == 11)
-                    {
-                        <BSTD>N. Equipo</BSTD>
-                    }
-                    else
-                    {
-
-                        @*  <BSTD>División</BSTD>*@
-                        <BSTD>Área</BSTD>
-                        <BSTD>Ksf</BSTD>
-
-                    }
-
+             
+                    <BSTD>Área</BSTD>
+                    <BSTD>Ksf</BSTD>
                     <BSTD>Código de Equipo</BSTD>
                     <BSTD ColSpan="4">Discrepancia</BSTD>
                     <BSTD>Código</BSTD>
@@ -131,7 +112,6 @@
 
                     }
 
-
                 </BSTR>
             </BSTHead>
             <BSTBody>
@@ -143,44 +123,12 @@
                         @if (Codigo == d.RdcodDis | Codigo == "Todo")
                         {
 
-
                             <BSTR>
 
-                                @*<BSTD>@d.IdReuDia</BSTD>*@
-                                @*Centro para validar el comedor*@
-                                @if (CentroComedor == 11)
-                                {
-                                    @if (APIReunionService.equiposlinea.Any(e => e.EcodEquiEam == d.RdcodEq) is true)
-                                    {
-
-
-                                        @foreach (var eq in APIReunionService.equiposlinea)
-                                        {
-
-                                            if (eq.EcodEquiEam == d.RdcodEq)
-                                            {
-                                                <BSTD>@eq.EnombreEam</BSTD>
-
-                                            }
-
-
-                                        }
-                                    }
-                                    else
-                                    {
-                                        <BSTD>No hay desctripción.</BSTD>
-
-                                    }
-
-                                }
-                                else
-                                {
+                                @*<BSTD>@d.IdReuDia</BSTD>*@                         
                                     @*  <BSTD>@d.Rddiv</BSTD>*@
-                                    <BSTD>@d.Rdarea</BSTD>
-                                    <BSTD>@d.IdksfNavigation.KsfNombre</BSTD>
-                                }
-
-
+                                <BSTD>@d.Rdarea</BSTD>
+                                <BSTD>@d.IdksfNavigation.KsfNombre</BSTD>                            
                                 <BSTD>@d.RdcodEq</BSTD>
                                 <BSTD ColSpan="4">@d.Rddisc.ToUpper()</BSTD>
                                 <BSTD>@d.RdcodDis</BSTD>
@@ -264,8 +212,8 @@ else if (dataIsLoaded == 2 && DbReunionService.reunionditablas.Count() == 0)
     private int IdDiv { get; set; } //id de la division
     private int CentroComedor;//Variable para verificar si es el comedor venezuela;
 
-    private string Div { get; set; } //Centro
-    private string Division { get; set; } //División
+    //private string Div { get; set; } //Centro
+    //private string Division { get; set; } //División
 
 
     private string Codigo { get; set; } = "Todo"; //Codigo
@@ -287,10 +235,10 @@ else if (dataIsLoaded == 2 && DbReunionService.reunionditablas.Count() == 0)
     protected override async Task OnInitializedAsync()
     {
         await CreateData();
-        Rol = claims[1].Value;
+        Rol =claims.FirstOrDefault(c => c.Type.Contains("role"))?.Value;
 
 
-        if (claims[1].Value == "Admin" | claims[1].Value == "SuperAdmin"| claims[1].Value=="MttoAdmin")
+        if (Rol == "Admin" || Rol == "SuperAdmin" || Rol == "MttoAdmin" || Rol == "SeguridadAdmin")
         {
             // await APIReunionService.GetCentros("All");
             await APIReunionService.GetCentrosxEmpresa("All" + claims[10].Value);
@@ -300,13 +248,7 @@ else if (dataIsLoaded == 2 && DbReunionService.reunionditablas.Count() == 0)
             //await APIReunionService.GetCentros(claims[6].Value.ToString());
             await APIReunionService.GetCentrosxEmpresa(claims[11].Value);
         }
-        //Si es el comedor busca los equipos
-        if (claims[11].Value == "11")
-        {
-            CentroComedor = int.Parse(claims[11].Value);
-            await APIReunionService.GetEquiposCentro(claims[11].Value);
 
-        }
         IdCentro = int.Parse(claims[11].Value);
         IdDiv = int.Parse(claims[12].Value);
         await APIReunionService.Getksf();

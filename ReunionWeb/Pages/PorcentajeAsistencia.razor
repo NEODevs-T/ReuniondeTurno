@@ -5,7 +5,8 @@
 @inject HttpClient Http
 @inject AuthenticationStateProvider AuthStateProvider
 @inject ILocalStorageService LocalStorage
-@attribute [Authorize(Roles = "Admin, AdminChempro, SupIntendente, SupIntendenteGeneral, SuperAdmin, MttoAdmin")]
+@inject NotificationService NotificationService
+@attribute [Authorize(Roles = "Admin, AdminChempro, SupIntendente, SupIntendenteGeneral, SuperAdmin, MttoAdmin,SeguridadAdmin")]
 
 
 
@@ -58,10 +59,10 @@
             <BSCol Column="3">
                 <BSRow><BSLabel> Buscar</BSLabel></BSRow>
                 <BSButton IsOutlined Color="BSColor.Success" Size="Size.ExtraSmall" @onclick="Get">   Estadísticas  <span class="oi oi-check"></span></BSButton>
-                </BSCol>
+             </BSCol>
 
 
-                </BSRow>
+         </BSRow>
 
     }
 
@@ -95,18 +96,19 @@
         </BSCol>
     </BSRow>
     <p></p>
-    if (Lista == 0)
-    {
+   
         @if (APIReunionService.asistenreus.Where(c => c.AridCargoRNavigation.CRBloque == 1).Count() > 0)
         {
             <BSCol Column="4">
                 <BSLabel>Bloque: @bloque</BSLabel>
 
-                <BSInput InputType="InputType.Range" step="1" min="1" max="3" @bind-Value="bloque" /><BSButton IsOutlined Color="BSColor.Success" Size="Size.ExtraSmall" @onclick="Porcentaje">   Obtener Porcentajes  <span class="oi oi-check"></span></BSButton>
+                    <BSInput InputType="InputType.Range" step="1" min="1" max="3" @bind-Value="bloque" /><BSButton IsOutlined Color="BSColor.Success" Size="Size.ExtraSmall" @onclick="Porcentaje">   Obtener Porcentajes  <span class="oi oi-check"></span></BSButton>
 
-                </BSCol>
+             </BSCol>
             <p></p>
-        }
+        } if (Lista == 0 && !carga)
+    {
+
         <BSCol Column="6">
             <BSTable IsResponsive="true" IsStriped="true" IsBordered="true">
                 <BSTHead Class="cabecera">
@@ -135,6 +137,7 @@
                                     <BSTD>@d.Asistencias</BSTD>
                                     <BSTD>@d.Total %</BSTD>
                                 }
+
                             }
                             else
                             {
@@ -157,15 +160,18 @@
                 </BSTR>
             </BSTable>
         </BSCol>
+
+
     }
-    else
-    {        @if (APIReunionService.asistenreus.Where(c => c.AridCargoRNavigation.CRBloque == 1).Count() > 0)
+    else if (Lista == 1)
+    {
+        @if (APIReunionService.asistenreus.Where(c => c.AridCargoRNavigation.CRBloque == 1).Count() > 0)
         {
             <BSCol Column="4">
                 <BSLabel>Bloque: @bloque</BSLabel>
 
-                <BSInput InputType="InputType.Range" step="1" min="1" max="3" @bind-Value="bloque" />
-            </BSCol>
+                    <BSInput InputType="InputType.Range" step="1" min="1" max="3" @bind-Value="bloque" />
+                </BSCol>
         }
         <BSCol Column="10">
             <BSTable IsResponsive="true" IsStriped="true" IsBordered="true">
@@ -251,13 +257,18 @@
             </BSTable>
         </BSCol>
     }
+    else if (carga)
+    {
+        <div class="loader"></div>
+    }
+
 }
 
 else if (APIReunionService.cargoreus.Count() == 0 && dataIsLoaded == 2)
 {
     <p>No se ha cargado personal a este centro.</p>
 }
-else if (dataIsLoaded == 1 && APIReunionService.cargoreus.Count() == 0)
+else if (dataIsLoaded == 1 && porasis.Count() == 0)
 {
     <div class="loader"></div>
 }
@@ -267,10 +278,11 @@ else if (dataIsLoaded == 1 && APIReunionService.cargoreus.Count() == 0)
 @code {
 
     private List<StatsAsisDto> porasis = new List<StatsAsisDto>();
+    private List<StatsAsisDto> listafiltradabloque = new List<StatsAsisDto>();
     private List<AsistenReu> listaasistencia = new List<AsistenReu>();
+    private List<CargoReu> listacargos = new List<CargoReu>();
 
-
-
+    bool carga = false;
     int dataIsLoaded = 0;
     private string mensaje = "", f1 = "", f2 = "";
     private string Div { get; set; }
@@ -280,10 +292,9 @@ else if (dataIsLoaded == 1 && APIReunionService.cargoreus.Count() == 0)
     private DateTime fecha1 = DateTime.Now;
     private DateTime fecha2 = DateTime.Now;
     public double asistotal { get; set; } = 0;
+    private NotifiRadzen Notificar = new NotifiRadzen();//Logic para crear las noyificaciones radzen
+
     int dias = 0;
-
-
-
 
     private List<Claim> claims { get; set; }
 
@@ -333,54 +344,68 @@ else if (dataIsLoaded == 1 && APIReunionService.cargoreus.Count() == 0)
 
     protected async Task Porcentaje()
     {
-
-        DateTime inicio = fecha1, hasta = fecha2;
-        dias = GetDias();
-        asistotal = 0;
-        int filtrocount = 0;
-        int bloquetotal;
-
-        if (dataIsLoaded != 1)
+        try
         {
-            dataIsLoaded = 1;
-            await APIReunionService.GetListaAsist(Div, claims[5].Value, f1, f2);
-            await APIReunionService.GetStatsAsist(Div, claims[5].Value, f1, f2);
-            porasis = APIReunionService.StatsAsisDtos;
-            dias = dias - feriados;
+            carga = true;
+            DateTime inicio = fecha1, hasta = fecha2;
+            dias = GetDias();
+            asistotal = 0;
 
-            foreach (var a in porasis)
+            listafiltradabloque = new List<StatsAsisDto>();
+            listacargos = new List<CargoReu>();
+
+            int filtrocount = 0;
+
+
+            if (dataIsLoaded != 1)
             {
+                dataIsLoaded = 1;
+                await APIReunionService.GetListaAsist(Div, claims[5].Value, f1, f2);
+                await APIReunionService.GetStatsAsist(Div, claims[5].Value, f1, f2);
+                await APIReunionService.GetAsistencia(Div, claims.FirstOrDefault(c => c.Type.Equals("Empresa"))?.Value);
 
-                if (APIReunionService.asistenreus.Where(c => c.AridCargoRNavigation.CRBloque == bloque).Count() > 0)
+                listacargos = APIReunionService.cargoreus;
+                listafiltradabloque = APIReunionService.StatsAsisDtos;
+
+                dias = dias - feriados;
+
+                if (bloque > 0)
                 {
-                    //if (APIReunionService.asistenreus.Where(c => c.AridCargoRNavigation.Crnombre == a.Cargo).Count() > 0 & APIReunionService.asistenreus.FirstOrDefault(c=>c.AridCargoRNavigation.Crnombre==a.Cargo).AridCargoRNavigation.CRBloque==bloque)
-                    if (APIReunionService.asistenreus.FirstOrDefault(c => c.AridCargoRNavigation.Crnombre == a.Cargo).AridCargoRNavigation.CRBloque == bloque)
-                    {
-                        filtrocount++;
-                        a.Total = Math.Round((a.Asistencias / dias) * 100);
-                        asistotal = asistotal + a.Total;
+                    var elementosParaEliminar = listafiltradabloque
+                        .Where((elemento, index) => listacargos.Any(lista =>
+                            lista.CRBloque != bloque &&
+                            lista.Crnombre == elemento.Cargo))
+                        .ToList();
 
+                    foreach (var elemento in elementosParaEliminar)
+                    {
+                        listafiltradabloque.Remove(elemento);
                     }
+                }
+                porasis = listafiltradabloque;
+                foreach (var a in porasis)
+                {
+
+                    filtrocount++;
+                    a.Total = Math.Round((a.Asistencias / dias) * 100);
+                    asistotal = asistotal + a.Total;
 
                 }
-            }
 
-            bloquetotal = APIReunionService.asistenreus.Where(c => c.AridCargoRNavigation.CRBloque == bloque).Count();
-
-            if (bloquetotal == 0)
-            {
                 asistotal = Math.Round(asistotal / porasis.Count);
-            }
-            else
-            {
-                asistotal = Math.Round(asistotal / (bloquetotal));
+                dataIsLoaded = 2;
+                carga = false;
             }
 
-            dataIsLoaded = 2;
+        }
+        catch (Exception ex)
+        {
 
+            NotificationService.Notify(Notificar.Notificacion("error", "Ocurrió un error", "Por favor recargue la página." + ex.Message));
         }
 
     }
+
     protected async Task Get()
     {
         f1 = fecha1.ToString("dd-MM-yyyy");
@@ -405,16 +430,20 @@ else if (dataIsLoaded == 1 && APIReunionService.cargoreus.Count() == 0)
                 asistotal = asistotal + a.Total;
             }
             asistotal = Math.Round((asistotal / porasis.Count));
+
             dataIsLoaded = 2;
 
-            if (APIReunionService.asistenreus.Where(c => c.AridCargoRNavigation.CRBloque == bloque).Count() > 0)
+
+            if (APIReunionService.asistenreus.Any(c => c.AridCargoRNavigation.CRBloque == bloque))
             {
 
                 await Porcentaje();
             }
 
+
         }
     }
+
 
 
 

@@ -23,8 +23,7 @@
         <BSRow>
             <BSCol Column="3" ColumnSmall="2">
                 <BSLabel>Centro</BSLabel>
-                <BSInput InputType="InputType.Select" @bind-Value="IdCentro">
-                    <option value="">Seleccione</option>
+                <BSInput InputType="InputType.Select" @bind-Value="IdCentro">                  
                     @foreach (var d in APIReunionService.centro)
                     {
                         <option value="@d.IdCentro">@d.Cnom</option>
@@ -36,7 +35,6 @@
             <BSCol Column="3" ColumnSmall="2">
                 <BSLabel>División</BSLabel>
                 <BSInput InputType="InputType.Select" @bind-Value="IdDiv">
-                    <option value="">Seleccione</option>
                     @foreach (var d in APIReunionService.centro)
                     {
                         @foreach (var e in d.Divisions)
@@ -124,8 +122,7 @@
 </BSContainer>
 
 <p></p>
-@*<RadzenButton ButtonStyle="ButtonStyle.Success" Icon="add_circle_outline" class="mt-2 mb-4" Text="Nuevo Puesto" Click="@InsertRow" Disabled=@(puestoToInsert != null || puestoToUpdate != null) />
-*@
+
 @if (tabla.Count() > 0 && dataIsLoaded == 2)
 {
 
@@ -247,7 +244,10 @@ else if (dataIsLoaded == 2 && tabla.Count() == 0)
     string ayer = DateTime.Now.AddDays(-1).ToString("yyyyMMdd"), error;
     private bool data { get; set; } = false; //Centro
 
-    private int IdCentro { get; set; } //id del Centro
+
+    [Required(ErrorMessage = "Seleccione el Centro")]
+    private int IdCentro { get; set; } //id del Centro    
+    [Required(ErrorMessage = "Seleccione la división.")]
     private int IdDiv { get; set; } //id de la division
 
     private int CentroComedor;//Variable para verificar si es el comedor venezuela;
@@ -282,48 +282,87 @@ else if (dataIsLoaded == 2 && tabla.Count() == 0)
         fecha2 = DateTime.Now;
         await CreateData();
 
-        if (claims[1].Value == "Admin" | claims[1].Value == "SuperAdmin")
-        {
-            UsrAdmin = claims[1].Value;
-            await APIReunionService.GetCentrosxEmpresa("All" + claims[10].Value);
+        var rol = claims.FirstOrDefault(c => c.Type.Contains("role"))?.Value;
 
-        }
-        else if (claims[1].Value == "SupIntendenteGeneral")
+        // if (rol == "Admin" || rol== "SuperAdmin")
+        // {
+        //     UsrAdmin = rol;
+        //     await APIReunionService.GetCentrosxEmpresa("All" + claims[10].Value);
+
+        // }
+        // else if (rol== "SupIntendenteGeneral")
+        // {
+        //     UsrAdmin = rol;
+        //     await APIReunionService.GetCentrosxEmpresa(claims[11].Value);
+        // }
+        // else if ( rol == "SupIntendente" || rol== "Planificador")
+        // {
+        //     await APIReunionService.GetCentrosxEmpresa(claims[11].Value);
+        // }
+        // else if (rol == "MttoAdmin")
+        // {
+        //     UsrRol = "Mtto";
+        //     await APIReunionService.GetCentrosxEmpresa("All" + claims[10].Value);
+        // }     
+        // else if (rol == "SeguridadAdmin")
+        // {
+        //     UsrRol = "SeguridadAdmin";
+        //     await APIReunionService.GetCentrosxEmpresa("All" + claims[10].Value);
+        // }
+        // else
+        // {
+        //     if (rol == "Mantenimiento")
+        //     {
+        //         UsrRol = "Mtto";
+        //     }
+        //     else
+        //     {
+        //         UsrRol = rol;
+        //     }
+
+        //     await APIReunionService.GetCentrosxEmpresa(claims[11].Value);
+
+        // }
+
+        //TODO: Crear logica con funcion qur retorne esto.se usa en hoistoricos tambien
+        switch (claims.FirstOrDefault(c => c.Type.Contains("role"))?.Value)
         {
-            UsrAdmin = claims[1].Value;
-            await APIReunionService.GetCentrosxEmpresa(claims[11].Value);
-        }
-        else if (claims[1].Value == "Planificador" | claims[1].Value == "SupIntendente")
-        {
-            await APIReunionService.GetCentrosxEmpresa(claims[11].Value);
-        }
-        else if (claims[1].Value == "MttoAdmin")
-        {
-            UsrRol = "Mtto";
-            await APIReunionService.GetCentrosxEmpresa("All" + claims[10].Value);
-        }
-        else
-        {
-            if (claims[1].Value == "Mantenimiento")
-            {
+            case "Admin":
+            case "SuperAdmin":
+                UsrAdmin = "SuperAdmin";
+                await APIReunionService.GetCentrosxEmpresa("All" + claims.FirstOrDefault(c => c.Type.Contains("IdEmpresa"))?.Value);
+                break;
+
+            case "SupIntendenteGeneral":
+                UsrAdmin = "SupIntendenteGeneral";
+                await APIReunionService.GetCentrosxEmpresa(claims.FirstOrDefault(c => c.Type.Contains("IdCentro"))?.Value);
+                break;
+
+            case "Planificador":
+            case "SupIntendente":
+                await APIReunionService.GetCentrosxEmpresa(claims.FirstOrDefault(c => c.Type.Contains("IdCentro"))?.Value);
+                break;
+
+            case "MttoAdmin":
                 UsrRol = "Mtto";
-            }
-            else
-            {
-                UsrRol = claims[1].Value;
-            }
+                await APIReunionService.GetCentrosxEmpresa("All" + claims.FirstOrDefault(c => c.Type.Contains("IdEmpresa"))?.Value);
+                break;
+            case "SeguridadAdmin":
+                UsrRol = "Seguridad";//Seguridad para filtar por seguridad
+                await APIReunionService.GetCentrosxEmpresa("All" + claims.FirstOrDefault(c => c.Type.Contains("IdEmpresa"))?.Value);
+                break;
 
-            await APIReunionService.GetCentrosxEmpresa(claims[11].Value);
+            case "Mantenimiento":
+                UsrRol = "Mtto";
+                await APIReunionService.GetCentrosxEmpresa(claims.FirstOrDefault(c => c.Type.Contains("IdCentro"))?.Value);
+                break;
 
+            default:
+                UsrRol = claims.FirstOrDefault(c => c.Type.Contains("role"))?.Value;
+                await APIReunionService.GetCentrosxEmpresa(claims.FirstOrDefault(c => c.Type.Contains("IdCentro"))?.Value);
+                break;
         }
-
-        //Si es el comedor busca los equipos
-        if (claims[11].Value == "11")
-        {
-            CentroComedor = int.Parse(claims[11].Value);
-            await APIReunionService.GetEquiposCentro(claims[11].Value);
-        }
-
+        
         IdCentro = int.Parse(claims[11].Value);
         IdDiv = int.Parse(claims[12].Value);
 

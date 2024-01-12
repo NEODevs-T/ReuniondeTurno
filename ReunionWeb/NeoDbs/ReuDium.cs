@@ -20,13 +20,14 @@ namespace ReunionWeb.NeoDbs
         /// </summary>
         public int IdPais { get; set; }
         public int IdEmpresa { get; set; }
-
+        [Range(1, int.MaxValue, ErrorMessage = "El campo Responsable no es correcto.")]
         [Required(ErrorMessage = "Campo Responsable Requerido.")]
         public int IdResReu { get; set; }
         /// <summary>
         /// Id del afectado
         /// </summary>
         [Required(ErrorMessage = "Campo KSF Requerido.")]
+        [Range(1, int.MaxValue, ErrorMessage = "El campo KSF no es correcto.")]
         public int Idksf { get; set; }
         /// <summary>
         /// centro o planta
@@ -52,6 +53,7 @@ namespace ReunionWeb.NeoDbs
         /// Descripción de la discrepancia
         /// </summary>
         [Required(ErrorMessage = "Campo Discrepancia Requerido.")]
+        [StringLength(250, ErrorMessage = "El campo discrepancia  no debe tener mas de {1} carácteres")]
         public string? Rddisc { get; set; }
         /// <summary>
         /// Codigo del estado de la discrepancia.

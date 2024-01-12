@@ -1,5 +1,4 @@
-﻿//using ReunionWeb.Models;
-using ReunionWeb.DTOs;
+﻿using ReunionWeb.DTOs;
 using ReunionWeb.NeoDbs;
 
 namespace ReunionWeb.Services
@@ -26,6 +25,7 @@ namespace ReunionWeb.Services
 
         
         Task GetPendientes(string centro, string div, DateTime f1, DateTime f2, string tipo, string estado);
+        Task <List<ReuDium>>GetByODT(string ODT, string idcentro, string iddiv);
         Task<List<ReuDium>> GetHistoricos(string centro, string div, DateTime f1, DateTime f2, string tipo, string estado);
         Task GetCambioStatus(int idreu);
         Task GetCambioFecha(int idreu);

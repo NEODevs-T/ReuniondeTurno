@@ -11,10 +11,6 @@
 <p></p>
 
 
-
-
-
-
 <BSContainer>
 
     @if (APIReunionService.centro.Count() == 0)
@@ -24,10 +20,8 @@
     else
     {
 
-
         <BSRow>
             <BSCol Column="4">
-
 
                 <BSInput InputType="InputType.Select" @bind-Value="Div">
                     @foreach (var d in APIReunionService.centro)
@@ -48,9 +42,6 @@
 </BSContainer>
 
 <p></p>
-
-
-
 
 
 @if (APIReunionService.cargoreus.Count() > 0 && dataIsLoaded == 2)
@@ -129,8 +120,6 @@
                     }
 
                 }
-
-
             </BSTBody>
 
         </BSTable>
@@ -157,6 +146,7 @@ else if (dataIsLoaded == 1 && APIReunionService.cargoreus.Count() == 0)
     // private List<Asistencium> asis = new List<Asistencium>();
     private List<CargoReu> cr = new List<CargoReu>();
     private AsistenReu reuform;
+    private string UsrRol { get; set; } = ""; //rol para filtrar
 
     private int fecha = int.Parse(DateTime.Now.ToString("yyyyMMdd"));
 
@@ -166,11 +156,10 @@ else if (dataIsLoaded == 1 && APIReunionService.cargoreus.Count() == 0)
     int dataIsLoaded = 0;
     // private string RadioValue { get; set; }
     private string Div { get; set; }
-    private int bloque { get; set; } = 1;//Indica el Bloque de reunion a llenar asistencia
+    private int bloque { get; set; } = 0;//Indica el Bloque de reunion a llenar asistencia
     private List<AsistenReu> listaAsistencia { get; set; }
 
-    //private bool _buttonDisabled = true;
-    //private BSAlert? _alertRef;
+
 
 
 
@@ -191,15 +180,16 @@ else if (dataIsLoaded == 1 && APIReunionService.cargoreus.Count() == 0)
     {
 
         await CreateData();
-        if (claims.FirstOrDefault(c => c.Type.Contains("role"))?.Value == "Admin" | claims.FirstOrDefault(c => c.Type.Contains("role"))?.Value == "SuperAdmin")
+        UsrRol = claims.FirstOrDefault(c => c.Type.Contains("role"))?.Value;
+        if (UsrRol == "Admin" | UsrRol == "SuperAdmin")
         {
-                    
+
             await APIReunionService.GetCentrosxEmpresa("All" + claims.FirstOrDefault(c => c.Type.Contains("IdEmpresa"))?.Value);
         }
         else
         {
-           
-            await APIReunionService.GetCentrosxEmpresa(claims.FirstOrDefault(c => c.Type.Contains("IdCentro"))?.Value);
+
+            await APIReunionService.GetCentrosxEmpresa(claims.FirstOrDefault(c => c.Type.Equals("IdCentro"))?.Value);
         }
         Div = claims.FirstOrDefault(c => c.Type.Contains("Centro"))?.Value;
 
@@ -212,12 +202,15 @@ else if (dataIsLoaded == 1 && APIReunionService.cargoreus.Count() == 0)
         if (dataIsLoaded != 1)
         {
             dataIsLoaded = 1;
-            await APIReunionService.GetAsistencia(Div, claims[5].Value);
+            await APIReunionService.GetAsistencia(Div, claims.FirstOrDefault(c => c.Type.Equals("Empresa"))?.Value);
             cr = APIReunionService.cargoreus;
             listaAsistencia = new List<AsistenReu>();
 
+
+
             for (var i = 0; i < cr.Count; i++)
             {
+
                 reuform = new AsistenReu();
                 reuform.Ararea = Div;
                 reuform.Arfecha = DateTime.Now;
@@ -232,7 +225,10 @@ else if (dataIsLoaded == 1 && APIReunionService.cargoreus.Count() == 0)
                 listaAsistencia[i].AridCargoR = APIReunionService.cargoreus[i].IdCargoR;
             }
 
-
+            if (listaAsistencia.Any(c => c.AridCargoRNavigation.CRBloque == 1))
+            {
+                bloque = 1;
+            }
             dataIsLoaded = 2;
 
         }
@@ -249,6 +245,19 @@ else if (dataIsLoaded == 1 && APIReunionService.cargoreus.Count() == 0)
         {
             if ((claims[4].Value == "Venezuela" & time > 8 & time < 10) | (claims[4].Value == "Colombia" & time > 8 & time < 11) | (claims[4].Value == "Guatemala" & time > 9 & time < 13))
             {
+
+            
+            if (bloque > 0)
+            {
+                for (int i = listaAsistencia.Count - 1; i >= 0; i--)
+                {
+                    if (listaAsistencia[i].AridCargoRNavigation.CRBloque != bloque)
+                    {
+                        listaAsistencia.RemoveAt(i);
+                    }
+                }
+            }
+
                 foreach (var item in listaAsistencia)
                 {
                     if(item.ArAsistente==0 & item.ArSuplente==1)

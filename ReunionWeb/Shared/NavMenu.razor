@@ -1,6 +1,6 @@
 ﻿<div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
-        <a class="navbar-brand" href="">ReunionWeb</a>
+        <small class="text-muted"> Powered By  </small><img src="./images/LogoNeo.png" alt="PAVECA" width="60px" />
         <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -69,7 +69,11 @@
                         <span class="oi oi-people" aria-hidden="true"></span> Pizarra
                     </NavLink>
                 </div>
-
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="historicos">
+                        <span class="oi oi-spreadsheet" aria-hidden="true"></span> Históricos
+                    </NavLink>
+                </div>
                 <div class="nav-item px-3">
                     <NavLink class="nav-link" href="calendario">
                         <span class=" oi oi-calendar" aria-hidden="true"></span> Calendario
@@ -78,24 +82,16 @@
 
             </NotAuthorized>
 
-
-
         </AuthorizeView>
         <AuthorizeView Roles="Admin,AdminChempro, SupIntendente,SupIntendenteGeneral,MttoAdmin">
             <Authorized>
-                <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="calendario">
-                        <span class=" oi oi-calendar" aria-hidden="true"></span> Calendario
-                    </NavLink>
-                </div>
+
                 <div class="nav-item px-3">
                     <NavLink class="nav-link" href="stats_asistencia">
-                        <span class="oi oi-graph" aria-hidden="true"></span> % Asistencias
+                        <span class="oi oi-graph" aria-hidden="true"></span> %Asistencias
                     </NavLink>
                 </div>
             </Authorized>
-
-
         </AuthorizeView>
 
         <AuthorizeView Roles="Admin,AdminChempro,SuperAdmin">
@@ -105,17 +101,9 @@
                         <span class="oi oi-wrench" aria-hidden="true"></span> Equipos
                     </NavLink>
                 </div>
-
-
             </Authorized>
-
-
         </AuthorizeView>
     </nav>
-    @*<div class="powered align-items-center justify-content-center" style="  position:fixed; display: flex; align-items: center; ;bottom:0px;">*@
-    <div style="  position:fixed; display: flex; align-items: center; bottom:0px;">
-        <small class="text-muted"> Powered By  </small><img src="./images/LogoNeo.png" alt="PAVECA" width="60px" />
-    </div>
 </div>
 
 @code {

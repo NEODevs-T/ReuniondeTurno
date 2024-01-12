@@ -115,8 +115,10 @@ else if (dataIsLoaded == 2 && APIReunionService.calentrabajo.Count() == 0)
     {
 
         await CreateData();
+        
+        var rol = claims.FirstOrDefault(c => c.Type.Contains("role"))?.Value;
 
-        if (claims[1].Value == "Admin" | claims[1].Value == "SuperAdmin" | claims[1].Value == "MttoAdmin")
+        if (rol == "Admin" || rol == "SuperAdmin" || rol == "MttoAdmin" || rol=="SeguridadAdmin")
         {
 
             await APIReunionService.GetCentrosxEmpresa("All" + claims[10].Value);

@@ -21,6 +21,8 @@
     }
     async Task Logout()
     {
+
+        await LocalStorage.RemoveItemAsync("OdtValue");
         await LocalStorage.RemoveItemAsync("ReunionWebToken");
         await AuthStateProvider.GetAuthenticationStateAsync();
     }

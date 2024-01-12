@@ -273,7 +273,7 @@ namespace ReunionDiaApi.Controllers
             {
                 var result = await _context.AsistenReus
                 .Include(x => x.AridCargoRNavigation)
-                .Where(x => (x.Arfecha >= d) && (x.Ararea == list[0].Ararea) & (x.AridCargoRNavigation.Crempresa == list[0].AridCargoRNavigation.Crempresa) & (x.AridCargoRNavigation.CRBloque == list[0].AridCargoRNavigation.CRBloque))
+                .Where(x => (x.Arfecha >= d) && (x.Ararea == list[0].Ararea) && (x.AridCargoRNavigation.Crempresa == list[0].AridCargoRNavigation.Crempresa) && (x.AridCargoRNavigation.CRBloque == list[0].AridCargoRNavigation.CRBloque))
                 .FirstOrDefaultAsync();
                 if (result == null)
                 {
