@@ -1,5 +1,5 @@
 ﻿@page "/reunion"
-@page "/reunion/{accion}/{division}/{f1}/{f2}/{tipo}/{est}"
+@page "/reunion/{accion}/{division}/{linea}/{f1}/{f2}/{tipo}/{est}"
 @inject IDbReunionService DbReunionService
 @inject IAPIReunionService APIReunionService
 @inject NavigationManager NavigationManager
@@ -193,7 +193,9 @@ else if (dataIsLoaded == 2 && DbReunionService.reunionditablas.Count() == 0)
     [Parameter]
     public string? accion { get; set; }//centro
     [Parameter]
-    public string? division { get; set; }//division
+    public string? division { get; set; }//division    
+    [Parameter]
+    public string? linea { get; set; }//linea
     [Parameter]
     public string? f1 { get; set; }
     [Parameter]
@@ -277,7 +279,7 @@ else if (dataIsLoaded == 2 && DbReunionService.reunionditablas.Count() == 0)
     }
     void Editar(int id)
     {
-        NavigationManager.NavigateTo($"EditDisc/{id}/1/{DateTime.Now.AddDays(-1).ToString("dd-MM-yyyy")}/{DateTime.Now.ToString("dd-MM-yyyy")}/Reunion");
+        NavigationManager.NavigateTo($"EditDisc/{id}/1/Re/{DateTime.Now.AddDays(-1).ToString("dd-MM-yyyy")}/{DateTime.Now.ToString("dd-MM-yyyy")}/Reunion");
 
     }
     protected override async Task OnParametersSetAsync()

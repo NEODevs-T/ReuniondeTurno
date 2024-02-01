@@ -10,6 +10,7 @@ using System.Reflection.Metadata.Ecma335;
 
 
 
+
 namespace ReunionWeb.Services
 {
     public class DbReunionService : IDbReunionService
@@ -254,7 +255,6 @@ namespace ReunionWeb.Services
                     .Where(a => (a.Rdcentro == centro & a.Rddiv == div) && (a.RdfecTra >= f1 & a.RdfecTra <= f2))
                     .Include(b => b.IdksfNavigation)
                     .Include(b => b.IdResReuNavigation)
-                    .Take(300)
                     .AsNoTracking()
                     .ToListAsync();
                 }
@@ -264,7 +264,6 @@ namespace ReunionWeb.Services
                     .Where(a => (a.Rdcentro == centro & a.Rddiv == div) && (a.RdfecTra >= f1 & a.RdfecTra <= f2) && (a.Rdstatus == "Pendiente/Responsable"))
                     .Include(b => b.IdksfNavigation)
                     .Include(b => b.IdResReuNavigation)
-                    .Take(300)
                     .AsNoTracking()
                     .ToListAsync();
                 }
@@ -277,7 +276,6 @@ namespace ReunionWeb.Services
                   .Include(b => b.IdksfNavigation)
                   .Include(b => b.IdResReuNavigation)
                   .AsNoTracking()
-                  .Take(50)
                   .ToListAsync();
                 }
             }
@@ -299,7 +297,6 @@ namespace ReunionWeb.Services
                     .Where(a => (a.Rdcentro == centro & a.Rddiv == div) && (a.RdfecReu >= f1 & a.RdfecReu <= f2))
                     .Include(b => b.IdksfNavigation)
                     .Include(b => b.IdResReuNavigation)
-                    .Take(300)
                     .AsNoTracking()
                     .ToListAsync();
                 }
@@ -309,7 +306,6 @@ namespace ReunionWeb.Services
                     .Where(a => (a.Rdcentro == centro & a.Rddiv == div) && (a.RdfecReu >= f1 & a.RdfecReu <= f2) && (a.Rdstatus == "Pendiente/Responsable"))
                     .Include(b => b.IdksfNavigation)
                     .Include(b => b.IdResReuNavigation)
-                    .Take(300)
                     .AsNoTracking()
                     .ToListAsync();
                 }
@@ -322,7 +318,6 @@ namespace ReunionWeb.Services
                   .Include(b => b.IdksfNavigation)
                   .Include(b => b.IdResReuNavigation)
                   .AsNoTracking()
-                  .Take(50)
                   .ToListAsync();
                 }
             }
@@ -380,7 +375,7 @@ namespace ReunionWeb.Services
                 _neocontext.Entry(bdDiscrep).State = EntityState.Modified;
                 await _neocontext.SaveChangesAsync();
                 reudiatablas = new List<ReuDium>();
-                bdDiscrep = null;
+                //bdDiscrep = null;
 
                 if (tipo == 0)
                 {
@@ -403,6 +398,49 @@ namespace ReunionWeb.Services
             }
 
 
+        }
+        public async Task<bool> UpdateDiscrepancia2(ReuDium d, int id, int tipo, string f1, string f2, string estado, string linea)
+        {
+            string div = "", centro = "";
+            // DateTime f1= DateTime.Now;
+
+            if (d.Rdcentro is not null)
+            {
+                //Consultar nombre del centro y division pra retornar el id en pendientes
+                CentroDivision centrodiv = new CentroDivision();
+                centrodiv = await GetCentroDiv(d.Rdcentro, d.Rddiv, 1);
+                centro = centrodiv.IdCentro.ToString();
+                div = centrodiv.IdDivision.ToString();
+
+            }
+
+       
+            try
+            {
+                _neocontext.ReuDia.Update(d);   
+                await _neocontext.SaveChangesAsync();
+                reudiatablas = new List<ReuDium>();
+                //bdDiscrep = null;
+
+                if (tipo == 0)
+                {
+                    _navigationManager.NavigateTo($"pendientes/{centro}/{div}/{linea}/{f1}/{f2}/{tipo}/{estado}");
+                }
+                else if (tipo == 1)
+                {
+                    _navigationManager.NavigateTo($"reunion/{centro}/{div}/Re/{f1}/{f2}/{tipo}/Reunion");
+                }
+                else if (tipo == 2)
+                {
+                    _navigationManager.NavigateTo($"pendientes/{centro}/{div}/{linea}/{f1}/{f2}/{tipo}/{estado}");
+                }
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
         }
 
         //Obtener id de centro y dic=vision y viceversa
@@ -518,12 +556,13 @@ namespace ReunionWeb.Services
         //Insertar discrepancia con chismoso
         public async Task<bool> InsertarRegistros(CambFec data, CambStat data2)
         {
+            data.IdReuDiaNavigation.CambStats.Add(data2);
             _neocontext.CambFecs.Add(data);
-            _neocontext.CambStats.Add(data2);
+            //_neocontext.CambStats.Add(data2);
+            await _neocontext.SaveChangesAsync();
 
-            return await _neocontext.SaveChangesAsync() > 0;
+            return true;
         }
-
 
     }
 }

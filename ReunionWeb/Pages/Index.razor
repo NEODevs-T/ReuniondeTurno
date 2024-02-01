@@ -1,4 +1,5 @@
-﻿@page "/"
+﻿    @inject AuthenticationStateProvider AuthStateProvider
+@page "/"
 
 <PageTitle>Index</PageTitle>
 
@@ -23,8 +24,15 @@
     <BSCarouselItem Interval="0">
         <img src="./images/valores.png" width="100%" height="90%"/>
 
+    </BSCarouselItem>   
+        @if (Pais == "Colombia")
+        {
+            <BSCarouselItem Interval="0">
+                <img src="./images/PRINCIPIOS GUIA.png" width="100%" height="90%"/>
+
     </BSCarouselItem>
-@*    <BSCarouselItem>
+        }
+@*  <BSCarouselItem>
         <svg class="bd-placeholder-img bd-placeholder-img-lg d-block w-100" width="800" height="400" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Third slide" preserveAspectRatio="xMidYMid slice" focusable="false">
             <rect width="100%" height="100%" fill="#555"></rect><text x="50%" y="50%" fill="#333" dy=".3em">Third slide</text>
         </svg>
@@ -32,9 +40,10 @@
             <h5>Third slide label</h5>
             <p>Some representative placeholder content for the third slide.</p>
         </BSCarouselCaption>
-    </BSCarouselItem>
-	*@
+    </BSCarouselItem> *@
+	
 </BSCarousel>
+
 </div>
 <p></p>
 <p></p>
@@ -103,4 +112,19 @@ Planes de Acción"</h4>
 	ESD: Para los planes de accion derivados de los equipos de solucion de discrepancias y cualquier responsable</p>	*@
 </div>			
 
+@code{
+    private List<Claim> claims { get; set; }
+        private string Pais { get; set; } = ""; //pais
+    private string UsrRol { get; set; } = ""; //rol para filtrar
 
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        claims = Enumerable.ToList(user.Claims);
+        Pais = claims.FirstOrDefault(c => c.Type.Contains("Pais"))?.Value;
+
+
+    }
+    }

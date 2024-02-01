@@ -231,37 +231,46 @@
     {
         await CreateData();
 
-        if (claims[1].Value == "Admin" | claims[1].Value == "SuperAdmin")
+        switch (claims.FirstOrDefault(c => c.Type.Contains("role"))?.Value)
         {
-            UsrAdmin = claims[1].Value;
+            case "Admin":
+            case "SuperAdmin":
+                UsrAdmin = "SuperAdmin";
+                await APIReunionService.GetCentrosxEmpresa("All" + claims.FirstOrDefault(c => c.Type.Contains("IdEmpresa"))?.Value);
+                break;
 
+            case "SupIntendenteGeneral":
+                UsrAdmin = "SupIntendenteGeneral";
+                await APIReunionService.GetCentrosxEmpresa(claims.FirstOrDefault(c => c.Type.Contains("IdCentro"))?.Value);
+                break;
 
-        }
-        else if (claims[1].Value == "SupIntendenteGeneral" | claims[1].Value == "SupIntendente")
-        {
-            UsrAdmin = claims[1].Value;
+            case "Planificador":
+            case "SupIntendente":
+                await APIReunionService.GetCentrosxEmpresa(claims.FirstOrDefault(c => c.Type.Contains("IdCentro"))?.Value);
+                break;
 
-        }
-
-        else
-        {
-            if (claims[1].Value == "Mantenimiento")
-            {
+            case "MttoAdmin":
                 UsrRol = "Mtto";
-            }
-            else
-            {
-                UsrRol = claims[1].Value;
-            }
+                await APIReunionService.GetCentrosxEmpresa("All" + claims.FirstOrDefault(c => c.Type.Contains("IdEmpresa"))?.Value);
+                break;
+            case "SeguridadAdmin":
+                UsrRol = "Seguridad";//Seguridad para filtar por seguridad
+                await APIReunionService.GetCentrosxEmpresa("All" + claims.FirstOrDefault(c => c.Type.Contains("IdEmpresa"))?.Value);
+                break;
+            case "CalidadAdmin":
+                UsrRol = "Calidad";//Seguridad para filtar por calidad
+                await APIReunionService.GetCentrosxEmpresa("All" + claims.FirstOrDefault(c => c.Type.Contains("IdEmpresa"))?.Value);
+                break;
 
+            case "Mantenimiento":
+                UsrRol = "Mtto";
+                await APIReunionService.GetCentrosxEmpresa(claims.FirstOrDefault(c => c.Type.Contains("IdCentro"))?.Value);
+                break;
 
-        }
-
-        //Si es el comedor busca los equipos
-        if (claims[11].Value == "11")
-        {
-            CentroComedor = int.Parse(claims[11].Value);
-
+            default:
+                UsrRol = claims.FirstOrDefault(c => c.Type.Contains("role"))?.Value;
+                await APIReunionService.GetCentrosxEmpresa(claims.FirstOrDefault(c => c.Type.Contains("IdCentro"))?.Value);
+                break;
         }
 
 

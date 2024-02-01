@@ -1,5 +1,5 @@
 ﻿@page "/pendientes"
-@page "/pendientes/{accion}/{division}/{f1}/{f2}/{tipo}/{est}"
+@page "/pendientes/{accion}/{division}/{linea}/{f1}/{f2}/{tipo}/{est}"
 @inject IDbReunionService DbReunionService
 @inject IAPIReunionService APIReunionService
 @inject NavigationManager NavigationManager
@@ -223,7 +223,9 @@ else
 
                                 @if (IdKsf == 0 | IdKsf == d.Idksf)
                                 {
-                                    <BSTR>
+
+                                    <BSTR Class="@GetClassVencido(d.RdfecTra, d.Rdstatus)">
+                                                                  
                                         @*<BSTD>@d.IdReuDia</BSTD>*@
                                         <BSTD>@d.Rdarea</BSTD>
                                             <BSTD>@d.IdksfNavigation.KsfNombre</BSTD>
@@ -491,7 +493,9 @@ else if (dataIsLoaded == 2 && DbReunionService.reudiatablas.Count() == 0)
     [Parameter]
     public string? accion { get; set; }//centro
     [Parameter]
-    public string? division { get; set; }//division
+    public string? division { get; set; }//division    
+    [Parameter]
+    public string? linea { get; set; }//division
     [Parameter]
     public string? f1 { get; set; }
     [Parameter]
@@ -546,52 +550,8 @@ else if (dataIsLoaded == 2 && DbReunionService.reudiatablas.Count() == 0)
         fecha2 = DateTime.Now;
         await CreateData();
 
-        //IdCentro = int.Parse(claims.FirstOrDefault(c => c.Type.Contains("IdCentro"))?.Value ?? "0");
 
-
-        // if (claims.FirstOrDefault(c => c.Type.Contains("role"))?.Value == "Admin" | claims.FirstOrDefault(c => c.Type.Contains("role"))?.Value == "SuperAdmin")
-        // {
-        //     UsrAdmin = claims.FirstOrDefault(c => c.Type.Contains("role"))?.Value;
-        //     await APIReunionService.GetCentrosxEmpresa("All" + claims.FirstOrDefault(c => c.Type.Contains("IdEmpresa"))?.Value);
-
-        // }
-        // else if (claims.FirstOrDefault(c => c.Type.Contains("role"))?.Value == "SupIntendenteGeneral")
-        // {
-        //     UsrAdmin = claims.FirstOrDefault(c => c.Type.Contains("role"))?.Value;
-        //     await APIReunionService.GetCentrosxEmpresa(claims.FirstOrDefault(c => c.Type.Contains("IdCentro"))?.Value);
-        // }
-        // else if (claims.FirstOrDefault(c => c.Type.Contains("role"))?.Value == "Planificador" | claims.FirstOrDefault(c => c.Type.Contains("role"))?.Value == "SupIntendente")
-        // {
-        //     await APIReunionService.GetCentrosxEmpresa(claims.FirstOrDefault(c => c.Type.Contains("IdCentro"))?.Value);
-        // }
-        // else if (claims.FirstOrDefault(c => c.Type.Contains("role"))?.Value == "MttoAdmin")
-        // {
-        //     UsrRol = "Mtto";
-        //     await APIReunionService.GetCentrosxEmpresa("All" + claims.FirstOrDefault(c => c.Type.Contains("IdEmpresa"))?.Value);
-        // }
-        // else
-        // {
-        //     if (claims.FirstOrDefault(c => c.Type.Contains("role"))?.Value == "Mantenimiento")
-        //     {
-        //         UsrRol = "Mtto";
-        //     }
-        //     else
-        //     {
-        //         UsrRol = claims.FirstOrDefault(c => c.Type.Contains("role"))?.Value;
-        //     }
-
-        //     await APIReunionService.GetCentrosxEmpresa(claims.FirstOrDefault(c => c.Type.Contains("IdCentro"))?.Value);
-
-        // }
-
-        //Si es el comedor busca los equipos
-        // if (claims.FirstOrDefault(c => c.Type.Contains("IdCentro"))?.Value == "11")
-        // {
-        //     CentroComedor = int.Parse(claims.FirstOrDefault(c => c.Type.Contains("IdCentro"))?.Value);
-        //     await APIReunionService.GetEquiposCentro(claims.FirstOrDefault(c => c.Type.Contains("IdCentro"))?.Value);
-        // }
-
-        //TODO: Crear logica con funcion qur retorne esto.se usa en hoistoricos tambien
+        //TODO: Crear logica con funcion qur retorne esto.se usa en hoistoricos e impresiones tambien
         switch (claims.FirstOrDefault(c => c.Type.Contains("role"))?.Value)
         {
             case "Admin":
@@ -616,6 +576,10 @@ else if (dataIsLoaded == 2 && DbReunionService.reudiatablas.Count() == 0)
                 break;
             case "SeguridadAdmin":
                 UsrRol = "Seguridad";//Seguridad para filtar por seguridad
+                await APIReunionService.GetCentrosxEmpresa("All" + claims.FirstOrDefault(c => c.Type.Contains("IdEmpresa"))?.Value);
+                break;
+            case "CalidadAdmin":
+                UsrRol = "Calidad";//Calidad para filtar por calidad
                 await APIReunionService.GetCentrosxEmpresa("All" + claims.FirstOrDefault(c => c.Type.Contains("IdEmpresa"))?.Value);
                 break;
 
@@ -643,12 +607,12 @@ else if (dataIsLoaded == 2 && DbReunionService.reudiatablas.Count() == 0)
         BuscarOdt = await LocalStorage.GetItemAsStringAsync("OdtValue");
         if (string.IsNullOrEmpty(BuscarOdt))
         {
-            valueodt = false;
+            valuvisualeodt= valueodt = false;
             await LocalStorage.RemoveItemAsync("OdtValue");
         }
         else
         {
-            valueodt = true;
+            valuvisualeodt =valueodt = true;
         }
 
 
@@ -758,7 +722,7 @@ else if (dataIsLoaded == 2 && DbReunionService.reudiatablas.Count() == 0)
 
     void Editar(int id)
     {
-        NavigationManager.NavigateTo($"EditDisc/{id}/{tipoconsulta}/{fecha1.ToString("dd-MM-yyyy")}/{fecha2.ToString("dd-MM-yyyy")}/{Status}");
+        NavigationManager.NavigateTo($"EditDisc/{id}/{tipoconsulta}/{NombreLinea}/{fecha1.ToString("dd-MM-yyyy")}/{fecha2.ToString("dd-MM-yyyy")}/{Status}");
 
     }
 
@@ -788,6 +752,8 @@ else if (dataIsLoaded == 2 && DbReunionService.reudiatablas.Count() == 0)
                     fecha2 = date2;
                     IdCentro = int.Parse(accion);
                     IdDiv = int.Parse(division);
+                    Status = est;
+                    NombreLinea = linea;
                     tipoconsulta = tipo;
                     dataIsLoaded = 1;
                     await DbReunionService.GetPendientes(accion, division, date1, date2, tipo, est);
@@ -830,5 +796,9 @@ else if (dataIsLoaded == 2 && DbReunionService.reudiatablas.Count() == 0)
     {
         //NavigationManager.NavigateTo($"TablaReunion/{IdCentro.ToString()}/{IdDiv.ToString()}/{DateTime.Now.AddDays(-1).ToString("dd-MM-yyyy")}/{DateTime.Now.ToString("dd-MM-yyyy")}/1", forceLoad: true);
         await IJS.InvokeAsync<object>("open", new object[] { $"TablaPendientes/{IdCentro.ToString()}/{IdDiv.ToString()}/{fecha1.ToString("dd-MM-yyyy")}/{fecha2.ToString("dd-MM-yyyy")}/{tipoconsulta}/{Status}/{idrespo}", "_blank" });
+    }
+    string GetClassVencido(DateTime ft, string estado)
+    {
+        return ft.Date < DateTime.Now.Date && estado.StartsWith("Pendiente") ? "Vencido" : "";
     }
 }

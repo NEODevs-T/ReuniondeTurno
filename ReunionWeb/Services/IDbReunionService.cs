@@ -39,6 +39,7 @@ namespace ReunionWeb.Services
         Task InsertCambioFec(CambFec cambiofec);//Insertar el usuarrio que cambio la fecha de trabajo.
         Task<bool> InsertarRegistros(CambFec cambiofec, CambStat status);//Insertar discrepancias con chismoso(Trazabilidad)
         Task<bool> UpdateDiscrepancia(ReuDium bdDiv1, int id, int tipo, string f1, string f2, string estdo);
+        Task<bool> UpdateDiscrepancia2(ReuDium bdDiv1, int id, int tipo, string f1, string f2, string estdo, string linea);
 
 
     }
