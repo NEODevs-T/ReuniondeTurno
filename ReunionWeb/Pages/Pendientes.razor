@@ -72,6 +72,7 @@ else
                 <option value="Pendiente-Responsable">Pendiente/Responsable</option>
                 <option value="Listo">Listo</option>
                 <option value="Cerrado">Cerrado</option>
+                <option value="Vencidos">Vencidos</option>
             </BSInput>
         </BSCol>
 
@@ -795,7 +796,7 @@ else if (dataIsLoaded == 2 && DbReunionService.reudiatablas.Count() == 0)
     public async Task PrintDocument()
     {
         //NavigationManager.NavigateTo($"TablaReunion/{IdCentro.ToString()}/{IdDiv.ToString()}/{DateTime.Now.AddDays(-1).ToString("dd-MM-yyyy")}/{DateTime.Now.ToString("dd-MM-yyyy")}/1", forceLoad: true);
-        await IJS.InvokeAsync<object>("open", new object[] { $"TablaPendientes/{IdCentro.ToString()}/{IdDiv.ToString()}/{fecha1.ToString("dd-MM-yyyy")}/{fecha2.ToString("dd-MM-yyyy")}/{tipoconsulta}/{Status}/{idrespo}", "_blank" });
+        await IJS.InvokeAsync<object>("open", new object[] { $"TablaPendientes/{IdCentro.ToString()}/{IdDiv.ToString()}/{NombreLinea}/{fecha1.ToString("dd-MM-yyyy")}/{fecha2.ToString("dd-MM-yyyy")}/{tipoconsulta}/{Status}/{idrespo}", "_blank" });
     }
     string GetClassVencido(DateTime ft, string estado)
     {

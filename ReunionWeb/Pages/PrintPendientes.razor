@@ -1,6 +1,6 @@
 ﻿@layout EmptyLayout
 @page "/TablaPendientes"
-@page "/TablaPendientes/{accion}/{division}/{f1}/{f2}/{tipo}/{est}/{idrespo:int}"
+@page "/TablaPendientes/{accion}/{division}/{linea}/{f1}/{f2}/{tipo}/{est}/{idrespo:int}"
 
 @inject IDbReunionService DbReunionService
 @inject IAPIReunionService APIReunionService
@@ -28,6 +28,7 @@
             <option value="Pendiente/Responsable">Pendiente/Responsable</option>
             <option value="Listo">Listo</option>
             <option value="Cerrado">Cerrado</option>
+            <option value="Vencidos">Vencidos</option>
         </BSInput>
     </BSCol>
 
@@ -43,7 +44,13 @@
             }
         </BSInput>
     </BSCol>
+    <BSCol Column="3">
+         <BSLabel>Responsable</BSLabel>
+        <BSInput InputType="InputType.Text" @bind-Value="linea"  IsReadonly=true/>
+    </BSCol>
+
 </BSRow>
+<button type="button" onclick="window.print()" class="btn btn-success"><span class="oi oi-print"></span></button>
 <p></p>
 <body>
     @if (DbReunionService.reudiatablas.Count() > 0 && dataIsLoaded == 2)
@@ -56,15 +63,9 @@
 
                     @*<BSTD>Id</BSTD>*@
                     @*Centro para validar el comedor*@
-                    @if (CentroComedor == 11)
-                    {
-                        <BSTD>N. Equipo</BSTD>
-                    }
-                    else
-                    {
-                        <BSTD>Área</BSTD>
-                        <BSTD>Ksf</BSTD>
-                    }
+
+                    <BSTD>Área</BSTD>
+                    <BSTD>Ksf</BSTD>
                     <BSTD>C. Equipo</BSTD>
                     <BSTD ColSpan="4">Discrepancia</BSTD>
                     <BSTD>Código</BSTD>
@@ -94,77 +95,52 @@
                 @*            @foreach (var d in DbReunionService.reudiatablas)*@
                 @foreach (var d in listareu)
                 {
-                    @if (Codigo == d.RdcodDis | Codigo == "Todo")
+                    @if (linea == "Todo" | linea == d.Rdarea)
                     {
-                        @if (Status == d.Rdstatus | Status == "Todo" | Status == "Total Pendiente" & (d.Rdstatus == "Pendiente" | d.Rdstatus == "Pendiente/Responsable"))
+                        @if (Codigo == d.RdcodDis | Codigo == "Todo")
                         {
-                            @if (idrespo == 0 | idrespo == d.IdResReu)
+                            @if (Status == d.Rdstatus | Status == "Todo" | Status == "Total Pendiente" & (d.Rdstatus == "Pendiente" | d.Rdstatus == "Pendiente/Responsable"))
                             {
-                                <BSTR>
-                                    @*<BSTD>@d.IdReuDia</BSTD>*@
-                                    @*Centro para validar el comedor*@
-                                    @if (CentroComedor == 11)
-                                    {
-                                        @if (APIReunionService.equiposlinea.Any(e => e.EcodEquiEam == d.RdcodEq) is true)
+                                @if (idrespo == 0 | idrespo == d.IdResReu)
+                                {
+                                    <BSTR>
+                                        @*<BSTD>@d.IdReuDia</BSTD>*@
+
+                                        <BSTD>@d.Rdarea</BSTD>
+                                            <BSTD>@d.IdksfNavigation.KsfNombre</BSTD>
+                                            <BSTD>@d.RdcodEq</BSTD>
+                                            <BSTD ColSpan="4">@d.Rddisc.ToUpperInvariant()</BSTD>
+                                            <BSTD>@d.RdcodDis</BSTD>
+                                            <BSTD Class="textotabla">@d.RdplanAcc</BSTD>
+                                            <BSTD>@d.Rdtiempo</BSTD>
+                                            @if (@d.IdResReuNavigation.Rrnombre == "Por Definir")
                                         {
-
-
-                                            @foreach (var eq in APIReunionService.equiposlinea)
-                                            {
-
-                                                if (eq.EcodEquiEam == d.RdcodEq)
-                                                {
-                                                    <BSTD>@eq.EnombreEam</BSTD>
-
-                                                }
-
-
-                                            }
+                                            <BSTD Class="Definir">@d.IdResReuNavigation.Rrnombre </BSTD>
                                         }
                                         else
                                         {
-                                            <BSTD>No hay desctripción.</BSTD>
-
+                                            <BSTD>@d.IdResReuNavigation.Rrnombre </BSTD>
                                         }
-                                    }
-                                    else
-                                    {
-                                        <BSTD>@d.Rdarea</BSTD>
-                                        <BSTD>@d.IdksfNavigation.KsfNombre</BSTD>
-                                    }
 
-                                    <BSTD>@d.RdcodEq</BSTD>
-                                        <BSTD ColSpan="4">@d.Rddisc.ToUpperInvariant()</BSTD>
-                                        <BSTD>@d.RdcodDis</BSTD>
-                                        <BSTD Class="textotabla">@d.RdplanAcc</BSTD>
-                                        <BSTD>@d.Rdtiempo</BSTD>
-                                        @if (@d.IdResReuNavigation.Rrnombre == "Por Definir")
-                                    {
-                                        <BSTD Class="Definir">@d.IdResReuNavigation.Rrnombre </BSTD>
-                                    }
-                                    else
-                                    {
-                                        <BSTD>@d.IdResReuNavigation.Rrnombre </BSTD>
-                                    }
+                                        @if (@d.Rdstatus == "Listo")
+                                        {
+                                            <BSTD Class="listo">@d.Rdstatus</BSTD>
+                                        }
+                                        else if (@d.Rdstatus == "Cerrado")
+                                        {
+                                            <BSTD Class="Cerrado">@d.Rdstatus</BSTD>
+                                        }
+                                        else
+                                        {
+                                            <BSTD Class="pendiente">@d.Rdstatus</BSTD>
+                                        }
+                                        <BSTD>@d.Rdodt</BSTD>
+                                            <BSTD>@d.RdfecReu.ToString("dd/MM/yyyy")</BSTD>
+                                            <BSTD>@d.RdfecTra.ToString("dd/MM/yyyy")</BSTD>
 
-                                    @if (@d.Rdstatus == "Listo")
-                                    {
-                                        <BSTD Class="listo">@d.Rdstatus</BSTD>
-                                    }
-                                    else if (@d.Rdstatus == "Cerrado")
-                                    {
-                                        <BSTD Class="Cerrado">@d.Rdstatus</BSTD>
-                                    }
-                                    else
-                                    {
-                                        <BSTD Class="pendiente">@d.Rdstatus</BSTD>
-                                    }
-                                    <BSTD>@d.Rdodt</BSTD>
-                                        <BSTD>@d.RdfecReu.ToString("dd/MM/yyyy")</BSTD>
-                                        <BSTD>@d.RdfecTra.ToString("dd/MM/yyyy")</BSTD>
+                                        </BSTR>
 
-                                    </BSTR>
-
+                                }
                             }
                         }
                     }
@@ -178,7 +154,6 @@
 
         </BSTable>
     }
-    <button type="button" onclick="window.print()" class="btn btn-success"><span class="oi oi-print"></span></button>
 </body>
 
 @code {
@@ -188,6 +163,8 @@
     public string? division { get; set; }//division
     [Parameter]
     public string? f1 { get; set; }
+    [Parameter]
+    public string? linea { get; set; }
     [Parameter]
     public string? f2 { get; set; }
     [Parameter]
@@ -222,7 +199,7 @@
     {
         await base.OnInitializedAsync();
         await APIReunionService.GetResReu();
-      
+
 
 
     }

@@ -285,8 +285,8 @@
             await APIReunionService.GetEquiposEAM(claims[11].Value.ToString());
 
         }
-        IdCent = int.Parse(claims.FirstOrDefault(c => c.Type.Contains("IdCentro"))?.Value);
-        IdDiv = int.Parse(claims.FirstOrDefault(c => c.Type.Contains("IdDiv"))?.Value);
+        // IdCent = int.Parse(claims.FirstOrDefault(c => c.Type.Contains("IdCentro"))?.Value);
+        // IdDiv = int.Parse(claims.FirstOrDefault(c => c.Type.Contains("IdDiv"))?.Value);
 
         APIReunionService.resporeu=APIReunionService.resporeu.Where(a => a.Rrdesc == claims.FirstOrDefault(c => c.Type.Contains("Empresa"))?.Value | string.IsNullOrEmpty(a.Rrdesc)).ToList();
     }
@@ -368,9 +368,6 @@
                     CambFech.CffecNew = DateTime.Now;
                     CambFech.Cfuser = claims[2].Value + " " + claims[3].Value;
 
-
-                    // Reuniondb.CambFec.Add(CambFech);
-                    // Reuniondb.CambStats.Add(CambStata);
 
                     var result = await DbReunionService.InsertarRegistros(CambFech, CambStata);
                     //var result= await DbReunionService.InsertDiscrepancia(Reuniondb);
