@@ -79,7 +79,7 @@
                 <p></p>
 
                 <BSRow>
-                    @if (tipo == 0 | tipo == 2)
+                    @if (tipo == 0 || tipo == 2)
                     {
                         <BSCol Column="6">
                             <BSLabel>Plan de Acción</BSLabel>
@@ -101,7 +101,7 @@
 
                 <BSRow>
 
-                    @if (tipo == 0 | tipo == 2)
+                    @if (tipo == 0 || tipo == 2)
                     {
                         <BSCol Column="2">
                             <BSLabel>Tiempo (Horas)</BSLabel>
@@ -118,7 +118,7 @@
                     }
 
 
-                    @if (tipo == 0 | tipo == 2)
+                    @if (tipo == 0 || tipo == 2)
                     {
                         <BSCol Column="2">
                             <BSLabel>Fecha del Trabajo</BSLabel>
@@ -146,7 +146,7 @@
                         <BSFeedback For="@(() => DiscForm.IdResReu)" ValidMessage="Correcto." />
                     </BSCol>
 
-                    @if (tipo == 0 | tipo == 2)
+                    @if (tipo == 0 || tipo == 2)
                     {
                         <BSCol Column="2">
                             <BSLabel>Fecha Reunión</BSLabel>
@@ -157,7 +157,7 @@
                 <p></p>
                 <BSRow>
 
-                    @if (tipo == 0 | tipo == 2)
+                    @if (tipo == 0 || tipo == 2)
                     {
                         <BSCol ColumnSmall="2">
                             <BSLabel>Código</BSLabel>
@@ -195,7 +195,7 @@
                         <BSLabel>Status</BSLabel>
                         <BSInput InputType="InputType.Select" @bind-Value="DiscForm.Rdstatus">
 
-                            @if (tipo == 0 | tipo == 2)
+                            @if (tipo == 0 || tipo == 2)
                             {
                                 <option value="Listo">Listo</option>
                                 <option value="Cerrado">Cerrado</option>
@@ -220,7 +220,7 @@
 
                     @if (APIReunionService.resporeu.Count() > 0)
                     {
-                        if (planificador == "Admin" | planificador == "Planificador" | planificador == "SuperAdmin")
+                        if (planificador == "Admin" || planificador == "Planificador" || planificador == "SuperAdmin")
                         {
                             <BSCol Column="2">
                                 <BSLabel>ODT</BSLabel>
@@ -302,18 +302,19 @@
                  </BSRow>
                  <p></p>
                  <BSRow>
-                     <BSCol Column="4">
+                     <BSCol Column="6">
                          <BSLabel>Discrepancia</BSLabel>
                          <BSInput InputType="InputType.Text" @bind-Value="DiscForm.Rddisc" />
                      </BSCol>
-
+                 </BSRow>
+                 <BSRow>
 
                      <BSCol Column="6">
                          <BSLabel>Plan de Acción</BSLabel>
                          <BSInput InputType="InputType.Text" @bind-Value="DiscForm.RdplanAcc" />
                      </BSCol>
-
                  </BSRow>
+
 
                  <p></p>
                  <p></p>
@@ -323,7 +324,7 @@
 
                      <BSInput InputType="InputType.Text" hidden @bind-Value="DiscForm.Rdtiempo" />
 
-                     @if (planificador == "Admin" | planificador == "Planificador" | planificador == "SuperAdmin")
+                     @if (planificador == "Admin" || planificador == "Planificador" || planificador == "SuperAdmin")
                     {
                         <BSCol Column="2">
                             <BSLabel>Fecha del Trabajo</BSLabel>
@@ -368,13 +369,13 @@
 
                     @if (APIReunionService.resporeu.Count() > 0)
                     {
-                        if (planificador == "Admin" | planificador == "Planificador" | planificador == "SuperAdmin")
+                        if (planificador == "Admin" || planificador == "Planificador" || planificador == "SuperAdmin")
                         {
                             <BSCol ColumnSmall="2">
                                 <BSLabel>Status</BSLabel>
                                 <BSInput InputType="InputType.Select" @bind-Value="DiscForm.Rdstatus">
 
-                                    @if (tipo == 0 | tipo == 2)
+                                    @if (tipo == 0 || tipo == 2)
                             {
                                 <option value="Listo">Listo</option>
                                 <option value="Pendiente/Responsable">Pendiente/Responsable</option>
@@ -410,7 +411,7 @@
                                     <BSLabel>Status</BSLabel>
                                     <BSInput InputType="InputType.Select" @bind-Value="DiscForm.Rdstatus">
 
-                                        @if (tipo == 0 | tipo == 2)
+                                        @if (tipo == 0 || tipo == 2)
                             {
                                 <option value="Listo">Listo</option>
                             }
@@ -428,7 +429,7 @@
                         }
 
 
-                        if (planificador == "Admin" | planificador == "Planificador" | planificador == "SuperAdmin")
+                        if (planificador == "Admin" || planificador == "Planificador" || planificador == "SuperAdmin")
                         {
                             <BSCol Column="2">
                                 <BSLabel>ODT</BSLabel>
@@ -526,6 +527,7 @@
     private string fechahoy2, Emp = "";//Empresa
     private string planificador;//Variable para verificar si es el usuario del planificador;
     private string camStat;//Variable para verificar si es el usuario cambio el Status;
+    private string PlanOld;//Variable para verificar si es el usuario cambio el plan de accion;
     private DateTime camFec;//Variable para verificar si es el usuario cambio la Fecha;
 
     private List<Claim> claims { get; set; }//obtener datos del token
@@ -550,10 +552,11 @@
 
         camStat = DiscForm.Rdstatus;
         camFec = DiscForm.RdfecTra;
+        PlanOld = DiscForm.RdplanAcc;
 
         await APIReunionService.Getksf();
         await APIReunionService.GetResReu();
-        APIReunionService.resporeu = APIReunionService.resporeu.Where(a => a.Rrdesc == claims.FirstOrDefault(c => c.Type.Contains("Empresa"))?.Value | string.IsNullOrEmpty(a.Rrdesc)).ToList();
+        APIReunionService.resporeu = APIReunionService.resporeu.Where(a => a.Rrdesc == claims.FirstOrDefault(c => c.Type.Contains("Empresa"))?.Value || string.IsNullOrEmpty(a.Rrdesc)).ToList();
         loader = false;
     }
 
@@ -593,6 +596,11 @@
                 else if (String.IsNullOrEmpty(DiscForm.RdplanAcc) && DiscForm.Rdstatus == "Cerrado")
                 {
                     NotificationService.Notify(Notificar.Notificacion("advertencia", "Atención", "No se puede cerrar sin Plan de Acción."));
+                }
+                else if (PlanOld != DiscForm.RdplanAcc && String.IsNullOrEmpty(DiscForm.RdplanAcc))
+                {
+                    NotificationService.Notify(Notificar.Notificacion("advertencia", "Atención", "No se guardar con Plan de Acción vacío."));
+                    DiscForm.RdplanAcc = PlanOld;
                 }
                 else
                 {
@@ -637,6 +645,7 @@
                         DiscForm.CambFec.Add(CambFec);
                     }
                     cambio = await DbReunionService.UpdateDiscrepancia2(DiscForm, (int)Id, (int)tipo, f1, f2, est, linea);
+
 
                 }
             }
