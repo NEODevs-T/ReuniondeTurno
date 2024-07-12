@@ -243,7 +243,7 @@ else if (dataIsLoaded == 1 && APIReunionService.cargoreus.Count() == 0)
         int conteo = 0;//chequar si se dejaron tosos en null
         try
         {
-            if ((claims[4].Value == "Venezuela" & time > 8 & time < 10) | (claims[4].Value == "Colombia" & time > 8 & time < 11) | (claims[4].Value == "Guatemala" & time > 9 & time < 13))
+            if ((claims[4].Value == "Venezuela" && time > 8 && time < 10) || (claims[4].Value == "Colombia" && time > 8 && time < 11) || (claims[4].Value == "Guatemala" && time > 9 && time < 13) || (claims[4].Value == "Panamá" && time > 8 && time < 12) )
             {
 
             
