@@ -226,7 +226,7 @@ else
                                 {
 
                                     <BSTR Class="@GetClassVencido(d.RdfecTra, d.Rdstatus)">
-                                                                  
+
                                         @*<BSTD>@d.IdReuDia</BSTD>*@
                                         <BSTD>@d.Rdarea</BSTD>
                                             <BSTD>@d.IdksfNavigation.KsfNombre</BSTD>
@@ -263,7 +263,9 @@ else
                                             <BSTD>
                                                 <BSRow>
                                                     <BSCol>
+                                                    @if(isEditar){
                                                         <button class="btn btn-success" @onclick="(() => Editar(d.IdReuDia))"><i class="oi oi-pencil"></i></button>
+                                                    }
                                                     </BSCol>
                                                     <BSCol>
                                                         @if (UsrAdmin != "")
@@ -530,8 +532,7 @@ else if (dataIsLoaded == 2 && DbReunionService.reudiatablas.Count() == 0)
     List<CambStat> cambiostatuss = new List<CambStat>();
     List<Division> divisiones = new List<Division>();
     private NotifiRadzen Notificar = new NotifiRadzen();//Logic para crear las noyificaciones radzen
-
-
+    private bool isEditar { get; set; } = true;
     private List<Claim> claims { get; set; }
 
     private async Task CreateData()
@@ -569,6 +570,10 @@ else if (dataIsLoaded == 2 && DbReunionService.reudiatablas.Count() == 0)
             case "Planificador":
             case "SupIntendente":
                 await APIReunionService.GetCentrosxEmpresa(claims.FirstOrDefault(c => c.Type.Contains("IdCentro"))?.Value);
+                break;
+            case "Auditores":
+                isEditar = false;
+                await APIReunionService.GetCentrosxEmpresa("All" + claims.FirstOrDefault(c => c.Type.Contains("IdEmpresa"))?.Value);
                 break;
 
             case "MttoAdmin":
