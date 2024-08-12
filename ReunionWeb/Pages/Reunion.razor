@@ -280,7 +280,6 @@ else if (dataIsLoaded == 2 && DbReunionService.reunionditablas.Count() == 0)
     void Editar(int id)
     {
         NavigationManager.NavigateTo($"EditDisc/{id}/1/Re/{DateTime.Now.AddDays(-1).ToString("dd-MM-yyyy")}/{DateTime.Now.ToString("dd-MM-yyyy")}/Reunion");
-
     }
     protected override async Task OnParametersSetAsync()
     {

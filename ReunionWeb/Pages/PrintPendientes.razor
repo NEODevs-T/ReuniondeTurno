@@ -6,6 +6,7 @@
 @inject IAPIReunionService APIReunionService
 @inject AuthenticationStateProvider AuthStateProvider
 @inject ILocalStorageService LocalStorage
+
 <BSRow>
     <BSCol ColumnSmall="1" Column="2">
         <BSLabel>Código</BSLabel>
@@ -242,6 +243,10 @@
             case "Mantenimiento":
                 UsrRol = "Mtto";
                 await APIReunionService.GetCentrosxEmpresa(claims.FirstOrDefault(c => c.Type.Contains("IdCentro"))?.Value);
+                break;
+
+            case "Auditores":
+                await APIReunionService.GetCentrosxEmpresa("All" + claims.FirstOrDefault(c => c.Type.Contains("IdEmpresa"))?.Value);
                 break;
 
             default:
