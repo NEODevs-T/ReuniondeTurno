@@ -34,7 +34,7 @@
 
 
             <BSCol Column="3" ColumnSmall="2">
-                <BSLabel>División</BSLabel>
+                <BSLabel>DivisiÃ³n</BSLabel>
                 <BSInput InputType="InputType.Select" @bind-Value="IdDiv">
                     <option>Seleccione</option>
                     @foreach (var d in APIReunionService.centro)
@@ -72,11 +72,11 @@
 {
 
     <RadzenScheduler Data="@data" TItem="DataItem"  StartProperty ="Start" SelectedIndex="1" style="height: 630px;" EndProperty="End" TodayText="Hoy" TextProperty="Text" AppointmentRender=@OnAppointmentRender>
-        <RadzenDayView  Text="Día"  />
+        <RadzenDayView  Text="DÃ­a"  />
         <RadzenWeekView Text="Semana" />
         <RadzenMonthView Text="Mes" />
-        <RadzenYearPlannerView Text="Planifcación"/>
-        <RadzenYearView Text="Año" />
+        <RadzenYearPlannerView Text="PlanifcaciÃ³n"/>
+        <RadzenYearView Text="AÃ±o" />
     </RadzenScheduler>
 }
 
@@ -97,7 +97,7 @@ else if (dataIsLoaded == 2 && APIReunionService.calentrabajo.Count() == 0)
 
     [Required(ErrorMessage = "Seleccione el Centro")]
     private int IdCentro { get; set; } //id del Centro
-    [Required(ErrorMessage = "Seleccione la división.")]
+    [Required(ErrorMessage = "Seleccione la divisiÃ³n.")]
     private int IdDiv { get; set; } //id de la division
     private int dataIsLoaded { get; set; } //verificar si cargo la lista
 
@@ -118,7 +118,7 @@ else if (dataIsLoaded == 2 && APIReunionService.calentrabajo.Count() == 0)
         
         var rol = claims.FirstOrDefault(c => c.Type.Contains("role"))?.Value;
 
-        if (rol == "Admin" || rol == "SuperAdmin" || rol == "MttoAdmin" || rol == "SeguridadAdmin" || rol == "CalidadAdmin")
+        if (rol == "Admin" || rol == "SuperAdmin" || rol == "MttoAdmin" || rol == "SeguridadAdmin" || rol == "Auditores" )
         {
 
             await APIReunionService.GetCentrosxEmpresa("All" + claims[10].Value);

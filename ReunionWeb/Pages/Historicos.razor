@@ -344,6 +344,10 @@ else if (dataIsLoaded == 2 && tabla.Count() == 0)
                 await APIReunionService.GetCentrosxEmpresa(claims.FirstOrDefault(c => c.Type.Contains("IdCentro"))?.Value);
                 break;
 
+            case "Auditores":
+                await APIReunionService.GetCentrosxEmpresa("All" + claims.FirstOrDefault(c => c.Type.Contains("IdEmpresa"))?.Value);
+                break;
+
             case "MttoAdmin":
                 UsrRol = "Mtto";
                 await APIReunionService.GetCentrosxEmpresa("All" + claims.FirstOrDefault(c => c.Type.Contains("IdEmpresa"))?.Value);

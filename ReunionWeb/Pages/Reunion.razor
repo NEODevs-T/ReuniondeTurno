@@ -240,7 +240,7 @@ else if (dataIsLoaded == 2 && DbReunionService.reunionditablas.Count() == 0)
         Rol =claims.FirstOrDefault(c => c.Type.Contains("role"))?.Value;
 
 
-        if (Rol == "Admin" || Rol == "SuperAdmin" || Rol == "MttoAdmin" || Rol == "SeguridadAdmin" || Rol == "CalidadAdmin")
+        if (Rol == "Admin" || Rol == "SuperAdmin" || Rol == "MttoAdmin" || Rol == "SeguridadAdmin" || Rol == "CalidadAdmin" || Rol == "Auditores")
         {
             // await APIReunionService.GetCentros("All");
             await APIReunionService.GetCentrosxEmpresa("All" + claims[10].Value);

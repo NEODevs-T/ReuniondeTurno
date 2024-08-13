@@ -220,7 +220,7 @@
     <p></p>
 
     <BSCol Column="12">
-        <BSButton Color="BSColor.Success" Size="Size.ExtraSmall" IsSubmit>  Guardar <span class="oi oi-check"></span></BSButton>
+        <BSButton Color="BSColor.Success" Size="Size.ExtraSmall" IsDisabled="isDesactivado" IsSubmit>  Guardar <span class="oi oi-check"></span></BSButton>
         <BSButton Color="BSColor.Primary" Size="Size.ExtraSmall" IsReset>  Nuevo </BSButton>
     </BSCol>
 </BSForm>
@@ -259,11 +259,9 @@
     private int? IdCent { get; set; }
     [Required(ErrorMessage = "Seleccione la división.")]
     private int? IdDiv { get; set; }
-
-
-
     private string mensaje = "";
 
+    private bool isDesactivado { get; set; } = false;
 
     protected override async Task OnInitializedAsync()
     {
@@ -293,7 +291,7 @@
 
     protected async Task Insert(EditContext e)
     {
-
+        isDesactivado = true;
         //Reuniondb.Fecha = fecha;
         try
         {
@@ -367,11 +365,7 @@
                     CambFech.Cffec = DateTime.Now;
                     CambFech.CffecNew = DateTime.Now;
                     CambFech.Cfuser = claims[2].Value + " " + claims[3].Value;
-
-
                     var result = await DbReunionService.InsertarRegistros(CambFech, CambStata);
-                    //var result= await DbReunionService.InsertDiscrepancia(Reuniondb);
-
                     if (result )
                     {
                         mensaje = "Registro Exitoso";
@@ -382,35 +376,25 @@
                         equiposfiltro = null;
                         selectedEquipoName = selectedEquipoId = null;
                         fechatrabajo = DateTime.Today;
-
                         NotificationService.Notify(Notificar.Notificacion("exito", mensaje, ""));
                     }
                     else
                     {
                         NotificationService.Notify(Notificar.Notificacion("error", "Error al insertar, intente de nuevo.",""));
-
                     }
-
-                    //await Reset();
-                    //Reuniondb = new BdDiv1();
-
                 }
             }
-
-
         }
         catch (Microsoft.EntityFrameworkCore.DbUpdateException ex)
         {
             NotificationService.Notify(Notificar.Notificacion("advertencia", "Error de conexión", "Error de conexión de datos.Intente de nuevo "));
-
         }
         catch (Exception ex)
         {
             NotificationService.Notify(Notificar.Notificacion("error", "Error inesperado.",  ex.Message));
-           
         }
 
-
+        isDesactivado = false;
     }
 
 
