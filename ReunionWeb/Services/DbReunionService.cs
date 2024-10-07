@@ -7,6 +7,7 @@ using System.Diagnostics.Metrics;
 using Radzen.Blazor.Rendering;
 using System.Linq.Dynamic.Core;
 using System.Reflection.Metadata.Ecma335;
+using ReunionWeb.ReunionDiaria.DTOs;
 
 
 
@@ -37,10 +38,9 @@ namespace ReunionWeb.Services
 
         public async Task<List<ReuDiumDTO>> GetByODT(string ODT, string idcentro, string iddiv)
         {
-            //"GetByODT/{ODT}/{idcentro}/{iddiv}"
-            url = $"{BaseUrl}/GetClasificacionTPM/";
+            url = $"{BaseUrl}GetByODT/{ODT}/{idcentro}/{iddiv}";
             cliente = _clientFactory.CreateClient();
-            return await cliente.GetFromJsonAsync<List<ClasifiTpmDTO>>(url) ?? new List<ClasifiTpmDTO>();
+            return await cliente.GetFromJsonAsync<List<ReuDiumDTO>>(url) ?? new List<ReuDiumDTO>();
 
         }
 

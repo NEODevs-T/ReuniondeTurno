@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Mvc;
-using ReunionWeb.DTOs;
+using ReunionWeb.ReunionDiaria.DTOs;
 
 using ReunionWeb.NeoDbs;
 using static System.Net.WebRequestMethods;

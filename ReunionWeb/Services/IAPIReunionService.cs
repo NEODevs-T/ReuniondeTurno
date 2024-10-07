@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using ReunionWeb.DTOs;
+using ReunionWeb.ReunionDiaria.DTOs;
 //using ReunionWeb.Models;
 using ReunionWeb.NeoDbs;
 
