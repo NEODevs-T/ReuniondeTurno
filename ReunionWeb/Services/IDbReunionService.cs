@@ -7,21 +7,21 @@ namespace ReunionWeb.Services
     {
 
 
-        List<Centro> centros { get; set; }
-         List<Linea> lineas { get; set; }
-         List<Empresa> empresas { get; set; }
-         List<Pai> paiss { get; set; }
-         List<Division> divs { get; set; }
-         List<Ksf> ksfss { get; set; }
-         List<RespoReu> resporeus { get; set; }
-         List<ReunionDium> reunionditablas { get; set; }
-         List<ReuDium> reudiatablas { get; set; }
-         List<Division> divisionss { get; set; }
-         List<AsistenReu> asistenreus { get; set; }
-         List<CargoReu> cargoreuss { get; set; }
-         List<CambStat> cambiostatus { get; set; }
-         List<CambFec> cambiofecha { get; set; }
-         Division centrodiscrepancia { get; set; }
+        // List<Centro> centros { get; set; }
+        //  List<Linea> lineas { get; set; }
+        //  List<Empresa> empresas { get; set; }
+        //  List<Pai> paiss { get; set; }
+        //  List<Division> divs { get; set; }
+        //  List<Ksf> ksfss { get; set; }
+        //  List<RespoReu> resporeus { get; set; }
+        //  List<ReunionDium> reunionditablas { get; set; }
+        //  List<ReuDium> reudiatablas { get; set; }
+        //  List<Division> divisionss { get; set; }
+        //  List<AsistenReu> asistenreus { get; set; }
+        //  List<CargoReu> cargoreuss { get; set; }
+        //  List<CambStat> cambiostatus { get; set; }
+        //  List<CambFec> cambiofecha { get; set; }
+        //  Division centrodiscrepancia { get; set; }
 
         
         Task GetPendientes(string centro, string div, DateTime f1, DateTime f2, string tipo, string estado);

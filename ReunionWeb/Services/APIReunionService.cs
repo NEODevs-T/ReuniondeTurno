@@ -33,7 +33,7 @@ namespace ReunionWeb.Services
             _http = http;
             _navigationManager = navigationManager;
         }
-
+        private const string BaseUrl = "http://neo.paveca.com.ve/apineomaster/api/Maestra";
         //Conversion
         public async Task GetEquiposEAM(string cent)
         {

@@ -57,8 +57,8 @@ namespace ReunionDiaApi.Controllers
         {
 
             empresa = await _context.Empresas
-           .Where(x => (x.IdPais == int.Parse(idpais)) & (x.Eestado == true))
-           .ToListAsync();
+                .Where(x => (x.IdPais == int.Parse(idpais)) & (x.Eestado == true))
+                .ToListAsync();
 
             return Ok(empresa);
         }
@@ -79,10 +79,10 @@ namespace ReunionDiaApi.Controllers
             if (cen == "All")
             {
                 centro = await _context.Centros
-               .Include(x => x.Divisions)
-               .ThenInclude(post => post.Lineas) // TO DO: eliminar en el codigo
-               .Where(c => c.IdEmpresaNavigation.IdEmpresa == idempresa)
-               .ToListAsync();
+                    .Include(x => x.Divisions)
+                    .ThenInclude(post => post.Lineas) // TO DO: eliminar en el codigo
+                    .Where(c => c.IdEmpresaNavigation.IdEmpresa == idempresa)
+                    .ToListAsync();
             }
 
             else
@@ -90,10 +90,10 @@ namespace ReunionDiaApi.Controllers
                 int centroid = int.Parse(cent);
 
                 centro = await _context.Centros
-               .Include(x => x.Divisions)
-               .ThenInclude(post => post.Lineas)// TO DO: eliminar en el codigo
-               .Where(x => x.IdCentro == centroid)
-               .ToListAsync();
+                .Include(x => x.Divisions)
+                .ThenInclude(post => post.Lineas)// TO DO: eliminar en el codigo
+                .Where(x => x.IdCentro == centroid)
+                .ToListAsync();
 
             }
 
@@ -106,8 +106,8 @@ namespace ReunionDiaApi.Controllers
         {
 
             linea = await _context.Lineas
-           .Where(x => (x.IdDivision == int.Parse(division)) & x.Lestado == true)
-           .ToListAsync();
+                .Where(x => (x.IdDivision == int.Parse(division)) & x.Lestado == true)
+                .ToListAsync();
 
             return Ok(linea);
         }
@@ -123,16 +123,16 @@ namespace ReunionDiaApi.Controllers
             if (cent == "All")
             {
                 var result = await _context.EquipoEams
-                 .Include(x => x.IdLineaNavigation)
-                 .Where(x => x.EestaEam == true)
-                 .Select(p => new
-                 {
-                     p.EcodEquiEam,
-                     p.EnombreEam,
-                     p.IdLineaNavigation
-                 })
-                 .AsNoTracking()
-                  .ToListAsync();
+                    .Include(x => x.IdLineaNavigation)
+                    .Where(x => x.EestaEam == true)
+                    .Select(p => new
+                    {
+                        p.EcodEquiEam,
+                        p.EnombreEam,
+                        p.IdLineaNavigation
+                    })
+                    .AsNoTracking()
+                    .ToListAsync();
 
                 return Ok(result);
             }
@@ -141,16 +141,16 @@ namespace ReunionDiaApi.Controllers
 
 
                 var result = await _context.EquipoEams
-                 .Include(x => x.IdLineaNavigation)
-                 .Where(x => x.IdLineaNavigation.IdDivisionNavigation.IdCentro == idcentro && x.EestaEam == true)
-                 .Select(p => new
-                 {
-                     p.EcodEquiEam,
-                     p.EnombreEam,
-                     p.IdLineaNavigation
-                 })
-                 .AsNoTracking()
-                  .ToListAsync();
+                    .Include(x => x.IdLineaNavigation)
+                    .Where(x => x.IdLineaNavigation.IdDivisionNavigation.IdCentro == idcentro && x.EestaEam == true)
+                    .Select(p => new
+                    {
+                        p.EcodEquiEam,
+                        p.EnombreEam,
+                        p.IdLineaNavigation
+                    })
+                    .AsNoTracking()
+                    .ToListAsync();
 
                 return Ok(result);
             }
@@ -245,12 +245,12 @@ namespace ReunionDiaApi.Controllers
 
                     return await UpdateEquipo(eq);
                     //return Ok("");
-                  
+
                 }
                 catch
                 {
                     return BadRequest("Error, intente nuevamente");
-                        
+
                 }
             }
 

@@ -16,22 +16,14 @@ namespace ReunionWeb.Services
     public class DbReunionService : IDbReunionService
     {
 
-        public List<Centro> centros { get; set; } = new List<Centro> { };
-        public List<Linea> lineas { get; set; } = new List<Linea> { };
-        public List<Empresa> empresas { get; set; } = new List<Empresa> { };
-        public List<Pai> paiss { get; set; } = new List<Pai> { };
-        public List<Division> divs { get; set; } = new List<Division> { };
-        public List<Ksf> ksfss { get; set; } = new List<Ksf>();
-        public List<RespoReu> resporeus { get; set; } = new List<RespoReu>();
-        public List<ReunionDium> reunionditablas { get; set; } = new List<ReunionDium>();
-        public List<ReuDium> reudiatablas { get; set; } = new List<ReuDium>();
-        public List<Division> divisionss { get; set; } = new List<Division>();
-        public List<AsistenReu> asistenreus { get; set; } = new List<AsistenReu>();
-        public List<CargoReu> cargoreuss { get; set; } = new List<CargoReu>();
-        public List<CambStat> cambiostatus { get; set; } = new List<CambStat>();
-        public List<CambFec> cambiofecha { get; set; } = new List<CambFec>();
-        public List<CalendarioTrabajoDTO> calentrabajo { get; set; } = new List<CalendarioTrabajoDTO>();
-        public Division centrodiscrepancia { get; set; } = new Division();
+        // **-------> CONEXION A LA API <--------**
+        private readonly IHttpClientFactory _clientFactory;
+        private const string BaseUrl = "http://neo.paveca.com.ve/apineomaster/api/DbReunionService";
+        private HttpClient cliente { get; set; } = new HttpClient();
+        private HttpResponseMessage? mensaje { get; set; } = new HttpResponseMessage();
+        private string url { get; set; } = "";
+
+        // **-------> CONEXION A LA API <--------**
 
 
         private readonly DbNeoContext _neocontext;
@@ -43,27 +35,13 @@ namespace ReunionWeb.Services
             _neocontext = _NeoContext;
         }
 
-        public async Task<List<ReuDium>> GetByODT(string ODT, string idcentro, string iddiv)
+        public async Task<List<ReuDiumDTO>> GetByODT(string ODT, string idcentro, string iddiv)
         {
-            //Consultar nombre del centro y division  para insertarlos
-            CentroDivision centrodiv = new CentroDivision();
-            centrodiv = await GetCentroDiv(idcentro, iddiv, 0);
+            //"GetByODT/{ODT}/{idcentro}/{iddiv}"
+            url = $"{BaseUrl}/GetClasificacionTPM/";
+            cliente = _clientFactory.CreateClient();
+            return await cliente.GetFromJsonAsync<List<ClasifiTpmDTO>>(url) ?? new List<ClasifiTpmDTO>();
 
-
-            string centro = centrodiv.Cnom;
-            string div = centrodiv.Dnombre;
-
-            reudiatablas = new List<ReuDium>();
-
-            reudiatablas = await _neocontext.ReuDia
-            .Where(a => a.Rdodt.Contains(ODT) && (a.Rdcentro == centrodiv.Cnom && a.Rddiv == centrodiv.Dnombre))
-            .Include(b => b.IdksfNavigation)
-            .Include(b => b.IdResReuNavigation)
-            .Include(b => b.IdEmpresaNavigation)
-            .OrderByDescending(b => b.RdfecReu)
-            .ToListAsync();
-
-            return reudiatablas;
         }
 
         //obtener discrepancias para pendientes y reunion 

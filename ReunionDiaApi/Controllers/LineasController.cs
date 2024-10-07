@@ -74,7 +74,7 @@ namespace ReunionDiaApi.Controllers
             {
                 var result = await _context.EquipoEams
                  .Include(x => x.IdLineaNavigation)
-                 .Where(x => x.EestaEam == true & x.IdLineaNavigation.IdCentroNavigation.IdEmpresaNavigation.IdEmpresa==idempresa)
+                 .Where(x => x.EestaEam == true & x.IdLineaNavigation.IdCentroNavigation.IdEmpresaNavigation.IdEmpresa == idempresa)
                  .Select(p => new
                  {
                      p.EcodEquiEam,
@@ -94,19 +94,19 @@ namespace ReunionDiaApi.Controllers
                  .Include(x => x.IdLineaNavigation)
                  //.Where(x => x.IdLineaNavigation.IdDivisionNavigation.IdCentroNavigation.Cnom == cent && x.EestaEam == true)
                  .Where(x => x.IdLineaNavigation.IdDivisionNavigation.IdCentro == int.Parse(cent) && x.EestaEam == true)
-                 .Select(p => new 
+                 .Select(p => new
                  {
-                     p.EcodEquiEam, 
-                     p.EnombreEam, 
+                     p.EcodEquiEam,
+                     p.EnombreEam,
                      p.IdLineaNavigation
                  })
                  .AsNoTracking()
                   .ToListAsync();
 
-                  return Ok(result);
+                return Ok(result);
             }
 
-          
+
         }
 
         [HttpGet("Division/{centro}/{div}")]
@@ -114,7 +114,7 @@ namespace ReunionDiaApi.Controllers
         {
 
             divisions = await _context.Divisions
-                .Include(x => x.IdCentroNavigation)
+                .Include(x => x.IdCentroNavigation) 
                 .ToListAsync();
 
             return Ok(linea);
@@ -125,8 +125,8 @@ namespace ReunionDiaApi.Controllers
         {
 
             cargoreus = await _context.CargoReus
-                .Where(a => a.Crarea == centro & a.Crempresa== empresa & a.Cresta==true)
-                .OrderByDescending(a=>a.Crnombre)
+                .Where(a => a.Crarea == centro & a.Crempresa == empresa & a.Cresta == true)
+                .OrderByDescending(a => a.Crnombre)
                 .ToListAsync();
 
             return Ok(cargoreus);
@@ -154,9 +154,9 @@ namespace ReunionDiaApi.Controllers
 
 
             resporeu = await _context.RespoReus
-                .Where(a => a.Rresta == true )
+                .Where(a => a.Rresta == true)
                 .ToListAsync();
-            
+
 
             return Ok(resporeu);
         }
@@ -195,7 +195,7 @@ namespace ReunionDiaApi.Controllers
             {
                 var result = await _context.AsistenReus
                 .Include(x => x.AridCargoRNavigation)
-               .Where(x => (x.Arfecha.Value.Date >= date1 & x.Arfecha.Value.Date <= date2) && x.Ararea == cent && x.AridCargoRNavigation.Crempresa==empresa)
+               .Where(x => (x.Arfecha.Value.Date >= date1 & x.Arfecha.Value.Date <= date2) && x.Ararea == cent && x.AridCargoRNavigation.Crempresa == empresa)
                .GroupBy(x => x.AridCargoRNavigation.Crnombre)
                .Select(a => new
                {
@@ -253,12 +253,12 @@ namespace ReunionDiaApi.Controllers
         [HttpGet("EquiposLinea/{Centro}")]
         public async Task<ActionResult<List<Empresa>>> EquiposLineaEAM(string Centro)
         {
-            
-                empresa = await _context.Empresas
-                .Include(x => x.IdPaisNavigation)
-                .Include(y=>y.Centros)
-                .Where(x=>x.Centros.First(i=>i.Cnom== Centro).IdEmpresa==x.IdEmpresa)
-                .ToListAsync();
+
+            empresa = await _context.Empresas
+            .Include(x => x.IdPaisNavigation)
+            .Include(y => y.Centros)
+            .Where(x => x.Centros.First(i => i.Cnom == Centro).IdEmpresa == x.IdEmpresa)
+            .ToListAsync();
 
 
             return Ok(empresa);
@@ -267,7 +267,7 @@ namespace ReunionDiaApi.Controllers
         [HttpPost("Asistencia")]
         public async Task<ActionResult<string>> SaveAsistencia(List<AsistenReu> list)
         {
-            DateTime d=DateTime.Today;
+            DateTime d = DateTime.Today;
 
             try
             {
@@ -307,16 +307,17 @@ namespace ReunionDiaApi.Controllers
 
         }
 
+        //TODO:areglar problemas del metodo
         //Obtener trabajos pendientes para el calendario
         [HttpGet("TrabajosCalendario/{pais}/{centro}/{division}")]
-        public async Task<ActionResult<List<CalendarioTrabajoDTO>>> GetTrabajosCalendario(string pais,string centro, string division)
+        public async Task<ActionResult<List<CalendarioTrabajoDTO>>> GetTrabajosCalendario(string pais, string centro, string division)
         {
 
             if (division == "All")
             {
                 var list = await _context.ReuDia
-                      .Include(x => x.IdResReuNavigation)
-                        .Where(d => (d.Rdstatus == "Pendiente/Responsable" | d.Rdstatus == "Pendiente") & (d.IdPais == int.Parse(pais)) & (d.Rdcentro == centro))
+                        .Include(x => x.IdResReuNavigation)
+                        .Where(d => (d.Rdstatus == "Pendiente/Responsable" || d.Rdstatus == "Pendiente") && (d.IdPais == int.Parse(pais)) && (d.Rdcentro == centro))
                         .Select(rd => new
                         {
                             IdReuDia = rd.IdReuDia,
@@ -336,8 +337,8 @@ namespace ReunionDiaApi.Controllers
             else
             {
                 var list = await _context.ReuDia
-                      .Include(x => x.IdResReuNavigation)
-                        .Where(d => (d.Rdstatus == "Pendiente/Responsable" | d.Rdstatus == "Pendiente") & (d.IdPais == int.Parse(pais)) & (d.Rdcentro == centro) & (d.Rddiv == division))
+                        .Include(x => x.IdResReuNavigation)
+                        //.Where(d => (d.Rdstatus == "Pendiente/Responsable" || d.Rdstatus == "Pendiente") && (d.IdPais == int.Parse(pais)) && (d.Rdcentro == centro) && (d.Rddiv == division))
                         .Select(rd => new
                         {
                             IdReuDia = rd.IdReuDia,
@@ -348,14 +349,13 @@ namespace ReunionDiaApi.Controllers
                             RdfecTra = rd.RdfecTra,
                             Responsable = rd.IdResReuNavigation.Rrnombre,
                             Linea = rd.Rdarea
-
                         })
                         .AsNoTracking()
                         .ToListAsync();
                 return Ok(list);
             }
 
-          
+
         }
 
 
