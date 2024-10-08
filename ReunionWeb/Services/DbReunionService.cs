@@ -8,6 +8,7 @@ using Radzen.Blazor.Rendering;
 using System.Linq.Dynamic.Core;
 using System.Reflection.Metadata.Ecma335;
 using ReunionWeb.ReunionDiaria.DTOs;
+using NeoAPI.DTOs.ReunionDiaria;
 
 
 
@@ -66,103 +67,65 @@ namespace ReunionWeb.Services
         //Update Discrepancia
         public async Task<bool> UpdateDiscrepancia(ReuDium d, int id, int tipo, string f1, string f2, string estado)
         {
-            string div = "", centro = "";
-            // DateTime f1= DateTime.Now;
-
-            if (d.Rdcentro is not null)
-            {
-                //Consultar nombre del centro y division pra retornar el id en pendientes
-                CentroDivision centrodiv = new CentroDivision();
-                centrodiv = await GetCentroDiv(d.Rdcentro, d.Rddiv, 1);
-                centro = centrodiv.IdCentro.ToString();
-                div = centrodiv.IdDivision.ToString();
-
-            }
-
-            ReuDium bdDiscrep = new ReuDium();
-
-            bdDiscrep = await _neocontext.ReuDia
-                .Include(b => b.IdksfNavigation)
-                .Include(b => b.IdResReuNavigation)
-               .FirstOrDefaultAsync(sh => sh.IdReuDia == id);
-            if (bdDiscrep == null)
-                throw new Exception("Sorry, not found");
-
-
-            bdDiscrep.Rdarea = d.Rdarea;
-            bdDiscrep.Rddiv = d.Rddiv;
-            bdDiscrep.RdcodDis = d.RdcodDis;
-            bdDiscrep.RdcodEq = d.RdcodEq;
-            bdDiscrep.Rddisc = d.Rddisc;
-            bdDiscrep.Rdcentro = d.Rdcentro;
-            bdDiscrep.RdfecReu = d.RdfecReu;
-            bdDiscrep.RdfecTra = d.RdfecTra;
-            bdDiscrep.Idksf = d.Idksf;
-            bdDiscrep.RdplanAcc = d.RdplanAcc;
-            bdDiscrep.Rdodt = d.Rdodt;
-            bdDiscrep.IdResReu = d.IdResReu;
-            bdDiscrep.Rdstatus = d.Rdstatus;
-            bdDiscrep.Rdtiempo = d.Rdtiempo;
-            bdDiscrep.IdPais = d.IdPais;
-            bdDiscrep.IdEmpresa = d.IdEmpresa;
-            //bdDiscrep.RdnumDis = d.RdnumDis;
-            //bdDiscrep.Rdobs = d.Rdobs;
+            bool band = false;
+            url = $"{BaseUrl}/UpdateDiscrepancia/{id}";
+            cliente = _clientFactory.CreateClient();
+            mensaje = await cliente.PutAsJsonAsync(url, id);
 
             try
             {
-                _neocontext.Entry(bdDiscrep).State = EntityState.Modified;
-                await _neocontext.SaveChangesAsync();
-                reudiatablas = new List<ReuDium>();
-                //bdDiscrep = null;
 
-                if (tipo == 0)
+                if (mensaje.IsSuccessStatusCode)
                 {
-                    _navigationManager.NavigateTo($"pendientes/{centro}/{div}/{f1}/{f2}/{tipo}/{estado}");
+                    band = await mensaje.Content.ReadFromJsonAsync<bool>();
                 }
-                else if (tipo == 1)
+
+                if (band == true)
                 {
-                    _navigationManager.NavigateTo($"reunion/{centro}/{div}/{f1}/{f2}/{tipo}/Reunion");
-                }
-                else if (tipo == 2)
-                {
-                    _navigationManager.NavigateTo($"pendientes/{centro}/{div}/{f1}/{f2}/{tipo}/{estado}");
+
+                    if (tipo == 0)
+                    {
+                        _navigationManager.NavigateTo($"pendientes/{centro}/{div}/{f1}/{f2}/{tipo}/{estado}");
+                    }
+                    else if (tipo == 1)
+                    {
+                        _navigationManager.NavigateTo($"reunion/{centro}/{div}/{f1}/{f2}/{tipo}/Reunion");
+                    }
+                    else if (tipo == 2)
+                    {
+                        _navigationManager.NavigateTo($"pendientes/{centro}/{div}/{f1}/{f2}/{tipo}/{estado}");
+                    }
                 }
 
                 return true;
+
             }
             catch (Exception ex)
             {
                 return false;
             }
 
-
         }
+
+
+
+
         public async Task<bool> UpdateDiscrepancia2(ReuDium d, int id, int tipo, string f1, string f2, string estado, string linea)
         {
-            string div = "", centro = "";
-            bool check = false;
-            // DateTime f1= DateTime.Now;
-
-            if (d.Rdcentro is not null)
-            {
-                //Consultar nombre del centro y division pra retornar el id en pendientes
-                CentroDivision centrodiv = new CentroDivision();
-                centrodiv = await GetCentroDiv(d.Rdcentro, d.Rddiv, 1);
-                centro = centrodiv.IdCentro.ToString();
-                div = centrodiv.IdDivision.ToString();
-
-            }
-
+            bool band = false;
+            url = $"{BaseUrl}/UpdateDiscrepancia2/{id}";
+            cliente = _clientFactory.CreateClient();
+            mensaje = await cliente.PutAsJsonAsync(url, id);
 
             try
             {
 
-                _neocontext.ReuDia.Update(d);
-                check = await _neocontext.SaveChangesAsync() > 0;
-                //reudiatablas = new List<ReuDium>();
-                ////bdDiscrep = null;
+                if (mensaje.IsSuccessStatusCode)
+                {
+                    band = await mensaje.Content.ReadFromJsonAsync<bool>();
+                }
 
-                if (check)
+                if (band == true)
                 {
                     if (tipo == 0)
                     {
@@ -193,122 +156,94 @@ namespace ReunionWeb.Services
 
         //Obtener id de centro y dic=vision y viceversa
 
-        public async Task<CentroDivision> GetCentroDiv(string centro, string division, int tipo)
+        public async Task<List<CentroDivisionDTO>> GetCentroDiv(string centro, string division, int tipo)
         {
-            CentroDivision CD = new CentroDivision();
-            if (tipo == 0)
-            {
-
-                centrodiscrepancia = await _neocontext.Divisions
-                    .Include(c => c.IdCentroNavigation)
-                    .Where(d => d.IdDivision == int.Parse(division))
-                    .Select(di => new Division
-                    {
-                        IdDivision = di.IdDivision,
-                        Dnombre = di.Dnombre,
-                        IdCentroNavigation = di.IdCentroNavigation
-                    })
-                    .AsNoTracking()
-                    .FirstOrDefaultAsync();
-
-
-
-                CD.IdCentro = centrodiscrepancia.IdCentroNavigation.IdCentro;
-                CD.IdDivision = centrodiscrepancia.IdDivision;
-                CD.Cnom = centrodiscrepancia.IdCentroNavigation.Cnom;
-                CD.Dnombre = centrodiscrepancia.Dnombre;
-            }
-
-            else if (tipo == 1)
-            {
-
-
-
-                centrodiscrepancia = await _neocontext.Divisions
-                    .Include(c => c.IdCentroNavigation)
-                    .Where(d => d.Dnombre == division && d.IdCentroNavigation.Cnom == centro)
-                    .Select(di => new Division
-                    {
-                        IdDivision = di.IdDivision,
-                        Dnombre = di.Dnombre,
-                        IdCentroNavigation = di.IdCentroNavigation
-                    })
-                    .AsNoTracking()
-                    .FirstOrDefaultAsync();
-
-
-
-                CD.IdCentro = centrodiscrepancia.IdCentroNavigation.IdCentro;
-                CD.IdDivision = centrodiscrepancia.IdDivision;
-                CD.Cnom = centrodiscrepancia.IdCentroNavigation.Cnom;
-                CD.Dnombre = centrodiscrepancia.Dnombre;
-            }
-
-
-            return CD;
+            url = $"{BaseUrl}GetHistoricos/{centro}/{division}/{tipo}";
+            cliente = _clientFactory.CreateClient();
+            return await cliente.GetFromJsonAsync<List<CentroDivisionDTO>>(url) ?? new List<CentroDivisionDTO>();
         }
 
         //Consultas para los cambios de estatus en una discrepancia
-        public async Task GetCambioStatus(int idreu)
+        public async Task<List<CambStatDTO>> GetCambioStatus(int idreu)
         {
-            cambiostatus = await _neocontext.CambStats
-                .Where(a => a.IdReuDia == idreu)
-                // .OrderByDescending(b => b.IdCambStat)
-                .ToListAsync();
+            url = $"{BaseUrl}GetCambioStatus/{idreu}";
+            cliente = _clientFactory.CreateClient();
+            return await cliente.GetFromJsonAsync<List<CambStatDTO>>(url) ?? new List<CambStatDTO>();
         }
 
-        public async Task GetCambioFecha(int idreu)
+        public async Task<List<CambFecDTO>> GetCambioFecha(int idreu)
         {
-            cambiofecha = await _neocontext.CambFecs
-                .Where(a => a.IdReuDia == idreu)
-                //.OrderByDescending(b => b.IdCambFec)
-                .ToListAsync();
+            url = $"{BaseUrl}GetCambioFecha/{idreu}";
+            cliente = _clientFactory.CreateClient();
+            return await cliente.GetFromJsonAsync<List<CambFecDTO>>(url) ?? new List<CambFecDTO>();
         }
 
 
         //obtener discrepancia a editar
-        public async Task<ReuDium> GetDiscrepantacia(int id)
+        public async Task<List<ReuDiumDTO>> GetDiscrepantacia(int id)
         {
-            var disc = await _neocontext.ReuDia
-                .Include(b => b.IdksfNavigation)
-                .Include(b => b.IdResReuNavigation)
-                .FirstOrDefaultAsync(h => h.IdReuDia == id);
-            if (disc == null)
-                throw new Exception("not found!");
-            return disc;
+            url = $"{BaseUrl}GetDiscrepantaciaJT/{id}";
+            cliente = _clientFactory.CreateClient();
+            return await cliente.GetFromJsonAsync<List<ReuDiumDTO>>(url) ?? new List<ReuDiumDTO>();
 
         }
 
 
         public async Task<int> InsertDiscrepancia(ReuDium discre)
         {
-            _neocontext.ReuDia.Add(discre);
-            await _neocontext.SaveChangesAsync();
-            return discre.IdReuDia;
+            int data = 0;
+            url = $"{BaseUrl}/AddDiscrepancia";
+            cliente = _clientFactory.CreateClient();
+            mensaje = await cliente.PostAsJsonAsync(url, discre);
+            if (mensaje.IsSuccessStatusCode)
+            {
+                data = discre.IdReuDia;
+            }
+            return data;
         }
 
 
-        public async Task InsertCambioStatus(CambStat status)
+        public async Task<bool> InsertCambioStatus(CambStat status)
         {
-            _neocontext.CambStats.Add(status);
-            await _neocontext.SaveChangesAsync();
+            bool band = false;
+            url = $"{BaseUrl}/AddCambioStatus";
+            cliente = _clientFactory.CreateClient();
+            mensaje = await cliente.PostAsJsonAsync(url, status);
+
+            if (mensaje.IsSuccessStatusCode)
+            {
+                band = await mensaje.Content.ReadFromJsonAsync<bool>();
+            }
+            return band;
         }
 
-        public async Task InsertCambioFec(CambFec cambiofec)
+
+        public async Task<bool> InsertCambioFec(CambFec cambiofec)
         {
-            _neocontext.CambFecs.Add(cambiofec);
-            await _neocontext.SaveChangesAsync();
+            bool band = false;
+            url = $"{BaseUrl}/AddCambioFec";
+            cliente = _clientFactory.CreateClient();
+            mensaje = await cliente.PostAsJsonAsync(url, cambiofec);
+
+            if (mensaje.IsSuccessStatusCode)
+            {
+                band = await mensaje.Content.ReadFromJsonAsync<bool>();
+            }
+            return band;
         }
-        //Insertar discrepancia con chismoso
-        public async Task<bool> InsertarRegistros(CambFec data, CambStat data2)
+
+        public async Task<bool> InsertarRegistros(RegistroCambiosDTO registroCambios)
         {
-            data.IdReuDiaNavigation.CambStats.Add(data2);
-            _neocontext.CambFecs.Add(data);
-            //_neocontext.CambStats.Add(data2);
-            await _neocontext.SaveChangesAsync();
+            bool band = false;
+            url = $"{BaseUrl}/AddRegistros";
+            cliente = _clientFactory.CreateClient();
+            mensaje = await cliente.PostAsJsonAsync(url, registroCambios);
 
-            return true;
+            if (mensaje.IsSuccessStatusCode)
+            {
+                band = await mensaje.Content.ReadFromJsonAsync<bool>();
+            }
+            return band;
         }
-
     }
 }
