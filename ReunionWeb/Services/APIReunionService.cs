@@ -22,6 +22,25 @@ public class APIReunionService //: IAPIReunionService
         // **-------> CONEXION A LA API <--------**
 
 
+        // **-------> PROPIEDADES DE JAVIER <------**
+
+        // List<CentroDTO> centro { get; set; }
+        // List<Linea> lineas { get; set; }
+        // List<Division> divisions { get; set; }
+        // List<Ksf> ksfs { get; set; }
+        // List<RespoReu> resporeu { get; set; }
+        // List<ReunionDium> reunionditabla { get; set; }
+        // List<ReuDium> reudiatabla { get; set; }
+        // List<AsistenReu> asistenreus { get; set; }
+        // List<CargoReu> cargoreus { get; set; }
+        // List<StatsAsisDto> StatsAsisDtos { get; set; }
+        // List<EquipoEam> equipos { get; set; }
+        // List<EquipoEam> equiposlinea { get; set; }
+        // List<CalendarioTrabajoDTO> calentrabajo { get; set; }
+
+        // **-------> PROPIEDADES DE JAVIER <------**
+
+
         public async Task<List<EquipoEamDTO>> GetEquiposEAM(string cent)
         {
                 url = $"{BaseUrlLineas}/GetEquipos/{cent}";
@@ -113,7 +132,7 @@ public class APIReunionService //: IAPIReunionService
         }
 
 
-//TODO: CREAR METO EN NEOAPIMASTER
+        //TODO: CREAR METO EN NEOAPIMASTER
 
         public async Task<bool> Postasistencia(List<AsistenReu> asisten)
         {
@@ -127,17 +146,17 @@ public class APIReunionService //: IAPIReunionService
                 }
                 return band;
         }
-        public async Task<bool> AddEquipo(EquipoDTO equipo)
+        public async Task<string> AddEquipo(EquipoDTO equipo)
         {
-                bool band = false;
+                string mens = "";
                 url = $"{BaseUrlMaestra}/AddEquipo";
                 cliente = _clientFactory.CreateClient();
                 mensaje = await cliente.PostAsJsonAsync(url, equipo);
                 if (mensaje.IsSuccessStatusCode)
                 {
-                        band = await mensaje.Content.ReadFromJsonAsync<bool>();
+                        mens = "el cambio fue existoso";
                 }
-                return band;
+                return mens;
         }
 
         public async Task<List<ReuDiumDTO>> GetTrabajosCalendario(string pais, string centro, string division)
