@@ -37,7 +37,7 @@ else
             <BSLabel>División</BSLabel>
             <BSInput InputType="InputType.Select" @bind-Value="IdDiv">
                 <option value=0>Seleccione</option>
-                @foreach (var d in Division)
+                @foreach (var d in _divisiones)
                 {
                     <option value="@d.IdDivision">@d.div</option>
                 }
@@ -530,7 +530,7 @@ else if (dataIsLoaded == 2 && DbReunionService.reudiatablas.Count() == 0)
     List<ReuDium> listareu = new List<ReuDium>();//filtar los responsables
     List<CambFec> cambiofechas = new List<CambFec>();
     List<CambStat> cambiostatuss = new List<CambStat>();
-    List<MaestraVDTO> Divisiones = new List<MaestraVDTO>();
+    List<MaestraVDTO> _divisiones = new List<MaestraVDTO>();
     private NotifiRadzen Notificar = new NotifiRadzen();//Logic para crear las noyificaciones radzen
     private bool isEditar { get; set; } = true;
     private List<Claim> claims { get; set; }
