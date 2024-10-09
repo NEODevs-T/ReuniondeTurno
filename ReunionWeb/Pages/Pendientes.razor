@@ -12,7 +12,7 @@
 <h4>Asuntos</h4>
 
 
-@if (APIReunionService.centro.Count() == 0)
+@if (centro.Count() == 0)
 {
     <div class="pt-5">
         <br />
@@ -26,9 +26,9 @@ else
             <BSLabel>Centro</BSLabel>
             <BSInput InputType="InputType.Select" Value=IdCentro ValueChanged="@((int value) => DivReset(value))">
                 <option value=0>Seleccione</option>
-                @foreach (var d in APIReunionService.centro)
+                @foreach (var d in centro)
                 {
-                    <option value="@d.IdCentro">@d.Cnom</option>
+                    <option value="@d.IdCentro">@d.Centro</option>
                 }
             </BSInput>
         </BSCol>
@@ -37,9 +37,9 @@ else
             <BSLabel>División</BSLabel>
             <BSInput InputType="InputType.Select" @bind-Value="IdDiv">
                 <option value=0>Seleccione</option>
-                @foreach (var d in divisiones)
+                @foreach (var d in Division)
                 {
-                    <option value="@d.IdDivision">@d.Dnombre</option>
+                    <option value="@d.IdDivision">@d.div</option>
                 }
             </BSInput>
         </BSCol>
@@ -530,10 +530,30 @@ else if (dataIsLoaded == 2 && DbReunionService.reudiatablas.Count() == 0)
     List<ReuDium> listareu = new List<ReuDium>();//filtar los responsables
     List<CambFec> cambiofechas = new List<CambFec>();
     List<CambStat> cambiostatuss = new List<CambStat>();
-    List<Division> divisiones = new List<Division>();
+    List<MaestraVDTO> Divisiones = new List<MaestraVDTO>();
     private NotifiRadzen Notificar = new NotifiRadzen();//Logic para crear las noyificaciones radzen
     private bool isEditar { get; set; } = true;
     private List<Claim> claims { get; set; }
+    private List<AsistenReuDTO> listaAsistencia { get; set; }
+    private List<LineaDTO> lineas { get; set; }
+    private List<DivisionDTO> divisions { get; set; }
+    private List<MaestraVDTO> centro { get; set; }
+    private List<KsfDTO> ksfs { get; set; }
+    private List<RespoReuDTO> resporeu { get; set; }
+    private List<ReuDiumDTO> reunionditabla { get; set; }
+    private List<ReuDiumDTO> reudiatabla { get; set; }
+    private List<AsistenReuDTO> asistenreus { get; set; }
+    private List<CargoReuDTO> cargoreus { get; set; }
+    private List<StatsAsisDto> StatsAsisDtos { get; set; }
+    private List<EquiposEamVDTO> equipos { get; set; }
+    private List<EquiposEamVDTO> equiposlinea { get; set; }
+    private List<EquipoEamDTO> listaEqupis { get; set; }
+    private RegistroCambiosDTO listaRegistro { get; set; } 
+    private List<CalendarioTrabajoDTO> calentrabajo { get; set; }
+    private List<CambFecDTO> cambiofecha { get; set; }
+    private List<ReuDiumDTO> reudiatablas { get; set; }
+    private APIReunionService apiclass = new APIReunionService();
+    private DbReunionService DbReu = new DbReunionService();
 
     private async Task CreateData()
 

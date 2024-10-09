@@ -7,6 +7,7 @@ namespace ReunionWeb.ReunionDiaria.DTOs;
 public class StatsAsisDto
 {
     public string Cargo { get; set; } = string.Empty;
-    public decimal Asistencias { get; set; }
+    public double Asistencias { get; set; }
+    public double Total { get; set; }
 }
 

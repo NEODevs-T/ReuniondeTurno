@@ -37,7 +37,7 @@
         <BSLabel>Responsable</BSLabel>
         <BSInput InputType="InputType.Select" @bind-Value="idrespo">
             <option value=0>Todo</option>
-            @foreach (var d in APIReunionService.resporeu)
+            @foreach (var d in resporeu)
             {
 
                 <option value="@d.IdResReu">@d.Rrnombre</option>
@@ -54,7 +54,7 @@
 <button type="button" onclick="window.print()" class="btn btn-success"><span class="oi oi-print"></span></button>
 <p></p>
 <body>
-    @if (DbReunionService.reudiatablas.Count() > 0 && dataIsLoaded == 2)
+    @if (reudiatablas.Count() > 0 && dataIsLoaded == 2)
     {
 
 
@@ -86,11 +86,11 @@
             @if (UsrRol == "Calidad" | UsrRol == "Seguridad" | UsrRol=="Mtto")*@
                 @if (UsrRol != "")
                 {
-                    listareu = DbReunionService.reudiatablas.Where(r => r.IdResReuNavigation.Rrnombre.StartsWith(UsrRol)).ToList();
+                    listareu = reudiatablas.Where(r => r.Responsable.StartsWith(UsrRol)).ToList();
                 }
                 else
                 {
-                    listareu = DbReunionService.reudiatablas;
+                    listareu = reudiatablas;
 
                 }
                 @*            @foreach (var d in DbReunionService.reudiatablas)*@
@@ -108,19 +108,19 @@
                                         @*<BSTD>@d.IdReuDia</BSTD>*@
 
                                         <BSTD>@d.Rdarea</BSTD>
-                                            <BSTD>@d.IdksfNavigation.KsfNombre</BSTD>
+                                            <BSTD>@d.ksfNom</BSTD>
                                             <BSTD>@d.RdcodEq</BSTD>
                                             <BSTD ColSpan="4">@d.Rddisc.ToUpperInvariant()</BSTD>
                                             <BSTD>@d.RdcodDis</BSTD>
                                             <BSTD Class="textotabla">@d.RdplanAcc</BSTD>
                                             <BSTD>@d.Rdtiempo</BSTD>
-                                            @if (@d.IdResReuNavigation.Rrnombre == "Por Definir")
+                                            @if (@d.Responsable == "Por Definir")
                                         {
-                                            <BSTD Class="Definir">@d.IdResReuNavigation.Rrnombre </BSTD>
+                                            <BSTD Class="Definir">@d.Responsable </BSTD>
                                         }
                                         else
                                         {
-                                            <BSTD>@d.IdResReuNavigation.Rrnombre </BSTD>
+                                            <BSTD>@d.Responsable </BSTD>
                                         }
 
                                         @if (@d.Rdstatus == "Listo")
@@ -183,7 +183,29 @@
     private string UsrAdmin { get; set; } = ""; //permisos de admin
     private string UsrRol { get; set; } = ""; //rol para filtrar
 
-    List<ReuDium> listareu = new List<ReuDium>();//filtar los responsables
+        private List<AsistenReuDTO> listaAsistencia { get; set; }
+    private List<LineaDTO> lineas { get; set; }
+    private List<DivisionDTO> divisions { get; set; }
+    private List<MaestraVDTO> centro { get; set; }
+    private List<KsfDTO> ksfs { get; set; }
+    private List<RespoReuDTO> resporeu { get; set; }
+    private List<ReuDiumDTO> reunionditabla { get; set; }
+    private List<ReuDiumDTO> reudiatabla { get; set; }
+    private List<AsistenReuDTO> asistenreus { get; set; }
+    private List<CargoReuDTO> cargoreus { get; set; }
+    private List<StatsAsisDto> StatsAsisDtos { get; set; }
+    private List<EquiposEamVDTO> equipos { get; set; }
+    private List<EquiposEamVDTO> equiposlinea { get; set; }
+    private List<EquipoEamDTO> listaEqupis { get; set; }
+    private RegistroCambiosDTO listaRegistro { get; set; } 
+    private List<CalendarioTrabajoDTO> calentrabajo { get; set; }
+    private List<CambFecDTO> cambiofecha { get; set; }
+    private List<ReuDiumDTO> reudiatablas { get; set; }
+    private APIReunionService apiclass = new APIReunionService();
+    private DbReunionService DbReu = new DbReunionService();
+
+
+    List<ReuDiumDTO> listareu = new List<ReuDiumDTO>();//filtar los responsables
 
     private List<Claim> claims { get; set; }
 

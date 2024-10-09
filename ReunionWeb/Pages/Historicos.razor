@@ -12,7 +12,7 @@
 
 <BSContainer>
 
-    @if (APIReunionService.centro.Count() == 0)
+    @if (centro.Count() == 0)
     {
         <div class="loader"></div>
     }
@@ -24,9 +24,9 @@
             <BSCol Column="3" ColumnSmall="2">
                 <BSLabel>Centro</BSLabel>
                 <BSInput InputType="InputType.Select" @bind-Value="IdCentro">                  
-                    @foreach (var d in APIReunionService.centro)
+                    @foreach (var d in centro)
                     {
-                        <option value="@d.IdCentro">@d.Cnom</option>
+                        <option value="@d.IdCentro">@d.Centro</option>
                     }
                 </BSInput>
             </BSCol>
@@ -35,15 +35,12 @@
             <BSCol Column="3" ColumnSmall="2">
                 <BSLabel>División</BSLabel>
                 <BSInput InputType="InputType.Select" @bind-Value="IdDiv">
-                    @foreach (var d in APIReunionService.centro)
-                    {
-                        @foreach (var e in d.Divisions)
-                        {
+                    @foreach (var d in centro)
+                    {                        
                             if (IdCentro == d.IdCentro)
                             {
-                                <option value="@e.IdDivision">@e.Dnombre</option>
+                                <option value="@d.IdDivision">@d.División</option>
                             }
-                        }
                     }
                 </BSInput>
             </BSCol>
@@ -128,7 +125,7 @@
 {
 
     <RadzenDataGrid @ref="@ReuTabla" Data="@tabla" class="rz-shadow-2" AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="true" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="30" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
-                TItem="ReuDium" LogicalFilterOperator="LogicalFilterOperator.Or" OrOperatorText="O" AndOperatorText="Y" EqualsText="Igual a" EditMode="DataGridEditMode.Single" ColumnWidth="200px">
+                TItem="ReuDiumDTO" LogicalFilterOperator="LogicalFilterOperator.Or" OrOperatorText="O" AndOperatorText="Y" EqualsText="Igual a" EditMode="DataGridEditMode.Single" ColumnWidth="200px">
         <Columns>
             @*
         <RadzenDataGridColumn TItem="ReuDium" Title="Centro" Frozen="true" Property="Rdcentro" Width="80px">
@@ -144,7 +141,7 @@
         </Template>
         </RadzenDataGridColumn>*@
 
-            <RadzenDataGridColumn TItem="ReuDium" Title="#" Frozen="true" Width="35px"  Filterable=false>
+            <RadzenDataGridColumn TItem="ReuDiumDTO" Title="#" Frozen="true" Width="35px"  Filterable=false>
                 <Template>
 
                     @(tabla.IndexOf(context) + 1)
@@ -158,67 +155,67 @@
 
 
 
-            <RadzenDataGridColumn TItem="ReuDium" Title="Equipo" Frozen="true" Property="RdcodEq" Width="80px">
+            <RadzenDataGridColumn TItem="ReuDiumDTO" Title="Equipo" Frozen="true" Property="RdcodEq" Width="80px">
                 <Template>
                     @context.RdcodEq
                 </Template>
             </RadzenDataGridColumn>
 
-            <RadzenDataGridColumn TItem="ReuDium" Title="KSF" Property="IdksfNavigation.KsfNombre" Width="80px">
+            <RadzenDataGridColumn TItem="ReuDiumDTO" Title="KSF" Property="ksfNom" Width="80px">
                 <Template>
-                    @context.IdksfNavigation.KsfNombre
+                    @context.ksfNom
                 </Template>
             </RadzenDataGridColumn>
 
-            <RadzenDataGridColumn TItem="ReuDium" Title="Discrepancia" Property="Rddisc" Width="220px">
+            <RadzenDataGridColumn TItem="ReuDiumDTO" Title="Discrepancia" Property="Rddisc" Width="220px">
                 <Template>
                     @context.Rddisc
                 </Template>
             </RadzenDataGridColumn>
 
-            <RadzenDataGridColumn TItem="ReuDium" Title="Código" Property="RdcodDis" Width="60px">
+            <RadzenDataGridColumn TItem="ReuDiumDTO" Title="Código" Property="RdcodDis" Width="60px">
                 <Template>
                     @context.RdcodDis
                 </Template>
             </RadzenDataGridColumn>
 
-            <RadzenDataGridColumn TItem="ReuDium" Title="Acción" Property="RdplanAcc" Width="200px">
+            <RadzenDataGridColumn TItem="ReuDiumDTO" Title="Acción" Property="RdplanAcc" Width="200px">
                 <Template>
                     @context.RdplanAcc
                 </Template>
             </RadzenDataGridColumn>
 
-            <RadzenDataGridColumn TItem="ReuDium" Title="Tiempo" Property="Rdtiempo" Width="60px">
+            <RadzenDataGridColumn TItem="ReuDiumDTO" Title="Tiempo" Property="Rdtiempo" Width="60px">
                 <Template>
                     @context.Rdtiempo
                 </Template>
             </RadzenDataGridColumn>
 
-            <RadzenDataGridColumn TItem="ReuDium" Title="Responsable" Property="IdResReuNavigation.Rrnombre" Width="100px">
+            <RadzenDataGridColumn TItem="ReuDiumDTO" Title="Responsable" Property="Responsable" Width="100px">
                 <Template>
-                    @context.IdResReuNavigation.Rrnombre
+                    @context.Responsable
                 </Template>
             </RadzenDataGridColumn>
 
-            <RadzenDataGridColumn TItem="ReuDium" Title="ODT" Property="Rdodt" Width="100px">
+            <RadzenDataGridColumn TItem="ReuDiumDTO" Title="ODT" Property="Rdodt" Width="100px">
                 <Template>
                     @context.Rdodt
                 </Template>
             </RadzenDataGridColumn>
 
-            <RadzenDataGridColumn TItem="ReuDium" Title="Estado" Property="Rdstatus" Width="90px">
+            <RadzenDataGridColumn TItem="ReuDiumDTO" Title="Estado" Property="Rdstatus" Width="90px">
                 <Template>
                     @context.Rdstatus
                 </Template>
             </RadzenDataGridColumn>
 
-            <RadzenDataGridColumn TItem="ReuDium" Title="F. Reunión" Property="RdfecReu" Width="90px">
+            <RadzenDataGridColumn TItem="ReuDiumDTO" Title="F. Reunión" Property="RdfecReu" Width="90px">
                 <Template>
                     @context.RdfecReu.ToString("yyyy/MM/dd")
                 </Template>
             </RadzenDataGridColumn>
 
-            <RadzenDataGridColumn TItem="ReuDium" Title="F. Trabajo" Property="RdfecTra" Width="90px">
+            <RadzenDataGridColumn TItem="ReuDiumDTO" Title="F. Trabajo" Property="RdfecTra" Width="90px">
                 <Template>
                     @context.RdfecTra.ToString("yyyy/MM/dd")
                 </Template>
@@ -238,8 +235,8 @@ else if (dataIsLoaded == 2 && tabla.Count() == 0)
     <p>No hay datos para esta fecha.</p>
 }
 @code {
-    RadzenDataGrid<ReuDium> ReuTabla;
-    List<ReuDium> tabla = new List<ReuDium>();
+    RadzenDataGrid<ReuDiumDTO> ReuTabla;
+    List<ReuDiumDTO> tabla = new List<ReuDiumDTO>();
 
     int dataIsLoaded = 0;
     string ayer = DateTime.Now.AddDays(-1).ToString("yyyyMMdd"), error;
@@ -264,7 +261,27 @@ else if (dataIsLoaded == 2 && tabla.Count() == 0)
     private string tipoconsulta { get; set; } = "0"; //1-fecha de reuinion 0 fecha trabajo
     private List<Claim> claims { get; set; }
     public DateTime fecha1;
-    public DateTime fecha2;
+    public DateTime fecha2;    
+    private List<AsistenReuDTO> listaAsistencia { get; set; }
+    private List<LineaDTO> lineas { get; set; }
+    private List<DivisionDTO> divisions { get; set; }
+    private List<MaestraVDTO> centro { get; set; }
+    private List<KsfDTO> ksfs { get; set; }
+    private List<RespoReuDTO> resporeu { get; set; }
+    private List<ReuDiumDTO> reunionditabla { get; set; }
+    private List<ReuDiumDTO> reudiatabla { get; set; }
+    private List<AsistenReuDTO> asistenreus { get; set; }
+    private List<CargoReuDTO> cargoreus { get; set; }
+    private List<StatsAsisDto> StatsAsisDtos { get; set; }
+    private List<EquiposEamVDTO> equipos { get; set; }
+    private List<EquiposEamVDTO> equiposlinea { get; set; }
+    private List<EquipoEamDTO> listaEqupis { get; set; }
+    private RegistroCambiosDTO listaRegistro { get; set; } 
+    private List<CalendarioTrabajoDTO> calentrabajo { get; set; }
+    private List<CambFecDTO> cambiofecha { get; set; }
+    private List<ReuDiumDTO> reudiatablas { get; set; }
+    private APIReunionService apiclass = new APIReunionService();
+    private DbReunionService DbReu = new DbReunionService();
 
 
     private async Task CreateData()
@@ -376,7 +393,7 @@ else if (dataIsLoaded == 2 && tabla.Count() == 0)
 
         await APIReunionService.Getksf();
         await APIReunionService.GetResReu();
-        DbReunionService.reudiatablas = new List<ReuDium>();
+        reudiatablas = new List<ReuDiumDTO>();
 
 
     }
@@ -386,7 +403,7 @@ else if (dataIsLoaded == 2 && tabla.Count() == 0)
         if (dataIsLoaded != 1)
         {
             dataIsLoaded = 1;
-            tabla = await DbReunionService.GetHistoricos(IdCentro.ToString(), IdDiv.ToString(), fecha1, fecha2, tipoconsulta, Status);
+            tabla = await DbReu.GetHistoricos(IdCentro.ToString(), IdDiv.ToString(), fecha1, fecha2, tipoconsulta, Status);
             dataIsLoaded = 2;
         }
     }

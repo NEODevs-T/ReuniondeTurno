@@ -22,4 +22,5 @@ public class EquipoEamDTO
 
     public LineaDTO Linea { get; set; }
 
+
 }

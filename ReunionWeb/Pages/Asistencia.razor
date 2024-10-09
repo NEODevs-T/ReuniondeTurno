@@ -2,7 +2,6 @@
 
 @inject IDbReunionService DbReunionService
 @inject AuthenticationStateProvider AuthStateProvider
-@inject IAPIReunionService APIReunionService
 @inject ILocalStorageService LocalStorage
 @inject NotificationService NotificationService
 @attribute [Authorize(Roles = "Admin, AdminChempro, SupIntendente, SupIntendenteGeneral, SuperAdmin")]
@@ -13,7 +12,7 @@
 
 <BSContainer>
 
-    @if (APIReunionService.centro.Count() == 0)
+    @if (centro.Count() == 0)
     {
         <div class="loader"></div>
     }
@@ -24,9 +23,9 @@
             <BSCol Column="4">
 
                 <BSInput InputType="InputType.Select" @bind-Value="Div">
-                    @foreach (var d in APIReunionService.centro)
+                    @foreach (var d in centro)
                     {
-                    <option value="@d.Cnom">@d.Cnom</option>
+                    <option value="@d.Centro">@d.Centro</option>
                     }
             </BSInput>
         </BSCol>
@@ -44,9 +43,9 @@
 <p></p>
 
 
-@if (APIReunionService.cargoreus.Count() > 0 && dataIsLoaded == 2)
+@if (cargoreus.Count() > 0 && dataIsLoaded == 2)
 {
-    @if (listaAsistencia.Where(c => c.AridCargoRNavigation.CRBloque == 1).Count() > 0)
+    @if (listaAsistencia.Where(c => c.Cargo.Crbloque == 1).Count() > 0)
     {
         <BSCol Column="4">
             <BSLabel>Bloque: @bloque</BSLabel>
@@ -64,16 +63,16 @@
                 </BSTR>
             </BSTHead>
             <BSTBody>
-                @if (listaAsistencia.Where(c=>c.AridCargoRNavigation.CRBloque ==1).Count()>0)
+                @if (listaAsistencia.Where(c=>c.Cargo.Crbloque ==1).Count()>0)
                 {
                    
-                    @foreach (var d in listaAsistencia.Where(c => c.AridCargoRNavigation.CRBloque == bloque))
+                    @foreach (var d in listaAsistencia.Where(c => c.Cargo.Crbloque == bloque))
                     {
 
 
                         <BSTR>
 
-                            <BSTD>@d.AridCargoRNavigation.Crnombre</BSTD>
+                            <BSTD>@d.Cargo.Crbloque</BSTD>
                             <BSTD>
                                 <div Class="@BS.Form_Check @BS.Form_Switch">
                                     <BSInputCheckbox CheckedValue="@(1)" Color="BSColor.Success" @bind-Value="d.ArAsistente" />
@@ -100,7 +99,7 @@
 
                         <BSTR>
 
-                        <BSTD>@d.AridCargoRNavigation.Crnombre</BSTD>
+                        <BSTD>@d.Cargo.Crnombre</BSTD>
                         <BSTD>
                             <div Class="@BS.Form_Check @BS.Form_Switch">
                                 <BSInputCheckbox CheckedValue="@(1)" Color="BSColor.Success" @bind-Value="d.ArAsistente" />
@@ -128,11 +127,11 @@
 
 
 }
-else if (APIReunionService.cargoreus.Count() == 0 && dataIsLoaded == 2)
+else if (cargoreus.Count() == 0 && dataIsLoaded == 2)
 {
     <p>No se ha cargado personal a este centro.</p>
 }
-else if (dataIsLoaded == 1 && APIReunionService.cargoreus.Count() == 0)
+else if (dataIsLoaded == 1 && cargoreus.Count() == 0)
 {
     <div class="loader"></div>
 }
@@ -144,8 +143,8 @@ else if (dataIsLoaded == 1 && APIReunionService.cargoreus.Count() == 0)
     // private Asistencium asisform = new Asistencium();
     // private AsistenReu asiform = new AsistenReu();
     // private List<Asistencium> asis = new List<Asistencium>();
-    private List<CargoReu> cr = new List<CargoReu>();
-    private AsistenReu reuform;
+    private List<CargoReuDTO> cr = new List<CargoReuDTO>();
+    private AsistenReuDTO reuform;
     private string UsrRol { get; set; } = ""; //rol para filtrar
 
     private int fecha = int.Parse(DateTime.Now.ToString("yyyyMMdd"));
@@ -157,10 +156,22 @@ else if (dataIsLoaded == 1 && APIReunionService.cargoreus.Count() == 0)
     // private string RadioValue { get; set; }
     private string Div { get; set; }
     private int bloque { get; set; } = 0;//Indica el Bloque de reunion a llenar asistencia
-    private List<AsistenReu> listaAsistencia { get; set; }
-
-
-
+    private List<AsistenReuDTO> listaAsistencia { get; set; }
+    private List<LineaDTO> lineas { get; set; }
+    private List<DivisionDTO> divisions { get; set; }
+    private List<MaestraVDTO> centro { get; set; }
+    private List<KsfDTO> ksfs { get; set; }
+    private List<RespoReuDTO> resporeu { get; set; }
+    private List<ReuDiumDTO> reunionditabla { get; set; }
+    private List<ReuDiumDTO> reudiatabla { get; set; }
+    private List<AsistenReuDTO> asistenreus { get; set; }
+    private List<CargoReuDTO> cargoreus { get; set; }
+    private List<StatsAsisDto> StatsAsisDtos { get; set; }
+    private List<EquiposEamVDTO> equipos { get; set; }
+    private List<EquiposEamVDTO> equiposlinea { get; set; }
+    private List<EquipoEamDTO> listaEqupis { get; set; }
+    private List<CalendarioTrabajoDTO> calentrabajo { get; set; }
+    private APIReunionService apiclass = new APIReunionService();
 
 
     private List<Claim> claims { get; set; }
@@ -184,12 +195,12 @@ else if (dataIsLoaded == 1 && APIReunionService.cargoreus.Count() == 0)
         if (UsrRol == "Admin" | UsrRol == "SuperAdmin")
         {
 
-            await APIReunionService.GetCentrosxEmpresa("All" + claims.FirstOrDefault(c => c.Type.Contains("IdEmpresa"))?.Value);
+            await apiclass.GetCentrosxEmpresa("All" + claims.FirstOrDefault(c => c.Type.Contains("IdEmpresa"))?.Value);
         }
         else
         {
 
-            await APIReunionService.GetCentrosxEmpresa(claims.FirstOrDefault(c => c.Type.Equals("IdCentro"))?.Value);
+            await apiclass.GetCentrosxEmpresa(claims.FirstOrDefault(c => c.Type.Equals("IdCentro"))?.Value);
         }
         Div = claims.FirstOrDefault(c => c.Type.Contains("Centro"))?.Value;
 
@@ -202,19 +213,19 @@ else if (dataIsLoaded == 1 && APIReunionService.cargoreus.Count() == 0)
         if (dataIsLoaded != 1)
         {
             dataIsLoaded = 1;
-            await APIReunionService.GetAsistencia(Div, claims.FirstOrDefault(c => c.Type.Equals("Empresa"))?.Value);
-            cr = APIReunionService.cargoreus;
-            listaAsistencia = new List<AsistenReu>();
+            await apiclass.GetAsistencia(Div, claims.FirstOrDefault(c => c.Type.Equals("Empresa"))?.Value);
+            cr = cargoreus;
+            listaAsistencia = new List<AsistenReuDTO>();
 
 
 
             for (var i = 0; i < cr.Count; i++)
             {
 
-                reuform = new AsistenReu();
+                reuform = new AsistenReuDTO();
                 reuform.Ararea = Div;
                 reuform.Arfecha = DateTime.Now;
-                reuform.AridCargoRNavigation = cr[i];
+                reuform.Cargo = cr[i];
                 listaAsistencia.Add(reuform);
             }
 
@@ -222,10 +233,10 @@ else if (dataIsLoaded == 1 && APIReunionService.cargoreus.Count() == 0)
             for (var i = 0; i < cr.Count; i++)
             {
 
-                listaAsistencia[i].AridCargoR = APIReunionService.cargoreus[i].IdCargoR;
+                listaAsistencia[i].Cargo.IdCargoR = cargoreus[i].IdCargoR;
             }
 
-            if (listaAsistencia.Any(c => c.AridCargoRNavigation.CRBloque == 1))
+            if (listaAsistencia.Any(c => c.Cargo.Crbloque == 1))
             {
                 bloque = 1;
             }
@@ -251,7 +262,7 @@ else if (dataIsLoaded == 1 && APIReunionService.cargoreus.Count() == 0)
             {
                 for (int i = listaAsistencia.Count - 1; i >= 0; i--)
                 {
-                    if (listaAsistencia[i].AridCargoRNavigation.CRBloque != bloque)
+                    if (listaAsistencia[i].Cargo.Crbloque != bloque)
                     {
                         listaAsistencia.RemoveAt(i);
                     }
@@ -282,7 +293,7 @@ else if (dataIsLoaded == 1 && APIReunionService.cargoreus.Count() == 0)
                 }
                 else
                 {
-                    mensaje = await APIReunionService.Postasistencia(listaAsistencia);
+                    mensaje = await apiclass.Postasistencia(listaAsistencia);
 
                     if (mensaje == "Registro Exitoso")
                     {

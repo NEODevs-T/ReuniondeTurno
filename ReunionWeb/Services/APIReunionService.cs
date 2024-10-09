@@ -7,7 +7,7 @@ using static System.Net.WebRequestMethods;
 using ReunionWeb.DTOs.Maestra;
 
 namespace ReunionWeb.Services;
-public class APIReunionService //: IAPIReunionService
+public class APIReunionService: IAPIReunionService
 {
         // **-------> CONEXION A LA API <--------**
         private readonly IHttpClientFactory _clientFactory;
@@ -134,17 +134,17 @@ public class APIReunionService //: IAPIReunionService
 
         //TODO: CREAR METO EN NEOAPIMASTER
 
-        public async Task<bool> Postasistencia(List<AsistenReu> asisten)
+        public async Task<string> Postasistencia(List<AsistenReuDTO> asisten)
         {
-                bool band = false;
-                url = $"{BaseUrlMaestra}/AddEquipo";
+                string mens = "";
+                url = $"{BaseUrlLineas}/AddAsistencia";
                 cliente = _clientFactory.CreateClient();
                 mensaje = await cliente.PostAsJsonAsync(url, asisten);
                 if (mensaje.IsSuccessStatusCode)
                 {
-                        band = await mensaje.Content.ReadFromJsonAsync<bool>();
+                        mens = "Se añadido exitosamente";
                 }
-                return band;
+                return mens;
         }
         public async Task<string> AddEquipo(EquipoDTO equipo)
         {
@@ -154,7 +154,7 @@ public class APIReunionService //: IAPIReunionService
                 mensaje = await cliente.PostAsJsonAsync(url, equipo);
                 if (mensaje.IsSuccessStatusCode)
                 {
-                        mens = "el cambio fue existoso";
+                        mens = "Se añadido exitosamente";
                 }
                 return mens;
         }

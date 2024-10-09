@@ -38,15 +38,17 @@ public partial class ReuDiumDTO
 
     public string? RdnumDis { get; set; }
 
-    public DateTime? RdfecReu { get; set; }
+    public DateTime RdfecReu { get; set; }
 
-    public DateTime? RdfecTra { get; set; }
+    public DateTime RdfecTra { get; set; }
 
     public string? Rdobs { get; set; }
 
     public DateTime? RdfecCrea { get; set; }
 
     public string? Responsable {get; set;}
+
+    public string? ksfNom {get; set;}
 
     public int? IdPais {get; set;}
 }

@@ -13,7 +13,7 @@
 
 <BSContainer>
 
-    @if (APIReunionService.centro.Count() == 0)
+    @if (centro.Count() == 0)
     {
 
 
@@ -27,9 +27,9 @@
                 <BSLabel>Centro</BSLabel>
                 <BSInput InputType="InputType.Select" @bind-Value="IdCentro">
                     <option value="">Seleccione</option>
-                    @foreach (var d in APIReunionService.centro)
+                    @foreach (var d in centro)
                     {
-                        <option value="@d.IdCentro">@d.Cnom</option>
+                        <option value="@d.IdCentro">@d.Centro</option>
                     }
                 </BSInput>
             </BSCol>
@@ -38,15 +38,12 @@
                 <BSLabel>División</BSLabel>
                 <BSInput InputType="InputType.Select" @bind-Value="IdDiv">
                     <option value="">Seleccione</option>
-                    @foreach (var d in APIReunionService.centro)
+                    @foreach (var d in centro)
                     {
-                        @foreach (var e in d.Divisions)
-                        {
                             if (IdCentro == d.IdCentro)
                             {
-                                <option value="@e.IdDivision">@e.Dnombre</option>
-                            }
-                        }
+                                <option value="@d.IdDivision">@d.División</option>
+                            }   
                     }
                 </BSInput>
             </BSCol>
@@ -68,7 +65,7 @@
                 </BSRow>
                 <BSButton IsOutlined Color="BSColor.Success" Size="Size.ExtraSmall" @onclick="Get"> Reunión <span class="oi oi-check"></span></BSButton>
                 </BSCol>
-                @if (DbReunionService.reudiatablas.Count() > 0 && dataIsLoaded == 2)
+                @if (reudiatablas.Count() > 0 && dataIsLoaded == 2)
             {
                 <BSCol ColumnSmall="2">
                     <BSRow>
@@ -85,7 +82,7 @@
 <p>
 </p>
 
-@if (DbReunionService.reudiatablas.Count() > 0 && dataIsLoaded == 2)
+@if (reudiatablas.Count() > 0 && dataIsLoaded == 2)
 {
     <BSContainer>
 
@@ -115,7 +112,7 @@
                 </BSTR>
             </BSTHead>
             <BSTBody>
-                @foreach (var d in DbReunionService.reudiatablas)
+                @foreach (var d in reudiatablas)
                 {
                     @if (d.Rdstatus != "Listo" & d.RdfecTra <= DateTime.Now | (d.Rdstatus != "Listo" & (d.Rdodt == "" | d.Rdodt is null)))
                     //@if (d.Rdstatus != "Listo")
@@ -128,7 +125,7 @@
                                 @*<BSTD>@d.IdReuDia</BSTD>*@                         
                                     @*  <BSTD>@d.Rddiv</BSTD>*@
                                 <BSTD>@d.Rdarea</BSTD>
-                                <BSTD>@d.IdksfNavigation.KsfNombre</BSTD>                            
+                                <BSTD>@d.ksfNom</BSTD>                            
                                 <BSTD>@d.RdcodEq</BSTD>
                                 <BSTD ColSpan="4">@d.Rddisc.ToUpper()</BSTD>
                                 <BSTD>@d.RdcodDis</BSTD>
@@ -141,13 +138,13 @@
                                     <BSTD Class="textotabla ">@d.RdplanAcc</BSTD>
                                 }
                                 <BSTD>@d.Rdtiempo</BSTD>
-                                @if (@d.IdResReuNavigation.Rrnombre == "Por Definir")
+                                @if (@d.Responsable == "Por Definir")
                                 {
-                                    <BSTD Class="Definir">@d.IdResReuNavigation.Rrnombre </BSTD>
+                                    <BSTD Class="Definir">@d.Responsable </BSTD>
                                 }
                                 else
                                 {
-                                    <BSTD ColSpan="1">@d.IdResReuNavigation.Rrnombre</BSTD>
+                                    <BSTD ColSpan="1">@d.Responsable</BSTD>
                                 }
 
                                 @if (@d.Rdstatus == "Revisar")
@@ -178,11 +175,11 @@
         </BSTable>
     </BSContainer>
 }
-else if (dataIsLoaded == 1 && DbReunionService.reunionditablas.Count() == 0)
+else if (dataIsLoaded == 1 && reudiatablas.Count() == 0)
 {
     <div class="loader"></div>
 }
-else if (dataIsLoaded == 2 && DbReunionService.reunionditablas.Count() == 0)
+else if (dataIsLoaded == 2 && reudiatablas.Count() == 0)
 {
     <p>No hay datos para esta fecha.</p>
 }
@@ -221,6 +218,26 @@ else if (dataIsLoaded == 2 && DbReunionService.reunionditablas.Count() == 0)
     private string Codigo { get; set; } = "Todo"; //Codigo
     private string Rol { get; set; } = ""; //Rol del usuario
 
+    private List<AsistenReuDTO> listaAsistencia { get; set; }
+    private List<LineaDTO> lineas { get; set; }
+    private List<DivisionDTO> divisions { get; set; }
+    private List<MaestraVDTO> centro { get; set; }
+    private List<KsfDTO> ksfs { get; set; }
+    private List<RespoReuDTO> resporeu { get; set; }
+    private List<ReuDiumDTO> reunionditabla { get; set; }
+    private List<ReuDiumDTO> reudiatabla { get; set; }
+    private List<AsistenReuDTO> asistenreus { get; set; }
+    private List<CargoReuDTO> cargoreus { get; set; }
+    private List<StatsAsisDto> StatsAsisDtos { get; set; }
+    private List<EquiposEamVDTO> equipos { get; set; }
+    private List<EquiposEamVDTO> equiposlinea { get; set; }
+    private List<EquipoEamDTO> listaEqupis { get; set; }
+    private RegistroCambiosDTO listaRegistro { get; set; } 
+    private List<CalendarioTrabajoDTO> calentrabajo { get; set; }
+    private List<CambFecDTO> cambiofecha { get; set; }
+    private List<ReuDiumDTO> reudiatablas { get; set; }
+    private APIReunionService apiclass = new APIReunionService();
+    private DbReunionService DbReu = new DbReunionService();
 
 
     private List<Claim> claims { get; set; }

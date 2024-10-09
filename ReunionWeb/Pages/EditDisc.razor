@@ -1,7 +1,6 @@
 ﻿@page "/EditDisc/{id:int}/{tipo:int}/{linea}/{f1}/{f2}/{est}"
 @inject NotificationService NotificationService
 @inject IDbReunionService DbReunionService
-@inject IAPIReunionService APIReunionService
 @inject NavigationManager NavigationManager
 @inject AuthenticationStateProvider AuthStateProvider
 @inject ILocalStorageService LocalStorage
@@ -51,7 +50,7 @@
                          <BSInput InputType="InputType.Select" @bind-Value="DiscForm.Idksf">
 
                              <option value="">Seleccione...</option>
-                             @foreach (var d in APIReunionService.ksfs)
+                             @foreach (var d in ksfs)
                             {
                                 <option value="@d.Idksf">@d.KsfNombre</option>
                             }
@@ -137,7 +136,7 @@
                         <BSLabel>Responsable</BSLabel>
                         <BSInput InputType="InputType.Select" @bind-Value="DiscForm.IdResReu">
                             <option value="">Seleccione...</option>
-                            @foreach (var d in APIReunionService.resporeu)
+                            @foreach (var d in resporeu)
                             {
                                 <option value="@d.IdResReu">@d.Rrnombre</option>
                             }
@@ -218,7 +217,7 @@
                         </BSInput>
                     </BSCol>
 
-                    @if (APIReunionService.resporeu.Count() > 0)
+                    @if (resporeu.Count() > 0)
                     {
                         if (planificador == "Admin" || planificador == "Planificador" || planificador == "SuperAdmin")
                         {
@@ -285,7 +284,7 @@
                      <BSInput InputType="InputType.Select" hidden @bind-Value="DiscForm.Idksf">
 
                          <option value="">Seleccione...</option>
-                         @foreach (var d in APIReunionService.ksfs)
+                         @foreach (var d in ksfs)
                         {
                             <option value="@d.Idksf">@d.KsfNombre</option>
                         }
@@ -345,7 +344,7 @@
                         <BSLabel>Responsable</BSLabel>
                         <BSInput InputType="InputType.Select" IsDisabled @bind-Value="DiscForm.IdResReu">
                              <option value="">Seleccione...</option>
-                             @foreach (var d in APIReunionService.resporeu)
+                             @foreach (var d in resporeu)
                             {
                                 <option value="@d.IdResReu">@d.Rrnombre</option>
                             }
@@ -367,7 +366,7 @@
                         </BSInput>
                     </BSCol>
 
-                    @if (APIReunionService.resporeu.Count() > 0)
+                    @if (resporeu.Count() > 0)
                     {
                         if (planificador == "Admin" || planificador == "Planificador" || planificador == "SuperAdmin")
                         {
@@ -515,11 +514,11 @@
     bool cambio = true;
     bool loader = true;
 
-    ReuDium DiscForm = new ReuDium();//Formulario para editar, la discrepancia
-    CambStat CambStat = new CambStat();//Formulario para agregar que usuario hizo el cambio de status.
-    CambFec CambFec = new CambFec();//Formulario para agregar que usuario hizo el cambio de fecha.
+    ReuDiumDTO DiscForm = new ReuDiumDTO();//Formulario para editar, la discrepancia
+    CambStatDTO CambStat = new CambStatDTO();//Formulario para agregar que usuario hizo el cambio de status.
+    CambFecDTO CambFec = new CambFecDTO();//Formulario para agregar que usuario hizo el cambio de fecha.
 
-    List<CambFec> CambiosFecha = new List<CambFec>();//Lista para  cambio de fecha.
+    List<CambFecDTO> CambiosFecha = new List<CambFecDTO>();//Lista para  cambio de fecha.
 
     private NotifiRadzen Notificar = new NotifiRadzen();//Logic para crear las noyificaciones radzen
 
@@ -528,9 +527,30 @@
     private string planificador;//Variable para verificar si es el usuario del planificador;
     private string camStat;//Variable para verificar si es el usuario cambio el Status;
     private string PlanOld;//Variable para verificar si es el usuario cambio el plan de accion;
-    private DateTime camFec;//Variable para verificar si es el usuario cambio la Fecha;
+    private DateTime? camFec;//Variable para verificar si es el usuario cambio la Fecha;
 
     private List<Claim> claims { get; set; }//obtener datos del token
+
+    private List<AsistenReuDTO> listaAsistencia { get; set; }
+    private List<LineaDTO> lineas { get; set; }
+    private List<DivisionDTO> divisions { get; set; }
+    private List<MaestraVDTO> centro { get; set; }
+    private List<KsfDTO> ksfs { get; set; }
+    private List<RespoReuDTO> resporeu { get; set; }
+    private List<ReuDiumDTO> reunionditabla { get; set; }
+    private List<ReuDiumDTO> reudiatabla { get; set; }
+    private List<AsistenReuDTO> asistenreus { get; set; }
+    private List<CargoReuDTO> cargoreus { get; set; }
+    private List<StatsAsisDto> StatsAsisDtos { get; set; }
+    private List<EquiposEamVDTO> equipos { get; set; }
+    private List<EquiposEamVDTO> equiposlinea { get; set; }
+    private List<EquipoEamDTO> listaEqupis { get; set; }
+    private RegistroCambiosDTO listaRegistro { get; set; } 
+    private List<CalendarioTrabajoDTO> calentrabajo { get; set; }
+    private List<CambFecDTO> cambiofecha { get; set; }
+    private APIReunionService apiclass = new APIReunionService();
+    private DbReunionService DbReu = new DbReunionService();
+
 
     private async Task CreateData()
     {
@@ -546,17 +566,17 @@
         loader = true;
         Emp = claims[5].Value;
         planificador = claims[1].Value;
-        DiscForm = await DbReunionService.GetDiscrepantacia((int)Id);
-        await DbReunionService.GetCambioFecha((int)Id);
-        CambiosFecha = DbReunionService.cambiofecha;
+        DiscForm = await DbReu.GetDiscrepantacia((int)Id);
+        await DbReu.GetCambioFecha((int)Id);
+        CambiosFecha = cambiofecha;
 
         camStat = DiscForm.Rdstatus;
         camFec = DiscForm.RdfecTra;
         PlanOld = DiscForm.RdplanAcc;
 
-        await APIReunionService.Getksf();
-        await APIReunionService.GetResReu();
-        APIReunionService.resporeu = APIReunionService.resporeu.Where(a => a.Rrdesc == claims.FirstOrDefault(c => c.Type.Contains("Empresa"))?.Value || string.IsNullOrEmpty(a.Rrdesc)).ToList();
+        await apiclass.Getksf();
+        await apiclass.GetResReu();
+        resporeu = resporeu.Where(a => a.Rrdesc == claims.FirstOrDefault(c => c.Type.Contains("Empresa"))?.Value || string.IsNullOrEmpty(a.Rrdesc)).ToList();
         loader = false;
     }
 
@@ -565,7 +585,7 @@
         string backcentro = DiscForm.Rdcentro;
         string backdiv = DiscForm.Rddiv;
 
-        CentroDivision centrodiv = await DbReunionService.GetCentroDiv(backcentro, backdiv, 1);
+        CentroDivisionDTO centrodiv = await DbReu.GetCentroDiv(backcentro, backdiv, 1);
 
         if (tipo == 0)
         {
@@ -587,7 +607,7 @@
         {
 
 
-            if (DiscForm.RdfecTra.Date >= DiscForm.RdfecReu.Date && (int)tipo == 1 || (int)tipo == 0 || (int)tipo == 2)
+            if (DiscForm.RdfecTra  >= DiscForm.RdfecReu && (int)tipo == 1 || (int)tipo == 0 || (int)tipo == 2)
             {
                 if (CambiosFecha.Count() >= 3 & camFec != DiscForm.RdfecTra)
                 {
@@ -633,7 +653,7 @@
                         CambStat.Cbfecha = DateTime.Now;
                         CambStat.Cbstat = DiscForm.Rdstatus;
                         CambStat.Cbuser = claims[2].Value + " " + claims[3].Value;
-                        DiscForm.CambStats.Add(CambStat);
+                        @* DiscForm.CambStats.Add(CambStat); *@
 
                     }
                     if (camFec != DiscForm.RdfecTra)
@@ -642,9 +662,9 @@
                         CambFec.Cffec = DateTime.Now;
                         CambFec.CffecNew = DiscForm.RdfecTra;
                         CambFec.Cfuser = claims[2].Value + " " + claims[3].Value;
-                        DiscForm.CambFec.Add(CambFec);
+                        @* DiscForm.CambFec.Add(CambFec); *@
                     }
-                    cambio = await DbReunionService.UpdateDiscrepancia2(DiscForm, (int)Id, (int)tipo, f1, f2, est, linea);
+                    cambio = await DbReu.UpdateDiscrepancia2(DiscForm, (int)Id, (int)tipo, f1, f2, est, linea);
 
 
                 }

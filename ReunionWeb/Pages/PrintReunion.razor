@@ -10,7 +10,7 @@
        
 <body>
 
-    @if (DbReunionService.reudiatablas.Count() > 0 && dataIsLoaded == 2)
+    @if (reudiatablas.Count() > 0 && dataIsLoaded == 2)
     {
         
 
@@ -47,7 +47,7 @@
                     </BSTR>
                 </BSTHead>
                 <BSTBody>
-                    @foreach (var d in DbReunionService.reudiatablas)
+                    @foreach (var d in reudiatablas)
                     {
                         @if (d.Rdstatus != "Listo" & d.RdfecTra <= DateTime.Now | (d.Rdstatus != "Listo" & (d.Rdodt == "" | d.Rdodt is null)))
                         //@if (d.Rdstatus != "Listo")
@@ -60,16 +60,16 @@
                                 @*Centro para validar el comedor*@
                                 @if (CentroComedor == 11)
                                 {
-                                    @if (APIReunionService.equiposlinea.Any(e => e.EcodEquiEam == d.RdcodEq) is true)
+                                    @if (equiposlinea.Any(e => e.CodigoEq == d.RdcodEq) is true)
                                     {
 
 
-                                        @foreach (var eq in APIReunionService.equiposlinea)
+                                        @foreach (var eq in equiposlinea)
                                         {
 
-                                            if (eq.EcodEquiEam == d.RdcodEq)
+                                            if (eq.CodigoEq == d.RdcodEq)
                                             {
-                                                <BSTD>@eq.EnombreEam</BSTD>
+                                                <BSTD>@eq.Equipo</BSTD>
 
                                             }
 
@@ -87,7 +87,7 @@
                                 {
                                     @*  <BSTD>@d.Rddiv</BSTD>*@
                                     <BSTD>@d.Rdarea</BSTD>
-                                    <BSTD>@d.IdksfNavigation.KsfNombre</BSTD>
+                                    <BSTD>@d.ksfNom</BSTD>
                                 }
 
 
@@ -103,13 +103,13 @@
                                     <BSTD Class="textotabla ">@d.RdplanAcc</BSTD>
                                 }
                                 <BSTD>@d.Rdtiempo</BSTD>
-                                @if (@d.IdResReuNavigation.Rrnombre == "Por Definir")
+                                @if (@d.ksfNom == "Por Definir")
                                 {
-                                    <BSTD Class="Definir">@d.IdResReuNavigation.Rrnombre </BSTD>
+                                    <BSTD Class="Definir">@d.Responsable </BSTD>
                                 }
                                 else
                                 {
-                                    <BSTD ColSpan="1">@d.IdResReuNavigation.Rrnombre</BSTD>
+                                    <BSTD ColSpan="1">@d.Responsable</BSTD>
                                 }
 
                                 @if (@d.Rdstatus == "Revisar")
@@ -152,6 +152,28 @@
     public string? f2 { get; set; }
     [Parameter]
     public string? tipo { get; set; }
+
+        private List<AsistenReuDTO> listaAsistencia { get; set; }
+    private List<LineaDTO> lineas { get; set; }
+    private List<DivisionDTO> divisions { get; set; }
+    private List<MaestraVDTO> centro { get; set; }
+    private List<KsfDTO> ksfs { get; set; }
+    private List<RespoReuDTO> resporeu { get; set; }
+    private List<ReuDiumDTO> reunionditabla { get; set; }
+    private List<ReuDiumDTO> reudiatabla { get; set; }
+    private List<AsistenReuDTO> asistenreus { get; set; }
+    private List<CargoReuDTO> cargoreus { get; set; }
+    private List<StatsAsisDto> StatsAsisDtos { get; set; }
+    private List<EquiposEamVDTO> equipos { get; set; }
+    private List<EquiposEamVDTO> equiposlinea { get; set; }
+    private List<EquipoEamDTO> listaEqupis { get; set; }
+    private RegistroCambiosDTO listaRegistro { get; set; } 
+    private List<CalendarioTrabajoDTO> calentrabajo { get; set; }
+    private List<CambFecDTO> cambiofecha { get; set; }
+    private List<ReuDiumDTO> reudiatablas { get; set; }
+    private APIReunionService apiclass = new APIReunionService();
+    private DbReunionService DbReu = new DbReunionService();
+
 
     int dataIsLoaded = 0;
     int CentroComedor = 0;

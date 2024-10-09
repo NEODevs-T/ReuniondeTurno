@@ -8,7 +8,6 @@ using Radzen.Blazor.Rendering;
 using System.Linq.Dynamic.Core;
 using System.Reflection.Metadata.Ecma335;
 using ReunionWeb.ReunionDiaria.DTOs;
-using NeoAPI.DTOs.ReunionDiaria;
 
 
 
@@ -27,15 +26,9 @@ public class DbReunionService : IDbReunionService
 
     // **-------> CONEXION A LA API <--------**
 
-
     private readonly DbNeoContext _neocontext;
     private readonly NavigationManager _navigationManager;
 
-    public DbReunionService(NavigationManager navigationManager, DbNeoContext _NeoContext)
-    {
-        _navigationManager = navigationManager;
-        _neocontext = _NeoContext;
-    }
 
     public async Task<List<ReuDiumDTO>> GetByODT(string ODT, string idcentro, string iddiv)
     {
@@ -125,7 +118,7 @@ public class DbReunionService : IDbReunionService
 
 
 
-    public async Task<bool> UpdateDiscrepancia2(ReuDium d, int id, int tipo, string f1, string f2, string estado, string linea)
+    public async Task<bool> UpdateDiscrepancia2(ReuDiumDTO d, int id, int tipo, string f1, string f2, string estado, string linea)
     {
         bool band = false;
         url = $"{BaseUrl}/UpdateDiscrepancia2/{id}";
@@ -171,11 +164,11 @@ public class DbReunionService : IDbReunionService
 
     //Obtener id de centro y dic=vision y viceversa
 
-    public async Task<List<CentroDivisionDTO>> GetCentroDiv(string centro, string division, int tipo)
+    public async Task<CentroDivisionDTO> GetCentroDiv(string centro, string division, int tipo)
     {
         url = $"{BaseUrl}GetHistoricos/{centro}/{division}/{tipo}";
         cliente = _clientFactory.CreateClient();
-        return await cliente.GetFromJsonAsync<List<CentroDivisionDTO>>(url) ?? new List<CentroDivisionDTO>();
+        return await cliente.GetFromJsonAsync<CentroDivisionDTO>(url) ?? new CentroDivisionDTO();
     }
 
     //Consultas para los cambios de estatus en una discrepancia
@@ -195,11 +188,11 @@ public class DbReunionService : IDbReunionService
 
 
     //obtener discrepancia a editar
-    public async Task<List<ReuDiumDTO>> GetDiscrepantacia(int id)
+    public async Task<ReuDiumDTO> GetDiscrepantacia(int id)
     {
         url = $"{BaseUrl}GetDiscrepantaciaJT/{id}";
         cliente = _clientFactory.CreateClient();
-        return await cliente.GetFromJsonAsync<List<ReuDiumDTO>>(url) ?? new List<ReuDiumDTO>();
+        return await cliente.GetFromJsonAsync<ReuDiumDTO>(url) ?? new ReuDiumDTO();
 
     }
 

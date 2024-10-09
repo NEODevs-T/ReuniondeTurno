@@ -1,7 +1,8 @@
 using System;
 using System.Collections.Generic;
 
-namespace NeoAPI.DTOs.ReunionDiaria;
+namespace ReunionWeb.ReunionDiaria.DTOs;
+
 
 public class CambFecDTO
 {
