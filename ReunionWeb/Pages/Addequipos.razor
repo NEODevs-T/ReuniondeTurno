@@ -69,7 +69,7 @@ else
                             <option value="">Seleccione...</option>
                             @foreach (var d in centro.Where(li=>li.IdDivision==Division && li.IdCentro==Centro))
                             {
-                                    <option value="@e.IdLinea">@e.Linea</option>                         
+                                    <option value="@d.IdLinea">@d.Linea</option>                         
                             }
                         </BSInput>
                         <BSFeedback For="@(() =>Linea)" ValidMessage="Correcto." />
@@ -127,7 +127,7 @@ else
                     <option value="">Seleccione</option>
                     @foreach (var d in centro)
                     {
-                        <option value="@d.IdCentro">@d.centro</option>
+                        <option value="@d.IdCentro">@d.Centro</option>
                     }
                 </BSInput>
                 <BSFeedback For="@(() =>Centro)" ValidMessage="Correcto." />
@@ -141,7 +141,7 @@ else
                     {
                     @foreach (var d in centro.Where(di=>di.IdCentro==Centro))
                     {
-                              <option value="@e.IdDivision">@e.Division</option>                           
+                              <option value="@d.IdDivision">@d.División</option>                           
                     }
                     
                 </BSInput>
@@ -155,7 +155,7 @@ else
                     <option value="">Seleccione...</option>
                     @foreach (var d in centro.Where(li=>li.IdDivision==Division && li.IdCentro==Centro))
                     {
-                                <option value="@e.IdLinea">@e.Linea</option>                         
+                                <option value="@d.IdLinea">@d.Linea</option>                         
                     }
                 </BSInput>
                 <BSFeedback For="@(() =>Linea)" ValidMessage="Correcto." />
@@ -212,50 +212,50 @@ else
                             {
 
                                 
-                                    @if(equiposlinea.Where(a => a.EcodEquiEam.Contains(EquipoFiltro)).Count()==0)
+                                    @if(equiposlinea.Where(a => a.CodigoEq.Contains(EquipoFiltro)).Count()==0)
                                     {
                                         <p>No hay registros.</p>
                                     }
                                     else
                                     {
-                                         @foreach (var d in  equiposlinea.Where(a => a.EcodEquiEam.Contains(EquipoFiltro)).ToList())
+                                         @foreach (var d in  equiposlinea.Where(a => a.CodigoEq.Contains(EquipoFiltro)).ToList())
                                         {
                                             <BSTR>
                                             @*<BSTD>@d.IdEquipo</BSTD>*@
                                             <BSTD>@d.Centro</BSTD>
-                                            <BSTD>@d.División</BSTD>
+                                            <BSTD>@d.Desc</BSTD>
                                             <BSTD>@d.Linea</BSTD>
                                             
                                             @if(idequipoeditar==d.IdEquipo)
                                             {
                                                 <BSTD>
                                                     
-                                                      <BSInput InputType="InputType.Text" @bind-Value="d.EnombreEam" />
-                                                      <BSFeedback For="@(() => d.EnombreEam)" ValidMessage="Correcto." />
+                                                      <BSInput InputType="InputType.Text" @bind-Value="d.Equipo" />
+                                                      <BSFeedback For="@(() => d.Equipo)" ValidMessage="Correcto." />
 
                                                 </BSTD> 
                                                 
                                                 <BSTD>
                                                     
-                                                      <BSInput InputType="InputType.Text" @bind-Value="d.EcodEquiEam" />
-                                                      <BSFeedback For="@(() => d.EcodEquiEam)" ValidMessage="Correcto." />
+                                                      <BSInput InputType="InputType.Text" @bind-Value="d.CodigoEq" />
+                                                      <BSFeedback For="@(() => d.CodigoEq)" ValidMessage="Correcto." />
 
                                                 </BSTD>  
 
                                                 <BSTD>
                                                     
-                                                      <BSInput InputType="InputType.Text" @bind-Value="d.EdescriEam" />
-                                                      <BSFeedback For="@(() => d.EdescriEam)" ValidMessage="Correcto." />
+                                                      <BSInput InputType="InputType.Text" @bind-Value="d.Desc" />
+                                                      <BSFeedback For="@(() => d.Desc)" ValidMessage="Correcto." />
 
                                                 </BSTD>
 
                                                 <BSTD>
                                                     
-                                                      <BSInput InputType="InputType.Select" @bind-Value="d.EestaEam">
+                                                      <BSInput InputType="InputType.Select" @bind-Value="d.Estado">
                                                             <option value="true">Activar</option>  
                                                             <option value="false">Desactivar</option> 
                                                        </BSInput>
-                                                      <BSFeedback For="@(() => d.EestaEam)" ValidMessage="Correcto." />
+                                                      <BSFeedback For="@(() => d.Estado)" ValidMessage="Correcto." />
 
                                                 </BSTD>
                                                 <BSTD>                                                                            
@@ -268,18 +268,18 @@ else
                                              else
                                             {
                                                 <BSTD>
-                                                    @d.EnombreEam                                    
+                                                    @d.Equipo                                    
                                                 </BSTD>
                                             
                                         
                                             <BSTD>
-                                                    @d.EcodEquiEam
+                                                    @d.CodigoEq
                                             </BSTD>
                                             <BSTD>
-                                                    @d.EdescriEam
+                                                    @d.Desc
                                             </BSTD>
                                             <BSTD>
-                                                @if(d.EestaEam==true)
+                                                @if(d.Estado==true)
                                                 {
                                                     <p>Activo</p>
                                                 }
@@ -301,7 +301,7 @@ else
                             
                             else               
                             {
-                                @foreach (var d in APIReunionService.equiposlinea)
+                                @foreach (var d in equiposlinea)
                                 {
                                   <BSTR>
                        @*         <BSTD>@d.IdEquipo</BSTD>*@
@@ -312,32 +312,32 @@ else
                                             {
                                                 <BSTD>
                                                     
-                                                      <BSInput InputType="InputType.Text" @bind-Value="d.EnombreEam" />
-                                                      <BSFeedback For="@(() => d.EnombreEam)" ValidMessage="Correcto." />
+                                                      <BSInput InputType="InputType.Text" @bind-Value="d.Equipo" />
+                                                      <BSFeedback For="@(() => d.Equipo)" ValidMessage="Correcto." />
 
                                                 </BSTD> 
                                                 
                                                 <BSTD>
                                                     
-                                                      <BSInput InputType="InputType.Text" @bind-Value="d.EcodEquiEam" />
-                                                      <BSFeedback For="@(() => d.EcodEquiEam)" ValidMessage="Correcto." />
+                                                      <BSInput InputType="InputType.Text" @bind-Value="d.CodigoEq" />
+                                                      <BSFeedback For="@(() => d.CodigoEq)" ValidMessage="Correcto." />
 
                                                 </BSTD>  
 
                                                 <BSTD>
                                                     
-                                                      <BSInput InputType="InputType.Text" @bind-Value="d.EdescriEam" />
-                                                      <BSFeedback For="@(() => d.EdescriEam)" ValidMessage="Correcto." />
+                                                      <BSInput InputType="InputType.Text" @bind-Value="d.Desc" />
+                                                      <BSFeedback For="@(() => d.Desc)" ValidMessage="Correcto." />
 
                                                 </BSTD>
 
                                                 <BSTD>
                                                     
-                                                      <BSInput InputType="InputType.Select" @bind-Value="d.EestaEam">
+                                                      <BSInput InputType="InputType.Select" @bind-Value="d.Estado">
                                                             <option value="true">Activar</option>  
                                                             <option value="false">Desactivar</option> 
                                                        </BSInput>
-                                                      <BSFeedback For="@(() => d.EestaEam)" ValidMessage="Correcto." />
+                                                      <BSFeedback For="@(() => d.Estado)" ValidMessage="Correcto." />
 
                                                 </BSTD>
                                                 <BSTD>                                                                            
@@ -349,18 +349,18 @@ else
                                              else
                                             {
                                                 <BSTD>
-                                                    @d.EnombreEam                                    
+                                                    @d.Equipo                                   
                                                 </BSTD>
                                             
                                         
                                             <BSTD>
-                                                    @d.EcodEquiEam
+                                                    @d.CodigoEq
                                             </BSTD>
                                             <BSTD>
-                                                    @d.EdescriEam
+                                                    @d.Desc
                                             </BSTD>
                                             <BSTD>
-                                                @if(d.EestaEam==true)
+                                                @if(d.Estado==true)
                                                 {
                                                     <p>Activo</p>
                                                 }
@@ -384,11 +384,11 @@ else
                 </BSTable>
             </BSContainer>
         }
-        else if (dataIsLoaded == 1 && APIReunionService.equiposlinea.Count() == 0)
+        else if (dataIsLoaded == 1 && equiposlinea.Count() == 0)
         {
             <div class="loader"></div>
         }
-        else if (dataIsLoaded == 2 && APIReunionService.equiposlinea.Count() == 0)
+        else if (dataIsLoaded == 2 && equiposlinea.Count() == 0)
         {
             <p>No hay equipos.</p>
         }
@@ -416,9 +416,11 @@ else
     private int Division { get; set; }
     [Required(ErrorMessage = "Seleccione la Línea.")]
     private int Linea { get; set; }
+
+    private APIReunionService apiclass = new APIReunionService();
     private string EquipoFiltro { get; set; } = "";
     private int tipo { get; set; } = 0;
-    private int idequipoeditar { get; set; } = 0;//id para mostar los campos de edicion 
+    private int idequipoeditar { get; set; } = 0;//id para mostar los campos de edicion
     private string mensaje = "", result = "";//resultado del save;
 
     int dataIsLoaded = 0;
@@ -429,23 +431,21 @@ else
     EquipoDTO EquipoForm = new EquipoDTO();
     List<EquipoEam> EquipoLista = new List<EquipoEam>();
     private List<Claim> claims { get; set; }
-    private List<AsistenReuDTO> listaAsistencia { get; set; }
-    private List<LineaDTO> lineas { get; set; }
-    private List<DivisionDTO> divisions { get; set; }
-    private List<MaestraVDTO> Centro { get; set; }
-    private List<KsfDTO> ksfs { get; set; }
-    private List<RespoReuDTO> resporeu { get; set; }
-    private List<ReuDiumDTO> reunionditabla { get; set; }
-    private List<ReuDiumDTO> reudiatabla { get; set; }
-    private List<AsistenReuDTO> asistenreus { get; set; }
-    private List<CargoReuDTO> cargoreus { get; set; }
-    private List<StatsAsisDto> StatsAsisDtos { get; set; }
-    private List<EquiposEamVDTO> equipos { get; set; }
-    private List<EquiposEamVDTO> equiposlinea { get; set; }
-    private List<EquipoEamDTO> listaEqupis { get; set; }
-    private List<CalendarioTrabajoDTO> calentrabajo { get; set; }
-    private APIReunionService apiclass = new APIReunionService();
 
+    List<MaestraVDTO> centro { get; set; }
+    List<LineaDTO> lineas { get; set; }
+    List<DivisionDTO> divisions { get; set; }
+    List<KsfDTO> ksfs { get; set; }
+    List<RespoReuDTO> resporeu { get; set; }
+    List<ReuDiumDTO> reunionditabla { get; set; }
+    List<ReuDiumDTO> reudiatabla { get; set; }
+    List<AsistenReuDTO> asistenreus { get; set; }
+    List<CargoReuDTO> cargoreus { get; set; }
+    List<StatsAsisDto> StatsAsisDtos { get; set; }
+    List<EquiposEamVDTO> equipos { get; set; }
+    List<EquiposEamVDTO> equiposlinea { get; set; }
+    List<EquipoEamDTO> listaEqupis { get; set; }
+    List<CalendarioTrabajoDTO> calentrabajo { get; set; }
 
     private async Task CreateData()
 
@@ -481,24 +481,25 @@ else
                 EquipoForm.IdLinea = Linea;
                 EquipoForm.EestaEam = true;
                 EquipoForm.EcodEquiEam = EquipoForm.EcodEquiEam.Replace(" ", String.Empty);
-                mensaje = await apiclass.PostEquipo(EquipoForm);
-            
-                    if (mensaje == "Registro Exitoso")
-                    {
-                        NotificationService.Notify(Notificar.Notificacion("exito", mensaje, ""));
-                    }
-                    else 
-                    {
-                         NotificationService.Notify(Notificar.Notificacion("advertencia", "Atención", mensaje));
-                    }
+                mensaje = await apiclass.AddEquipo(EquipoForm);
+
+                if (mensaje == "Registro Exitoso")
+                {
+                    NotificationService.Notify(Notificar.Notificacion("exito", mensaje, ""));
+                }
+                else
+                {
+                    NotificationService.Notify(Notificar.Notificacion("advertencia", "Atención", mensaje));
+                }
                 Reset();
-                
+
 
             }
             catch (Exception ex)
             {
-                 NotificationService.Notify(Notificar.Notificacion("error", "Error al Insertar los datos, Intente de Nuevo", ex.Message));
-               
+                NotificationService.Notify(Notificar.Notificacion("error", "Error al Insertar los datos, Intente de Nuevo",
+                ex.Message));
+
             }
         }
     }
@@ -507,46 +508,48 @@ else
     {
         idequipoeditar = id;
     }
-     async Task Cancelar()
+    async Task Cancelar()
     {
         idequipoeditar = 0;
     }
-    async Task Editar(EquipoEam equipo)
+    async Task Editar(EquiposEamVDTO equipo)
     {
         try
         {
             EquipoDTO eq = new EquipoDTO();
             eq.IdEquipo = equipo.IdEquipo;
             eq.IdLinea = equipo.IdLinea;
-            eq.EcodEquiEam = equipo.EcodEquiEam;
-            eq.EdescriEam = equipo.EdescriEam;
-            eq.EestaEam = equipo.EestaEam;
-            eq.EnombreEam = equipo.EnombreEam;
+            eq.EcodEquiEam = equipo.CodigoEq;
+            eq.EdescriEam = equipo.Desc;
+            eq.EestaEam = equipo.Estado;
+            eq.EnombreEam = equipo.Equipo;
 
-            mensaje = await APIReunionService.PostEquipo(eq);
+            mensaje = await apiclass.AddEquipo(eq);
 
-             if (mensaje == "Registro Exitoso")
-                    {
-                        NotificationService.Notify(Notificar.Notificacion("exito", mensaje, ""));
-                    }
-                    else 
-                    {
-                         NotificationService.Notify(Notificar.Notificacion("advertencia", "Atención", mensaje));
-                    }
-           
+            if (mensaje == "Registro Exitoso")
+            {
+                NotificationService.Notify(Notificar.Notificacion("exito", mensaje, ""));
+            }
+            else
+            {
+                NotificationService.Notify(Notificar.Notificacion("advertencia", "Atención", mensaje));
+            }
+
             idequipoeditar = 0;
         }
         catch (Exception ex)
         {
-            NotificationService.Notify(Notificar.Notificacion("error", "Error al Insertar los datos, Intente de Nuevo", ex.Message));
+            NotificationService.Notify(Notificar.Notificacion("error", "Error al Insertar los datos, Intente de Nuevo",
+            ex.Message));
         }
 
     }
-    
+
 
     protected async Task Reset()
     {
         EquipoForm = new EquipoDTO();
         Centro = 0;
     }
-}
+    }
+
