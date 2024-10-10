@@ -2,6 +2,7 @@
 
 
 @inject IDbReunionService DbReunionService
+@inject IAPIReunionService apiclass
 @inject HttpClient Http
 @inject AuthenticationStateProvider AuthStateProvider
 @inject ILocalStorageService LocalStorage
@@ -251,24 +252,24 @@
     private int? IdDiv { get; set; }
     private string mensaje = "";
     private bool isDesactivado { get; set; } = false;
-    private List<AsistenReuDTO> listaAsistencia { get; set; }
-    private List<LineaDTO> lineas { get; set; }
-    private List<DivisionDTO> divisions { get; set; }
-    private List<MaestraVDTO> centro { get; set; }
-    private List<KsfDTO> ksfs { get; set; }
-    private List<RespoReuDTO> resporeu { get; set; }
-    private List<ReuDiumDTO> reunionditabla { get; set; }
-    private List<ReuDiumDTO> reudiatabla { get; set; }
-    private List<AsistenReuDTO> asistenreus { get; set; }
-    private List<CargoReuDTO> cargoreus { get; set; }
-    private List<StatsAsisDto> StatsAsisDtos { get; set; }
-    private List<EquiposEamVDTO> equipos { get; set; }
-    private List<EquiposEamVDTO> equiposlinea { get; set; }
-    private List<EquipoEamDTO> listaEqupis { get; set; }
-    private RegistroCambiosDTO listaRegistro { get; set; } 
+    private List<AsistenReuDTO> listaAsistencia { get; set; } = new List<AsistenReuDTO>();
+    private List<LineaDTO> lineas { get; set; } = new List<LineaDTO>();
+    private List<DivisionDTO> divisions { get; set; } = new List<DivisionDTO>();
+    private List<MaestraVDTO> centro { get; set; } = new List<MaestraVDTO>();
+    private List<KsfDTO> ksfs { get; set; } = new List<KsfDTO>();
+    private List<RespoReuDTO> resporeu { get; set; } = new List<RespoReuDTO>();
+    private List<ReuDiumDTO> reunionditabla { get; set; } = new List<ReuDiumDTO>();
+    private List<ReuDiumDTO> reudiatabla { get; set; } = new List<ReuDiumDTO>();
+    private List<AsistenReuDTO> asistenreus { get; set; } = new List<AsistenReuDTO>();
+    private List<CargoReuDTO> cargoreus { get; set; } = new List<CargoReuDTO>();
+    private List<StatsAsisDto> StatsAsisDtos { get; set; } = new List<StatsAsisDto>();
+    private List<EquiposEamVDTO> equipos { get; set; } = new List<EquiposEamVDTO>();
+    private List<EquiposEamVDTO> equiposlinea { get; set; } = new List<EquiposEamVDTO>();
+    private List<EquipoEamDTO> listaEqupis { get; set; } = new List<EquipoEamDTO>();
+    private RegistroCambiosDTO listaRegistro { get; set; } //= new RegistroCambiosDTO(); 
     private List<CalendarioTrabajoDTO> calentrabajo { get; set; }
-    private APIReunionService apiclass = new APIReunionService();
-    private DbReunionService DbReu = new DbReunionService();
+    
+
 
     protected override async Task OnInitializedAsync()
     {
@@ -276,7 +277,8 @@
         await CreateData();
         await apiclass.Getksf();
         await apiclass.GetResReu();
-        if (claims[1].Value == "Admin" | claims[1].Value == "SuperAdmin")
+        @* if (claims[1].Value == "Admin" | claims[1].Value == "SuperAdmin") *@
+        if (claims != null && claims.Count > 1 && (claims[1]?.Value == "Admin" || claims[1]?.Value == "SuperAdmin"))
         {
 
             await apiclass.GetCentrosxEmpresa("All" + claims[10].Value);
@@ -370,7 +372,7 @@
                     CambFech.CffecNew = DateTime.Now;
                     CambFech.Cfuser = claims[2].Value + " " + claims[3].Value;
                     listaRegistro = new RegistroCambiosDTO(CambFech, CambStata);
-                    var result = await DbReu.InsertarRegistros(listaRegistro);
+                    var result = await DbReunionService.InsertarRegistros(listaRegistro);
                     if (result )
                     {
                         mensaje = "Registro Exitoso";

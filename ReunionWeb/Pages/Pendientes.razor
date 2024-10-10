@@ -531,27 +531,26 @@ else if (dataIsLoaded == 2 && reudiatablas.Count() == 0)
     private NotifiRadzen Notificar = new NotifiRadzen();//Logic para crear las noyificaciones radzen
     private bool isEditar { get; set; } = true;
     private List<Claim> claims { get; set; }
-    private List<AsistenReuDTO> listaAsistencia { get; set; }
-    private List<LineaDTO> lineas { get; set; }
-    private List<MaestraVDTO> divisions { get; set; }
-    private List<MaestraVDTO> centro { get; set; }
-    private List<KsfDTO> ksfs { get; set; }
-    private List<RespoReuDTO> resporeu { get; set; }
-    private List<ReuDiumDTO> reunionditabla { get; set; }
-    private List<ReuDiumDTO> reudiatabla { get; set; }
-    private List<AsistenReuDTO> asistenreus { get; set; }
-    private List<CargoReuDTO> cargoreus { get; set; }
-    private List<StatsAsisDto> StatsAsisDtos { get; set; }
-    private List<EquiposEamVDTO> equipos { get; set; }
-    private List<EquiposEamVDTO> equiposlinea { get; set; }
-    private List<EquipoEamDTO> listaEqupis { get; set; }
-    private RegistroCambiosDTO listaRegistro { get; set; } 
-    private List<CalendarioTrabajoDTO> calentrabajo { get; set; }
-    private List<CambStatDTO> cambiostatus { get; set; }
-    private List<CambFecDTO> cambiofecha { get; set; }
-    private List<ReuDiumDTO> reudiatablas { get; set; }
-    private APIReunionService apiclass = new APIReunionService();
-    private DbReunionService DbReu = new DbReunionService();
+    private List<AsistenReuDTO> listaAsistencia { get; set; } = new List<AsistenReuDTO>();
+    private List<LineaDTO> lineas { get; set; } = new List<LineaDTO>();
+    private List<MaestraVDTO> divisions { get; set; } = new List<MaestraVDTO>();
+    private List<MaestraVDTO> centro { get; set; } = new List<MaestraVDTO>();
+    private List<KsfDTO> ksfs { get; set; } = new List<KsfDTO>();
+    private List<RespoReuDTO> resporeu { get; set; } = new List<RespoReuDTO>();
+    private List<ReuDiumDTO> reunionditabla { get; set; } = new List<ReuDiumDTO>();
+    private List<ReuDiumDTO> reudiatabla { get; set; } = new List<ReuDiumDTO>();
+    private List<AsistenReuDTO> asistenreus { get; set; } = new List<AsistenReuDTO>();
+    private List<CargoReuDTO> cargoreus { get; set; } = new List<CargoReuDTO>(); 
+    private List<StatsAsisDto> StatsAsisDtos { get; set; } = new List<StatsAsisDto>();
+    private List<EquiposEamVDTO> equipos { get; set; } = new List<EquiposEamVDTO>();
+    private List<EquiposEamVDTO> equiposlinea { get; set; } = new List<EquiposEamVDTO>();
+    private List<EquipoEamDTO> listaEqupis { get; set; } = new List<EquipoEamDTO>();
+    private List<CalendarioTrabajoDTO> calentrabajo { get; set; } = new List<CalendarioTrabajoDTO>();
+    
+
+    private List<ReuDiumDTO> reudiatablas { get; set; } = new List<ReuDiumDTO>();
+    private List<CambFecDTO> cambiofecha { get; set; } = new List<CambFecDTO>();
+    private List<CambStatDTO> cambiostatus { get; set; } = new List<CambStatDTO>();
 
     private async Task CreateData()
 
@@ -677,7 +676,7 @@ else if (dataIsLoaded == 2 && reudiatablas.Count() == 0)
                 if (dataIsLoaded != 1)
                 {
                     dataIsLoaded = 1;
-                    listareu = await DbReu.GetByODT(BuscarOdt, IdCentro.ToString(), IdDiv.ToString());
+                    listareu = await DbReunionService.GetByODT(BuscarOdt, IdCentro.ToString(), IdDiv.ToString());
                     dataIsLoaded = 2;
 
                 }

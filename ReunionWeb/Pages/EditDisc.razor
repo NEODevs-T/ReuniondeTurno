@@ -1,6 +1,7 @@
 ﻿@page "/EditDisc/{id:int}/{tipo:int}/{linea}/{f1}/{f2}/{est}"
 @inject NotificationService NotificationService
 @inject IDbReunionService DbReunionService
+@inject IAPIReunionService apiclass
 @inject NavigationManager NavigationManager
 @inject AuthenticationStateProvider AuthStateProvider
 @inject ILocalStorageService LocalStorage
@@ -548,8 +549,8 @@
     private RegistroCambiosDTO listaRegistro { get; set; } 
     private List<CalendarioTrabajoDTO> calentrabajo { get; set; }
     private List<CambFecDTO> cambiofecha { get; set; }
-    private APIReunionService apiclass = new APIReunionService();
-    private DbReunionService DbReu = new DbReunionService();
+    
+
 
 
     private async Task CreateData()
@@ -566,8 +567,8 @@
         loader = true;
         Emp = claims[5].Value;
         planificador = claims[1].Value;
-        DiscForm = await DbReu.GetDiscrepantacia((int)Id);
-        await DbReu.GetCambioFecha((int)Id);
+        DiscForm = await DbReunionService.GetDiscrepantacia((int)Id);
+        await DbReunionService.GetCambioFecha((int)Id);
         CambiosFecha = cambiofecha;
 
         camStat = DiscForm.Rdstatus;
@@ -585,7 +586,7 @@
         string backcentro = DiscForm.Rdcentro;
         string backdiv = DiscForm.Rddiv;
 
-        CentroDivisionDTO centrodiv = await DbReu.GetCentroDiv(backcentro, backdiv, 1);
+        CentroDivisionDTO centrodiv = await DbReunionService.GetCentroDiv(backcentro, backdiv, 1);
 
         if (tipo == 0)
         {
@@ -664,7 +665,7 @@
                         CambFec.Cfuser = claims[2].Value + " " + claims[3].Value;
                         @* DiscForm.CambFec.Add(CambFec); *@
                     }
-                    cambio = await DbReu.UpdateDiscrepancia2(DiscForm, (int)Id, (int)tipo, f1, f2, est, linea);
+                    cambio = await DbReunionService.UpdateDiscrepancia2(DiscForm, (int)Id, (int)tipo, f1, f2, est, linea);
 
 
                 }

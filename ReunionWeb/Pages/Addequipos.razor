@@ -1,6 +1,6 @@
 ﻿@page "/addequipo"
 @inject IDbReunionService DbReunionService
-@inject IAPIReunionService APIReunionService
+@inject IAPIReunionService apiclass
 @inject HttpClient Http
 @inject AuthenticationStateProvider AuthStateProvider
 @inject ILocalStorageService LocalStorage
@@ -417,7 +417,7 @@ else
     [Required(ErrorMessage = "Seleccione la Línea.")]
     private int Linea { get; set; }
 
-    private APIReunionService apiclass = new APIReunionService();
+    
     private string EquipoFiltro { get; set; } = "";
     private int tipo { get; set; } = 0;
     private int idequipoeditar { get; set; } = 0;//id para mostar los campos de edicion

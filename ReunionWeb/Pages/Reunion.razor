@@ -1,12 +1,13 @@
 ﻿@page "/reunion"
 @page "/reunion/{accion}/{division}/{linea}/{f1}/{f2}/{tipo}/{est}"
 @inject IDbReunionService DbReunionService
-@inject IAPIReunionService APIReunionService
+@inject IAPIReunionService apiclass
 @inject NavigationManager NavigationManager
 @inject AuthenticationStateProvider AuthStateProvider
 @inject IJSRuntime IJS
 
-@*@attribute [Authorize(Roles = "Admin,AdminChempro, SupIntendente,SupIntendenteGeneral,SuperAdmin, Planificador, Mantenimiento,Calidad,Seguridad,Efluentes, PendientesChempro, MttoAdmin")]*@
+@*@attribute [Authorize(Roles = "Admin,AdminChempro, SupIntendente,SupIntendenteGeneral,SuperAdmin, Planificador,
+Mantenimiento,Calidad,Seguridad,Efluentes, PendientesChempro, MttoAdmin")]*@
 
 <h3>Formato de Reunión</h3>
 
@@ -34,16 +35,16 @@
                 </BSInput>
             </BSCol>
 
-            <BSCol Column="3" >
+            <BSCol Column="3">
                 <BSLabel>División</BSLabel>
                 <BSInput InputType="InputType.Select" @bind-Value="IdDiv">
                     <option value="">Seleccione</option>
                     @foreach (var d in centro)
                     {
-                            if (IdCentro == d.IdCentro)
-                            {
-                                <option value="@d.IdDivision">@d.División</option>
-                            }   
+                        if (IdCentro == d.IdCentro)
+                        {
+                            <option value="@d.IdDivision">@d.División</option>
+                        }
                     }
                 </BSInput>
             </BSCol>
@@ -63,16 +64,18 @@
                 <BSRow>
                     <BSLabel>Aceptar</BSLabel>
                 </BSRow>
-                <BSButton IsOutlined Color="BSColor.Success" Size="Size.ExtraSmall" @onclick="Get"> Reunión <span class="oi oi-check"></span></BSButton>
-                </BSCol>
-                @if (reudiatablas.Count() > 0 && dataIsLoaded == 2)
+                <BSButton IsOutlined Color="BSColor.Success" Size="Size.ExtraSmall" @onclick="Get"> Reunión <span
+                        class="oi oi-check"></span></BSButton>
+            </BSCol>
+            @if (reudiatablas.Count() > 0 && dataIsLoaded == 2)
             {
                 <BSCol ColumnSmall="2">
                     <BSRow>
                         <BSLabel>Imprimir</BSLabel>
                     </BSRow>
-                    <BSButton IsOutlined Color="BSColor.Success" Size="Size.ExtraSmall" @onclick="PrintDocument">  <span class="oi oi-print"></span></BSButton>
-                    </BSCol>
+                    <BSButton IsOutlined Color="BSColor.Success" Size="Size.ExtraSmall" @onclick="PrintDocument"> <span
+                            class="oi oi-print"></span></BSButton>
+                </BSCol>
             }
         </BSRow>
     }
@@ -91,7 +94,7 @@
                 <BSTR>
 
                     @*<BSTD>Id</BSTD>*@
-             
+
                     <BSTD>Área</BSTD>
                     <BSTD>Ksf</BSTD>
                     <BSTD>Código de Equipo</BSTD>
@@ -114,7 +117,8 @@
             <BSTBody>
                 @foreach (var d in reudiatablas)
                 {
-                    @if (d.Rdstatus != "Listo" & d.RdfecTra <= DateTime.Now | (d.Rdstatus != "Listo" & (d.Rdodt == "" | d.Rdodt is null)))
+                    @if (d.Rdstatus != "Listo" & d.RdfecTra <= DateTime.Now | (d.Rdstatus != "Listo" & (d.Rdodt == "" | d.Rdodt
+                   is null)))
                     //@if (d.Rdstatus != "Listo")
                     {
                         @if (Codigo == d.RdcodDis | Codigo == "Todo")
@@ -122,10 +126,10 @@
 
                             <BSTR>
 
-                                @*<BSTD>@d.IdReuDia</BSTD>*@                         
-                                    @*  <BSTD>@d.Rddiv</BSTD>*@
+                                @*<BSTD>@d.IdReuDia</BSTD>*@
+                                @* <BSTD>@d.Rddiv</BSTD>*@
                                 <BSTD>@d.Rdarea</BSTD>
-                                <BSTD>@d.ksfNom</BSTD>                            
+                                <BSTD>@d.ksfNom</BSTD>
                                 <BSTD>@d.RdcodEq</BSTD>
                                 <BSTD ColSpan="4">@d.Rddisc.ToUpper()</BSTD>
                                 <BSTD>@d.RdcodDis</BSTD>
@@ -160,7 +164,8 @@
                                 @if (Rol == "Admin" | Rol == "AdminChempro" | Rol == "SupIntendente" | Rol == "SupIntendenteGeneral")
                                 {
                                     <BSTD>
-                                        <button class="btn btn-success" @onclick="(() => Editar(d.IdReuDia))"><i class="oi oi-pencil"></i></button>
+                                        <button class="btn btn-success" @onclick="(() => Editar(d.IdReuDia))"><i
+                                                class="oi oi-pencil"></i></button>
                                     </BSTD>
                                 }
 
@@ -190,7 +195,7 @@ else if (dataIsLoaded == 2 && reudiatablas.Count() == 0)
     [Parameter]
     public string? accion { get; set; }//centro
     [Parameter]
-    public string? division { get; set; }//division    
+    public string? division { get; set; }//division
     [Parameter]
     public string? linea { get; set; }//linea
     [Parameter]
@@ -198,7 +203,7 @@ else if (dataIsLoaded == 2 && reudiatablas.Count() == 0)
     [Parameter]
     public string? f2 { get; set; }
     [Parameter]
-    public string? tipo { get; set; }   
+    public string? tipo { get; set; }
     [Parameter]
     public string? est { get; set; }
 
@@ -232,12 +237,12 @@ else if (dataIsLoaded == 2 && reudiatablas.Count() == 0)
     private List<EquiposEamVDTO> equipos { get; set; }
     private List<EquiposEamVDTO> equiposlinea { get; set; }
     private List<EquipoEamDTO> listaEqupis { get; set; }
-    private RegistroCambiosDTO listaRegistro { get; set; } 
+    private RegistroCambiosDTO listaRegistro { get; set; }
     private List<CalendarioTrabajoDTO> calentrabajo { get; set; }
     private List<CambFecDTO> cambiofecha { get; set; }
     private List<ReuDiumDTO> reudiatablas { get; set; }
-    private APIReunionService apiclass = new APIReunionService();
-    private DbReunionService DbReu = new DbReunionService();
+
+
 
 
     private List<Claim> claims { get; set; }
@@ -254,24 +259,25 @@ else if (dataIsLoaded == 2 && reudiatablas.Count() == 0)
     protected override async Task OnInitializedAsync()
     {
         await CreateData();
-        Rol =claims.FirstOrDefault(c => c.Type.Contains("role"))?.Value;
+        Rol = claims.FirstOrDefault(c => c.Type.Contains("role"))?.Value;
 
 
-        if (Rol == "Admin" || Rol == "SuperAdmin" || Rol == "MttoAdmin" || Rol == "SeguridadAdmin" || Rol == "CalidadAdmin" || Rol == "Auditores")
+        if (Rol == "Admin" || Rol == "SuperAdmin" || Rol == "MttoAdmin" || Rol == "SeguridadAdmin" || Rol == "CalidadAdmin" ||
+        Rol == "Auditores")
         {
-            // await APIReunionService.GetCentros("All");
-            await APIReunionService.GetCentrosxEmpresa("All" + claims[10].Value);
+            // await apiclass.GetCentros("All");
+            await apiclass.GetCentrosxEmpresa("All" + claims[10].Value);
         }
         else
         {
-            //await APIReunionService.GetCentros(claims[6].Value.ToString());
-            await APIReunionService.GetCentrosxEmpresa(claims[11].Value);
+            //await apiclass.GetCentros(claims[6].Value.ToString());
+            await apiclass.GetCentrosxEmpresa(claims[11].Value);
         }
 
         IdCentro = int.Parse(claims[11].Value);
         IdDiv = int.Parse(claims[12].Value);
-        await APIReunionService.Getksf();
-        await APIReunionService.GetResReu();
+        await apiclass.Getksf();
+        await apiclass.GetResReu();
 
     }
 
@@ -283,15 +289,16 @@ else if (dataIsLoaded == 2 && reudiatablas.Count() == 0)
             if (dataIsLoaded != 1)
             {
                 dataIsLoaded = 1;
-                await DbReunionService.GetPendientes(IdCentro.ToString(), IdDiv.ToString(), DateTime.Now.AddDays(-1), DateTime.Now, "1", "Reunion");
+                await DbReunionService.GetPendientes(IdCentro.ToString(), IdDiv.ToString(), DateTime.Now.AddDays(-1), DateTime.Now, "1",
+                "Reunion");
                 dataIsLoaded = 2;
             }
         }
         else
         {
-       
-                error = "Seleccione los valores en las listas*";
-            
+
+            error = "Seleccione los valores en las listas*";
+
         }
     }
     void Editar(int id)
@@ -312,7 +319,6 @@ else if (dataIsLoaded == 2 && reudiatablas.Count() == 0)
     }
     public async Task PrintDocument()
     {
-        //NavigationManager.NavigateTo($"TablaReunion/{IdCentro.ToString()}/{IdDiv.ToString()}/{DateTime.Now.AddDays(-1).ToString("dd-MM-yyyy")}/{DateTime.Now.ToString("dd-MM-yyyy")}/1", forceLoad: true);
         await IJS.InvokeAsync<object>("open", new object[] { $"TablaReunion/{IdCentro.ToString()}/{IdDiv.ToString()}/{DateTime.Now.AddDays(-1).ToString("dd-MM-yyyy")}/{DateTime.Now.ToString("dd-MM-yyyy")}/1", "_blank" });
     }
 

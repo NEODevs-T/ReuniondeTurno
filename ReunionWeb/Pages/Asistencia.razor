@@ -1,6 +1,7 @@
 ﻿@page "/asistencia"
 
 @inject IDbReunionService DbReunionService
+@inject IAPIReunionService apiclass
 @inject AuthenticationStateProvider AuthStateProvider
 @inject ILocalStorageService LocalStorage
 @inject NotificationService NotificationService
@@ -171,7 +172,7 @@ else if (dataIsLoaded == 1 && cargoreus.Count() == 0)
     private List<EquiposEamVDTO> equiposlinea { get; set; }
     private List<EquipoEamDTO> listaEqupis { get; set; }
     private List<CalendarioTrabajoDTO> calentrabajo { get; set; }
-    private APIReunionService apiclass = new APIReunionService();
+    
 
 
     private List<Claim> claims { get; set; }

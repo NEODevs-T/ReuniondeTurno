@@ -24,6 +24,11 @@ public class DbReunionService : IDbReunionService
     private HttpResponseMessage? mensaje { get; set; } = new HttpResponseMessage();
     private string url { get; set; } = "";
 
+    public DbReunionService(IHttpClientFactory clientFactory)
+    {
+        _clientFactory = clientFactory;
+    }
+
     // **-------> CONEXION A LA API <--------**
 
     private readonly DbNeoContext _neocontext;

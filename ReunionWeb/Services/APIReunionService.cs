@@ -19,6 +19,11 @@ public class APIReunionService: IAPIReunionService
         private HttpResponseMessage? mensaje { get; set; } = new HttpResponseMessage();
         private string url { get; set; } = "";
 
+        public APIReunionService(IHttpClientFactory clientFactory)
+        {
+                _clientFactory = clientFactory;
+        }
+
         // **-------> CONEXION A LA API <--------**
 
 
@@ -98,7 +103,7 @@ public class APIReunionService: IAPIReunionService
 
         public async Task<List<KsfDTO>> Getksf()
         {
-                url = $"{BaseUrlMaestra}/GetKsf";
+                url = $"{BaseUrlLineas}/GetKsf";
                 cliente = _clientFactory.CreateClient();
                 return await cliente.GetFromJsonAsync<List<KsfDTO>>(url) ?? new List<KsfDTO>();
         }

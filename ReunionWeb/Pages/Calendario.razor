@@ -2,6 +2,7 @@
 @using Radzen.Blazor.Rendering;
 @inject DialogService DialogService
 @inject IDbReunionService DbReunionService
+@inject IAPIReunionService apiclass
 @inject NavigationManager NavigationManager
 @inject HttpClient Http
 @inject AuthenticationStateProvider AuthStateProvider
@@ -27,7 +28,7 @@
                     }
                 </BSInput>
                 <BSValidationSummary />
-                 <BSFeedback For="@(() => IdCentro)" ValidMessage="Correcto." />
+                <BSFeedback For="@(() => IdCentro)" ValidMessage="Correcto." />
             </BSCol>
 
 
@@ -38,15 +39,15 @@
                     <option>Seleccione</option>
                     @foreach (var d in Centro)
                     {
-                            if (IdCentro == d.IdCentro)
-                            {
-                                <option value="@d.IdDivision">@d.División</option>
-                            }
-                        
+                        if (IdCentro == d.IdCentro)
+                        {
+                            <option value="@d.IdDivision">@d.División</option>
+                        }
+
                     }
                     <option value="0">Todo</option>
                 </BSInput>
-                 <BSFeedback For="@(() => IdDiv)" ValidMessage="Correcto." />
+                <BSFeedback For="@(() => IdDiv)" ValidMessage="Correcto." />
             </BSCol>
 
 
@@ -54,10 +55,11 @@
                 <BSRow>
                     <BSLabel>Aceptar</BSLabel>
                 </BSRow>
-                <BSButton IsOutlined Color="BSColor.Success" Size="Size.ExtraSmall" @onclick="(() => Get(IdCentro,IdDiv))"> Consultar <span class="oi oi-check"></span></BSButton>
-                </BSCol>
+                <BSButton IsOutlined Color="BSColor.Success" Size="Size.ExtraSmall" @onclick="(() => Get(IdCentro,IdDiv))">
+                    Consultar <span class="oi oi-check"></span></BSButton>
+            </BSCol>
 
-                </BSRow>
+        </BSRow>
     }
 
 </BSContainer>
@@ -68,11 +70,12 @@
 @if (calentrabajo.Count() > 0 && dataIsLoaded == 2)
 {
 
-    <RadzenScheduler Data="@data" TItem="DataItem"  StartProperty ="Start" SelectedIndex="1" style="height: 630px;" EndProperty="End" TodayText="Hoy" TextProperty="Text" AppointmentRender=@OnAppointmentRender>
-        <RadzenDayView  Text="Día"  />
+    <RadzenScheduler Data="@data" TItem="DataItem" StartProperty="Start" SelectedIndex="1" style="height: 630px;"
+        EndProperty="End" TodayText="Hoy" TextProperty="Text" AppointmentRender=@OnAppointmentRender>
+        <RadzenDayView Text="Día" />
         <RadzenWeekView Text="Semana" />
         <RadzenMonthView Text="Mes" />
-        <RadzenYearPlannerView Text="Planifcación"/>
+        <RadzenYearPlannerView Text="Planifcación" />
         <RadzenYearView Text="Año" />
     </RadzenScheduler>
 }
@@ -98,22 +101,22 @@ else if (dataIsLoaded == 2 && calentrabajo.Count() == 0)
     private int IdDiv { get; set; } //id de la division
     private int dataIsLoaded { get; set; } //verificar si cargo la lista
     DataItem[] data;
-    private List<AsistenReuDTO> listaAsistencia { get; set; }
-    private List<LineaDTO> lineas { get; set; }
-    private List<DivisionDTO> divisions { get; set; }
-    private List<MaestraVDTO> Centro { get; set; }
-    private List<KsfDTO> ksfs { get; set; }
-    private List<RespoReuDTO> resporeu { get; set; }
-    private List<ReuDiumDTO> reunionditabla { get; set; }
-    private List<ReuDiumDTO> reudiatabla { get; set; }
-    private List<AsistenReuDTO> asistenreus { get; set; }
-    private List<CargoReuDTO> cargoreus { get; set; }
-    private List<StatsAsisDto> StatsAsisDtos { get; set; }
-    private List<EquiposEamVDTO> equipos { get; set; }
-    private List<EquiposEamVDTO> equiposlinea { get; set; }
-    private List<EquipoEamDTO> listaEqupis { get; set; }
-    private List<CalendarioTrabajoDTO> calentrabajo { get; set; }
-    private APIReunionService apiclass = new APIReunionService();
+    private List<AsistenReuDTO> listaAsistencia { get; set; } = new List<AsistenReuDTO>();
+    private List<LineaDTO> lineas { get; set; } = new List<LineaDTO>();
+    private List<DivisionDTO> divisions { get; set; } = new List<DivisionDTO>();
+    private List<MaestraVDTO> Centro { get; set; } = new List<MaestraVDTO>();
+    private List<KsfDTO> ksfs { get; set; } = new List<KsfDTO>();
+    private List<RespoReuDTO> resporeu { get; set; } = new List<RespoReuDTO>();
+    private List<ReuDiumDTO> reunionditabla { get; set; } = new List<ReuDiumDTO>();
+    private List<ReuDiumDTO> reudiatabla { get; set; } = new List<ReuDiumDTO>();
+    private List<AsistenReuDTO> asistenreus { get; set; } = new List<AsistenReuDTO>();
+    private List<CargoReuDTO> cargoreus { get; set; } = new List<CargoReuDTO>();
+    private List<StatsAsisDto> StatsAsisDtos { get; set; } = new List<StatsAsisDto>();
+    private List<EquiposEamVDTO> equipos { get; set; } = new List<EquiposEamVDTO>();
+    private List<EquiposEamVDTO> equiposlinea { get; set; } = new List<EquiposEamVDTO>();
+    private List<EquipoEamDTO> listaEqupis { get; set; } = new List<EquipoEamDTO>();
+    private List<CalendarioTrabajoDTO> calentrabajo { get; set; } = new List<CalendarioTrabajoDTO>();
+
 
 
     private async Task CreateData()
@@ -128,10 +131,11 @@ else if (dataIsLoaded == 2 && calentrabajo.Count() == 0)
     {
 
         await CreateData();
-        
+
         var rol = claims.FirstOrDefault(c => c.Type.Contains("role"))?.Value;
 
-        if (rol == "Admin" || rol == "SuperAdmin" || rol == "MttoAdmin" || rol == "SeguridadAdmin" || rol == "Auditores" || rol == "CalidadAdmin" )
+        if (rol == "Admin" || rol == "SuperAdmin" || rol == "MttoAdmin" || rol == "SeguridadAdmin" || rol == "Auditores" || rol
+        == "CalidadAdmin")
         {
 
             await apiclass.GetCentrosxEmpresa("All" + claims[10].Value);
@@ -152,7 +156,7 @@ else if (dataIsLoaded == 2 && calentrabajo.Count() == 0)
     protected async Task Get(int IdCentro, int IdDiv)
     {
         string centro = "", division = "";
-        if (IdCentro>0)
+        if (IdCentro > 0)
         {
             centro = Centro.Where(c => c.IdCentro == IdCentro).FirstOrDefault(c => c.IdCentro.Equals(IdCentro)).Centro;
             if (IdDiv == 0)
@@ -163,10 +167,10 @@ else if (dataIsLoaded == 2 && calentrabajo.Count() == 0)
             {
                 foreach (var d in Centro)
                 {
-                        if (IdDiv == d.IdDivision)
-                        {
-                            division = d.División;
-                        }
+                    if (IdDiv == d.IdDivision)
+                    {
+                        division = d.División;
+                    }
                 }
             }
 
@@ -178,17 +182,19 @@ else if (dataIsLoaded == 2 && calentrabajo.Count() == 0)
 
                 for (int i = 0; i < data.Count(); i++)
                 {
-                    DateTime Inicio = new DateTime(calentrabajo[i].RdfecTra.Year, calentrabajo[i].RdfecTra.Month, calentrabajo[i].RdfecTra.Day, 08, 00, 00);
+                    DateTime Inicio = new DateTime(calentrabajo[i].RdfecTra.Year, calentrabajo[i].RdfecTra.Month,
+                    calentrabajo[i].RdfecTra.Day, 08, 00, 00);
                     DateTime Final = Inicio.AddHours((calentrabajo[i].Rdtiempo is null) ? 0 : (double.Parse(calentrabajo[i].Rdtiempo)));
                     data[i] = new DataItem
-                {
+                        {
 
-                        Start= Inicio,
-                        End=Final,
-                            Text = calentrabajo[i].Linea + " - " + calentrabajo[i].Responsable + " - " + ((calentrabajo[i].Rddisc.Length < 30) ? calentrabajo[i].Rddisc : calentrabajo[i].Rddisc.Substring(0,30)+"...") + " - " + calentrabajo[i].RdcodEq
+                            Start = Inicio,
+                            End = Final,
+                            Text = calentrabajo[i].Linea + " - " + calentrabajo[i].Responsable + " - " + ((calentrabajo[i].Rddisc.Length < 30) ?
+                        calentrabajo[i].Rddisc : calentrabajo[i].Rddisc.Substring(0, 30) + "...") + " - " + calentrabajo[i].RdcodEq
 
-                };
-                    if(data[i].End<DateTime.Today)
+                        };
+                    if (data[i].End < DateTime.Today)
                     {
                         data[i].Text = "Vencido " + data[i].Text;
                     }
@@ -206,12 +212,12 @@ else if (dataIsLoaded == 2 && calentrabajo.Count() == 0)
         // Never call StateHasChanged in AppointmentRender - would lead to infinite loop
         //for (int i = 0; i < data.Count(); i++)
         //{
-            if (args.Data.Text.Substring(0, 7) == "Vencido")
-            {
-                args.Attributes["style"] = "background: red !important";
-            }
+        if (args.Data.Text.Substring(0, 7) == "Vencido")
+        {
+            args.Attributes["style"] = "background: red !important";
+        }
         //}
-        
+
     }
 
     class DataItem
@@ -223,21 +229,21 @@ else if (dataIsLoaded == 2 && calentrabajo.Count() == 0)
 
 
     //DataItem[] data = new DataItem[]
-    //      {
+    // {
 
 
-    //  new DataItem
-    //  {
-    //    Start = DateTime.Today,
-    //    End = DateTime.Today.AddDays(1),
-    //    Text = "Birthday"
-    //  },
-    //   new DataItem
-    //  {
-    //    Start = DateTime.Today,
-    //    End = DateTime.Today.AddDays(1),
-    //    Text = "Birthday"
-    //  }
-    //      };
+    // new DataItem
+    // {
+    // Start = DateTime.Today,
+    // End = DateTime.Today.AddDays(1),
+    // Text = "Birthday"
+    // },
+    // new DataItem
+    // {
+    // Start = DateTime.Today,
+    // End = DateTime.Today.AddDays(1),
+    // Text = "Birthday"
+    // }
+    // };
 
 }
