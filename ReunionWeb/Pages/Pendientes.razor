@@ -39,25 +39,22 @@ else
                 <option value=0>Seleccione</option>
                 @foreach (var d in _divisiones)
                 {
-                    <option value="@d.IdDivision">@d.div</option>
+                    <option value="@d.IdDivision">@d.División</option>
                 }
             </BSInput>
         </BSCol>
-        @if (DbReunionService.reudiatablas.Count() > 0 && dataIsLoaded == 2)
+        @if (reudiatablas.Count() > 0 && dataIsLoaded == 2)
         {
             <BSCol ColumnLarge="3" ColumnSmall="6">
                 <BSLabel>Línea</BSLabel>
                 <BSInput InputType="InputType.Select" @bind-Value="NombreLinea" IsDisabled=@valueodt>
                     <option value="Todo">Todo</option>
-                    @foreach (var d in APIReunionService.centro)
+                    @foreach (var d in centro)
                     {
-                        @foreach (var e in d.Lineas)
-                        {
-                            if (IdDiv == e.IdDivision)
+                            if (IdDiv == d.IdDivision)
                             {
-                                <option value="@e.Lnom">@e.Lnom</option>
+                                <option value="@d.Linea">@d.Linea</option>
                             }
-                        }
                     }
                 </BSInput>
             </BSCol>
@@ -144,13 +141,13 @@ else
 
     @*Filltros extra*@
     <BSRow>
-        @if (DbReunionService.reudiatablas.Count() > 0 && dataIsLoaded == 2)
+        @if (reudiatablas.Count() > 0 && dataIsLoaded == 2)
         {
             <BSCol Column="3">
                 <BSLabel>Responsable</BSLabel>
                 <BSInput InputType="InputType.Select" IsDisabled=@valueodt @bind-Value="idrespo">
                     <option value=0>Todo</option>
-                    @foreach (var d in APIReunionService.resporeu)
+                    @foreach (var d in resporeu)
                     {
 
                         <option value="@d.IdResReu">@d.Rrnombre</option>
@@ -166,7 +163,7 @@ else
                 <BSInput InputType="InputType.Select" IsDisabled=@valueodt @bind-Value="IdKsf">
 
                     <option value="0">Todo</option>
-                    @foreach (var d in APIReunionService.ksfs)
+                    @foreach (var d in ksfs)
                     {
                         <option value="@d.Idksf">@d.KsfNombre</option>
                     }
@@ -186,7 +183,7 @@ else
 }
 
 @*Tabla vieja*@
-@if (DbReunionService.reudiatablas.Count() > 0 && dataIsLoaded == 2)
+@if (reudiatablas.Count() > 0 && dataIsLoaded == 2)
 {
     <div class=" pt-3">
 
@@ -229,20 +226,20 @@ else
 
                                         @*<BSTD>@d.IdReuDia</BSTD>*@
                                         <BSTD>@d.Rdarea</BSTD>
-                                            <BSTD>@d.IdksfNavigation.KsfNombre</BSTD>
+                                            <BSTD>@d.ksfNom</BSTD>
                                             <BSTD>@d.RdcodEq</BSTD>
                                             <BSTD>@d.Rddisc.ToUpperInvariant()</BSTD>
                                             <BSTD>@d.RdcodDis</BSTD>
                                             <BSTD Class="textotabla">@d.RdplanAcc</BSTD>
                                             <BSTD>@d.Rdtiempo</BSTD>
 
-                                            @if (@d.IdResReuNavigation.Rrnombre == "Por Definir")
+                                            @if (@d.Responsable == "Por Definir")
                                         {
-                                            <BSTD Class="Definir">@d.IdResReuNavigation.Rrnombre </BSTD>
+                                            <BSTD Class="Definir">@d.Responsable </BSTD>
                                         }
                                         else
                                         {
-                                            <BSTD>@d.IdResReuNavigation.Rrnombre </BSTD>
+                                            <BSTD>@d.Responsable </BSTD>
                                         }
 
                                         @if (@d.Rdstatus == "Listo")
@@ -363,11 +360,11 @@ else
 
 
 }
-else if (dataIsLoaded == 1 && DbReunionService.reudiatablas.Count() == 0)
+else if (dataIsLoaded == 1 && reudiatablas.Count() == 0)
 {
     <div class="loader"></div>
 }
-else if (dataIsLoaded == 2 && DbReunionService.reudiatablas.Count() == 0)
+else if (dataIsLoaded == 2 && reudiatablas.Count() == 0)
 {
     <p>No hay datos para mostrar.</p>
 }
@@ -527,16 +524,16 @@ else if (dataIsLoaded == 2 && DbReunionService.reudiatablas.Count() == 0)
     private int idrespo { get; set; }  //responsable a filtarint.Parse(claims[9].Value)
     public DateTime fecha1;
     public DateTime fecha2;
-    List<ReuDium> listareu = new List<ReuDium>();//filtar los responsables
-    List<CambFec> cambiofechas = new List<CambFec>();
-    List<CambStat> cambiostatuss = new List<CambStat>();
+    List<ReuDiumDTO> listareu = new List<ReuDiumDTO>();//filtar los responsables
+    List<CambFecDTO> cambiofechas = new List<CambFecDTO>();
+    List<CambStatDTO> cambiostatuss = new List<CambStatDTO>();
     List<MaestraVDTO> _divisiones = new List<MaestraVDTO>();
     private NotifiRadzen Notificar = new NotifiRadzen();//Logic para crear las noyificaciones radzen
     private bool isEditar { get; set; } = true;
     private List<Claim> claims { get; set; }
     private List<AsistenReuDTO> listaAsistencia { get; set; }
     private List<LineaDTO> lineas { get; set; }
-    private List<DivisionDTO> divisions { get; set; }
+    private List<MaestraVDTO> divisions { get; set; }
     private List<MaestraVDTO> centro { get; set; }
     private List<KsfDTO> ksfs { get; set; }
     private List<RespoReuDTO> resporeu { get; set; }
@@ -550,6 +547,7 @@ else if (dataIsLoaded == 2 && DbReunionService.reudiatablas.Count() == 0)
     private List<EquipoEamDTO> listaEqupis { get; set; }
     private RegistroCambiosDTO listaRegistro { get; set; } 
     private List<CalendarioTrabajoDTO> calentrabajo { get; set; }
+    private List<CambStatDTO> cambiostatus { get; set; }
     private List<CambFecDTO> cambiofecha { get; set; }
     private List<ReuDiumDTO> reudiatablas { get; set; }
     private APIReunionService apiclass = new APIReunionService();
@@ -625,8 +623,8 @@ else if (dataIsLoaded == 2 && DbReunionService.reudiatablas.Count() == 0)
         IdDiv = int.Parse(claims.FirstOrDefault(c => c.Type.Contains("IdDiv"))?.Value ?? "0");
         await APIReunionService.Getksf();
         await APIReunionService.GetResReu();
-        APIReunionService.resporeu = APIReunionService.resporeu.Where(a => a.Rrdesc == claims.FirstOrDefault(c => c.Type.Contains("Empresa"))?.Value | string.IsNullOrEmpty(a.Rrdesc)).ToList();
-        DbReunionService.reudiatablas = new List<ReuDium>();
+        resporeu = resporeu.Where(a => a.Rrdesc == claims.FirstOrDefault(c => c.Type.Contains("Empresa"))?.Value | string.IsNullOrEmpty(a.Rrdesc)).ToList();
+        reudiatablas = new List<ReuDiumDTO>();
 
         //Eliminar el ODT para un  nuevo cargado
 
@@ -679,7 +677,7 @@ else if (dataIsLoaded == 2 && DbReunionService.reudiatablas.Count() == 0)
                 if (dataIsLoaded != 1)
                 {
                     dataIsLoaded = 1;
-                    listareu = await DbReunionService.GetByODT(BuscarOdt, IdCentro.ToString(), IdDiv.ToString());
+                    listareu = await DbReu.GetByODT(BuscarOdt, IdCentro.ToString(), IdDiv.ToString());
                     dataIsLoaded = 2;
 
                 }
@@ -724,9 +722,9 @@ else if (dataIsLoaded == 2 && DbReunionService.reudiatablas.Count() == 0)
         IdCentro = idcentro;
         IdDiv = 0;
 
-        divisiones = APIReunionService.centro
+        divisions = centro
         .Where(c => c.IdCentro == idcentro)
-        .SelectMany(c => c.Divisions)
+        @* .SelectMany(c => c.Divisions) *@
         .ToList();
 
         return Task.CompletedTask;
@@ -734,12 +732,12 @@ else if (dataIsLoaded == 2 && DbReunionService.reudiatablas.Count() == 0)
     protected async Task GetHistory(int idreu)
     {
         cargandocambio = false;
-        cambiostatuss = new List<CambStat>();
-        cambiofechas = new List<CambFec>();
+        cambiostatuss = new List<CambStatDTO>();
+        cambiofechas = new List<CambFecDTO>();
         await DbReunionService.GetCambioStatus(idreu);
         await DbReunionService.GetCambioFecha(idreu);
-        cambiofechas = DbReunionService.cambiofecha;
-        cambiostatuss = DbReunionService.cambiostatus;
+        cambiofechas = cambiofecha;
+        cambiostatuss = cambiostatus;
 
         cargandocambio = true;
 
@@ -807,12 +805,12 @@ else if (dataIsLoaded == 2 && DbReunionService.reudiatablas.Count() == 0)
     {
         if (!string.IsNullOrEmpty(UsrRol))
         {
-            listareu = DbReunionService.reudiatablas.Where(r => r.IdResReuNavigation.Rrnombre.StartsWith(UsrRol)).ToList();
+            listareu = reudiatablas.Where(r => r.Responsable.StartsWith(UsrRol)).ToList();
 
         }
         else
         {
-            listareu = DbReunionService.reudiatablas;
+            listareu = reudiatablas;
 
         }
     }
