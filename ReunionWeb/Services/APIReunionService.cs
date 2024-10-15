@@ -86,14 +86,14 @@ public class APIReunionService : IAPIReunionService
         //TODO: Recuerda cambiar las url
         public async Task<List<DivisionesVDTO>> ObtenerDivisionDelCentro(int idCentro)
         {
-                url = $"{BaseUrl}/GetDivisiones/{idCentro}";
+                url = $"{BaseUrlMaestra}/GetDivisiones/{idCentro}";
                 return divisions = await _http.GetFromJsonAsync<List<DivisionesVDTO>>(url) ?? new List<DivisionesVDTO>();
         }
 
         public async Task<List<MaestraVDTO>> GetCentrosxEmpresa(string cent)
         {
-                // url = $"{BaseUrlMaestra}/GetCentrosJT/{cent}";
-                url = $"{BaseUrl}/GetCentrosJT/{cent}";
+                url = $"{BaseUrlMaestra}/GetCentrosJT/{cent}";
+                // url = $"{BaseUrl}/GetCentrosJT/{cent}";
                 cliente = _clientFactory.CreateClient();
                 return centro = await _http.GetFromJsonAsync<List<MaestraVDTO>>(url) ?? new List<MaestraVDTO>();
         }

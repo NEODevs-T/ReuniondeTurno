@@ -42,11 +42,11 @@
             <BSInput InputType="InputType.Select" @onchange='BuscarLinea' @bind-Value="IdDiv">
                 <option value="">Seleccione...</option>
                 @if(apiclass.centro != null){
-                @foreach (var d in apiclass.divisions.Where(di => di.IdCentro == IdCent))
-                {
-                        <option value="@d.IdDivision">@d.Ndivision</option>
+                    @foreach (var d in apiclass.divisions)
+                    {
+                            <option value="@d.IdDivision">@d.Ndivision</option>
 
-                }
+                    }
                 }
             </BSInput>
         
@@ -59,8 +59,7 @@
                 <option value="">Seleccione...</option>
                 @foreach (var d in apiclass.lineas.Where(li => li.IdDivision == IdDiv))
                 {
-
-                        <option value="@d.Linea">@d.Linea</option>
+                    <option value="@d.Linea">@d.Linea</option>
                 }
             </BSInput>
             </BSCol>
@@ -286,14 +285,14 @@
 
  protected async Task BuscarDivision(ChangeEventArgs e)
 {
-    if (!string.IsNullOrWhiteSpace(e.Value?.ToString()) && int.TryParse(e.Value.ToString(), out int idCent))
+    if (!string.IsNullOrWhiteSpace(e.Value?.ToString()) && int.TryParse(e.Value.ToString(), out int IdCent))
     {
 
         try
         {
             if (IdCent != 0)
             {
-                apiclass.divisions = await apiclass.ObtenerDivisionDelCentro(IdCent ?? 0);
+                apiclass.divisions = await apiclass.ObtenerDivisionDelCentro(IdCent);
             }
         }
         catch (Exception ex)
@@ -461,7 +460,7 @@ protected async Task BuscarLinea(ChangeEventArgs e)
 
     List<EquipoEamDTO>? equiposfiltro;
     string? selectedEquipoId;
-    string? selectedEquipoName;
+        string? selectedEquipoName;
     string? filter;
     bool codsuccess = false;
     async Task HandleInput(ChangeEventArgs d)
