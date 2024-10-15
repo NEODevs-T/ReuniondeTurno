@@ -8,24 +8,27 @@ namespace ReunionWeb.Services
     public interface IAPIReunionService
     {
 
-        // List<Centro> centro { get; set; }
-        // List<Linea> lineas { get; set; }
-        // List<Division> divisions { get; set; }
-        // List<Ksf> ksfs { get; set; }
-        // List<RespoReu> resporeu { get; set; }
-        // List<ReunionDium> reunionditabla { get; set; }
-        // List<ReuDium> reudiatabla { get; set; }
-        // List<AsistenReu> asistenreus { get; set; }
-        // List<CargoReu> cargoreus { get; set; }
-        // List<StatsAsisDto> StatsAsisDtos { get; set; }
-        // List<EquipoEam> equipos { get; set; }
-        // List<EquipoEam> equiposlinea { get; set; }
-        // List<CalendarioTrabajoDTO> calentrabajo { get; set; }
+        List<CentrosVDTO> centro { get; set; }
+        List<LineaVDTO> lineas { get; set; }
+        List<MaestraVDTO> divisions { get; set; }
+        List<KsfDTO> ksfs { get; set; }
+        List<RespoReuDTO> resporeu { get; set; }
+        List<ReuDiumDTO> reunionditabla { get; set; }
+        List<ReuDiumDTO> reudiatabla { get; set; }
+        List<AsistenReuDTO> asistenreus { get; set; }
+        List<CargoReuDTO> cargoreus { get; set; }
+        List<StatsAsisDto> StatsAsisDtos { get; set; }
+        List<EquipoEamDTO> equipos { get; set; }
+        List<EquipoEamDTO> equiposlinea { get; set; }
+        List<CalendarioTrabajoDTO> calentrabajo { get; set; }
+        RegistroCambiosDTO listaRegistro { get; set; } //= new RegistroCambiosDTO(); 
+
+
 
         Task<List<EquipoEamDTO>> GetEquiposEAM(string cent);
         Task<List<EquipoEamDTO>> GetEquiposID(string idCentro);
         Task<List<EquipoEamDTO>> GetEquiposxlinea(string idLinea);
-        Task<List<LineaDTO>> GetBdDiv(string cent);
+        Task<List<MaestraVDTO>> GetBdDiv(string cent);
         Task<List<CentrosVDTO>> GetCentrosxEmpresa(string cent);
         Task<List<LineaVDTO>> GetLineas(int idDivision);
         Task<List<KsfDTO>> Getksf();

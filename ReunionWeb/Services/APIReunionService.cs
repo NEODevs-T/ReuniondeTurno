@@ -7,49 +7,57 @@ using static System.Net.WebRequestMethods;
 using ReunionWeb.DTOs.Maestra;
 
 namespace ReunionWeb.Services;
-public class APIReunionService: IAPIReunionService
+public class APIReunionService : IAPIReunionService
 {
         // **-------> CONEXION A LA API <--------**
         private readonly IHttpClientFactory _clientFactory;
         private const string BaseUrlMaestra = "http://neo.paveca.com.ve/apineomaster/api/Maestra";
         private const string BaseUrlLineas = "http://neo.paveca.com.ve/apineomaster/api/Lineas";
+        private const string BaseUrl = "http://localhost:5021/api/Lineas";
         private const string ViejaUrl1 = "http://neo.paveca.com.ve/ReunionApi/Lineas";
         private const string ViejaUrl2 = "http://neo.paveca.com.ve/ReunionApi/Empresas";
         private HttpClient cliente { get; set; } = new HttpClient();
+        private HttpClient _http { get; set; } = new HttpClient();
         private HttpResponseMessage? mensaje { get; set; } = new HttpResponseMessage();
         private string url { get; set; } = "";
 
-        public APIReunionService(IHttpClientFactory clientFactory)
+        public APIReunionService(IHttpClientFactory clientFactory, HttpClient http)
         {
                 _clientFactory = clientFactory;
+                _http = http;
         }
 
         // **-------> CONEXION A LA API <--------**
 
 
         // **-------> PROPIEDADES DE JAVIER <------**
+        public List<CentrosVDTO> centro { get; set; } = new List<CentrosVDTO>();
+        public List<LineaVDTO> lineas { get; set; } = new List<LineaVDTO>();
+        public List<MaestraVDTO> divisions { get; set; } = new List<MaestraVDTO>();
+        public List<KsfDTO> ksfs { get; set; } = new List<KsfDTO>();
+        public List<RespoReuDTO> resporeu { get; set; } = new List<RespoReuDTO>();
+        public List<ReuDiumDTO> reunionditabla { get; set; } = new List<ReuDiumDTO>();
+        public List<ReuDiumDTO> reudiatabla { get; set; } = new List<ReuDiumDTO>();
+        public List<AsistenReuDTO> asistenreus { get; set; } = new List<AsistenReuDTO>();
+        public List<CargoReuDTO> cargoreus { get; set; } = new List<CargoReuDTO>();
+        public List<StatsAsisDto> StatsAsisDtos { get; set; } = new List<StatsAsisDto>();
+        public List<EquipoEamDTO> equipos { get; set; } = new List<EquipoEamDTO>();
+        public List<EquipoEamDTO> equiposlinea { get; set; } = new List<EquipoEamDTO>();
+        public List<CalendarioTrabajoDTO> calentrabajo { get; set; } = new List<CalendarioTrabajoDTO>();
 
-        // List<CentroDTO> centro { get; set; }
-        // List<Linea> lineas { get; set; }
-        // List<Division> divisions { get; set; }
-        // List<Ksf> ksfs { get; set; }
-        // List<RespoReu> resporeu { get; set; }
-        // List<ReunionDium> reunionditabla { get; set; }
-        // List<ReuDium> reudiatabla { get; set; }
-        // List<AsistenReu> asistenreus { get; set; }
-        // List<CargoReu> cargoreus { get; set; }
-        // List<StatsAsisDto> StatsAsisDtos { get; set; }
-        // List<EquipoEam> equipos { get; set; }
-        // List<EquipoEam> equiposlinea { get; set; }
-        // List<CalendarioTrabajoDTO> calentrabajo { get; set; }
+        public RegistroCambiosDTO listaRegistro { get; set; } //= new RegistroCambiosDTO(); 
+
 
         // **-------> PROPIEDADES DE JAVIER <------**
 
 
         public async Task<List<EquipoEamDTO>> GetEquiposEAM(string cent)
         {
+
+                // url = $"{BaseUrlLineas}/GetEquipos/{cent}";
                 url = $"{BaseUrlLineas}/GetEquipos/{cent}";
                 cliente = _clientFactory.CreateClient();
+                equipos = await _http.GetFromJsonAsync<List<EquipoEamDTO>>($"{BaseUrlLineas}/GetEquipos/{cent}");
                 return await cliente.GetFromJsonAsync<List<EquipoEamDTO>>(url) ?? new List<EquipoEamDTO>();
 
         }
@@ -68,18 +76,18 @@ public class APIReunionService: IAPIReunionService
 
         }
 
-        public async Task<List<LineaDTO>> GetBdDiv(string cent)
+        public async Task<List<MaestraVDTO>> GetBdDiv(string cent)
         {
+
                 url = $"{BaseUrlLineas}/GetBdDiv/{cent}";
-                cliente = _clientFactory.CreateClient();
-                return await cliente.GetFromJsonAsync<List<LineaDTO>>(url) ?? new List<LineaDTO>();
+                return divisions = await _http.GetFromJsonAsync<List<MaestraVDTO>>(url) ?? new List<MaestraVDTO>(); 
         }
 
         public async Task<List<CentrosVDTO>> GetCentrosxEmpresa(string cent)
         {
                 url = $"{BaseUrlMaestra}/GetCentrosJT/{cent}";
                 cliente = _clientFactory.CreateClient();
-                return await cliente.GetFromJsonAsync<List<CentrosVDTO>>(url) ?? new List<CentrosVDTO>();
+                return centro = await _http.GetFromJsonAsync<List<CentrosVDTO>>(url) ?? new List<CentrosVDTO>();
         }
 
 
@@ -89,7 +97,7 @@ public class APIReunionService: IAPIReunionService
         //     //var result = await _http.GetFromJsonAsync<List<Division>>($"http://localhost:5258/Lineas/Division/{centro}/{div}");
         //     if (result != null)
         //         divisions = result;
-        //}
+        // //}
 
 
 
@@ -105,13 +113,17 @@ public class APIReunionService: IAPIReunionService
         {
                 url = $"{BaseUrlLineas}/GetKsf";
                 cliente = _clientFactory.CreateClient();
-                return await cliente.GetFromJsonAsync<List<KsfDTO>>(url) ?? new List<KsfDTO>();
+                ksfs = await _http.GetFromJsonAsync<List<KsfDTO>>($"{BaseUrlLineas}/GetKsf");
+                var results = await cliente.GetFromJsonAsync<List<KsfDTO>>(url);
+                return results;
+                // return await cliente.GetFromJsonAsync<List<KsfDTO>>(url) ?? new List<KsfDTO>();
         }
 
         public async Task<List<RespoReuDTO>> GetResReu()
         {
-                url = $"{BaseUrlMaestra}/GetResponsables";
+                url = $"{BaseUrlLineas}/GetResponsables";
                 cliente = _clientFactory.CreateClient();
+                resporeu = await _http.GetFromJsonAsync<List<RespoReuDTO>>($"{BaseUrlLineas}/GetResponsables");
                 return await cliente.GetFromJsonAsync<List<RespoReuDTO>>(url) ?? new List<RespoReuDTO>();
         }
 

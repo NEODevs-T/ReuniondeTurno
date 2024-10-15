@@ -26,11 +26,11 @@
     
         <BSCol Column="3">
             <BSLabel>Centro</BSLabel>
-            <BSInput InputType="InputType.Select" @bind-Value="IdCent">
+            <BSInput InputType="InputType.Select" @onchange="BuscarDivision" @bind-Value="IdCent">
                 <option value="">Seleccione...</option>
-                @foreach (var d in centro)
+                @foreach (var e in apiclass.centro)
                 {
-                    <option value="@d.IdCentro">@d.Centro</option>
+                    <option value="@e.IdCentro">@e.Centro</option>
                 }
             </BSInput>
         </BSCol>
@@ -39,11 +39,11 @@
 
         <BSCol Column="3">
             <BSLabel>Division</BSLabel>
-            <BSInput InputType="InputType.Select" @onchange='cambio' @bind-Value="IdDiv">
+            <BSInput InputType="InputType.Select" @onchange="BuscarLinea" @bind-Value="IdDiv">
                 
 
                 <option value="">Seleccione...</option>
-                @foreach (var d in centro.Where(di => di.IdCentro == IdCent))
+                @foreach (var d in apiclass.divisions.Where(di => di.IdCentro == IdCent))
                 {
                         <option value="@d.IdDivision">@d.División</option>
 
@@ -55,9 +55,9 @@
 
         <BSCol Column="3">
             <BSLabel>Línea</BSLabel>
-            <BSInput InputType="InputType.Select" @bind-Value="Reuniondb.Rdarea">
+            <BSInput InputType="InputType.Select" @onchange='BuscarLinea' @bind-Value="Reuniondb.Rdarea">
                 <option value="">Seleccione...</option>
-                @foreach (var d in centro.Where(li => li.IdDivision == IdDiv && li.IdCentro == IdCent))
+                @foreach (var d in apiclass.lineas.Where(li => li.IdDivision == IdDiv && li.IdCentro == IdCent))
                 {
 
                         <option value="@d.Linea">@d.Linea</option>
@@ -86,7 +86,7 @@
 
 
         </BSCol>
-        @if (centro.Count > 0 & tipoequipo == "0")
+        @if (apiclass.centro.Count > 0 & tipoequipo == "0")
         {
           
             @if (Reuniondb.Rdcentro != "Chempro")
@@ -96,11 +96,11 @@
                     <BSInput InputType="InputType.Select" @bind-Value="Reuniondb.RdcodEq">
 
                         <option value="">Seleccione...</option>
-                        @foreach (var d in equipos)
+                        @foreach (var d in apiclass.equipos)
                         {
-                            if (Reuniondb.Rdarea == d.Linea)
+                            if (Reuniondb.Rdarea == d.Linea.Lnom)
                             {
-                                <option value="@d.CodigoEq">@d.CodigoEq - @d.Equipo</option>
+                                <option value="@d.EcodEquiEam">@d.EcodEquiEam - @d.EnombreEam</option>
                             }
                         }
 
@@ -119,7 +119,7 @@
                 </BSCol>
             }
         }
-        else if (centro.Count > 0 & tipoequipo == "1")
+        else if (apiclass.centro.Count > 0 & tipoequipo == "1")
         {
             <BSCol Column="4">
                 <BSLabel>C. Equipo</BSLabel>
@@ -131,12 +131,12 @@
                             @if (equiposfiltro.Any())
                             {
 
-                                @foreach (var e in equiposfiltro)
+                                @foreach (var d in equiposfiltro)
                                 {
-                                    if (Reuniondb.Rdarea == e.Linea)
+                                    if (Reuniondb.Rdarea == d.Linea.Lnom)
                                     {
-                                        <li class="option" @onclick=@(_ => SelectEquipo(e.CodigoEq))>
-                                            <span class="option-text">@e.CodigoEq - @e.Equipo</span>
+                                        <li class="option" @onclick=@(_ => SelectEquipo(d.EcodEquiEam))>
+                                            <span class="option-text">@d.EcodEquiEam - @d.EnombreEam</span>
                                         </li>
                                     }
                                 }
@@ -166,7 +166,7 @@
             <BSInput InputType="InputType.Select" @bind-Value="Reuniondb.Idksf">
 
                 <option value="">Seleccione...</option>
-                @foreach (var d in ksfs)
+                @foreach (var d in apiclass.ksfs)
                 {
                     <option value="@d.Idksf">@d.KsfNombre</option>
                 }
@@ -196,7 +196,7 @@
             <BSInput InputType="InputType.Select" @bind-Value="Reuniondb.IdResReu">
                 <option value="">Seleccione...</option>
 
-                @foreach (var d in resporeu)
+                @foreach (var d in apiclass.resporeu)
                 {
                     <option value="@d.IdResReu">@d.Rrnombre</option>
                 }
@@ -250,25 +250,27 @@
     private int? IdCent { get; set; }
     [Required(ErrorMessage = "Seleccione la división.")]
     private int? IdDiv { get; set; }
+    private int? IdLin { get; set; }
     private string mensaje = "";
     private bool isDesactivado { get; set; } = false;
     private List<AsistenReuDTO> listaAsistencia { get; set; } = new List<AsistenReuDTO>();
-    private List<LineaDTO> lineas { get; set; } = new List<LineaDTO>();
-    private List<DivisionDTO> divisions { get; set; } = new List<DivisionDTO>();
-    private List<MaestraVDTO> centro { get; set; } = new List<MaestraVDTO>();
-    private List<KsfDTO> ksfs { get; set; } = new List<KsfDTO>();
-    private List<RespoReuDTO> resporeu { get; set; } = new List<RespoReuDTO>();
-    private List<ReuDiumDTO> reunionditabla { get; set; } = new List<ReuDiumDTO>();
-    private List<ReuDiumDTO> reudiatabla { get; set; } = new List<ReuDiumDTO>();
-    private List<AsistenReuDTO> asistenreus { get; set; } = new List<AsistenReuDTO>();
-    private List<CargoReuDTO> cargoreus { get; set; } = new List<CargoReuDTO>();
-    private List<StatsAsisDto> StatsAsisDtos { get; set; } = new List<StatsAsisDto>();
-    private List<EquiposEamVDTO> equipos { get; set; } = new List<EquiposEamVDTO>();
-    private List<EquiposEamVDTO> equiposlinea { get; set; } = new List<EquiposEamVDTO>();
-    private List<EquipoEamDTO> listaEqupis { get; set; } = new List<EquipoEamDTO>();
-    private RegistroCambiosDTO listaRegistro { get; set; } //= new RegistroCambiosDTO(); 
-    private List<CalendarioTrabajoDTO> calentrabajo { get; set; }
-    
+    /*  private List<LineaVDTO> lineas { get; set; } = new List<LineaVDTO>();
+        private List<DivisionesVDTO> divisions { get; set; } = new List<DivisionesVDTO>();
+        private List<KsfDTO> ksfs { get; set; } = new List<KsfDTO>();
+        private List<RespoReuDTO> resporeu { get; set; } = new List<RespoReuDTO>();
+        private List<ReuDiumDTO> reunionditabla { get; set; } = new List<ReuDiumDTO>();
+        private List<ReuDiumDTO> reudiatabla { get; set; } = new List<ReuDiumDTO>();
+        private List<AsistenReuDTO> asistenreus { get; set; } = new List<AsistenReuDTO>();
+        private List<CargoReuDTO> cargoreus { get; set; } = new List<CargoReuDTO>();
+        private List<StatsAsisDto> StatsAsisDtos { get; set; } = new List<StatsAsisDto>();
+        private List<EquipoEamDTO> equipos { get; set; } = new List<EquipoEamDTO>();
+        private List<EquiposEamVDTO> equiposlinea { get; set; } = new List<EquiposEamVDTO>();
+        private List<EquipoEamDTO> listaEqupis { get; set; } = new List<EquipoEamDTO>();
+        private List<CalendarioTrabajoDTO> calentrabajo { get; set; }
+        private List<CentrosVDTO> listaCentros { get; set; }
+        
+        private List<EquipoEamDTO> ListaEquipos { get; set; } */
+        //private List<CentrosVDTO> centro { get; set; } = new List<CentrosVDTO>();
 
 
     protected override async Task OnInitializedAsync()
@@ -283,7 +285,6 @@
 
             await apiclass.GetCentrosxEmpresa("All" + claims[10].Value);
             await apiclass.GetEquiposEAM("All" + claims[10].Value);
-
         }
         else
         {
@@ -292,13 +293,40 @@
             await apiclass.GetEquiposEAM(claims[11].Value.ToString());
 
         }
-        // IdCent = int.Parse(claims.FirstOrDefault(c => c.Type.Contains("IdCentro"))?.Value);
-        // IdDiv = int.Parse(claims.FirstOrDefault(c => c.Type.Contains("IdDiv"))?.Value);
+        IdCent = int.Parse(claims.FirstOrDefault(c => c.Type.Contains("IdCentro"))?.Value);
+        IdDiv = int.Parse(claims.FirstOrDefault(c => c.Type.Contains("IdDiv"))?.Value);
+        IdLin = int.Parse(claims.FirstOrDefault(c => c.Type.Contains("IdLin"))?.Value);
 
-        resporeu = resporeu.Where(a => a.Rrdesc == claims.FirstOrDefault(c => c.Type.Contains("Empresa"))?.Value | string.IsNullOrEmpty(a.Rrdesc)).ToList();
+        apiclass.resporeu = apiclass.resporeu.Where(a => a.Rrdesc == claims.FirstOrDefault(c => c.Type.Contains("Empresa"))?.Value | string.IsNullOrEmpty(a.Rrdesc)).ToList();
     }
 
-    protected async Task Insert(EditContext e)
+    protected async Task BuscarDivision(ChangeEventArgs e){
+        IdDiv = int.Parse(e.Value.ToString());
+        Reuniondb.Rdarea = "";
+        try{
+            if (IdCent != null)
+            {
+                await apiclass.GetBdDiv();
+            }
+        }catch(Exception ex){
+            mensaje = "Error: " + ex.Message;
+            //Notificacion("error","",mensaje);
+        }
+    }
+    protected async Task BuscarLinea(ChangeEventArgs e){
+        IdLin = int.Parse(e.Value.ToString());
+        try{
+            if (IdLin != null)
+            {
+                await apiclass.GetLineas(IdLin ?? 0);
+            }
+        }catch(Exception ex){
+            mensaje = "Error: " + ex.Message;
+            //Notificacion("error","",mensaje);
+        }
+    }
+
+    protected async Task Insert(EditContext d)
     {
         isDesactivado = true;
         //Reuniondb.Fecha = fecha;
@@ -315,18 +343,18 @@
 
             }
 
-            if (e.Validate())
+            if (d.Validate())
             {
                 Reuniondb.RdfecReu = (fechahoy = DateTime.Now);
                 Reuniondb.RdfecTra = fechatrabajo;
 
-                Reuniondb.Rdcentro = centro.Where(c => c.IdCentro == IdCent).FirstOrDefault(c => c.IdCentro.Equals(IdCent)).Centro;
+                Reuniondb.Rdcentro = apiclass.centro.Where(c => c.IdCentro == IdCent).FirstOrDefault(c => c.IdCentro.Equals(IdCent)).Centro;
                 //Asigno el id de la division al form
-                foreach (var d in centro)
+                foreach (var e in apiclass.divisions)
                 {
-                        if (IdDiv == d.IdDivision)
+                        if (IdDiv == e.IdDivision)
                         {
-                            Reuniondb.Rddiv = d.División;
+                            Reuniondb.Rddiv = e.División;
                         }
                 }
 
@@ -371,8 +399,8 @@
                     CambFech.Cffec = DateTime.Now;
                     CambFech.CffecNew = DateTime.Now;
                     CambFech.Cfuser = claims[2].Value + " " + claims[3].Value;
-                    listaRegistro = new RegistroCambiosDTO(CambFech, CambStata);
-                    var result = await DbReunionService.InsertarRegistros(listaRegistro);
+                    apiclass.listaRegistro = new RegistroCambiosDTO(CambFech, CambStata);
+                    var result = await DbReunionService.InsertarRegistros(apiclass.listaRegistro);
                     if (result )
                     {
                         mensaje = "Registro Exitoso";
@@ -414,17 +442,17 @@
         fechatrabajo = DateTime.Today;
     }
 
-    List<EquiposEamVDTO>? equiposfiltro;
+    List<EquipoEamDTO>? equiposfiltro;
     string? selectedEquipoId;
     string? selectedEquipoName;
     string? filter;
     bool codsuccess = false;
-    async Task HandleInput(ChangeEventArgs e)
+    async Task HandleInput(ChangeEventArgs d)
     {
-        filter = e.Value?.ToString();
+        filter = d.Value?.ToString();
         if (filter?.Length > 0)
         {
-            equiposfiltro = equipos.Where(a => a.CodigoEq.Contains(filter) | a.Equipo.Contains(filter.ToUpper())).ToList();
+            equiposfiltro = apiclass.equipos.Where(a => a.EcodEquiEam.Contains(filter) | a.EcodEquiEam.Contains(filter.ToUpper())).ToList();
         }
         else
         {
@@ -433,19 +461,14 @@
         }
     }
 
-    public async Task cambio(ChangeEventArgs e){
-        Reuniondb.Rdarea = "";
-        IdDiv = int.Parse(e.Value.ToString());
-    }
-
     void SelectEquipo(string id)
     {
         selectedEquipoId = id;
-        selectedEquipoName = equiposfiltro!.First(c => c.CodigoEq.Equals(selectedEquipoId)).Equipo;
+        selectedEquipoName = equiposfiltro!.First(c => c.EcodEquiEam.Equals(selectedEquipoId)).EnombreEam;
         equiposfiltro = null;
     }
 
-    protected async Task BuscarLineas(ChangeEventArgs e)
+    protected async Task BuscarLineas(ChangeEventArgs d)
     {
 
 
