@@ -8,9 +8,9 @@ namespace ReunionWeb.Services
     public interface IAPIReunionService
     {
 
-        List<CentrosVDTO> centro { get; set; }
+        List<MaestraVDTO> centro { get; set; }
         List<LineaVDTO> lineas { get; set; }
-        List<MaestraVDTO> divisions { get; set; }
+        List<DivisionesVDTO> divisions { get; set; }
         List<KsfDTO> ksfs { get; set; }
         List<RespoReuDTO> resporeu { get; set; }
         List<ReuDiumDTO> reunionditabla { get; set; }
@@ -28,8 +28,9 @@ namespace ReunionWeb.Services
         Task<List<EquipoEamDTO>> GetEquiposEAM(string cent);
         Task<List<EquipoEamDTO>> GetEquiposID(string idCentro);
         Task<List<EquipoEamDTO>> GetEquiposxlinea(string idLinea);
-        Task<List<MaestraVDTO>> GetBdDiv(string cent);
-        Task<List<CentrosVDTO>> GetCentrosxEmpresa(string cent);
+        Task<List<DivisionesVDTO>> GetBdDiv(string cent);
+        Task<List<DivisionesVDTO>> ObtenerDivisionDelCentro(int idCentro);
+        Task<List<MaestraVDTO>> GetCentrosxEmpresa(string cent);
         Task<List<LineaVDTO>> GetLineas(int idDivision);
         Task<List<KsfDTO>> Getksf();
         Task<List<RespoReuDTO>> GetResReu();

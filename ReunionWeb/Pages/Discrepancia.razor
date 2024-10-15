@@ -28,9 +28,9 @@
             <BSLabel>Centro</BSLabel>
             <BSInput InputType="InputType.Select" @onchange="BuscarDivision" @bind-Value="IdCent">
                 <option value="">Seleccione...</option>
-                @foreach (var e in apiclass.centro)
+                @foreach (var d in apiclass.centro)
                 {
-                    <option value="@e.IdCentro">@e.Centro</option>
+                    <option value="@d.IdCentro">@d.Centro</option>
                 }
             </BSInput>
         </BSCol>
@@ -39,14 +39,14 @@
 
         <BSCol Column="3">
             <BSLabel>Division</BSLabel>
-            <BSInput InputType="InputType.Select" @onchange="BuscarLinea" @bind-Value="IdDiv">
-                
-
+            <BSInput InputType="InputType.Select" @onchange='BuscarLinea' @bind-Value="IdDiv">
                 <option value="">Seleccione...</option>
+                @if(apiclass.centro != null){
                 @foreach (var d in apiclass.divisions.Where(di => di.IdCentro == IdCent))
                 {
-                        <option value="@d.IdDivision">@d.División</option>
+                        <option value="@d.IdDivision">@d.Ndivision</option>
 
+                }
                 }
             </BSInput>
         
@@ -55,16 +55,15 @@
 
         <BSCol Column="3">
             <BSLabel>Línea</BSLabel>
-            <BSInput InputType="InputType.Select" @onchange='BuscarLinea' @bind-Value="Reuniondb.Rdarea">
+            <BSInput InputType="InputType.Select" @bind-Value="Reuniondb.Rdarea">
                 <option value="">Seleccione...</option>
-                @foreach (var d in apiclass.lineas.Where(li => li.IdDivision == IdDiv && li.IdCentro == IdCent))
+                @foreach (var d in apiclass.lineas.Where(li => li.IdDivision == IdDiv))
                 {
 
                         <option value="@d.Linea">@d.Linea</option>
                 }
             </BSInput>
-          
-        </BSCol>
+            </BSCol>
 
     </BSRow>
     <p></p>
@@ -254,23 +253,6 @@
     private string mensaje = "";
     private bool isDesactivado { get; set; } = false;
     private List<AsistenReuDTO> listaAsistencia { get; set; } = new List<AsistenReuDTO>();
-    /*  private List<LineaVDTO> lineas { get; set; } = new List<LineaVDTO>();
-        private List<DivisionesVDTO> divisions { get; set; } = new List<DivisionesVDTO>();
-        private List<KsfDTO> ksfs { get; set; } = new List<KsfDTO>();
-        private List<RespoReuDTO> resporeu { get; set; } = new List<RespoReuDTO>();
-        private List<ReuDiumDTO> reunionditabla { get; set; } = new List<ReuDiumDTO>();
-        private List<ReuDiumDTO> reudiatabla { get; set; } = new List<ReuDiumDTO>();
-        private List<AsistenReuDTO> asistenreus { get; set; } = new List<AsistenReuDTO>();
-        private List<CargoReuDTO> cargoreus { get; set; } = new List<CargoReuDTO>();
-        private List<StatsAsisDto> StatsAsisDtos { get; set; } = new List<StatsAsisDto>();
-        private List<EquipoEamDTO> equipos { get; set; } = new List<EquipoEamDTO>();
-        private List<EquiposEamVDTO> equiposlinea { get; set; } = new List<EquiposEamVDTO>();
-        private List<EquipoEamDTO> listaEqupis { get; set; } = new List<EquipoEamDTO>();
-        private List<CalendarioTrabajoDTO> calentrabajo { get; set; }
-        private List<CentrosVDTO> listaCentros { get; set; }
-        
-        private List<EquipoEamDTO> ListaEquipos { get; set; } */
-        //private List<CentrosVDTO> centro { get; set; } = new List<CentrosVDTO>();
 
 
     protected override async Task OnInitializedAsync()
@@ -300,31 +282,60 @@
         apiclass.resporeu = apiclass.resporeu.Where(a => a.Rrdesc == claims.FirstOrDefault(c => c.Type.Contains("Empresa"))?.Value | string.IsNullOrEmpty(a.Rrdesc)).ToList();
     }
 
-    protected async Task BuscarDivision(ChangeEventArgs e){
-        IdDiv = int.Parse(e.Value.ToString());
-        Reuniondb.Rdarea = "";
-        try{
-            if (IdCent != null)
+
+
+ protected async Task BuscarDivision(ChangeEventArgs e)
+{
+    if (!string.IsNullOrWhiteSpace(e.Value?.ToString()) && int.TryParse(e.Value.ToString(), out int idCent))
+    {
+
+        try
+        {
+            if (IdCent != 0)
             {
-                await apiclass.GetBdDiv();
+                apiclass.divisions = await apiclass.ObtenerDivisionDelCentro(IdCent ?? 0);
             }
-        }catch(Exception ex){
+        }
+        catch (Exception ex)
+        {
             mensaje = "Error: " + ex.Message;
-            //Notificacion("error","",mensaje);
         }
     }
-    protected async Task BuscarLinea(ChangeEventArgs e){
-        IdLin = int.Parse(e.Value.ToString());
-        try{
-            if (IdLin != null)
+    else
+    {
+        mensaje = "El valor del centro seleccionado no es válido.";
+    }
+}
+
+protected async Task BuscarLinea(ChangeEventArgs e)
+{
+    // Verificar si e.Value es null o una cadena vacía
+    if (!string.IsNullOrWhiteSpace(e.Value?.ToString()) && int.TryParse(e.Value.ToString(), out int idLin))
+    {
+        IdLin = idLin;
+
+        try
+        {
+            if (IdLin != 0) // Verifica que no sea 0
             {
-                await apiclass.GetLineas(IdLin ?? 0);
+                await apiclass.ObtenerDivisionDelCentro(IdDiv ?? 0);
             }
-        }catch(Exception ex){
+        }
+        catch (Exception ex)
+        {
             mensaje = "Error: " + ex.Message;
-            //Notificacion("error","",mensaje);
+            // Notificación o manejo del error
         }
     }
+    else
+    {
+        mensaje = "El valor ingresado no es un número válido.";
+        // Aquí puedes notificar el error al usuario o manejarlo de otra manera
+    }
+}
+
+
+
 
     protected async Task Insert(EditContext d)
     {
@@ -354,7 +365,7 @@
                 {
                         if (IdDiv == e.IdDivision)
                         {
-                            Reuniondb.Rddiv = e.División;
+                            Reuniondb.Rddiv = e.Ndivision;
                         }
                 }
 
@@ -442,6 +453,12 @@
         fechatrabajo = DateTime.Today;
     }
 
+    public async Task cambio(ChangeEventArgs e)
+    {
+        Reuniondb.Rdarea = "";
+        IdDiv = int.Parse(e.Value.ToString());
+    }
+
     List<EquipoEamDTO>? equiposfiltro;
     string? selectedEquipoId;
     string? selectedEquipoName;
@@ -468,15 +485,5 @@
         equiposfiltro = null;
     }
 
-    protected async Task BuscarLineas(ChangeEventArgs d)
-    {
 
-
-        if (IdDiv != 0)
-        {
-
-            await apiclass.GetLineas(IdDiv.Value);
-
-        }
-    }
 }
