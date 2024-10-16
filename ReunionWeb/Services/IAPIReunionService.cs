@@ -30,6 +30,7 @@ namespace ReunionWeb.Services
         Task<List<EquipoEamDTO>> GetEquiposxlinea(string idLinea);
         Task<List<DivisionesVDTO>> GetBdDiv(string cent);
         Task<List<DivisionesVDTO>> ObtenerDivisionDelCentro(int idCentro);
+        Task<List<LineaVDTO>> ObtenerLasLineasPorDivision(int idDivision);
         Task<List<MaestraVDTO>> GetCentrosxEmpresa(string cent);
         Task<List<LineaVDTO>> GetLineas(int idDivision);
         Task<List<KsfDTO>> Getksf();

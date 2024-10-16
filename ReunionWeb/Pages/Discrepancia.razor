@@ -283,57 +283,51 @@
 
 
 
- protected async Task BuscarDivision(ChangeEventArgs e)
-{
-    if (!string.IsNullOrWhiteSpace(e.Value?.ToString()) && int.TryParse(e.Value.ToString(), out int IdCent))
+    protected async Task BuscarDivision(ChangeEventArgs e)
     {
-
-        try
+        if (!string.IsNullOrWhiteSpace(e.Value?.ToString()) && int.TryParse(e.Value.ToString(), out int IdCent))
         {
-            if (IdCent != 0)
+
+            try
             {
-                apiclass.divisions = await apiclass.ObtenerDivisionDelCentro(IdCent);
+                if (IdCent != 0)
+                {
+                    apiclass.divisions = await apiclass.ObtenerDivisionDelCentro(IdCent);
+                }
+            }
+            catch (Exception ex)
+            {
+                mensaje = "Error: " + ex.Message;
             }
         }
-        catch (Exception ex)
+        else
         {
-            mensaje = "Error: " + ex.Message;
+            mensaje = "El valor del centro seleccionado no es válido.";
         }
     }
-    else
-    {
-        mensaje = "El valor del centro seleccionado no es válido.";
-    }
-}
 
-protected async Task BuscarLinea(ChangeEventArgs e)
-{
-    // Verificar si e.Value es null o una cadena vacía
-    if (!string.IsNullOrWhiteSpace(e.Value?.ToString()) && int.TryParse(e.Value.ToString(), out int idLin))
+    protected async Task BuscarLinea(ChangeEventArgs e)
     {
-        IdLin = idLin;
-
-        try
+        if (!string.IsNullOrWhiteSpace(e.Value?.ToString()) && int.TryParse(e.Value.ToString(), out int IdLin))
         {
-            if (IdLin != 0) // Verifica que no sea 0
+
+            try
             {
-                await apiclass.ObtenerDivisionDelCentro(IdDiv ?? 0);
+                if (IdLin != 0)
+                {
+                    apiclass.lineas = await apiclass.ObtenerLasLineasPorDivision(IdLin);
+                }
+            }
+            catch (Exception ex)
+            {
+                mensaje = "Error: " + ex.Message;
             }
         }
-        catch (Exception ex)
+        else
         {
-            mensaje = "Error: " + ex.Message;
-            // Notificación o manejo del error
+            mensaje = "El valor del centro seleccionado no es válido.";
         }
     }
-    else
-    {
-        mensaje = "El valor ingresado no es un número válido.";
-        // Aquí puedes notificar el error al usuario o manejarlo de otra manera
-    }
-}
-
-
 
 
     protected async Task Insert(EditContext d)
