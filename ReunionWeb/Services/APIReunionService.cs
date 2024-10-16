@@ -83,7 +83,6 @@ public class APIReunionService : IAPIReunionService
                 return divisions = await _http.GetFromJsonAsync<List<DivisionesVDTO>>(url) ?? new List<DivisionesVDTO>();
         }
 
-        //TODO: Recuerda cambiar las url
         public async Task<List<DivisionesVDTO>> ObtenerDivisionDelCentro(int idCentro)
         {
                 url = $"{BaseUrlMaestra}/GetDivisiones/{idCentro}";
@@ -100,7 +99,7 @@ public class APIReunionService : IAPIReunionService
 
         public async Task<List<LineaVDTO>> ObtenerLasLineasPorDivision(int idDivision)
         {
-                url = $"{BaseUrl}/GetLineas/{idDivision}";
+                url = $"{BaseUrlMaestra}/GetLineas/{idDivision}";
                 return lineas = await _http.GetFromJsonAsync<List<LineaVDTO>>(url) ?? new List<LineaVDTO>();
         }
 
