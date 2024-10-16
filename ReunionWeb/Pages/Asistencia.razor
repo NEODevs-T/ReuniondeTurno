@@ -1,7 +1,7 @@
 ﻿@page "/asistencia"
 
 @inject IDbReunionService DbReunionService
-@inject IAPIReunionService apiclass
+@inject IAPIReunionService APIReunionService
 @inject AuthenticationStateProvider AuthStateProvider
 @inject ILocalStorageService LocalStorage
 @inject NotificationService NotificationService
@@ -24,7 +24,7 @@
             <BSCol Column="4">
 
                 <BSInput InputType="InputType.Select" @bind-Value="Div">
-                    @foreach (var d in centro)
+                    @foreach (var d in APIReunionService.centro)
                     {
                     <option value="@d.Centro">@d.Centro</option>
                     }
@@ -196,12 +196,12 @@ else if (dataIsLoaded == 1 && cargoreus.Count() == 0)
         if (UsrRol == "Admin" | UsrRol == "SuperAdmin")
         {
 
-            await apiclass.GetCentrosxEmpresa("All" + claims.FirstOrDefault(c => c.Type.Contains("IdEmpresa"))?.Value);
+            await APIReunionService.GetCentrosxEmpresa("All" + claims.FirstOrDefault(c => c.Type.Contains("IdEmpresa"))?.Value);
         }
         else
         {
 
-            await apiclass.GetCentrosxEmpresa(claims.FirstOrDefault(c => c.Type.Equals("IdCentro"))?.Value);
+            await APIReunionService.GetCentrosxEmpresa(claims.FirstOrDefault(c => c.Type.Equals("IdCentro"))?.Value);
         }
         Div = claims.FirstOrDefault(c => c.Type.Contains("Centro"))?.Value;
 
@@ -214,7 +214,7 @@ else if (dataIsLoaded == 1 && cargoreus.Count() == 0)
         if (dataIsLoaded != 1)
         {
             dataIsLoaded = 1;
-            await apiclass.GetAsistencia(Div, claims.FirstOrDefault(c => c.Type.Equals("Empresa"))?.Value);
+            await APIReunionService.GetAsistencia(Div, claims.FirstOrDefault(c => c.Type.Equals("Empresa"))?.Value);
             cr = cargoreus;
             listaAsistencia = new List<AsistenReuDTO>();
 
@@ -294,7 +294,7 @@ else if (dataIsLoaded == 1 && cargoreus.Count() == 0)
                 }
                 else
                 {
-                    mensaje = await apiclass.Postasistencia(listaAsistencia);
+                    mensaje = await APIReunionService.Postasistencia(listaAsistencia);
 
                     if (mensaje == "Registro Exitoso")
                     {

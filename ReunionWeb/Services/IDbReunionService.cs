@@ -1,4 +1,5 @@
 ﻿using ReunionWeb.DTOs;
+using ReunionWeb.DTOs.Maestra;
 using ReunionWeb.NeoDbs;
 using ReunionWeb.ReunionDiaria.DTOs;
 
@@ -8,19 +9,21 @@ namespace ReunionWeb.Services
     {
 
 
-        // List<Centro> centros { get; set; }
-        //  List<Linea> lineas { get; set; }
-        //  List<Empresa> empresas { get; set; }
-        //  List<Pai> paiss { get; set; }
-        //  List<Division> divs { get; set; }
-        //  List<Ksf> ksfss { get; set; }
-        //  List<RespoReu> resporeus { get; set; }
-        //  List<ReunionDium> reunionditablas { get; set; }
-        //  List<Division> divisionss { get; set; }
-        //  List<AsistenReu> asistenreus { get; set; }
-        //  List<CargoReu> cargoreuss { get; set; }
-        //  List<CambStat> cambiostatus { get; set; }
-        //  Division centrodiscrepancia { get; set; }
+        List<CentrosVDTO> centros { get; set; }
+        List<LineaVDTO> lineas { get; set; }
+        List<EmpresasVDTO> empresas { get; set; }
+        List<PaiDTO> paiss { get; set; }
+        List<DivisionesVDTO> divs { get; set; }
+        List<KsfDTO> ksfss { get; set;} 
+        List<RespoReuDTO> resporeus { get; set; }
+        List<ReuDiumDTO> reunionditablas { get; set; } 
+        List<DivisionesVDTO> divisionss { get; set; }
+        List<AsistenReuDTO> asistenreus { get; set; }
+        List<CargoReuDTO> cargoreuss { get; set; }
+        List<CambStatDTO> cambiostatus { get; set; }
+        List<CambFecDTO> cambioFecha { get; set; }
+        DivisionesVDTO centrodiscrepancia { get; set; }
+
 
         
         Task<List<ReuDiumDTO>> GetPendientes(string idcentro, string iddiv, DateTime f1, DateTime f2, string tipo, string estado);
@@ -33,11 +36,11 @@ namespace ReunionWeb.Services
 
 
 
-        Task<int> InsertDiscrepancia(ReuDium discre);
-        Task<bool> InsertCambioStatus(CambStat status);//Insertar usuario que cambio el status
-        Task<bool> InsertCambioFec(CambFec cambiofec);//Insertar el usuarrio que cambio la fecha de trabajo.
+        Task<int> InsertDiscrepancia(ReuDiumDTO discre);
+        Task<bool> InsertCambioStatus(CambStatDTO status);//Insertar usuario que cambio el status
+        Task<bool> InsertCambioFec(CambFecDTO cambiofec);//Insertar el usuarrio que cambio la fecha de trabajo.
         Task<bool> InsertarRegistros(RegistroCambiosDTO registroCambios);//Insertar discrepancias con chismoso(Trazabilidad)
-        Task<bool> UpdateDiscrepancia(ReuDium d, int id, int tipo, string f1, string f2, string estado);
+        Task<bool> UpdateDiscrepancia(ReuDiumDTO d, int id, int tipo, string f1, string f2, string estado);
         Task<bool> UpdateDiscrepancia2(ReuDiumDTO bdDiv1, int id, int tipo, string f1, string f2, string estdo, string linea);
 
 

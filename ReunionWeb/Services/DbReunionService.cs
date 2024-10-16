@@ -8,6 +8,7 @@ using Radzen.Blazor.Rendering;
 using System.Linq.Dynamic.Core;
 using System.Reflection.Metadata.Ecma335;
 using ReunionWeb.ReunionDiaria.DTOs;
+using ReunionWeb.DTOs.Maestra;
 
 
 
@@ -17,29 +18,47 @@ namespace ReunionWeb.Services;
 public class DbReunionService : IDbReunionService
 {
 
+    public DbReunionService(IHttpClientFactory clientFactory, HttpClient http)
+    {
+        _clientFactory = clientFactory;
+
+        _http = http;
+    }
     // **-------> CONEXION A LA API <--------**
     private readonly IHttpClientFactory _clientFactory;
     private const string BaseUrl = "http://neo.paveca.com.ve/apineomaster/api/DbReunionService";
     private HttpClient cliente { get; set; } = new HttpClient();
     private HttpResponseMessage? mensaje { get; set; } = new HttpResponseMessage();
     private string url { get; set; } = "";
-
-    public DbReunionService(IHttpClientFactory clientFactory)
-    {
-        _clientFactory = clientFactory;
-    }
+    private HttpClient _http { get; set; } = new HttpClient();
 
     // **-------> CONEXION A LA API <--------**
 
-    private readonly DbNeoContext _neocontext;
+        public List<CentrosVDTO> centros { get; set; } = new List<CentrosVDTO>();
+        public List<LineaVDTO> lineas { get; set; } = new List<LineaVDTO>();
+        public List<EmpresasVDTO> empresas { get; set; } = new List<EmpresasVDTO>();
+        public List<PaiDTO> paiss { get; set; } = new List<PaiDTO>();
+        public List<DivisionesVDTO> divs { get; set; } = new List<DivisionesVDTO>();
+        public List<KsfDTO> ksfss { get; set; } = new List<KsfDTO>();
+        public List<RespoReuDTO> resporeus { get; set; } = new List<RespoReuDTO>();
+        public List<ReuDiumDTO> reunionditablas { get; set; } = new List<ReuDiumDTO>();
+        public ReuDiumDTO reuniondia { get; set; } = new ReuDiumDTO();
+        public List<DivisionesVDTO> divisionss { get; set; } = new List<DivisionesVDTO>();
+        public List<AsistenReuDTO> asistenreus { get; set; } = new List<AsistenReuDTO>();
+        public List<CargoReuDTO> cargoreuss { get; set; } = new List<CargoReuDTO>();
+        public List<CambStatDTO> cambiostatus { get; set; } = new List<CambStatDTO>();
+        public List<CambFecDTO> cambioFecha { get; set; } = new List<CambFecDTO>();
+        public DivisionesVDTO centrodiscrepancia { get; set; } = new DivisionesVDTO();
+        public CentroDivisionDTO divicent {get; set; } = new CentroDivisionDTO();
+
+
     private readonly NavigationManager _navigationManager;
 
 
     public async Task<List<ReuDiumDTO>> GetByODT(string ODT, string idcentro, string iddiv)
     {
         url = $"{BaseUrl}GetByODT/{ODT}/{idcentro}/{iddiv}";
-        cliente = _clientFactory.CreateClient();
-        return await cliente.GetFromJsonAsync<List<ReuDiumDTO>>(url) ?? new List<ReuDiumDTO>();
+        return reunionditablas = await _http.GetFromJsonAsync<List<ReuDiumDTO>>(url) ?? new List<ReuDiumDTO>();
 
     }
 
@@ -47,8 +66,7 @@ public class DbReunionService : IDbReunionService
     public async Task<List<ReuDiumDTO>> GetPendientes(string idcentro, string iddiv, DateTime f1, DateTime f2, string tipo, string estado)
     {
         url = $"{BaseUrl}GetPendientes/{idcentro}/{iddiv}/{f1}/{f2}/{tipo}/{estado}";
-        cliente = _clientFactory.CreateClient();
-        return await cliente.GetFromJsonAsync<List<ReuDiumDTO>>(url) ?? new List<ReuDiumDTO>();
+        return reunionditablas = await _http.GetFromJsonAsync<List<ReuDiumDTO>>(url) ?? new List<ReuDiumDTO>();
 
     }
 
@@ -57,13 +75,12 @@ public class DbReunionService : IDbReunionService
     {
 
         url = $"{BaseUrl}GetHistoricos/{idcentro}/{iddiv}/{f1}/{f2}/{tipo}/{estado}";
-        cliente = _clientFactory.CreateClient();
-        return await cliente.GetFromJsonAsync<List<ReuDiumDTO>>(url) ?? new List<ReuDiumDTO>();
+        return reunionditablas = await _http.GetFromJsonAsync<List<ReuDiumDTO>>(url) ?? new List<ReuDiumDTO>();
 
     }
 
     //Update Discrepancia
-    public async Task<bool> UpdateDiscrepancia(ReuDium d, int id, int tipo, string f1, string f2, string estado)
+    public async Task<bool> UpdateDiscrepancia(ReuDiumDTO d, int id, int tipo, string f1, string f2, string estado)
     {
         bool band = false;
         url = $"{BaseUrl}/UpdateDiscrepancia/{id}";
@@ -172,23 +189,20 @@ public class DbReunionService : IDbReunionService
     public async Task<CentroDivisionDTO> GetCentroDiv(string centro, string division, int tipo)
     {
         url = $"{BaseUrl}GetHistoricos/{centro}/{division}/{tipo}";
-        cliente = _clientFactory.CreateClient();
-        return await cliente.GetFromJsonAsync<CentroDivisionDTO>(url) ?? new CentroDivisionDTO();
+        return divicent = await _http.GetFromJsonAsync<CentroDivisionDTO>(url) ?? new CentroDivisionDTO();
     }
 
     //Consultas para los cambios de estatus en una discrepancia
     public async Task<List<CambStatDTO>> GetCambioStatus(int idreu)
     {
         url = $"{BaseUrl}GetCambioStatus/{idreu}";
-        cliente = _clientFactory.CreateClient();
-        return await cliente.GetFromJsonAsync<List<CambStatDTO>>(url) ?? new List<CambStatDTO>();
+        return cambiostatus = await _http.GetFromJsonAsync<List<CambStatDTO>>(url) ?? new List<CambStatDTO>();
     }
 
     public async Task<List<CambFecDTO>> GetCambioFecha(int idreu)
     {
         url = $"{BaseUrl}GetCambioFecha/{idreu}";
-        cliente = _clientFactory.CreateClient();
-        return await cliente.GetFromJsonAsync<List<CambFecDTO>>(url) ?? new List<CambFecDTO>();
+        return cambioFecha = await _http.GetFromJsonAsync<List<CambFecDTO>>(url) ?? new List<CambFecDTO>();
     }
 
 
@@ -196,13 +210,12 @@ public class DbReunionService : IDbReunionService
     public async Task<ReuDiumDTO> GetDiscrepantacia(int id)
     {
         url = $"{BaseUrl}GetDiscrepantaciaJT/{id}";
-        cliente = _clientFactory.CreateClient();
-        return await cliente.GetFromJsonAsync<ReuDiumDTO>(url) ?? new ReuDiumDTO();
+        return reuniondia = await _http.GetFromJsonAsync<ReuDiumDTO>(url) ?? new ReuDiumDTO();
 
     }
 
 
-    public async Task<int> InsertDiscrepancia(ReuDium discre)
+    public async Task<int> InsertDiscrepancia(ReuDiumDTO discre)
     {
         int data = 0;
         url = $"{BaseUrl}/AddDiscrepancia";
@@ -216,7 +229,7 @@ public class DbReunionService : IDbReunionService
     }
 
 
-    public async Task<bool> InsertCambioStatus(CambStat status)
+    public async Task<bool> InsertCambioStatus(CambStatDTO status)
     {
         bool band = false;
         url = $"{BaseUrl}/AddCambioStatus";
@@ -231,7 +244,7 @@ public class DbReunionService : IDbReunionService
     }
 
 
-    public async Task<bool> InsertCambioFec(CambFec cambiofec)
+    public async Task<bool> InsertCambioFec(CambFecDTO cambiofec)
     {
         bool band = false;
         url = $"{BaseUrl}/AddCambioFec";

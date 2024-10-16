@@ -12,7 +12,7 @@
 <h4>Asuntos</h4>
 
 
-@if (centro.Count() == 0)
+@if (APIReunionService.centro.Count() == 0)
 {
     <div class="pt-5">
         <br />
@@ -24,9 +24,9 @@ else
     <BSRow>
         <BSCol ColumnLarge="3" ColumnSmall="6">
             <BSLabel>Centro</BSLabel>
-            <BSInput InputType="InputType.Select" Value=IdCentro ValueChanged="@((int value) => DivReset(value))">
+            <BSInput InputType="InputType.Select" Value=IdCentro ValueChanged="@((int value) => DivReset(value))" @onchange="BuscarDivision" >>
                 <option value=0>Seleccione</option>
-                @foreach (var d in centro)
+                @foreach (var d in APIReunionService.centro)
                 {
                     <option value="@d.IdCentro">@d.Centro</option>
                 }
@@ -37,9 +37,9 @@ else
             <BSLabel>División</BSLabel>
             <BSInput InputType="InputType.Select" @bind-Value="IdDiv">
                 <option value=0>Seleccione</option>
-                @foreach (var d in _divisiones)
+                @foreach (var d in APIReunionService.divisions)
                 {
-                    <option value="@d.IdDivision">@d.División</option>
+                    <option value="@d.IdDivision">@d.Ndivision</option>
                 }
             </BSInput>
         </BSCol>
@@ -49,12 +49,9 @@ else
                 <BSLabel>Línea</BSLabel>
                 <BSInput InputType="InputType.Select" @bind-Value="NombreLinea" IsDisabled=@valueodt>
                     <option value="Todo">Todo</option>
-                    @foreach (var d in centro)
+                    @foreach (var d in APIReunionService.lineas)
                     {
-                            if (IdDiv == d.IdDivision)
-                            {
                                 <option value="@d.Linea">@d.Linea</option>
-                            }
                     }
                 </BSInput>
             </BSCol>
@@ -147,7 +144,7 @@ else
                 <BSLabel>Responsable</BSLabel>
                 <BSInput InputType="InputType.Select" IsDisabled=@valueodt @bind-Value="idrespo">
                     <option value=0>Todo</option>
-                    @foreach (var d in resporeu)
+                    @foreach (var d in APIReunionService.resporeu)
                     {
 
                         <option value="@d.IdResReu">@d.Rrnombre</option>
@@ -163,7 +160,7 @@ else
                 <BSInput InputType="InputType.Select" IsDisabled=@valueodt @bind-Value="IdKsf">
 
                     <option value="0">Todo</option>
-                    @foreach (var d in ksfs)
+                    @foreach (var d in DbReunionService.ksfss)
                     {
                         <option value="@d.Idksf">@d.KsfNombre</option>
                     }
@@ -505,6 +502,8 @@ else if (dataIsLoaded == 2 && reudiatablas.Count() == 0)
     [Parameter]
     public string? est { get; set; }
 
+    private string mensaje = "";
+
     int dataIsLoaded = 0;
     string ayer = DateTime.Now.AddDays(-1).ToString("yyyyMMdd");
     private bool data { get; set; } = false; //Centro
@@ -530,23 +529,7 @@ else if (dataIsLoaded == 2 && reudiatablas.Count() == 0)
     List<MaestraVDTO> _divisiones = new List<MaestraVDTO>();
     private NotifiRadzen Notificar = new NotifiRadzen();//Logic para crear las noyificaciones radzen
     private bool isEditar { get; set; } = true;
-    private List<Claim> claims { get; set; }
-    private List<AsistenReuDTO> listaAsistencia { get; set; } = new List<AsistenReuDTO>();
-    private List<LineaDTO> lineas { get; set; } = new List<LineaDTO>();
-    private List<MaestraVDTO> divisions { get; set; } = new List<MaestraVDTO>();
-    private List<MaestraVDTO> centro { get; set; } = new List<MaestraVDTO>();
-    private List<KsfDTO> ksfs { get; set; } = new List<KsfDTO>();
-    private List<RespoReuDTO> resporeu { get; set; } = new List<RespoReuDTO>();
-    private List<ReuDiumDTO> reunionditabla { get; set; } = new List<ReuDiumDTO>();
-    private List<ReuDiumDTO> reudiatabla { get; set; } = new List<ReuDiumDTO>();
-    private List<AsistenReuDTO> asistenreus { get; set; } = new List<AsistenReuDTO>();
-    private List<CargoReuDTO> cargoreus { get; set; } = new List<CargoReuDTO>(); 
-    private List<StatsAsisDto> StatsAsisDtos { get; set; } = new List<StatsAsisDto>();
-    private List<EquiposEamVDTO> equipos { get; set; } = new List<EquiposEamVDTO>();
-    private List<EquiposEamVDTO> equiposlinea { get; set; } = new List<EquiposEamVDTO>();
-    private List<EquipoEamDTO> listaEqupis { get; set; } = new List<EquipoEamDTO>();
-    private List<CalendarioTrabajoDTO> calentrabajo { get; set; } = new List<CalendarioTrabajoDTO>();
-    
+    private List<Claim> claims { get; set; }    
 
     private List<ReuDiumDTO> reudiatablas { get; set; } = new List<ReuDiumDTO>();
     private List<CambFecDTO> cambiofecha { get; set; } = new List<CambFecDTO>();
@@ -622,7 +605,7 @@ else if (dataIsLoaded == 2 && reudiatablas.Count() == 0)
         IdDiv = int.Parse(claims.FirstOrDefault(c => c.Type.Contains("IdDiv"))?.Value ?? "0");
         await APIReunionService.Getksf();
         await APIReunionService.GetResReu();
-        resporeu = resporeu.Where(a => a.Rrdesc == claims.FirstOrDefault(c => c.Type.Contains("Empresa"))?.Value | string.IsNullOrEmpty(a.Rrdesc)).ToList();
+        APIReunionService.resporeu = APIReunionService.resporeu.Where(a => a.Rrdesc == claims.FirstOrDefault(c => c.Type.Contains("Empresa"))?.Value | string.IsNullOrEmpty(a.Rrdesc)).ToList();
         reudiatablas = new List<ReuDiumDTO>();
 
         //Eliminar el ODT para un  nuevo cargado
@@ -637,9 +620,32 @@ else if (dataIsLoaded == 2 && reudiatablas.Count() == 0)
         {
             valuvisualeodt =valueodt = true;
         }
-
-
     }
+
+
+    protected async Task BuscarDivision(ChangeEventArgs e)
+    {
+        if (!string.IsNullOrWhiteSpace(e.Value?.ToString()) && int.TryParse(e.Value.ToString(), out int IdCentro))
+        {
+
+            try
+            {
+                if (IdCentro != 0)
+                {
+                    APIReunionService.divisions = await APIReunionService.ObtenerDivisionDelCentro(IdCentro);
+                }
+            }
+            catch (Exception ex)
+            {
+                mensaje = "Error: " + ex.Message;
+            }
+        }
+        else
+        {
+            mensaje = "El valor del centro seleccionado no es válido.";
+        }
+    }
+
 
     protected async Task Get()
     {
@@ -721,7 +727,7 @@ else if (dataIsLoaded == 2 && reudiatablas.Count() == 0)
         IdCentro = idcentro;
         IdDiv = 0;
 
-        divisions = centro
+        APIReunionService.divisions = APIReunionService.divisions
         .Where(c => c.IdCentro == idcentro)
         @* .SelectMany(c => c.Divisions) *@
         .ToList();

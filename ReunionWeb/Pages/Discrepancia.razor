@@ -62,7 +62,8 @@
                     <option value="@d.Linea">@d.Linea</option>
                 }
             </BSInput>
-            </BSCol>
+          
+        </BSCol>
 
     </BSRow>
     <p></p>
@@ -96,10 +97,7 @@
                         <option value="">Seleccione...</option>
                         @foreach (var d in apiclass.equipos)
                         {
-                            if (Reuniondb.Rdarea == d.Linea.Lnom)
-                            {
                                 <option value="@d.EcodEquiEam">@d.EcodEquiEam - @d.EnombreEam</option>
-                            }
                         }
 
 
@@ -129,14 +127,11 @@
                             @if (equiposfiltro.Any())
                             {
 
-                                @foreach (var d in equiposfiltro)
+                                @foreach (var e in equiposfiltro)
                                 {
-                                    if (Reuniondb.Rdarea == d.Linea.Lnom)
-                                    {
-                                        <li class="option" @onclick=@(_ => SelectEquipo(d.EcodEquiEam))>
-                                            <span class="option-text">@d.EcodEquiEam - @d.EnombreEam</span>
+                                        <li class="option" @onclick=@(_ => SelectEquipo(e.EcodEquiEam))>
+                                            <span class="option-text">@e.EcodEquiEam - @e.EnombreEam</span>
                                         </li>
-                                    }
                                 }
                             }
                             else
@@ -393,19 +388,21 @@
                     CambStata = new CambStatDTO();
                     CambFech = new CambFecDTO();
 
-                    @* CambStata.IdReuDiaNavigation = Reuniondb; *@
+                    CambStata.ReuDia = Reuniondb;
                     CambStata.Cbfecha = DateTime.Now;
                     CambStata.Cbstat = "Pendiente";
                     CambStata.Cbuser = claims[2].Value + " " + claims[3].Value;
 
 
-                    @* CambFech.IdReuDiaNavigation = Reuniondb; *@
+                    CambFech.ReuDia = Reuniondb;
                     CambFech.Cffec = DateTime.Now;
                     CambFech.CffecNew = DateTime.Now;
                     CambFech.Cfuser = claims[2].Value + " " + claims[3].Value;
                     apiclass.listaRegistro = new RegistroCambiosDTO(CambFech, CambStata);
+                    apiclass.listaRegistro.Data.IdReuDia = Reuniondb.IdReuDia;
+                    apiclass.listaRegistro.Data2.IdReuDia = Reuniondb.IdReuDia;
                     var result = await DbReunionService.InsertarRegistros(apiclass.listaRegistro);
-                    if (result )
+                    if (result)
                     {
                         mensaje = "Registro Exitoso";
                         Reuniondb = new ReuDiumDTO();
