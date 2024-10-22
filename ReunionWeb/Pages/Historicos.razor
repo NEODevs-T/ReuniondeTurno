@@ -12,7 +12,7 @@
 
 <BSContainer>
 
-    @if (centro.Count() == 0)
+    @if (APIReunionService.centro.Count() == 0)
     {
         <div class="loader"></div>
     }
@@ -23,8 +23,8 @@
         <BSRow>
             <BSCol Column="3" ColumnSmall="2">
                 <BSLabel>Centro</BSLabel>
-                <BSInput InputType="InputType.Select" @bind-Value="IdCentro">
-                    @foreach (var d in centro)
+                <BSInput InputType="InputType.Select" @onchange="BuscarDivision" @bind-Value="IdCentro">
+                    @foreach (var d in APIReunionService.centro)
                     {
                         <option value="@d.IdCentro">@d.Centro</option>
                     }
@@ -35,12 +35,9 @@
             <BSCol Column="3" ColumnSmall="2">
                 <BSLabel>División</BSLabel>
                 <BSInput InputType="InputType.Select" @bind-Value="IdDiv">
-                    @foreach (var d in centro)
+                    @foreach (var d in APIReunionService.divisions)
                     {
-                        if (IdCentro == d.IdCentro)
-                        {
-                            <option value="@d.IdDivision">@d.División</option>
-                        }
+                        <option value="@d.IdDivision">@d.Ndivision</option>
                     }
                 </BSInput>
             </BSCol>
@@ -268,21 +265,9 @@ else if (dataIsLoaded == 2 && tabla.Count() == 0)
     private List<Claim> claims { get; set; }
     public DateTime fecha1;
     public DateTime fecha2;
-    private List<AsistenReuDTO> listaAsistencia { get; set; } = new List<AsistenReuDTO>();
-    private List<LineaDTO> lineas { get; set; } = new List<LineaDTO>();
-    private List<DivisionDTO> divisions { get; set; } = new List<DivisionDTO>();
-    private List<MaestraVDTO> centro { get; set; } = new List<MaestraVDTO>();
-    private List<KsfDTO> ksfs { get; set; } = new List<KsfDTO>();
-    private List<RespoReuDTO> resporeu { get; set; } = new List<RespoReuDTO>();
-    private List<ReuDiumDTO> reunionditabla { get; set; } = new List<ReuDiumDTO>();
-    private List<ReuDiumDTO> reudiatabla { get; set; } = new List<ReuDiumDTO>();
-    private List<AsistenReuDTO> asistenreus { get; set; } = new List<AsistenReuDTO>();
-    private List<CargoReuDTO> cargoreus { get; set; } = new List<CargoReuDTO>();
-    private List<StatsAsisDto> StatsAsisDtos { get; set; } = new List<StatsAsisDto>();
-    private List<EquiposEamVDTO> equipos { get; set; } = new List<EquiposEamVDTO>();
-    private List<EquiposEamVDTO> equiposlinea { get; set; } = new List<EquiposEamVDTO>();
-    private List<EquipoEamDTO> listaEqupis { get; set; } = new List<EquipoEamDTO>();
-    private List<CalendarioTrabajoDTO> calentrabajo { get; set; } = new List<CalendarioTrabajoDTO>();
+
+    private string mensaje = "";
+
 
 
 
@@ -396,11 +381,32 @@ else if (dataIsLoaded == 2 && tabla.Count() == 0)
 
         await APIReunionService.Getksf();
         await APIReunionService.GetResReu();
-        reudiatabla = new List<ReuDiumDTO>();
+        DbReunionService.reunionditablas = new List<ReuDiumDTO>();
 
 
     }
+    protected async Task BuscarDivision(ChangeEventArgs e)
+    {
+        if (!string.IsNullOrWhiteSpace(e.Value?.ToString()) && int.TryParse(e.Value.ToString(), out int IdCent))
+        {
 
+            try
+            {
+                if (IdCent != 0)
+                {
+                    APIReunionService.divisions = await APIReunionService.ObtenerDivisionDelCentro(IdCent);
+                }
+            }
+            catch (Exception ex)
+            {
+                mensaje = "Error: " + ex.Message;
+            }
+        }
+        else
+        {
+            mensaje = "El valor del centro seleccionado no es válido.";
+        }
+    }
     protected async Task Get()
     {
         if (dataIsLoaded != 1)

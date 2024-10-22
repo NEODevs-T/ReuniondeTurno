@@ -70,7 +70,7 @@ public class APIReunionService : IAPIReunionService
         }
         public async Task<List<EquipoEamDTO>> GetEquiposxlinea(string idLinea)
         {
-                url = $"{BaseUrlMaestra}GetEquiposEAMPorLinea/{idLinea}";
+                url = $"{BaseUrlMaestra}/GetEquiposEAMPorLinea/{idLinea}";
                 cliente = _clientFactory.CreateClient();
                 return await cliente.GetFromJsonAsync<List<EquipoEamDTO>>(url) ?? new List<EquipoEamDTO>();
 
@@ -143,7 +143,7 @@ public class APIReunionService : IAPIReunionService
 
         public async Task<List<CargoReuDTO>> GetAsistencia(string div, string empresa)
         {
-                url = $"{BaseUrlMaestra}/GetAsistencia/{div}/{empresa}";
+                url = $"{BaseUrlLineas}/GetAsistencia/{div}/{empresa}";
                 cliente = _clientFactory.CreateClient();
                 return await cliente.GetFromJsonAsync<List<CargoReuDTO>>(url) ?? new List<CargoReuDTO>();
         }

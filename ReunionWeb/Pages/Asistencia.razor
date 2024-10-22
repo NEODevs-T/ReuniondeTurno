@@ -13,7 +13,7 @@
 
 <BSContainer>
 
-    @if (centro.Count() == 0)
+    @if (APIReunionService.centro.Count() == 0)
     {
         <div class="loader"></div>
     }
@@ -23,7 +23,7 @@
         <BSRow>
             <BSCol Column="4">
 
-                <BSInput InputType="InputType.Select" @bind-Value="Div">
+                <BSInput InputType="InputType.Select"  @bind-Value="Div">
                     @foreach (var d in APIReunionService.centro)
                     {
                     <option value="@d.Centro">@d.Centro</option>
@@ -44,7 +44,7 @@
 <p></p>
 
 
-@if (cargoreus.Count() > 0 && dataIsLoaded == 2)
+@if (APIReunionService.cargoreus.Count() > 0 && dataIsLoaded == 2)
 {
     @if (listaAsistencia.Where(c => c.Cargo.Crbloque == 1).Count() > 0)
     {
@@ -128,11 +128,11 @@
 
 
 }
-else if (cargoreus.Count() == 0 && dataIsLoaded == 2)
+else if (APIReunionService.cargoreus.Count() == 0 && dataIsLoaded == 2)
 {
     <p>No se ha cargado personal a este centro.</p>
 }
-else if (dataIsLoaded == 1 && cargoreus.Count() == 0)
+else if (dataIsLoaded == 1 && APIReunionService.cargoreus.Count() == 0)
 {
     <div class="loader"></div>
 }
@@ -158,21 +158,7 @@ else if (dataIsLoaded == 1 && cargoreus.Count() == 0)
     private string Div { get; set; }
     private int bloque { get; set; } = 0;//Indica el Bloque de reunion a llenar asistencia
     private List<AsistenReuDTO> listaAsistencia { get; set; }
-    private List<LineaDTO> lineas { get; set; }
-    private List<DivisionDTO> divisions { get; set; }
-    private List<MaestraVDTO> centro { get; set; }
-    private List<KsfDTO> ksfs { get; set; }
-    private List<RespoReuDTO> resporeu { get; set; }
-    private List<ReuDiumDTO> reunionditabla { get; set; }
-    private List<ReuDiumDTO> reudiatabla { get; set; }
-    private List<AsistenReuDTO> asistenreus { get; set; }
-    private List<CargoReuDTO> cargoreus { get; set; }
-    private List<StatsAsisDto> StatsAsisDtos { get; set; }
-    private List<EquiposEamVDTO> equipos { get; set; }
-    private List<EquiposEamVDTO> equiposlinea { get; set; }
-    private List<EquipoEamDTO> listaEqupis { get; set; }
-    private List<CalendarioTrabajoDTO> calentrabajo { get; set; }
-    
+
 
 
     private List<Claim> claims { get; set; }
@@ -215,7 +201,7 @@ else if (dataIsLoaded == 1 && cargoreus.Count() == 0)
         {
             dataIsLoaded = 1;
             await APIReunionService.GetAsistencia(Div, claims.FirstOrDefault(c => c.Type.Equals("Empresa"))?.Value);
-            cr = cargoreus;
+            cr = DbReunionService.cargoreuss;
             listaAsistencia = new List<AsistenReuDTO>();
 
 
@@ -234,7 +220,7 @@ else if (dataIsLoaded == 1 && cargoreus.Count() == 0)
             for (var i = 0; i < cr.Count; i++)
             {
 
-                listaAsistencia[i].Cargo.IdCargoR = cargoreus[i].IdCargoR;
+                listaAsistencia[i].Cargo.IdCargoR = DbReunionService.cargoreuss[i].IdCargoR;
             }
 
             if (listaAsistencia.Any(c => c.Cargo.Crbloque == 1))

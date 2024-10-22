@@ -1,62 +1,94 @@
-﻿using Microsoft.AspNetCore.Components;
-using ReunionWeb.NeoDbs;
-using ReunionWeb.Controllers;
-using Microsoft.EntityFrameworkCore;
-using ReunionWeb.DTOs;
-using System.Diagnostics.Metrics;
-using Radzen.Blazor.Rendering;
-using System.Linq.Dynamic.Core;
-using System.Reflection.Metadata.Ecma335;
+using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Mvc;
 using ReunionWeb.ReunionDiaria.DTOs;
+
+using ReunionWeb.NeoDbs;
+using static System.Net.WebRequestMethods;
 using ReunionWeb.DTOs.Maestra;
+using ReunionWeb.Interface;
 
 
+namespace ReunionWeb.Data;
 
-
-namespace ReunionWeb.Services;
-
-public class DbReunionService : IDbReunionService
+public class AvisadorData: IAvisadorData
 {
-
-    public DbReunionService(NavigationManager navigationManager,IHttpClientFactory clientFactory, HttpClient http)
+    public AvisadorData(NavigationManager navigationManager, IHttpClientFactory clientFactory, HttpClient http)
     {
         _clientFactory = clientFactory;
-
         _http = http;
-
         _navigationManager = navigationManager;
     }
-    // **-------> CONEXION A LA API <--------**
+
+    private const string BaseUrl = "http://neo.paveca.com.ve/apineomaster/api/Avisador";
+
     private readonly IHttpClientFactory _clientFactory;
-    private const string BaseUrl = "http://neo.paveca.com.ve/apineomaster/api/DbReunionService";
-    private const string BaseUrl2 = "http://localhost:5021/api/DbReunionService";
     private HttpClient cliente { get; set; } = new HttpClient();
+    private HttpClient _http { get; set; } = new HttpClient();
     private HttpResponseMessage? mensaje { get; set; } = new HttpResponseMessage();
     private string url { get; set; } = "";
-    private HttpClient _http { get; set; } = new HttpClient();
 
-    // **-------> CONEXION A LA API <--------**
-
-        public List<CentrosVDTO> centros { get; set; } = new List<CentrosVDTO>();
-        public List<LineaVDTO> lineas { get; set; } = new List<LineaVDTO>();
-        public List<EmpresasVDTO> empresas { get; set; } = new List<EmpresasVDTO>();
-        public List<PaiDTO> paiss { get; set; } = new List<PaiDTO>();
-        public List<DivisionesVDTO> divs { get; set; } = new List<DivisionesVDTO>();
-        public List<KsfDTO> ksfss { get; set; } = new List<KsfDTO>();
-        public List<RespoReuDTO> resporeus { get; set; } = new List<RespoReuDTO>();
-        public List<ReuDiumDTO> reunionditablas { get; set; } = new List<ReuDiumDTO>();
-        public ReuDiumDTO reuniondia { get; set; } = new ReuDiumDTO();
-        public List<DivisionesVDTO> divisionss { get; set; } = new List<DivisionesVDTO>();
-        public List<AsistenReuDTO> asistenreus { get; set; } = new List<AsistenReuDTO>();
-        public List<CargoReuDTO> cargoreuss { get; set; } = new List<CargoReuDTO>();
-        public List<CambStatDTO> cambiostatus { get; set; } = new List<CambStatDTO>();
-        public List<CambFecDTO> cambioFecha { get; set; } = new List<CambFecDTO>();
-        public DivisionesVDTO centrodiscrepancia { get; set; } = new DivisionesVDTO();
-        public CentroDivisionDTO divicent {get; set; } = new CentroDivisionDTO();
-
+    public List<RespoReuDTO> resporeus { get; set; } = new List<RespoReuDTO>();
+    public List<ReuDiumDTO> reunionditablas { get; set; } = new List<ReuDiumDTO>();
+    public ReuDiumDTO reuniondia { get; set; } = new ReuDiumDTO();
+    public List<ReuDiumDTO> reudiatablas { get; set; } = new List<ReuDiumDTO>();
+    public List<AsistenReuDTO> asistenreus { get; set; } = new List<AsistenReuDTO>();
+    public List<CargoReuDTO> cargoreuss { get; set; } = new List<CargoReuDTO>();
+    public List<CambStatDTO> cambiostatus { get; set; } = new List<CambStatDTO>();
+    public List<CambFecDTO> cambiofecha { get; set; } = new List<CambFecDTO>();
 
     private readonly NavigationManager _navigationManager;
 
+    // **-------> PROPIEDADES DE JAVIER <------**
+
+
+    public async Task<List<RespoReuDTO>> GetResReu()
+    {
+        url = $"{BaseUrl}/GetResponsables";
+        cliente = _clientFactory.CreateClient();
+        resporeus = await _http.GetFromJsonAsync<List<RespoReuDTO>>($"{BaseUrl}/GetResponsables");
+        return await cliente.GetFromJsonAsync<List<RespoReuDTO>>(url) ?? new List<RespoReuDTO>();
+    }
+
+
+    public async Task<List<CargoReuDTO>> GetAsistencia(string div, string empresa)
+    {
+        url = $"{BaseUrl}/GetAsistencia/{div}/{empresa}";
+        cliente = _clientFactory.CreateClient();
+        return await cliente.GetFromJsonAsync<List<CargoReuDTO>>(url) ?? new List<CargoReuDTO>();
+    }
+    public async Task<List<AsistenReuDTO>> GetStatsAsist(string div, string empresa, string f1, string f2)
+    {
+        url = $"{BaseUrl}/GetStatsAsis/{div}/{empresa}/{f1}/{f2}";
+        cliente = _clientFactory.CreateClient();
+        return await cliente.GetFromJsonAsync<List<AsistenReuDTO>>(url) ?? new List<AsistenReuDTO>();
+    }
+
+    public async Task<List<AsistenReuDTO>> GetListaAsist(string div, string empresa, string f1, string f2)
+    {
+        url = $"{BaseUrl}/GetListaAsis/{div}/{empresa}/{f1}/{f2}";
+        cliente = _clientFactory.CreateClient();
+        return await cliente.GetFromJsonAsync<List<AsistenReuDTO>>(url) ?? new List<AsistenReuDTO>();
+    }
+
+    public async Task<string> Postasistencia(List<AsistenReuDTO> asisten)
+    {
+        string mens = "";
+        url = $"{BaseUrl}/AddAsistencia";
+        cliente = _clientFactory.CreateClient();
+        mensaje = await cliente.PostAsJsonAsync(url, asisten);
+        if (mensaje.IsSuccessStatusCode)
+        {
+            mens = "Se añadido exitosamente";
+        }
+        return mens;
+    }
+
+    public async Task<List<ReuDiumDTO>> GetTrabajosCalendario(string pais, string centro, string division)
+    {
+        url = $"{BaseUrl}/GetTrabajosPorCalendario/{pais}/{centro}/{division}";
+        cliente = _clientFactory.CreateClient();
+        return await cliente.GetFromJsonAsync<List<ReuDiumDTO>>(url) ?? new List<ReuDiumDTO>();
+    }
 
     public async Task<List<ReuDiumDTO>> GetByODT(string ODT, string idcentro, string iddiv)
     {
@@ -99,7 +131,6 @@ public class DbReunionService : IDbReunionService
 
             if (d.Rdcentro is not null)
             {
-                // Consultar nombre del centro y división para retornar el id en pendientes
                 CentroDivisionDTO centrodiv = await GetCentroDivi(d.Rdcentro, d.Rddiv, 1);
 
                 if (centrodiv == null)
@@ -190,25 +221,20 @@ public class DbReunionService : IDbReunionService
         }
     }
 
-    //Obtener id de centro y dic=vision y viceversa
 
-    public async Task<CentroDivisionDTO> GetCentroDiv(string centro, string division, int tipo)
-    {
-        url = $"{BaseUrl}GetHistoricos/{centro}/{division}/{tipo}";
-        return divicent = await _http.GetFromJsonAsync<CentroDivisionDTO>(url) ?? new CentroDivisionDTO();
-    }
 
-    //Consultas para los cambios de estatus en una discrepancia
+
     public async Task<List<CambStatDTO>> GetCambioStatus(int idreu)
     {
         url = $"{BaseUrl}GetCambioStatus/{idreu}";
         return cambiostatus = await _http.GetFromJsonAsync<List<CambStatDTO>>(url) ?? new List<CambStatDTO>();
     }
 
+
     public async Task<List<CambFecDTO>> GetCambioFecha(int idreu)
     {
         url = $"{BaseUrl}GetCambioFecha/{idreu}";
-        return cambioFecha = await _http.GetFromJsonAsync<List<CambFecDTO>>(url) ?? new List<CambFecDTO>();
+        return cambiofecha = await _http.GetFromJsonAsync<List<CambFecDTO>>(url) ?? new List<CambFecDTO>();
     }
 
 
@@ -285,8 +311,4 @@ public class DbReunionService : IDbReunionService
         return await cliente.GetFromJsonAsync<CentroDivisionDTO>(url) ?? new CentroDivisionDTO();
 
     }
-
 }
-
-
-

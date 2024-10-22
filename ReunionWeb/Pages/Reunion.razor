@@ -1,10 +1,10 @@
 ﻿@page "/reunion"
 @page "/reunion/{accion}/{division}/{linea}/{f1}/{f2}/{tipo}/{est}"
 @inject IDbReunionService DbReunionService
-@inject IAPIReunionService apiclass
-@inject NavigationManager NavigationManager
+@inject IAPIReunionService APIReunionService
 @inject AuthenticationStateProvider AuthStateProvider
 @inject IJSRuntime IJS
+@inject NavigationManager NavigationManager
 
 @*@attribute [Authorize(Roles = "Admin,AdminChempro, SupIntendente,SupIntendenteGeneral,SuperAdmin, Planificador,
 Mantenimiento,Calidad,Seguridad,Efluentes, PendientesChempro, MttoAdmin")]*@
@@ -14,7 +14,7 @@ Mantenimiento,Calidad,Seguridad,Efluentes, PendientesChempro, MttoAdmin")]*@
 
 <BSContainer>
 
-    @if (centro.Count() == 0)
+    @if (APIReunionService.centro.Count() == 0)
     {
 
 
@@ -26,9 +26,9 @@ Mantenimiento,Calidad,Seguridad,Efluentes, PendientesChempro, MttoAdmin")]*@
         <BSRow>
             <BSCol Column="3" ColumnSmall="2">
                 <BSLabel>Centro</BSLabel>
-                <BSInput InputType="InputType.Select" @bind-Value="IdCentro">
+                <BSInput InputType="InputType.Select" @onchange="BuscarDivision" @bind-Value="IdCentro">
                     <option value="">Seleccione</option>
-                    @foreach (var d in centro)
+                    @foreach (var d in APIReunionService.centro)
                     {
                         <option value="@d.IdCentro">@d.Centro</option>
                     }
@@ -39,12 +39,9 @@ Mantenimiento,Calidad,Seguridad,Efluentes, PendientesChempro, MttoAdmin")]*@
                 <BSLabel>División</BSLabel>
                 <BSInput InputType="InputType.Select" @bind-Value="IdDiv">
                     <option value="">Seleccione</option>
-                    @foreach (var d in centro)
+                    @foreach (var d in APIReunionService.divisions)
                     {
-                        if (IdCentro == d.IdCentro)
-                        {
-                            <option value="@d.IdDivision">@d.División</option>
-                        }
+                            <option value="@d.IdDivision">@d.Ndivision</option>
                     }
                 </BSInput>
             </BSCol>
@@ -67,7 +64,7 @@ Mantenimiento,Calidad,Seguridad,Efluentes, PendientesChempro, MttoAdmin")]*@
                 <BSButton IsOutlined Color="BSColor.Success" Size="Size.ExtraSmall" @onclick="Get"> Reunión <span
                         class="oi oi-check"></span></BSButton>
             </BSCol>
-            @if (reudiatablas.Count() > 0 && dataIsLoaded == 2)
+            @if (DbReunionService.reunionditablas.Count() > 0 && dataIsLoaded == 2)
             {
                 <BSCol ColumnSmall="2">
                     <BSRow>
@@ -85,7 +82,7 @@ Mantenimiento,Calidad,Seguridad,Efluentes, PendientesChempro, MttoAdmin")]*@
 <p>
 </p>
 
-@if (reudiatablas.Count() > 0 && dataIsLoaded == 2)
+@if (DbReunionService.reunionditablas.Count() > 0 && dataIsLoaded == 2)
 {
     <BSContainer>
 
@@ -115,7 +112,7 @@ Mantenimiento,Calidad,Seguridad,Efluentes, PendientesChempro, MttoAdmin")]*@
                 </BSTR>
             </BSTHead>
             <BSTBody>
-                @foreach (var d in reudiatablas)
+                @foreach (var d in DbReunionService.reunionditablas)
                 {
                     @if (d.Rdstatus != "Listo" & d.RdfecTra <= DateTime.Now | (d.Rdstatus != "Listo" & (d.Rdodt == "" | d.Rdodt
                    is null)))
@@ -180,11 +177,11 @@ Mantenimiento,Calidad,Seguridad,Efluentes, PendientesChempro, MttoAdmin")]*@
         </BSTable>
     </BSContainer>
 }
-else if (dataIsLoaded == 1 && reudiatablas.Count() == 0)
+else if (dataIsLoaded == 1 && DbReunionService.reunionditablas.Count() == 0)
 {
     <div class="loader"></div>
 }
-else if (dataIsLoaded == 2 && reudiatablas.Count() == 0)
+else if (dataIsLoaded == 2 && DbReunionService.reunionditablas.Count() == 0)
 {
     <p>No hay datos para esta fecha.</p>
 }
@@ -223,24 +220,7 @@ else if (dataIsLoaded == 2 && reudiatablas.Count() == 0)
     private string Codigo { get; set; } = "Todo"; //Codigo
     private string Rol { get; set; } = ""; //Rol del usuario
 
-    private List<AsistenReuDTO> listaAsistencia { get; set; }
-    private List<LineaDTO> lineas { get; set; }
-    private List<DivisionDTO> divisions { get; set; }
-    private List<MaestraVDTO> centro { get; set; }
-    private List<KsfDTO> ksfs { get; set; }
-    private List<RespoReuDTO> resporeu { get; set; }
-    private List<ReuDiumDTO> reunionditabla { get; set; }
-    private List<ReuDiumDTO> reudiatabla { get; set; }
-    private List<AsistenReuDTO> asistenreus { get; set; }
-    private List<CargoReuDTO> cargoreus { get; set; }
-    private List<StatsAsisDto> StatsAsisDtos { get; set; }
-    private List<EquiposEamVDTO> equipos { get; set; }
-    private List<EquiposEamVDTO> equiposlinea { get; set; }
-    private List<EquipoEamDTO> listaEqupis { get; set; }
-    private RegistroCambiosDTO listaRegistro { get; set; }
-    private List<CalendarioTrabajoDTO> calentrabajo { get; set; }
-    private List<CambFecDTO> cambiofecha { get; set; }
-    private List<ReuDiumDTO> reudiatablas { get; set; }
+    private string mensaje {get; set; } = "";
 
 
 
@@ -266,20 +246,44 @@ else if (dataIsLoaded == 2 && reudiatablas.Count() == 0)
         Rol == "Auditores")
         {
             // await apiclass.GetCentros("All");
-            await apiclass.GetCentrosxEmpresa("All" + claims[10].Value);
+            await APIReunionService.GetCentrosxEmpresa("All" + claims[10].Value);
         }
         else
         {
             //await apiclass.GetCentros(claims[6].Value.ToString());
-            await apiclass.GetCentrosxEmpresa(claims[11].Value);
+            await APIReunionService.GetCentrosxEmpresa(claims[11].Value);
         }
 
         IdCentro = int.Parse(claims[11].Value);
         IdDiv = int.Parse(claims[12].Value);
-        await apiclass.Getksf();
-        await apiclass.GetResReu();
+        await APIReunionService.Getksf();
+        await APIReunionService.GetResReu();
 
     }
+
+    protected async Task BuscarDivision(ChangeEventArgs e)
+    {
+        if (!string.IsNullOrWhiteSpace(e.Value?.ToString()) && int.TryParse(e.Value.ToString(), out int IdCentro))
+        {
+
+            try
+            {
+                if (IdCentro != 0)
+                {
+                    APIReunionService.divisions = await APIReunionService.ObtenerDivisionDelCentro(IdCentro);
+                }
+            }
+            catch (Exception ex)
+            {
+                mensaje = "Error: " + ex.Message;
+            }
+        }
+        else
+        {
+            mensaje = "El valor del centro seleccionado no es válido.";
+        }
+    }
+
 
     protected async Task Get()
     {

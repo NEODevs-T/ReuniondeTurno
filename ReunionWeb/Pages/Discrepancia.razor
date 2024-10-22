@@ -398,9 +398,9 @@
                     CambFech.Cffec = DateTime.Now;
                     CambFech.CffecNew = DateTime.Now;
                     CambFech.Cfuser = claims[2].Value + " " + claims[3].Value;
+
                     apiclass.listaRegistro = new RegistroCambiosDTO(CambFech, CambStata);
-                    apiclass.listaRegistro.Data.IdReuDia = Reuniondb.IdReuDia;
-                    apiclass.listaRegistro.Data2.IdReuDia = Reuniondb.IdReuDia;
+                    
                     var result = await DbReunionService.InsertarRegistros(apiclass.listaRegistro);
                     if (result)
                     {
