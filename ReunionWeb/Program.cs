@@ -1,11 +1,13 @@
 global using Microsoft.AspNetCore.Components.Authorization;
 global using Blazored.LocalStorage;
+using ReunionWeb.Interface;
 using BlazorStrap;
 using Microsoft.EntityFrameworkCore;
 using ReunionWeb.Services;
 using ReunionWeb.NeoDbs;
 using ReunionWeb;
 using Radzen;
+using ReunionWeb.Data;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -21,6 +23,13 @@ builder.Services.AddHttpClient<IAPIReunionService, APIReunionService>(client =>
 });
 builder.Services.AddScoped<IDbReunionService, DbReunionService>();
 builder.Services.AddScoped<IAPIReunionService, APIReunionService>();
+builder.Services.AddScoped<IMaestraData, MaestraData>();
+builder.Services.AddScoped<IAsistenciaReuData, AsistenciaReuData>();
+builder.Services.AddScoped<IAvisadorData, AvisadorData>();
+builder.Services.AddScoped<ICargoReuData, CargoReuData>();
+builder.Services.AddScoped<IKsfData, KsfData>();
+builder.Services.AddScoped<IPizarraData, PizarraData>();
+builder.Services.AddScoped<IRespoReuData, RespoReuData>();
 builder.Services.AddScoped<DialogService>();//para calendario de radzen
 builder.Services.AddScoped<NotificationService>(); ;//para notificaciones de radzen
 

@@ -1,8 +1,13 @@
 ﻿@page "/discrepancia"
 
 
-@inject IDbReunionService DbReunionService
-@inject IAPIReunionService apiclass
+@inject IAsistenciaReuData AsistenciaReuData
+@inject IAvisadorData AvisadorData
+@inject ICargoReuData CargoReuData
+@inject IKsfData KsfData
+@inject IPizarraData PizarraData
+@inject IRespoReuData RespoReuData
+@inject IMaestraData MaestraData
 @inject HttpClient Http
 @inject AuthenticationStateProvider AuthStateProvider
 @inject ILocalStorageService LocalStorage
@@ -28,7 +33,7 @@
             <BSLabel>Centro</BSLabel>
             <BSInput InputType="InputType.Select" @onchange="BuscarDivision" @bind-Value="IdCent">
                 <option value="">Seleccione...</option>
-                @foreach (var d in apiclass.centro)
+                @foreach (var d in MaestraData.centro)
                 {
                     <option value="@d.IdCentro">@d.Centro</option>
                 }
@@ -41,8 +46,8 @@
             <BSLabel>Division</BSLabel>
             <BSInput InputType="InputType.Select" @onchange='BuscarLinea' @bind-Value="IdDiv">
                 <option value="">Seleccione...</option>
-                @if(apiclass.centro != null){
-                    @foreach (var d in apiclass.divisions)
+                @if(MaestraData.centro != null){
+                    @foreach (var d in MaestraData.divisions)
                     {
                             <option value="@d.IdDivision">@d.Ndivision</option>
 
@@ -57,7 +62,7 @@
             <BSLabel>Línea</BSLabel>
             <BSInput InputType="InputType.Select" @bind-Value="Reuniondb.Rdarea">
                 <option value="">Seleccione...</option>
-                @foreach (var d in apiclass.lineas.Where(li => li.IdDivision == IdDiv))
+                @foreach (var d in MaestraData.lineas.Where(li => li.IdDivision == IdDiv))
                 {
                     <option value="@d.Linea">@d.Linea</option>
                 }
@@ -85,7 +90,7 @@
 
 
         </BSCol>
-        @if (apiclass.centro.Count > 0 & tipoequipo == "0")
+        @if (MaestraData.centro.Count > 0 & tipoequipo == "0")
         {
           
             @if (Reuniondb.Rdcentro != "Chempro")
@@ -95,7 +100,7 @@
                     <BSInput InputType="InputType.Select" @bind-Value="Reuniondb.RdcodEq">
 
                         <option value="">Seleccione...</option>
-                        @foreach (var d in apiclass.equipos)
+                        @foreach (var d in MaestraData.equipos)
                         {
                                 <option value="@d.EcodEquiEam">@d.EcodEquiEam - @d.EnombreEam</option>
                         }
@@ -115,7 +120,7 @@
                 </BSCol>
             }
         }
-        else if (apiclass.centro.Count > 0 & tipoequipo == "1")
+        else if (MaestraData.centro.Count > 0 & tipoequipo == "1")
         {
             <BSCol Column="4">
                 <BSLabel>C. Equipo</BSLabel>
@@ -159,7 +164,7 @@
             <BSInput InputType="InputType.Select" @bind-Value="Reuniondb.Idksf">
 
                 <option value="">Seleccione...</option>
-                @foreach (var d in apiclass.ksfs)
+                @foreach (var d in KsfData.ksfs)
                 {
                     <option value="@d.Idksf">@d.KsfNombre</option>
                 }
@@ -189,7 +194,7 @@
             <BSInput InputType="InputType.Select" @bind-Value="Reuniondb.IdResReu">
                 <option value="">Seleccione...</option>
 
-                @foreach (var d in apiclass.resporeu)
+                @foreach (var d in RespoReuData.resporeus)
                 {
                     <option value="@d.IdResReu">@d.Rrnombre</option>
                 }
@@ -253,27 +258,27 @@
     {
 
         await CreateData();
-        await apiclass.Getksf();
-        await apiclass.GetResReu();
+        await KsfData.Getksf();
+        await RespoReuData.GetResReu();
         @* if (claims[1].Value == "Admin" | claims[1].Value == "SuperAdmin") *@
         if (claims != null && claims.Count > 1 && (claims[1]?.Value == "Admin" || claims[1]?.Value == "SuperAdmin"))
         {
 
-            await apiclass.GetCentrosxEmpresa("All" + claims[10].Value);
-            await apiclass.GetEquiposEAM("All" + claims[10].Value);
+            await MaestraData.GetCentrosxEmpresa("All" + claims[10].Value);
+            await MaestraData.GetEquiposEAM("All" + claims[10].Value);
         }
         else
         {
 
-            await apiclass.GetCentrosxEmpresa(claims[11].Value);      
-            await apiclass.GetEquiposEAM(claims[11].Value.ToString());
+            await MaestraData.GetCentrosxEmpresa(claims[11].Value);      
+            await MaestraData.GetEquiposEAM(claims[11].Value.ToString());
 
         }
         IdCent = int.Parse(claims.FirstOrDefault(c => c.Type.Contains("IdCentro"))?.Value);
         IdDiv = int.Parse(claims.FirstOrDefault(c => c.Type.Contains("IdDiv"))?.Value);
         IdLin = int.Parse(claims.FirstOrDefault(c => c.Type.Contains("IdLin"))?.Value);
 
-        apiclass.resporeu = apiclass.resporeu.Where(a => a.Rrdesc == claims.FirstOrDefault(c => c.Type.Contains("Empresa"))?.Value | string.IsNullOrEmpty(a.Rrdesc)).ToList();
+        RespoReuData.resporeus = RespoReuData.resporeus.Where(a => a.Rrdesc == claims.FirstOrDefault(c => c.Type.Contains("Empresa"))?.Value | string.IsNullOrEmpty(a.Rrdesc)).ToList();
     }
 
 
@@ -287,7 +292,7 @@
             {
                 if (IdCent != 0)
                 {
-                    apiclass.divisions = await apiclass.ObtenerDivisionDelCentro(IdCent);
+                    MaestraData.divisions = await MaestraData.ObtenerDivisionDelCentro(IdCent);
                 }
             }
             catch (Exception ex)
@@ -310,7 +315,7 @@
             {
                 if (IdLin != 0)
                 {
-                    apiclass.lineas = await apiclass.ObtenerLasLineasPorDivision(IdLin);
+                    MaestraData.lineas = await MaestraData.ObtenerLasLineasPorDivision(IdLin);
                 }
             }
             catch (Exception ex)
@@ -347,9 +352,9 @@
                 Reuniondb.RdfecReu = (fechahoy = DateTime.Now);
                 Reuniondb.RdfecTra = fechatrabajo;
 
-                Reuniondb.Rdcentro = apiclass.centro.Where(c => c.IdCentro == IdCent).FirstOrDefault(c => c.IdCentro.Equals(IdCent)).Centro;
+                Reuniondb.Rdcentro = MaestraData.centro.Where(c => c.IdCentro == IdCent).FirstOrDefault(c => c.IdCentro.Equals(IdCent)).Centro;
                 //Asigno el id de la division al form
-                foreach (var e in apiclass.divisions)
+                foreach (var e in MaestraData.divisions)
                 {
                         if (IdDiv == e.IdDivision)
                         {
@@ -399,9 +404,9 @@
                     CambFech.CffecNew = DateTime.Now;
                     CambFech.Cfuser = claims[2].Value + " " + claims[3].Value;
 
-                    apiclass.listaRegistro = new RegistroCambiosDTO(CambFech, CambStata);
+                    AvisadorData.listaRegistro = new RegistroCambiosDTO(CambFech, CambStata);
                     
-                    var result = await DbReunionService.InsertarRegistros(apiclass.listaRegistro);
+                    var result = await AvisadorData.InsertarRegistros(AvisadorData.listaRegistro);
                     if (result)
                     {
                         mensaje = "Registro Exitoso";
@@ -459,7 +464,7 @@
         filter = d.Value?.ToString();
         if (filter?.Length > 0)
         {
-            equiposfiltro = apiclass.equipos.Where(a => a.EcodEquiEam.Contains(filter) | a.EcodEquiEam.Contains(filter.ToUpper())).ToList();
+            equiposfiltro = MaestraData.equipos.Where(a => a.EcodEquiEam.Contains(filter) | a.EcodEquiEam.Contains(filter.ToUpper())).ToList();
         }
         else
         {

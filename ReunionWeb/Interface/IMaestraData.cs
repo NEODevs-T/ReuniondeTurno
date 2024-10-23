@@ -15,7 +15,6 @@ interface IMaestraData
     List<CentrosVDTO> centro { get; set; }
     List<LineaVDTO> lineas { get; set; }
     List<DivisionesVDTO> divisions { get; set; }
-    List<KsfDTO> ksfs { get; set; }
     List<EquipoEamDTO> equipos { get; set; }
     List<EquipoEamDTO> equiposlinea { get; set; }
     List<CalendarioTrabajoDTO> calentrabajo { get; set; }
@@ -29,7 +28,6 @@ interface IMaestraData
     Task<List<CentrosVDTO>> GetCentrosxEmpresa(string cent);
     Task<List<LineaVDTO>> ObtenerLasLineasPorDivision(int idDivision);
     Task<List<LineaVDTO>> GetLineas(int idDivision);
-    Task<List<KsfDTO>> Getksf();
     Task<string> AddEquipo(EquipoDTO equipo);
     Task<List<EquipoEamDTO>> GetEquiposCentro(string idCentro);
     Task<CentroDivisionDTO> GetCentroDiv(string centro, string division, int tipo);

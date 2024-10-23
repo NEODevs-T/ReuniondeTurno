@@ -26,13 +26,9 @@ public class MaestraData : IMaestraData
     private string url { get; set; } = "";
     public CentroDivisionDTO divicent { get; set; } = new CentroDivisionDTO();
     private readonly IHttpClientFactory _clientFactory;
-
-
-
     public List<CentrosVDTO> centro { get; set; } = new List<CentrosVDTO>();
     public List<LineaVDTO> lineas { get; set; } = new List<LineaVDTO>();
     public List<DivisionesVDTO> divisions { get; set; } = new List<DivisionesVDTO>();
-    public List<KsfDTO> ksfs { get; set; } = new List<KsfDTO>();
     public List<EquipoEamDTO> equipos { get; set; } = new List<EquipoEamDTO>();
     public List<EquipoEamDTO> equiposlinea { get; set; } = new List<EquipoEamDTO>();
     public List<CalendarioTrabajoDTO> calentrabajo { get; set; } = new List<CalendarioTrabajoDTO>();
@@ -94,14 +90,6 @@ public class MaestraData : IMaestraData
         url = $"{BaseUrl}/GetLineas/{idDivision:int}";
         cliente = _clientFactory.CreateClient();
         return lineas = await cliente.GetFromJsonAsync<List<LineaVDTO>>(url) ?? new List<LineaVDTO>();
-    }
-    public async Task<List<KsfDTO>> Getksf()
-    {
-        url = $"{BaseUrl}/GetKsf";
-        cliente = _clientFactory.CreateClient();
-        ksfs = await _http.GetFromJsonAsync<List<KsfDTO>>($"{BaseUrl}/GetKsf");
-        var results = ksfs;
-        return results;
     }
 
     public async Task<string> AddEquipo(EquipoDTO equipo)
