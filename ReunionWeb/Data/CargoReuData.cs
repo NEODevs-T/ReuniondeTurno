@@ -33,7 +33,7 @@ public class CargoReuData : ICargoReuData
     {
         url = $"{BaseUrl}/GetAsistencia/{div}/{empresa}";
         cliente = _clientFactory.CreateClient();
-        return await cliente.GetFromJsonAsync<List<CargoReuDTO>>(url) ?? new List<CargoReuDTO>();
+        return cargoreuss = await cliente.GetFromJsonAsync<List<CargoReuDTO>>(url) ?? new List<CargoReuDTO>();
     }
 
 }

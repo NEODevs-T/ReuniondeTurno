@@ -48,7 +48,7 @@ else
                 }
             </BSInput>
         </BSCol>
-        @if (reudiatablas.Count() > 0 && dataIsLoaded == 2)
+        @if (PizarraData.reudiatablas.Count() > 0 && dataIsLoaded == 2)
         {
             <BSCol ColumnLarge="3" ColumnSmall="6">
                 <BSLabel>Línea</BSLabel>
@@ -126,7 +126,6 @@ else
          </BSCol>
 
 
-    using ReunionWeb.Data;
          <BSCol ColumnLarge="3" ColumnSmall="6">
              <BSLabel>ODT</BSLabel>  <RadzenSwitch @bind-Value=@valuvisualeodt Change="Cambio" />
              <BSRow>
@@ -144,7 +143,7 @@ else
 
     @*Filltros extra*@
     <BSRow>
-        @if (reudiatablas.Count() > 0 && dataIsLoaded == 2)
+        @if (PizarraData.reudiatablas.Count() > 0 && dataIsLoaded == 2)
         {
             <BSCol Column="3">
                 <BSLabel>Responsable</BSLabel>
@@ -186,7 +185,7 @@ else
 }
 
 @*Tabla vieja*@
-@if (reudiatablas.Count() > 0 && dataIsLoaded == 2)
+@if (PizarraData.reudiatablas.Count() > 0 && dataIsLoaded == 2)
 {
     <div class=" pt-3">
 
@@ -363,11 +362,11 @@ else
 
 
 }
-else if (dataIsLoaded == 1 && reudiatablas.Count() == 0)
+else if (dataIsLoaded == 1 && PizarraData.reudiatablas.Count() == 0)
 {
     <div class="loader"></div>
 }
-else if (dataIsLoaded == 2 && reudiatablas.Count() == 0)
+else if (dataIsLoaded == 2 && PizarraData.reudiatablas.Count() == 0)
 {
     <p>No hay datos para mostrar.</p>
 }
@@ -537,9 +536,6 @@ else if (dataIsLoaded == 2 && reudiatablas.Count() == 0)
     private bool isEditar { get; set; } = true;
     private List<Claim> claims { get; set; }    
 
-    private List<ReuDiumDTO> reudiatablas { get; set; } = new List<ReuDiumDTO>();
-    private List<CambFecDTO> cambiofecha { get; set; } = new List<CambFecDTO>();
-    private List<CambStatDTO> cambiostatus { get; set; } = new List<CambStatDTO>();
 
     private async Task CreateData()
 
@@ -612,7 +608,7 @@ else if (dataIsLoaded == 2 && reudiatablas.Count() == 0)
         await KsfData.Getksf();
         await RespoReuData.GetResReu();
         RespoReuData.resporeus = RespoReuData.resporeus.Where(a => a.Rrdesc == claims.FirstOrDefault(c => c.Type.Contains("Empresa"))?.Value | string.IsNullOrEmpty(a.Rrdesc)).ToList();
-        reudiatablas = new List<ReuDiumDTO>();
+        PizarraData.reudiatablas = new List<ReuDiumDTO>();
 
         //Eliminar el ODT para un  nuevo cargado
 
@@ -747,8 +743,8 @@ else if (dataIsLoaded == 2 && reudiatablas.Count() == 0)
         cambiofechas = new List<CambFecDTO>();
         await AvisadorData.GetCambioStatus(idreu);
         await AvisadorData.GetCambioFecha(idreu);
-        cambiofechas = cambiofecha;
-        cambiostatuss = cambiostatus;
+        cambiofechas = AvisadorData.cambiofecha;
+        cambiostatuss = AvisadorData.cambiostatus;
 
         cargandocambio = true;
 
@@ -816,12 +812,12 @@ else if (dataIsLoaded == 2 && reudiatablas.Count() == 0)
     {
         if (!string.IsNullOrEmpty(UsrRol))
         {
-            listareu = reudiatablas.Where(r => r.Responsable.StartsWith(UsrRol)).ToList();
+            listareu = PizarraData.reudiatablas.Where(r => r.Responsable.StartsWith(UsrRol)).ToList();
 
         }
         else
         {
-            listareu = reudiatablas;
+            listareu = PizarraData.reudiatablas;
 
         }
     }

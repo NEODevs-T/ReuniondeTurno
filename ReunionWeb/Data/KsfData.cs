@@ -34,7 +34,7 @@ public class KsfData: IKsfData
     {
         url = $"{BaseUrl}/GetKsf";
         cliente = _clientFactory.CreateClient();
-        ksfs = await _http.GetFromJsonAsync<List<KsfDTO>>($"{BaseUrl}/GetKsf");
+        ksfs = await _http.GetFromJsonAsync<List<KsfDTO>>(url);
         var results = ksfs;
         return results;
     }
