@@ -27,6 +27,7 @@ public class AsistenciaReuData:IAsistenciaReuData
     private string url { get; set; } = "";
     private readonly IHttpClientFactory _clientFactory;
     public List<AsistenReuDTO> asistenreus { get; set; } = new List<AsistenReuDTO>();
+    public List<StatsAsisDto> StatsAsisDtos { get; set; } = new List<StatsAsisDto>();
     
     public async Task<List<AsistenReuDTO>> GetStatsAsist(string div, string empresa, string f1, string f2)
     {

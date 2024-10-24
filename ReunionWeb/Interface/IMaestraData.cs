@@ -17,7 +17,6 @@ interface IMaestraData
     List<DivisionesVDTO> divisions { get; set; }
     List<EquipoEamDTO> equipos { get; set; }
     List<EquipoEamDTO> equiposlinea { get; set; }
-    List<CalendarioTrabajoDTO> calentrabajo { get; set; }
 
 
     Task<List<EquipoEamDTO>> GetEquiposEAM(string cent);

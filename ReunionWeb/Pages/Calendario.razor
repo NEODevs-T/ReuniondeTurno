@@ -1,8 +1,13 @@
 @page "/calendario"
 @using Radzen.Blazor.Rendering;
 @inject DialogService DialogService
-@inject IDbReunionService DbReunionService
-@inject IAPIReunionService APIReunionService
+@inject IAsistenciaReuData AsistenciaReuData
+@inject IAvisadorData AvisadorData
+@inject ICargoReuData CargoReuData
+@inject IKsfData KsfData
+@inject IPizarraData PizarraData
+@inject IRespoReuData RespoReuData
+@inject IMaestraData MaestraData
 @inject NavigationManager NavigationManager
 @inject HttpClient Http
 @inject AuthenticationStateProvider AuthStateProvider
@@ -11,7 +16,7 @@
 
 <BSContainer>
 
-    @if (APIReunionService.centro.Count() == 0)
+    @if (MaestraData.centro.Count() == 0)
     {
         <div class="loader"></div>
     }
@@ -22,7 +27,7 @@
                 <BSLabel>Centro</BSLabel>
                 <BSInput InputType="InputType.Select" @onchange="BuscarDivision"  @bind-Value="IdCentro">
                     <option value="">Seleccione</option>
-                    @foreach (var d in APIReunionService.centro)
+                    @foreach (var d in MaestraData.centro)
                     {
                         <option value="@d.IdCentro">@d.Centro</option>
                     }
@@ -37,7 +42,7 @@
                 <BSLabel>División</BSLabel>
                 <BSInput InputType="InputType.Select" @bind-Value="IdDiv">
                     <option>Seleccione</option>
-                    @foreach (var d in APIReunionService.divisions)
+                    @foreach (var d in MaestraData.divisions)
                     {
                             <option value="@d.IdDivision">@d.Ndivision</option>
                     }
@@ -63,7 +68,7 @@
 <p>
 
 </p>
-@if (APIReunionService.calentrabajo.Count() > 0 && dataIsLoaded == 2)
+@if (PizarraData.calentrabajo.Count() > 0 && dataIsLoaded == 2)
 {
 
     <RadzenScheduler Data="@data" TItem="DataItem" StartProperty="Start" SelectedIndex="1" style="height: 630px;"
@@ -76,11 +81,11 @@
     </RadzenScheduler>
 }
 
-else if (dataIsLoaded == 1 && APIReunionService.calentrabajo.Count() == 0)
+else if (dataIsLoaded == 1 && PizarraData.calentrabajo.Count() == 0)
 {
     <div class="loader"></div>
 }
-else if (dataIsLoaded == 2 && APIReunionService.calentrabajo.Count() == 0)
+else if (dataIsLoaded == 2 && PizarraData.calentrabajo.Count() == 0)
 {
     <p>No hay datos para esta fecha.</p>
 }
@@ -119,18 +124,18 @@ else if (dataIsLoaded == 2 && APIReunionService.calentrabajo.Count() == 0)
         == "CalidadAdmin")
         {
 
-            await APIReunionService.GetCentrosxEmpresa("All" + claims[10].Value);
+            await MaestraData.GetCentrosxEmpresa("All" + claims[10].Value);
 
         }
         else
         {
 
-            await APIReunionService.GetCentrosxEmpresa(claims[11].Value);
+            await MaestraData.GetCentrosxEmpresa(claims[11].Value);
 
         }
 
-        await APIReunionService.Getksf();
-        await APIReunionService.GetResReu();
+        await KsfData.Getksf();
+        await RespoReuData.GetResReu();
 
     }
 
@@ -139,14 +144,14 @@ else if (dataIsLoaded == 2 && APIReunionService.calentrabajo.Count() == 0)
         string centro = "", division = "";
         if (IdCentro > 0)
         {
-            centro = APIReunionService.centro.Where(c => c.IdCentro == IdCentro).FirstOrDefault(c => c.IdCentro.Equals(IdCentro)).Centro;
+            centro = MaestraData.centro.Where(c => c.IdCentro == IdCentro).FirstOrDefault(c => c.IdCentro.Equals(IdCentro)).Centro;
             if (IdDiv == 0)
             {
                 division = "All";
             }
             else
             {
-                foreach (var d in APIReunionService.divisions)
+                foreach (var d in MaestraData.divisions)
                 {
                     if (IdDiv == d.IdDivision)
                     {
@@ -158,21 +163,21 @@ else if (dataIsLoaded == 2 && APIReunionService.calentrabajo.Count() == 0)
             if (dataIsLoaded != 1)
             {
                 dataIsLoaded = 1;
-                await APIReunionService.GetTrabajosCalendario(claims[9].Value.ToString(), centro, division);
-                data = new DataItem[APIReunionService.calentrabajo.Count()];
+                await PizarraData.GetTrabajosCalendario(claims[9].Value.ToString(), centro, division);
+                data = new DataItem[PizarraData.calentrabajo.Count()];
 
                 for (int i = 0; i < data.Count(); i++)
                 {
-                    DateTime Inicio = new DateTime(APIReunionService.calentrabajo[i].RdfecTra.Year, APIReunionService.calentrabajo[i].RdfecTra.Month,
-                    APIReunionService.calentrabajo[i].RdfecTra.Day, 08, 00, 00);
-                    DateTime Final = Inicio.AddHours((APIReunionService.calentrabajo[i].Rdtiempo is null) ? 0 : (double.Parse(APIReunionService.calentrabajo[i].Rdtiempo)));
+                    DateTime Inicio = new DateTime(PizarraData.calentrabajo[i].RdfecTra.Year, PizarraData.calentrabajo[i].RdfecTra.Month,
+                    PizarraData.calentrabajo[i].RdfecTra.Day, 08, 00, 00);
+                    DateTime Final = Inicio.AddHours((PizarraData.calentrabajo[i].Rdtiempo is null) ? 0 : (double.Parse(PizarraData.calentrabajo[i].Rdtiempo)));
                     data[i] = new DataItem
                         {
 
                             Start = Inicio,
                             End = Final,
-                            Text = APIReunionService.calentrabajo[i].Linea + " - " + APIReunionService.calentrabajo[i].Responsable + " - " + ((APIReunionService.calentrabajo[i].Rddisc.Length < 30) ?
-                        APIReunionService.calentrabajo[i].Rddisc : APIReunionService.calentrabajo[i].Rddisc.Substring(0, 30) + "...") + " - " + APIReunionService.calentrabajo[i].RdcodEq
+                            Text = PizarraData.calentrabajo[i].Linea + " - " + PizarraData.calentrabajo[i].Responsable + " - " + ((PizarraData.calentrabajo[i].Rddisc.Length < 30) ?
+                        PizarraData.calentrabajo[i].Rddisc : PizarraData.calentrabajo[i].Rddisc.Substring(0, 30) + "...") + " - " + PizarraData.calentrabajo[i].RdcodEq
 
                         };
                     if (data[i].End < DateTime.Today)
@@ -210,7 +215,7 @@ else if (dataIsLoaded == 2 && APIReunionService.calentrabajo.Count() == 0)
             {
                 if (IdCentro != 0)
                 {
-                    APIReunionService.divisions = await APIReunionService.ObtenerDivisionDelCentro(IdCentro);
+                    MaestraData.divisions = await MaestraData.ObtenerDivisionDelCentro(IdCentro);
                 }
             }
             catch (Exception ex)

@@ -1,6 +1,11 @@
 ﻿@page "/stats_asistencia"
-@inject IDbReunionService DbReunionService
-@inject IAPIReunionService APIReunionService
+@inject IAsistenciaReuData AsistenciaReuData
+@inject IAvisadorData AvisadorData
+@inject ICargoReuData CargoReuData
+@inject IKsfData KsfData
+@inject IPizarraData PizarraData
+@inject IRespoReuData RespoReuData
+@inject IMaestraData MaestraData
 @inject NavigationManager NavigationManager
 @inject HttpClient Http
 @inject AuthenticationStateProvider AuthStateProvider
@@ -20,7 +25,7 @@
 
 <BSContainer>
 
-    @if (APIReunionService.centro.Count() == 0)
+    @if (MaestraData.centro.Count() == 0)
     {
         <div class="loader"></div>
     }
@@ -34,7 +39,7 @@
                 <BSLabel>Centro</BSLabel>
                 <BSInput InputType="InputType.Select" @bind-Value="Div">
                     <option value="">Seleccione</option>
-                    @foreach (var d in APIReunionService.centro)
+                    @foreach (var d in MaestraData.centro)
                     {
                         <option value="@d.Centro">@d.Centro</option>
                     }
@@ -74,7 +79,7 @@
 
 
 
-@if (APIReunionService.StatsAsisDtos.Count() > 0 && dataIsLoaded == 2)
+@if (AsistenciaReuData.StatsAsisDtos.Count() > 0 && dataIsLoaded == 2)
 {
     <p><h5>@dias Días de reunión. </h5></p>
 
@@ -97,7 +102,7 @@
     </BSRow>
     <p></p>
    
-        @if (APIReunionService.asistenreus.Where(c => c.Cargo.Crbloque == 1).Count() > 0)
+        @if (AsistenciaReuData.asistenreus.Where(c => c.Cargo.Crbloque == 1).Count() > 0)
         {
             <BSCol Column="4">
                 <BSLabel>Bloque: @bloque</BSLabel>
@@ -127,10 +132,10 @@
                     @foreach (var d in porasis)
                     {
                         <BSTR>
-                            @if (APIReunionService.asistenreus.Where(c => c.Cargo.Crbloque == 1).Count() > 0)
+       @if (AsistenciaReuData.asistenreus.Where(c => c.Cargo.Crbloque == 1).Count() > 0)
                             {
 
-                                @if ((APIReunionService.asistenreus.FirstOrDefault(c => c.Cargo.Crnombre == d.Cargo).Cargo.Crbloque) == bloque)
+                                @if ((AsistenciaReuData.asistenreus.FirstOrDefault(c => c.Cargo.Crnombre == d.Cargo).Cargo.Crbloque) == bloque)
                                 {
 
                                     <BSTD>@d.Cargo</BSTD>
@@ -165,7 +170,7 @@
     }
     else if (Lista == 1)
     {
-        @if (APIReunionService.asistenreus.Where(c => c.Cargo.Crbloque == 1).Count() > 0)
+        @if (AsistenciaReuData.asistenreus.Where(c => c.Cargo.Crbloque == 1).Count() > 0)
         {
             <BSCol Column="4">
                 <BSLabel>Bloque: @bloque</BSLabel>
@@ -187,15 +192,15 @@
                     </BSTR>
                 </BSTHead>
                 <BSTBody>
-                    @foreach (var d in APIReunionService.asistenreus)
+                    @foreach (var d in AsistenciaReuData.asistenreus)
                     {
 
 
                         <BSTR>
 
-                            @if (APIReunionService.asistenreus.Where(c => c.Cargo.Crbloque == 1).Count() > 0)
+                            @if (AsistenciaReuData.asistenreus.Where(c => c.Cargo.Crbloque == 1).Count() > 0)
                             {
-                                @if ((APIReunionService.asistenreus.FirstOrDefault(c => c.Ararea == d.Ararea).Cargo.Crbloque) == bloque)
+                                @if ((AsistenciaReuData.asistenreus.FirstOrDefault(c => c.Ararea == d.Ararea).Cargo.Crbloque) == bloque)
                                 {
                                     <BSTD>@d.Arfecha</BSTD>
                                     <BSTD>@d.Cargo.Crnombre</BSTD>
@@ -264,7 +269,7 @@
 
 }
 
-else if (APIReunionService.cargoreus.Count() == 0 && dataIsLoaded == 2)
+else if (CargoReuData.cargoreuss.Count() == 0 && dataIsLoaded == 2)
 {
     <p>No se ha cargado personal a este centro.</p>
 }
@@ -316,12 +321,12 @@ else if (dataIsLoaded == 1 && porasis.Count() == 0)
         if (claims.FirstOrDefault(c => c.Type.Contains("role"))?.Value == "Admin" | claims.FirstOrDefault(c => c.Type.Contains("role"))?.Value == "SuperAdmin" | claims.FirstOrDefault(c => c.Type.Contains("role"))?.Value == "MttoAdmin")
         {
 
-            await APIReunionService.GetCentrosxEmpresa("All" + claims.FirstOrDefault(c => c.Type.Contains("IdEmpresa"))?.Value);
+            await MaestraData.GetCentrosxEmpresa("All" + claims.FirstOrDefault(c => c.Type.Contains("IdEmpresa"))?.Value);
         }
         else
         {
 
-            await APIReunionService.GetCentrosxEmpresa(claims.FirstOrDefault(c => c.Type.Contains("IdCentro"))?.Value);
+            await MaestraData.GetCentrosxEmpresa(claims.FirstOrDefault(c => c.Type.Contains("IdCentro"))?.Value);
         }
         Div = claims.FirstOrDefault(c => c.Type.Contains("Centro"))?.Value;
 
@@ -361,12 +366,12 @@ else if (dataIsLoaded == 1 && porasis.Count() == 0)
             if (dataIsLoaded != 1)
             {
                 dataIsLoaded = 1;
-                await APIReunionService.GetListaAsist(Div, claims[5].Value, f1, f2);
-                await APIReunionService.GetStatsAsist(Div, claims[5].Value, f1, f2);
-                await APIReunionService.GetAsistencia(Div, claims.FirstOrDefault(c => c.Type.Equals("Empresa"))?.Value);
+                await AsistenciaReuData.GetListaAsist(Div, claims[5].Value, f1, f2);
+                await AsistenciaReuData.GetStatsAsist(Div, claims[5].Value, f1, f2);
+                await CargoReuData.GetAsistencia(Div, claims.FirstOrDefault(c => c.Type.Equals("Empresa"))?.Value);
 
-                listacargos = APIReunionService.cargoreus;
-                listafiltradabloque = APIReunionService.StatsAsisDtos;
+                listacargos = CargoReuData.cargoreuss;
+                listafiltradabloque = AsistenciaReuData.StatsAsisDtos;
 
                 dias = dias - feriados;
 
@@ -420,9 +425,9 @@ else if (dataIsLoaded == 1 && porasis.Count() == 0)
         if (dataIsLoaded != 1)
         {
             dataIsLoaded = 1;
-            await APIReunionService.GetListaAsist(Div, claims[5].Value, f1, f2);
-            await APIReunionService.GetStatsAsist(Div, claims[5].Value, f1, f2);
-            porasis = APIReunionService.StatsAsisDtos;
+            await AsistenciaReuData.GetListaAsist(Div, claims[5].Value, f1, f2);
+            await AsistenciaReuData.GetStatsAsist(Div, claims[5].Value, f1, f2);
+            porasis = AsistenciaReuData.StatsAsisDtos;
             dias = dias - feriados;
 
             foreach (var a in porasis)
@@ -435,7 +440,7 @@ else if (dataIsLoaded == 1 && porasis.Count() == 0)
             dataIsLoaded = 2;
 
 
-            if (APIReunionService.asistenreus.Any(c => c.Cargo.Crbloque == bloque))
+            if (AsistenciaReuData.asistenreus.Any(c => c.Cargo.Crbloque == bloque))
             {
 
                 await Porcentaje();

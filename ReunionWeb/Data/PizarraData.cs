@@ -32,6 +32,8 @@ public class PizarraData : IPizarraData
     public List<ReuDiumDTO> reunionditablas { get; set; } = new List<ReuDiumDTO>();
     public ReuDiumDTO reuniondia { get; set; } = new ReuDiumDTO();
     public List<ReuDiumDTO> reudiatablas { get; set; } = new List<ReuDiumDTO>();
+    public List<CalendarioTrabajoDTO> calentrabajo { get; set; } = new List<CalendarioTrabajoDTO>();
+
     public async Task<List<ReuDiumDTO>> GetTrabajosCalendario(string pais, string centro, string division)
     {
         url = $"{BaseUrl}/GetTrabajosPorCalendario/{pais}/{centro}/{division}";

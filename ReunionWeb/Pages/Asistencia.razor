@@ -1,7 +1,12 @@
 ﻿@page "/asistencia"
 
-@inject IDbReunionService DbReunionService
-@inject IAPIReunionService APIReunionService
+@inject IAsistenciaReuData AsistenciaReuData
+@inject IAvisadorData AvisadorData
+@inject ICargoReuData CargoReuData
+@inject IKsfData KsfData
+@inject IPizarraData PizarraData
+@inject IRespoReuData RespoReuData
+@inject IMaestraData MaestraData
 @inject AuthenticationStateProvider AuthStateProvider
 @inject ILocalStorageService LocalStorage
 @inject NotificationService NotificationService
@@ -13,7 +18,7 @@
 
 <BSContainer>
 
-    @if (APIReunionService.centro.Count() == 0)
+    @if (MaestraData.centro.Count() == 0)
     {
         <div class="loader"></div>
     }
@@ -24,7 +29,7 @@
             <BSCol Column="4">
 
                 <BSInput InputType="InputType.Select"  @bind-Value="Div">
-                    @foreach (var d in APIReunionService.centro)
+                    @foreach (var d in MaestraData.centro)
                     {
                     <option value="@d.Centro">@d.Centro</option>
                     }
@@ -44,7 +49,7 @@
 <p></p>
 
 
-@if (APIReunionService.cargoreus.Count() > 0 && dataIsLoaded == 2)
+@if (CargoReuData.cargoreuss.Count() > 0 && dataIsLoaded == 2)
 {
     @if (listaAsistencia.Where(c => c.Cargo.Crbloque == 1).Count() > 0)
     {
@@ -128,11 +133,11 @@
 
 
 }
-else if (APIReunionService.cargoreus.Count() == 0 && dataIsLoaded == 2)
+else if (CargoReuData.cargoreuss.Count() == 0 && dataIsLoaded == 2)
 {
     <p>No se ha cargado personal a este centro.</p>
 }
-else if (dataIsLoaded == 1 && APIReunionService.cargoreus.Count() == 0)
+else if (dataIsLoaded == 1 && RespoReuData.resporeus.Count() == 0)
 {
     <div class="loader"></div>
 }
@@ -182,15 +187,14 @@ else if (dataIsLoaded == 1 && APIReunionService.cargoreus.Count() == 0)
         if (UsrRol == "Admin" | UsrRol == "SuperAdmin")
         {
 
-            await APIReunionService.GetCentrosxEmpresa("All" + claims.FirstOrDefault(c => c.Type.Contains("IdEmpresa"))?.Value);
+            await MaestraData.GetCentrosxEmpresa("All" + claims.FirstOrDefault(c => c.Type.Contains("IdEmpresa"))?.Value);
         }
         else
         {
 
-            await APIReunionService.GetCentrosxEmpresa(claims.FirstOrDefault(c => c.Type.Equals("IdCentro"))?.Value);
+            await MaestraData.GetCentrosxEmpresa(claims.FirstOrDefault(c => c.Type.Equals("IdCentro"))?.Value);
         }
         Div = claims.FirstOrDefault(c => c.Type.Contains("Centro"))?.Value;
-
 
 
     }
@@ -200,11 +204,9 @@ else if (dataIsLoaded == 1 && APIReunionService.cargoreus.Count() == 0)
         if (dataIsLoaded != 1)
         {
             dataIsLoaded = 1;
-            await APIReunionService.GetAsistencia(Div, claims.FirstOrDefault(c => c.Type.Equals("Empresa"))?.Value);
-            cr = DbReunionService.cargoreuss;
+            await CargoReuData.GetAsistencia(Div, claims.FirstOrDefault(c => c.Type.Equals("Empresa"))?.Value);
+            cr = CargoReuData.cargoreuss;
             listaAsistencia = new List<AsistenReuDTO>();
-
-
 
             for (var i = 0; i < cr.Count; i++)
             {
@@ -220,7 +222,7 @@ else if (dataIsLoaded == 1 && APIReunionService.cargoreus.Count() == 0)
             for (var i = 0; i < cr.Count; i++)
             {
 
-                listaAsistencia[i].Cargo.IdCargoR = DbReunionService.cargoreuss[i].IdCargoR;
+                listaAsistencia[i].Cargo.IdCargoR = CargoReuData.cargoreuss[i].IdCargoR;
             }
 
             if (listaAsistencia.Any(c => c.Cargo.Crbloque == 1))
@@ -280,7 +282,7 @@ else if (dataIsLoaded == 1 && APIReunionService.cargoreus.Count() == 0)
                 }
                 else
                 {
-                    mensaje = await APIReunionService.Postasistencia(listaAsistencia);
+                    mensaje = await AsistenciaReuData.Postasistencia(listaAsistencia);
 
                     if (mensaje == "Registro Exitoso")
                     {

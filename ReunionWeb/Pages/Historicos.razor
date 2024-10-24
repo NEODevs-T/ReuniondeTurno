@@ -1,8 +1,12 @@
 ﻿@page "/historicos"
 
-@inject IDbReunionService DbReunionService
-@inject IAPIReunionService APIReunionService
-
+@inject IAsistenciaReuData AsistenciaReuData
+@inject IAvisadorData AvisadorData
+@inject ICargoReuData CargoReuData
+@inject IKsfData KsfData
+@inject IPizarraData PizarraData
+@inject IRespoReuData RespoReuData
+@inject IMaestraData MaestraData
 @inject NavigationManager NavigationManager
 @inject HttpClient Http
 @inject AuthenticationStateProvider AuthStateProvider
@@ -12,7 +16,7 @@
 
 <BSContainer>
 
-    @if (APIReunionService.centro.Count() == 0)
+    @if (MaestraData.centro.Count() == 0)
     {
         <div class="loader"></div>
     }
@@ -24,7 +28,7 @@
             <BSCol Column="3" ColumnSmall="2">
                 <BSLabel>Centro</BSLabel>
                 <BSInput InputType="InputType.Select" @onchange="BuscarDivision" @bind-Value="IdCentro">
-                    @foreach (var d in APIReunionService.centro)
+                    @foreach (var d in MaestraData.centro)
                     {
                         <option value="@d.IdCentro">@d.Centro</option>
                     }
@@ -35,7 +39,7 @@
             <BSCol Column="3" ColumnSmall="2">
                 <BSLabel>División</BSLabel>
                 <BSInput InputType="InputType.Select" @bind-Value="IdDiv">
-                    @foreach (var d in APIReunionService.divisions)
+                    @foreach (var d in MaestraData.divisions)
                     {
                         <option value="@d.IdDivision">@d.Ndivision</option>
                     }
@@ -336,52 +340,52 @@ else if (dataIsLoaded == 2 && tabla.Count() == 0)
             case "Admin":
             case "SuperAdmin":
                 UsrAdmin = "SuperAdmin";
-                await APIReunionService.GetCentrosxEmpresa("All" + claims.FirstOrDefault(c => c.Type.Contains("IdEmpresa"))?.Value);
+                await MaestraData.GetCentrosxEmpresa("All" + claims.FirstOrDefault(c => c.Type.Contains("IdEmpresa"))?.Value);
                 break;
 
             case "SupIntendenteGeneral":
                 UsrAdmin = "SupIntendenteGeneral";
-                await APIReunionService.GetCentrosxEmpresa(claims.FirstOrDefault(c => c.Type.Contains("IdCentro"))?.Value);
+                await MaestraData.GetCentrosxEmpresa(claims.FirstOrDefault(c => c.Type.Contains("IdCentro"))?.Value);
                 break;
 
             case "Planificador":
             case "SupIntendente":
-                await APIReunionService.GetCentrosxEmpresa(claims.FirstOrDefault(c => c.Type.Contains("IdCentro"))?.Value);
+                await MaestraData.GetCentrosxEmpresa(claims.FirstOrDefault(c => c.Type.Contains("IdCentro"))?.Value);
                 break;
 
             case "Auditores":
-                await APIReunionService.GetCentrosxEmpresa("All" + claims.FirstOrDefault(c => c.Type.Contains("IdEmpresa"))?.Value);
+                await MaestraData.GetCentrosxEmpresa("All" + claims.FirstOrDefault(c => c.Type.Contains("IdEmpresa"))?.Value);
                 break;
 
             case "MttoAdmin":
                 UsrRol = "Mtto";
-                await APIReunionService.GetCentrosxEmpresa("All" + claims.FirstOrDefault(c => c.Type.Contains("IdEmpresa"))?.Value);
+                await MaestraData.GetCentrosxEmpresa("All" + claims.FirstOrDefault(c => c.Type.Contains("IdEmpresa"))?.Value);
                 break;
             case "SeguridadAdmin":
                 UsrRol = "Seguridad";//Seguridad para filtar por seguridad
-                await APIReunionService.GetCentrosxEmpresa("All" + claims.FirstOrDefault(c => c.Type.Contains("IdEmpresa"))?.Value);
+                await MaestraData.GetCentrosxEmpresa("All" + claims.FirstOrDefault(c => c.Type.Contains("IdEmpresa"))?.Value);
                 break;
             case "CalidadAdmin":
                 UsrRol = "Calidad";//Seguridad para filtar por calidad
-                await APIReunionService.GetCentrosxEmpresa("All" + claims.FirstOrDefault(c => c.Type.Contains("IdEmpresa"))?.Value);
+                await MaestraData.GetCentrosxEmpresa("All" + claims.FirstOrDefault(c => c.Type.Contains("IdEmpresa"))?.Value);
                 break;
             case "Mantenimiento":
                 UsrRol = "Mtto";
-                await APIReunionService.GetCentrosxEmpresa(claims.FirstOrDefault(c => c.Type.Contains("IdCentro"))?.Value);
+                await MaestraData.GetCentrosxEmpresa(claims.FirstOrDefault(c => c.Type.Contains("IdCentro"))?.Value);
                 break;
 
             default:
                 UsrRol = claims.FirstOrDefault(c => c.Type.Contains("role"))?.Value;
-                await APIReunionService.GetCentrosxEmpresa(claims.FirstOrDefault(c => c.Type.Contains("IdCentro"))?.Value);
+                await MaestraData.GetCentrosxEmpresa(claims.FirstOrDefault(c => c.Type.Contains("IdCentro"))?.Value);
                 break;
         }
 
         IdCentro = int.Parse(claims[11].Value);
         IdDiv = int.Parse(claims[12].Value);
 
-        await APIReunionService.Getksf();
-        await APIReunionService.GetResReu();
-        DbReunionService.reunionditablas = new List<ReuDiumDTO>();
+        await KsfData.Getksf();
+        await RespoReuData.GetResReu();
+        PizarraData.reudiatablas = new List<ReuDiumDTO>();
 
 
     }
@@ -394,7 +398,7 @@ else if (dataIsLoaded == 2 && tabla.Count() == 0)
             {
                 if (IdCent != 0)
                 {
-                    APIReunionService.divisions = await APIReunionService.ObtenerDivisionDelCentro(IdCent);
+                    MaestraData.divisions = await MaestraData.ObtenerDivisionDelCentro(IdCent);
                 }
             }
             catch (Exception ex)
@@ -412,7 +416,7 @@ else if (dataIsLoaded == 2 && tabla.Count() == 0)
         if (dataIsLoaded != 1)
         {
             dataIsLoaded = 1;
-            tabla = await DbReunionService.GetHistoricos(IdCentro.ToString(), IdDiv.ToString(), fecha1, fecha2, tipoconsulta, Status);
+            tabla = await PizarraData.GetHistoricos(IdCentro.ToString(), IdDiv.ToString(), fecha1, fecha2, tipoconsulta, Status);
             dataIsLoaded = 2;
         }
     }

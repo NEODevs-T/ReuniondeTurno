@@ -1,7 +1,12 @@
 ﻿@page "/reunion"
 @page "/reunion/{accion}/{division}/{linea}/{f1}/{f2}/{tipo}/{est}"
-@inject IDbReunionService DbReunionService
-@inject IAPIReunionService APIReunionService
+@inject IAsistenciaReuData AsistenciaReuData
+@inject IAvisadorData AvisadorData
+@inject ICargoReuData CargoReuData
+@inject IKsfData KsfData
+@inject IPizarraData PizarraData
+@inject IRespoReuData RespoReuData
+@inject IMaestraData MaestraData
 @inject AuthenticationStateProvider AuthStateProvider
 @inject IJSRuntime IJS
 @inject NavigationManager NavigationManager
@@ -14,7 +19,7 @@ Mantenimiento,Calidad,Seguridad,Efluentes, PendientesChempro, MttoAdmin")]*@
 
 <BSContainer>
 
-    @if (APIReunionService.centro.Count() == 0)
+    @if (MaestraData.centro.Count() == 0)
     {
 
 
@@ -28,7 +33,7 @@ Mantenimiento,Calidad,Seguridad,Efluentes, PendientesChempro, MttoAdmin")]*@
                 <BSLabel>Centro</BSLabel>
                 <BSInput InputType="InputType.Select" @onchange="BuscarDivision" @bind-Value="IdCentro">
                     <option value="">Seleccione</option>
-                    @foreach (var d in APIReunionService.centro)
+                    @foreach (var d in MaestraData.centro)
                     {
                         <option value="@d.IdCentro">@d.Centro</option>
                     }
@@ -39,7 +44,7 @@ Mantenimiento,Calidad,Seguridad,Efluentes, PendientesChempro, MttoAdmin")]*@
                 <BSLabel>División</BSLabel>
                 <BSInput InputType="InputType.Select" @bind-Value="IdDiv">
                     <option value="">Seleccione</option>
-                    @foreach (var d in APIReunionService.divisions)
+                    @foreach (var d in MaestraData.divisions)
                     {
                             <option value="@d.IdDivision">@d.Ndivision</option>
                     }
@@ -64,7 +69,7 @@ Mantenimiento,Calidad,Seguridad,Efluentes, PendientesChempro, MttoAdmin")]*@
                 <BSButton IsOutlined Color="BSColor.Success" Size="Size.ExtraSmall" @onclick="Get"> Reunión <span
                         class="oi oi-check"></span></BSButton>
             </BSCol>
-            @if (DbReunionService.reunionditablas.Count() > 0 && dataIsLoaded == 2)
+            @if (PizarraData.reudiatablas.Count() > 0 && dataIsLoaded == 2)
             {
                 <BSCol ColumnSmall="2">
                     <BSRow>
@@ -82,7 +87,7 @@ Mantenimiento,Calidad,Seguridad,Efluentes, PendientesChempro, MttoAdmin")]*@
 <p>
 </p>
 
-@if (DbReunionService.reunionditablas.Count() > 0 && dataIsLoaded == 2)
+@if (PizarraData.reudiatablas.Count() > 0 && dataIsLoaded == 2)
 {
     <BSContainer>
 
@@ -112,7 +117,7 @@ Mantenimiento,Calidad,Seguridad,Efluentes, PendientesChempro, MttoAdmin")]*@
                 </BSTR>
             </BSTHead>
             <BSTBody>
-                @foreach (var d in DbReunionService.reunionditablas)
+                @foreach (var d in PizarraData.reudiatablas)
                 {
                     @if (d.Rdstatus != "Listo" & d.RdfecTra <= DateTime.Now | (d.Rdstatus != "Listo" & (d.Rdodt == "" | d.Rdodt
                    is null)))
@@ -177,11 +182,11 @@ Mantenimiento,Calidad,Seguridad,Efluentes, PendientesChempro, MttoAdmin")]*@
         </BSTable>
     </BSContainer>
 }
-else if (dataIsLoaded == 1 && DbReunionService.reunionditablas.Count() == 0)
+else if (dataIsLoaded == 1 && PizarraData.reudiatablas.Count() == 0)
 {
     <div class="loader"></div>
 }
-else if (dataIsLoaded == 2 && DbReunionService.reunionditablas.Count() == 0)
+else if (dataIsLoaded == 2 && PizarraData.reudiatablas.Count() == 0)
 {
     <p>No hay datos para esta fecha.</p>
 }
@@ -246,18 +251,18 @@ else if (dataIsLoaded == 2 && DbReunionService.reunionditablas.Count() == 0)
         Rol == "Auditores")
         {
             // await apiclass.GetCentros("All");
-            await APIReunionService.GetCentrosxEmpresa("All" + claims[10].Value);
+            await MaestraData.GetCentrosxEmpresa("All" + claims[10].Value);
         }
         else
         {
             //await apiclass.GetCentros(claims[6].Value.ToString());
-            await APIReunionService.GetCentrosxEmpresa(claims[11].Value);
+            await MaestraData.GetCentrosxEmpresa(claims[11].Value);
         }
 
         IdCentro = int.Parse(claims[11].Value);
         IdDiv = int.Parse(claims[12].Value);
-        await APIReunionService.Getksf();
-        await APIReunionService.GetResReu();
+        await KsfData.Getksf();
+        await RespoReuData.GetResReu();
 
     }
 
@@ -270,7 +275,7 @@ else if (dataIsLoaded == 2 && DbReunionService.reunionditablas.Count() == 0)
             {
                 if (IdCentro != 0)
                 {
-                    APIReunionService.divisions = await APIReunionService.ObtenerDivisionDelCentro(IdCentro);
+                    MaestraData.divisions = await MaestraData.ObtenerDivisionDelCentro(IdCentro);
                 }
             }
             catch (Exception ex)
@@ -293,7 +298,7 @@ else if (dataIsLoaded == 2 && DbReunionService.reunionditablas.Count() == 0)
             if (dataIsLoaded != 1)
             {
                 dataIsLoaded = 1;
-                await DbReunionService.GetPendientes(IdCentro.ToString(), IdDiv.ToString(), DateTime.Now.AddDays(-1), DateTime.Now, "1",
+                await PizarraData.GetPendientes(IdCentro.ToString(), IdDiv.ToString(), DateTime.Now.AddDays(-1), DateTime.Now, "1",
                 "Reunion");
                 dataIsLoaded = 2;
             }
@@ -316,7 +321,7 @@ else if (dataIsLoaded == 2 && DbReunionService.reunionditablas.Count() == 0)
             dataIsLoaded = 1;
             IdCentro = int.Parse(accion);
             IdDiv = int.Parse(division);
-            await DbReunionService.GetPendientes(accion, division, DateTime.Now.AddDays(-1), DateTime.Now, tipo, "Reunion");
+            await PizarraData.GetPendientes(accion, division, DateTime.Now.AddDays(-1), DateTime.Now, tipo, "Reunion");
             dataIsLoaded = 2;
         }
 

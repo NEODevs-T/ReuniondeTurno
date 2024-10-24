@@ -1,7 +1,12 @@
 ﻿@page "/pendientes"
 @page "/pendientes/{accion}/{division}/{linea}/{f1}/{f2}/{tipo}/{est}"
-@inject IDbReunionService DbReunionService
-@inject IAPIReunionService APIReunionService
+@inject IAsistenciaReuData AsistenciaReuData
+@inject IAvisadorData AvisadorData
+@inject ICargoReuData CargoReuData
+@inject IKsfData KsfData
+@inject IPizarraData PizarraData
+@inject IRespoReuData RespoReuData
+@inject IMaestraData MaestraData
 @inject NavigationManager NavigationManager
 @inject HttpClient Http
 @inject AuthenticationStateProvider AuthStateProvider
@@ -12,7 +17,7 @@
 <h4>Asuntos</h4>
 
 
-@if (APIReunionService.centro.Count() == 0)
+@if (MaestraData.centro.Count() == 0)
 {
     <div class="pt-5">
         <br />
@@ -26,7 +31,7 @@ else
             <BSLabel>Centro</BSLabel>
             <BSInput InputType="InputType.Select" Value=IdCentro ValueChanged="@((int value) => DivReset(value))" @onchange="BuscarDivision" >>
                 <option value=0>Seleccione</option>
-                @foreach (var d in APIReunionService.centro)
+                @foreach (var d in MaestraData.centro)
                 {
                     <option value="@d.IdCentro">@d.Centro</option>
                 }
@@ -37,7 +42,7 @@ else
             <BSLabel>División</BSLabel>
             <BSInput InputType="InputType.Select" @bind-Value="IdDiv">
                 <option value=0>Seleccione</option>
-                @foreach (var d in APIReunionService.divisions)
+                @foreach (var d in MaestraData.divisions)
                 {
                     <option value="@d.IdDivision">@d.Ndivision</option>
                 }
@@ -49,7 +54,7 @@ else
                 <BSLabel>Línea</BSLabel>
                 <BSInput InputType="InputType.Select" @bind-Value="NombreLinea" IsDisabled=@valueodt>
                     <option value="Todo">Todo</option>
-                    @foreach (var d in APIReunionService.lineas)
+                    @foreach (var d in MaestraData.lineas)
                     {
                                 <option value="@d.Linea">@d.Linea</option>
                     }
@@ -121,6 +126,7 @@ else
          </BSCol>
 
 
+    using ReunionWeb.Data;
          <BSCol ColumnLarge="3" ColumnSmall="6">
              <BSLabel>ODT</BSLabel>  <RadzenSwitch @bind-Value=@valuvisualeodt Change="Cambio" />
              <BSRow>
@@ -144,7 +150,7 @@ else
                 <BSLabel>Responsable</BSLabel>
                 <BSInput InputType="InputType.Select" IsDisabled=@valueodt @bind-Value="idrespo">
                     <option value=0>Todo</option>
-                    @foreach (var d in APIReunionService.resporeu)
+                    @foreach (var d in RespoReuData.resporeus)
                     {
 
                         <option value="@d.IdResReu">@d.Rrnombre</option>
@@ -160,7 +166,7 @@ else
                 <BSInput InputType="InputType.Select" IsDisabled=@valueodt @bind-Value="IdKsf">
 
                     <option value="0">Todo</option>
-                    @foreach (var d in DbReunionService.ksfss)
+                    @foreach (var d in KsfData.ksfs)
                     {
                         <option value="@d.Idksf">@d.KsfNombre</option>
                     }
@@ -559,53 +565,53 @@ else if (dataIsLoaded == 2 && reudiatablas.Count() == 0)
             case "Admin":
             case "SuperAdmin":
                 UsrAdmin = "SuperAdmin";
-                await APIReunionService.GetCentrosxEmpresa("All" + claims.FirstOrDefault(c => c.Type.Contains("IdEmpresa"))?.Value);
+                await MaestraData.GetCentrosxEmpresa("All" + claims.FirstOrDefault(c => c.Type.Contains("IdEmpresa"))?.Value);
                 break;
 
             case "SupIntendenteGeneral":
                 UsrAdmin = "SupIntendenteGeneral";
-                await APIReunionService.GetCentrosxEmpresa(claims.FirstOrDefault(c => c.Type.Contains("IdCentro"))?.Value);
+                await MaestraData.GetCentrosxEmpresa(claims.FirstOrDefault(c => c.Type.Contains("IdCentro"))?.Value);
                 break;
 
             case "Planificador":
             case "SupIntendente":
-                await APIReunionService.GetCentrosxEmpresa(claims.FirstOrDefault(c => c.Type.Contains("IdCentro"))?.Value);
+                await MaestraData.GetCentrosxEmpresa(claims.FirstOrDefault(c => c.Type.Contains("IdCentro"))?.Value);
                 break;
             case "Auditores":
                 isEditar = false;
-                await APIReunionService.GetCentrosxEmpresa("All" + claims.FirstOrDefault(c => c.Type.Contains("IdEmpresa"))?.Value);
+                await MaestraData.GetCentrosxEmpresa("All" + claims.FirstOrDefault(c => c.Type.Contains("IdEmpresa"))?.Value);
                 break;
 
             case "MttoAdmin":
                 UsrRol = "Mtto";
-                await APIReunionService.GetCentrosxEmpresa("All" + claims.FirstOrDefault(c => c.Type.Contains("IdEmpresa"))?.Value);
+                await MaestraData.GetCentrosxEmpresa("All" + claims.FirstOrDefault(c => c.Type.Contains("IdEmpresa"))?.Value);
                 break;
             case "SeguridadAdmin":
                 UsrRol = "Seguridad";//Seguridad para filtar por seguridad
-                await APIReunionService.GetCentrosxEmpresa("All" + claims.FirstOrDefault(c => c.Type.Contains("IdEmpresa"))?.Value);
+                await MaestraData.GetCentrosxEmpresa("All" + claims.FirstOrDefault(c => c.Type.Contains("IdEmpresa"))?.Value);
                 break;
             case "CalidadAdmin":
                 UsrRol = "Calidad";//Calidad para filtar por calidad
-                await APIReunionService.GetCentrosxEmpresa("All" + claims.FirstOrDefault(c => c.Type.Contains("IdEmpresa"))?.Value);
+                await MaestraData.GetCentrosxEmpresa("All" + claims.FirstOrDefault(c => c.Type.Contains("IdEmpresa"))?.Value);
                 break;
 
             case "Mantenimiento":
                 UsrRol = "Mtto";
-                await APIReunionService.GetCentrosxEmpresa(claims.FirstOrDefault(c => c.Type.Contains("IdCentro"))?.Value);
+                await MaestraData.GetCentrosxEmpresa(claims.FirstOrDefault(c => c.Type.Contains("IdCentro"))?.Value);
                 break;
 
             default:
                 UsrRol = claims.FirstOrDefault(c => c.Type.Contains("role"))?.Value;
-                await APIReunionService.GetCentrosxEmpresa(claims.FirstOrDefault(c => c.Type.Contains("IdCentro"))?.Value);
+                await MaestraData.GetCentrosxEmpresa(claims.FirstOrDefault(c => c.Type.Contains("IdCentro"))?.Value);
                 break;
         }
 
         //Cargar Listas
         await DivReset(IdCentro = int.Parse(claims.FirstOrDefault(c => c.Type.Equals("IdCentro"))?.Value ?? "0"));
         IdDiv = int.Parse(claims.FirstOrDefault(c => c.Type.Contains("IdDiv"))?.Value ?? "0");
-        await APIReunionService.Getksf();
-        await APIReunionService.GetResReu();
-        APIReunionService.resporeu = APIReunionService.resporeu.Where(a => a.Rrdesc == claims.FirstOrDefault(c => c.Type.Contains("Empresa"))?.Value | string.IsNullOrEmpty(a.Rrdesc)).ToList();
+        await KsfData.Getksf();
+        await RespoReuData.GetResReu();
+        RespoReuData.resporeus = RespoReuData.resporeus.Where(a => a.Rrdesc == claims.FirstOrDefault(c => c.Type.Contains("Empresa"))?.Value | string.IsNullOrEmpty(a.Rrdesc)).ToList();
         reudiatablas = new List<ReuDiumDTO>();
 
         //Eliminar el ODT para un  nuevo cargado
@@ -632,7 +638,7 @@ else if (dataIsLoaded == 2 && reudiatablas.Count() == 0)
             {
                 if (IdCentro != 0)
                 {
-                    APIReunionService.divisions = await APIReunionService.ObtenerDivisionDelCentro(IdCentro);
+                    MaestraData.divisions = await MaestraData.ObtenerDivisionDelCentro(IdCentro);
                 }
             }
             catch (Exception ex)
@@ -655,7 +661,7 @@ else if (dataIsLoaded == 2 && reudiatablas.Count() == 0)
             if (dataIsLoaded != 1)
             {
                 dataIsLoaded = 1;
-                await DbReunionService.GetPendientes(IdCentro.ToString(), IdDiv.ToString(), fecha1, fecha2, tipoconsulta, Status);
+                await PizarraData.GetPendientes(IdCentro.ToString(), IdDiv.ToString(), fecha1, fecha2, tipoconsulta, Status);
                 ObtenerReunionesPorRol();//actualizar tabla
                 dataIsLoaded = 2;
 
@@ -682,7 +688,7 @@ else if (dataIsLoaded == 2 && reudiatablas.Count() == 0)
                 if (dataIsLoaded != 1)
                 {
                     dataIsLoaded = 1;
-                    listareu = await DbReunionService.GetByODT(BuscarOdt, IdCentro.ToString(), IdDiv.ToString());
+                    listareu = await PizarraData.GetByODT(BuscarOdt, IdCentro.ToString(), IdDiv.ToString());
                     dataIsLoaded = 2;
 
                 }
@@ -727,7 +733,7 @@ else if (dataIsLoaded == 2 && reudiatablas.Count() == 0)
         IdCentro = idcentro;
         IdDiv = 0;
 
-        APIReunionService.divisions = APIReunionService.divisions
+        MaestraData.divisions = MaestraData.divisions
         .Where(c => c.IdCentro == idcentro)
         @* .SelectMany(c => c.Divisions) *@
         .ToList();
@@ -739,8 +745,8 @@ else if (dataIsLoaded == 2 && reudiatablas.Count() == 0)
         cargandocambio = false;
         cambiostatuss = new List<CambStatDTO>();
         cambiofechas = new List<CambFecDTO>();
-        await DbReunionService.GetCambioStatus(idreu);
-        await DbReunionService.GetCambioFecha(idreu);
+        await AvisadorData.GetCambioStatus(idreu);
+        await AvisadorData.GetCambioFecha(idreu);
         cambiofechas = cambiofecha;
         cambiostatuss = cambiostatus;
 
@@ -785,7 +791,7 @@ else if (dataIsLoaded == 2 && reudiatablas.Count() == 0)
                     NombreLinea = linea;
                     tipoconsulta = tipo;
                     dataIsLoaded = 1;
-                    await DbReunionService.GetPendientes(accion, division, date1, date2, tipo, est);
+                    await PizarraData.GetPendientes(accion, division, date1, date2, tipo, est);
                     ObtenerReunionesPorRol();//actualizar tabla
 
                     dataIsLoaded = 2;

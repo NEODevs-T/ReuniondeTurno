@@ -20,6 +20,7 @@ public class MaestraData : IMaestraData
     }
 
     private const string BaseUrl = "http://neo.paveca.com.ve/apineomaster/api/Maestra";
+    // private const string BaseUrl2 = "http://localhost:5021/api/Maestra";
     private HttpClient cliente { get; set; } = new HttpClient();
     private HttpClient _http { get; set; } = new HttpClient();
     private HttpResponseMessage? mensaje { get; set; } = new HttpResponseMessage();
@@ -31,7 +32,6 @@ public class MaestraData : IMaestraData
     public List<DivisionesVDTO> divisions { get; set; } = new List<DivisionesVDTO>();
     public List<EquipoEamDTO> equipos { get; set; } = new List<EquipoEamDTO>();
     public List<EquipoEamDTO> equiposlinea { get; set; } = new List<EquipoEamDTO>();
-    public List<CalendarioTrabajoDTO> calentrabajo { get; set; } = new List<CalendarioTrabajoDTO>();
 
 
 
@@ -39,7 +39,6 @@ public class MaestraData : IMaestraData
     public async Task<List<EquipoEamDTO>> GetEquiposEAM(string cent)
     {
 
-        // url = $"{BaseUrl}/GetEquipos/{cent}";
         url = $"{BaseUrl}/GetEquipos/{cent}";
         cliente = _clientFactory.CreateClient();
         return equipos = await _http.GetFromJsonAsync<List<EquipoEamDTO>>(url) ?? new List<EquipoEamDTO>(); 

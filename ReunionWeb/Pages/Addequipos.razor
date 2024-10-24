@@ -1,6 +1,11 @@
 ﻿@page "/addequipo"
-@inject IDbReunionService DbReunionService
-@inject IAPIReunionService APIReunionService
+@inject IAsistenciaReuData AsistenciaReuData
+@inject IAvisadorData AvisadorData
+@inject ICargoReuData CargoReuData
+@inject IKsfData KsfData
+@inject IPizarraData PizarraData
+@inject IRespoReuData RespoReuData
+@inject IMaestraData MaestraData
 @inject HttpClient Http
 @inject AuthenticationStateProvider AuthStateProvider
 @inject ILocalStorageService LocalStorage
@@ -15,7 +20,7 @@
 <p></p>
 
 
-    @if (APIReunionService.centro.Count() == 0)
+    @if (MaestraData.centro.Count() == 0)
 {
     <div class="loader"></div>
 
@@ -42,7 +47,7 @@ else
                         <BSLabel>Centro</BSLabel>
                         <BSInput InputType="InputType.Select" @onchange="BuscarDivision" @bind-Value="IdCent">
                             <option value="">Seleccione</option>
-                            @foreach (var d in APIReunionService.centro)
+                            @foreach (var d in MaestraData.centro)
                             {
                                 <option value="@d.IdCentro">@d.Centro</option>
                             }
@@ -54,7 +59,7 @@ else
                         <BSLabel>División</BSLabel>
                         <BSInput InputType="InputType.Select" @onchange='BuscarLinea' @bind-Value="IdDiv">
                             <option value="">Seleccione</option>
-                            @foreach (var d in APIReunionService.divisions)
+                            @foreach (var d in MaestraData.divisions)
                             {
                                     <option value="@d.IdDivision">@d.Ndivision</option>                           
                             }
@@ -67,7 +72,7 @@ else
                         <BSLabel>Línea</BSLabel>
                         <BSInput InputType="InputType.Select" @bind-Value="IdLin">
                             <option value="">Seleccione...</option>
-                            @foreach (var d in APIReunionService.lineas)
+                            @foreach (var d in MaestraData.lineas)
                             {
                                     <option value="@d.IdLinea">@d.Linea</option>                         
                             }
@@ -125,7 +130,7 @@ else
                 <BSLabel>Centro</BSLabel>
                 <BSInput InputType="InputType.Select" @onchange="BuscarDivision" @bind-Value="IdCent" >
                     <option value="">Seleccione</option>
-                    @foreach (var d in APIReunionService.centro)
+                    @foreach (var d in MaestraData.centro)
                     {
                         <option value="@d.IdCentro">@d.Centro</option>
                     }
@@ -139,7 +144,7 @@ else
                     <option value="">Seleccione</option>
                   
                     {
-                    @foreach (var d in APIReunionService.divisions)
+                    @foreach (var d in MaestraData.divisions)
                     {
                               <option value="@d.IdDivision">@d.Ndivision</option>                           
                     }
@@ -153,7 +158,7 @@ else
                 <BSLabel>Línea</BSLabel>
                 <BSInput InputType="InputType.Select" @bind-Value="IdLin">
                     <option value="">Seleccione...</option>
-                    @foreach (var d in APIReunionService.lineas)
+                    @foreach (var d in MaestraData.lineas)
                     {
                                 <option value="@d.IdLinea">@d.Linea</option>                         
                     }
@@ -172,7 +177,7 @@ else
             <p></p>
       
 
-        @if (APIReunionService.equiposlinea.Count() > 0 && dataIsLoaded == 2)
+        @if (MaestraData.equiposlinea.Count() > 0 && dataIsLoaded == 2)
         {
                  
               <BSCol Column="3">
@@ -212,13 +217,13 @@ else
                             {
 
                                 
-                                    @if(APIReunionService.equiposlinea.Where(a => a.EcodEquiEam.Contains(EquipoFiltro)).Count()==0)
+                                    @if(MaestraData.equiposlinea.Where(a => a.EcodEquiEam.Contains(EquipoFiltro)).Count()==0)
                                     {
                                         <p>No hay registros.</p>
                                     }
                                     else
                                     {
-                                         @foreach (var d in  APIReunionService.equiposlinea.Where(a => a.EcodEquiEam.Contains(EquipoFiltro)).ToList())
+                                         @foreach (var d in  MaestraData.equiposlinea.Where(a => a.EcodEquiEam.Contains(EquipoFiltro)).ToList())
                                         {
                                             <BSTR>
                                             @*<BSTD>@d.IdEquipo</BSTD>*@
@@ -301,7 +306,7 @@ else
                             
                             else               
                             {
-                                @foreach (var d in APIReunionService.equiposlinea)
+                                @foreach (var d in MaestraData.equiposlinea)
                                 {
                                   <BSTR>
                        @*         <BSTD>@d.IdEquipo</BSTD>*@
@@ -384,11 +389,11 @@ else
                 </BSTable>
             </BSContainer>
         }
-        else if (dataIsLoaded == 1 && APIReunionService.equiposlinea.Count() == 0)
+        else if (dataIsLoaded == 1 && MaestraData.equiposlinea.Count() == 0)
         {
             <div class="loader"></div>
         }
-        else if (dataIsLoaded == 2 && APIReunionService.equiposlinea.Count() == 0)
+        else if (dataIsLoaded == 2 && MaestraData.equiposlinea.Count() == 0)
         {
             <p>No hay equipos.</p>
         }
@@ -445,7 +450,7 @@ else
         if (dataIsLoaded != 1)
         {
             dataIsLoaded = 1;
-            await APIReunionService.GetEquiposxlinea(IdLin.ToString());
+            await MaestraData.GetEquiposxlinea(IdLin.ToString());
             dataIsLoaded = 2;
         }
     }
@@ -459,7 +464,7 @@ else
             {
                 if (IdCentro != 0)
                 {
-                    APIReunionService.divisions = await APIReunionService.ObtenerDivisionDelCentro(IdCentro);
+                    MaestraData.divisions = await MaestraData.ObtenerDivisionDelCentro(IdCentro);
                 }
             }
             catch (Exception ex)
@@ -482,7 +487,7 @@ else
             {
                 if (IdLin != 0)
                 {
-                    APIReunionService.lineas = await APIReunionService.ObtenerLasLineasPorDivision(IdLin);
+                    MaestraData.lineas = await MaestraData.ObtenerLasLineasPorDivision(IdLin);
                 }
             }
             catch (Exception ex)
@@ -500,7 +505,7 @@ else
     protected override async Task OnInitializedAsync()
     {
         await CreateData();
-        await APIReunionService.GetCentrosxEmpresa("All" + claims[10].Value);
+        await MaestraData.GetCentrosxEmpresa("All" + claims[10].Value);
     }
     protected async Task SaveEquipo(EditContext e)
     {
@@ -513,7 +518,7 @@ else
                 EquipoForm.IdLinea = IdLin;
                 EquipoForm.EestaEam = true;
                 EquipoForm.EcodEquiEam = EquipoForm.EcodEquiEam.Replace(" ", String.Empty);
-                mensaje = await APIReunionService.AddEquipo(EquipoForm);
+                mensaje = await MaestraData.AddEquipo(EquipoForm);
 
                 if (mensaje == "Registro Exitoso")
                 {
@@ -556,7 +561,7 @@ else
             eq.EestaEam = equipo.EestaEam;
             eq.EnombreEam = equipo.EnombreEam;
 
-            mensaje = await APIReunionService.AddEquipo(eq);
+            mensaje = await MaestraData.AddEquipo(eq);
 
             if (mensaje == "Registro Exitoso")
             {

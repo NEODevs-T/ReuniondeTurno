@@ -4,11 +4,11 @@ namespace ReunionWeb.ReunionDiaria.DTOs;
 
 public class RegistroCambiosDTO
 {
-    public RegistroCambiosDTO(CambFecDTO Data, CambStatDTO Data2)
+    public RegistroCambiosDTO(CambFecDTO cambFecDTO, CambStatDTO cambStatDTO)
     {
-        this.Data = Data;
-        this.Data2 = Data2;
+        this.cambFecDTO = cambFecDTO;
+        this.cambStatDTO = cambStatDTO;
     }
-    public CambFecDTO Data { get; set; }
-    public CambStatDTO Data2 { get; set; }
+    public CambFecDTO? cambFecDTO { get; set; }
+    public CambStatDTO? cambStatDTO { get; set; }
 }
