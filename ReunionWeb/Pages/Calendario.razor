@@ -136,13 +136,14 @@ else if (dataIsLoaded == 2 && PizarraData.calentrabajo.Count() == 0)
 
         await KsfData.Getksf();
         await RespoReuData.GetResReu();
+        IdCentro = int.Parse(claims.FirstOrDefault(c => c.Type.Contains("IdCentro"))?.Value);
+
 
     }
 
     protected async Task Get(int IdCentro, int IdDiv)
     {
         string centro = "", division = "";
-        @* MaestraData.centro.Where(c => c.IdCentro = IdCentro); *@
         if (IdCentro > 0)
         {
             centro = MaestraData.centro.Where(c => c.IdCentro == IdCentro).FirstOrDefault(c => c.IdCentro.Equals(IdCentro)).Centro;
@@ -171,7 +172,12 @@ else if (dataIsLoaded == 2 && PizarraData.calentrabajo.Count() == 0)
                 {
                     DateTime Inicio = new DateTime(PizarraData.calentrabajo[i].RdfecTra.Year, PizarraData.calentrabajo[i].RdfecTra.Month,
                     PizarraData.calentrabajo[i].RdfecTra.Day, 08, 00, 00);
-                    DateTime Final = Inicio.AddHours((PizarraData.calentrabajo[i].Rdtiempo is null) ? 0 : (double.Parse(PizarraData.calentrabajo[i].Rdtiempo)));
+                    @* DateTime Final = Inicio.AddHours((PizarraData.calentrabajo[i].Rdtiempo is null) ? 0 : (double.Parse(PizarraData.calentrabajo[i].Rdtiempo))); *@
+                    DateTime Final = Inicio.AddHours(
+                    PizarraData.calentrabajo[i].Rdtiempo is null 
+                    ? 0 
+                    : (double.TryParse(PizarraData.calentrabajo[i].Rdtiempo, out double result) ? result : 0)
+                    );
                     data[i] = new DataItem
                         {
 
