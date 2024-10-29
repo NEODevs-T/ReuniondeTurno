@@ -139,6 +139,10 @@ public class PizarraData : IPizarraData
             if (mensaje.IsSuccessStatusCode)
             {
                 band = await mensaje.Content.ReadFromJsonAsync<bool>();
+                CentroDivisionDTO centrodiv = new CentroDivisionDTO();
+                centrodiv = await GetCentroDivi(d.Rdcentro, d.Rddiv, 1);
+                centro = centrodiv.IdCentro.ToString();
+                div = centrodiv.IdDivision.ToString();
             }
 
             if (band == true)
@@ -170,14 +174,14 @@ public class PizarraData : IPizarraData
         }
     }
 
-        public async Task<ReuDiumDTO> GetDiscrepantacia(int id)
+    public async Task<ReuDiumDTO> GetDiscrepantacia(int id)
     {
         url = $"{BaseUrl}/GetDiscrepantacia/{id}";
         return reuniondia = await _http.GetFromJsonAsync<ReuDiumDTO>(url) ?? new ReuDiumDTO();
 
     }
 
-    
+
     public async Task<int> InsertDiscrepancia(ReuDiumDTO discre)
     {
         int data = 0;
@@ -194,7 +198,7 @@ public class PizarraData : IPizarraData
 
     public async Task<CentroDivisionDTO> GetCentroDivi(string centro, string division, int tipo)
     {
-        url = $"{BaseUrl}GetCentroDivi/{centro}/{division}/{tipo}";
+        url = $"http://neo.paveca.com.ve/apineomaster/api/Maestra/GetCentroDivi/{centro}/{division}/{tipo}";
         cliente = _clientFactory.CreateClient();
         return await cliente.GetFromJsonAsync<CentroDivisionDTO>(url) ?? new CentroDivisionDTO();
 

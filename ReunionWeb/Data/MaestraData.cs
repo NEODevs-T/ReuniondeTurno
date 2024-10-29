@@ -55,7 +55,7 @@ public class MaestraData : IMaestraData
     {
         url = $"{BaseUrl}/GetEquiposEAMPorLinea/{idLinea}";
         cliente = _clientFactory.CreateClient();
-        return equipos = await cliente.GetFromJsonAsync<List<EquipoEamDTO>>(url) ?? new List<EquipoEamDTO>();
+        return equiposlinea = await cliente.GetFromJsonAsync<List<EquipoEamDTO>>(url) ?? new List<EquipoEamDTO>();
 
     }
     public async Task<List<DivisionesVDTO>> GetBdDiv(string cent)

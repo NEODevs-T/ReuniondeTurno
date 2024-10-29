@@ -142,6 +142,7 @@ else if (dataIsLoaded == 2 && PizarraData.calentrabajo.Count() == 0)
     protected async Task Get(int IdCentro, int IdDiv)
     {
         string centro = "", division = "";
+        @* MaestraData.centro.Where(c => c.IdCentro = IdCentro); *@
         if (IdCentro > 0)
         {
             centro = MaestraData.centro.Where(c => c.IdCentro == IdCentro).FirstOrDefault(c => c.IdCentro.Equals(IdCentro)).Centro;
