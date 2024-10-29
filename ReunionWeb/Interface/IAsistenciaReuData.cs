@@ -14,6 +14,6 @@ interface IAsistenciaReuData
     List<StatsAsisDto> StatsAsisDtos { get; set; }
 
     Task<string> Postasistencia(List<AsistenReuDTO> asisten);
-    Task<List<AsistenReuDTO>> GetStatsAsist(string div, string empresa, string f1, string f2);
+    Task<List<StatsAsisDto>> GetStatsAsist(string div, string empresa, string f1, string f2);
     Task<List<AsistenReuDTO>> GetListaAsist(string div, string empresa, string f1, string f2);
 }

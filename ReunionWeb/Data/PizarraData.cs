@@ -34,11 +34,11 @@ public class PizarraData : IPizarraData
     public List<ReuDiumDTO> reudiatablas { get; set; } = new List<ReuDiumDTO>();
     public List<CalendarioTrabajoDTO> calentrabajo { get; set; } = new List<CalendarioTrabajoDTO>();
 
-    public async Task<List<ReuDiumDTO>> GetTrabajosCalendario(string pais, string centro, string division)
+    public async Task<List<CalendarioTrabajoDTO>> GetTrabajosCalendario(string pais, string centro, string division)
     {
         url = $"{BaseUrl}/GetTrabajosPorCalendario/{pais}/{centro}/{division}";
         cliente = _clientFactory.CreateClient();
-        return await cliente.GetFromJsonAsync<List<ReuDiumDTO>>(url) ?? new List<ReuDiumDTO>();
+        return calentrabajo = await cliente.GetFromJsonAsync<List<CalendarioTrabajoDTO>>(url) ?? new List<CalendarioTrabajoDTO>();
     }
 
     public async Task<List<ReuDiumDTO>> GetByODT(string ODT, string idcentro, string iddiv)
@@ -54,7 +54,7 @@ public class PizarraData : IPizarraData
         string f1Formatiado = f1.ToString("yyyy-MM-dd");
         string f2Formatiado = f2.ToString("yyyy-MM-dd");
         url = $"{BaseUrl}/GetPendientes/{idcentro}/{iddiv}/{f1Formatiado}/{f2Formatiado}/{tipo}/{estado}";
-        return reunionditablas = await _http.GetFromJsonAsync<List<ReuDiumDTO>>(url) ?? new List<ReuDiumDTO>();
+        return reudiatablas = await _http.GetFromJsonAsync<List<ReuDiumDTO>>(url) ?? new List<ReuDiumDTO>();
 
     }
 
@@ -129,8 +129,9 @@ public class PizarraData : IPizarraData
     {
         bool band = false;
         url = $"{BaseUrl}/UpdateDiscrepancia2/{id}";
+        cliente.Timeout = TimeSpan.FromMinutes(5);
         cliente = _clientFactory.CreateClient();
-        mensaje = await cliente.PutAsJsonAsync(url, id);
+        mensaje = await cliente.PutAsJsonAsync(url, d);
 
         try
         {
@@ -171,7 +172,7 @@ public class PizarraData : IPizarraData
 
         public async Task<ReuDiumDTO> GetDiscrepantacia(int id)
     {
-        url = $"{BaseUrl}GetDiscrepantaciaJT/{id}";
+        url = $"{BaseUrl}/GetDiscrepantacia/{id}";
         return reuniondia = await _http.GetFromJsonAsync<ReuDiumDTO>(url) ?? new ReuDiumDTO();
 
     }

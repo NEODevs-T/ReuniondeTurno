@@ -9,7 +9,7 @@ using ReunionWeb.Interface;
 
 namespace ReunionWeb.Data;
 
-public class AsistenciaReuData:IAsistenciaReuData
+public class AsistenciaReuData : IAsistenciaReuData
 {
 
     public AsistenciaReuData(IHttpClientFactory clientFactory, HttpClient http, NavigationManager navigationManager)
@@ -21,6 +21,7 @@ public class AsistenciaReuData:IAsistenciaReuData
     }
 
     private const string BaseUrl = "http://neo.paveca.com.ve/apineomaster/api/AsistenciaReuControllers";
+
     private HttpClient cliente { get; set; } = new HttpClient();
     private HttpClient _http { get; set; } = new HttpClient();
     private HttpResponseMessage? mensaje { get; set; } = new HttpResponseMessage();
@@ -28,19 +29,19 @@ public class AsistenciaReuData:IAsistenciaReuData
     private readonly IHttpClientFactory _clientFactory;
     public List<AsistenReuDTO> asistenreus { get; set; } = new List<AsistenReuDTO>();
     public List<StatsAsisDto> StatsAsisDtos { get; set; } = new List<StatsAsisDto>();
-    
-    public async Task<List<AsistenReuDTO>> GetStatsAsist(string div, string empresa, string f1, string f2)
+
+    public async Task<List<StatsAsisDto>> GetStatsAsist(string div, string empresa, string f1, string f2)
     {
         url = $"{BaseUrl}/GetStatsAsis/{div}/{empresa}/{f1}/{f2}";
         cliente = _clientFactory.CreateClient();
-        return await cliente.GetFromJsonAsync<List<AsistenReuDTO>>(url) ?? new List<AsistenReuDTO>();
+        return StatsAsisDtos = await cliente.GetFromJsonAsync<List<StatsAsisDto>>(url) ?? new List<StatsAsisDto>();
     }
 
     public async Task<List<AsistenReuDTO>> GetListaAsist(string div, string empresa, string f1, string f2)
     {
         url = $"{BaseUrl}/GetListaAsis/{div}/{empresa}/{f1}/{f2}";
         cliente = _clientFactory.CreateClient();
-        return await cliente.GetFromJsonAsync<List<AsistenReuDTO>>(url) ?? new List<AsistenReuDTO>();
+        return asistenreus = await cliente.GetFromJsonAsync<List<AsistenReuDTO>>(url) ?? new List<AsistenReuDTO>();
     }
 
     public async Task<string> Postasistencia(List<AsistenReuDTO> asisten)

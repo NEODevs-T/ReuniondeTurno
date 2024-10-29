@@ -14,7 +14,7 @@ interface IPizarraData
     List<ReuDiumDTO> reudiatablas { get; set; }
     List<CalendarioTrabajoDTO> calentrabajo { get; set; }
 
-    Task<List<ReuDiumDTO>> GetTrabajosCalendario(string pais, string centro, string division);
+    Task<List<CalendarioTrabajoDTO>> GetTrabajosCalendario(string pais, string centro, string division);
     Task<List<ReuDiumDTO>> GetByODT(string ODT, string idcentro, string iddiv);
     Task<List<ReuDiumDTO>> GetPendientes(string idcentro, string iddiv, DateTime f1, DateTime f2, string tipo, string estado);
     Task<List<ReuDiumDTO>> GetHistoricos(string idcentro, string iddiv, DateTime f1, DateTime f2, string tipo, string estado);

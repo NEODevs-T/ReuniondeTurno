@@ -20,7 +20,6 @@ public class AvisadorData: IAvisadorData
     }
 
     private const string BaseUrl = "http://neo.paveca.com.ve/apineomaster/api/Avisador";
-    // private const string BaseUrl2 = "http://localhost:5021/api/Avisador";
 
     private readonly IHttpClientFactory _clientFactory;
     private HttpClient cliente { get; set; } = new HttpClient();
@@ -43,7 +42,7 @@ public class AvisadorData: IAvisadorData
 
     public async Task<List<CambFecDTO>> GetCambioFecha(int idreu)
     {
-        url = $"{BaseUrl}GetCambioFecha/{idreu}";
+        url = $"{BaseUrl}/GetCambioFecha/{idreu}";
         return cambiofecha = await _http.GetFromJsonAsync<List<CambFecDTO>>(url) ?? new List<CambFecDTO>();
     }
 
