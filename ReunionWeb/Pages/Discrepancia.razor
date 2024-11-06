@@ -32,7 +32,7 @@
         <BSCol Column="3">
             <BSLabel>Centro</BSLabel>
             <BSInput InputType="InputType.Select" @onchange="BuscarDivision" @bind-Value="IdCent">
-                <option value="">Seleccione...</option>
+                <option value="0">Seleccione...</option>
                 @foreach (var d in MaestraData.centro)
                 {
                     <option value="@d.IdCentro">@d.Centro</option>
@@ -45,7 +45,7 @@
         <BSCol Column="3">
             <BSLabel>Division</BSLabel>
             <BSInput InputType="InputType.Select" @onchange='BuscarLinea' @bind-Value="IdDiv">
-                <option value="">Seleccione...</option>
+                <option value="0">Seleccione...</option>
                 @if(MaestraData.centro != null){
                     @foreach (var d in MaestraData.divisions)
                     {
@@ -62,7 +62,7 @@
             <BSLabel>Línea</BSLabel>
             <BSInput InputType="InputType.Select" @bind-Value="Reuniondb.Rdarea">
                 <option value="">Seleccione...</option>
-                @foreach (var d in MaestraData.lineas.Where(li => li.IdDivision == IdDiv))
+                @foreach (var d in MaestraData.lineas)
                 {
                     <option value="@d.Linea">@d.Linea</option>
                 }
@@ -199,7 +199,6 @@
                     <option value="@d.IdResReu">@d.Rrnombre</option>
                 }
             </BSInput>
-       
         </BSCol>
 
     </BSRow>
@@ -213,6 +212,15 @@
         <BSButton Color="BSColor.Primary" Size="Size.ExtraSmall" IsReset>  Nuevo </BSButton>
     </BSCol>
 </BSForm>
+
+centro
+@IdCent
+
+division
+@IdDiv
+
+linea
+@IdLin
 
 
 @code {
@@ -243,12 +251,9 @@
     CambStatDTO CambStata = new CambStatDTO();//Formulario para agregar que usuario hizo el cambio de status.
     CambFecDTO CambFech = new CambFecDTO();//Formulario para agregar que usuario hizo el cambio de fecha.
 
-
-    [Required(ErrorMessage = "Seleccione el Centro")]
-    private int? IdCent { get; set; }
-    [Required(ErrorMessage = "Seleccione la división.")]
-    private int? IdDiv { get; set; }
-    private int? IdLin { get; set; }
+    private int IdCent { get; set; }
+    private int IdDiv { get; set; }
+    private int IdLin { get; set; }
     private string mensaje = "";
     private bool isDesactivado { get; set; } = false;
     private List<AsistenReuDTO> listaAsistencia { get; set; } = new List<AsistenReuDTO>();
@@ -260,33 +265,35 @@
         await CreateData();
         await KsfData.Getksf();
         await RespoReuData.GetResReu();
-        @* if (claims[1].Value == "Admin" | claims[1].Value == "SuperAdmin") *@
+
         if (claims != null && claims.Count > 1 && (claims[1]?.Value == "Admin" || claims[1]?.Value == "SuperAdmin"))
         {
 
             await MaestraData.GetCentrosxEmpresa("All" + claims[10].Value);
+            //TODO: Quitar la busqueda de equipos y buscarlo por linea
             await MaestraData.GetEquiposEAM("All" + claims[10].Value);
         }
         else
         {
-
-            await MaestraData.GetCentrosxEmpresa(claims[11].Value);      
+            await MaestraData.GetCentrosxEmpresa(claims[11].Value);
+            //TODO: Quitar la busqueda de equipos y buscarlo por linea
             await MaestraData.GetEquiposEAM(claims[11].Value.ToString());
-
         }
-        IdCent = int.Parse(claims.FirstOrDefault(c => c.Type.Contains("IdCentro"))?.Value);
-        IdDiv = int.Parse(claims.FirstOrDefault(c => c.Type.Contains("IdDiv"))?.Value);
-        IdLin = int.Parse(claims.FirstOrDefault(c => c.Type.Contains("IdLin"))?.Value);
 
-        RespoReuData.resporeus = RespoReuData.resporeus.Where(a => a.Rrdesc == claims.FirstOrDefault(c => c.Type.Contains("Empresa"))?.Value | string.IsNullOrEmpty(a.Rrdesc)).ToList();
+        IdCent = 0;
+        IdDiv = 0;
+
+        RespoReuData.resporeus = RespoReuData.resporeus.Where(a => a.Rrdesc == claims.FirstOrDefault(c => c.Type.Contains("Empresa"))?.Value || string.IsNullOrEmpty(a.Rrdesc)).ToList();
     }
 
 
 
     protected async Task BuscarDivision(ChangeEventArgs e)
     {
-        if (!string.IsNullOrWhiteSpace(e.Value?.ToString()) && int.TryParse(e.Value.ToString(), out int IdCent))
+        if (!string.IsNullOrWhiteSpace(e.Value?.ToString()))
         {
+            //TODO: Ejemplo de como hacerlo en las demas
+            IdCent = int.Parse(e.Value?.ToString() ?? "0");
 
             try
             {
@@ -413,7 +420,7 @@
                         Reuniondb = new ReuDiumDTO();
                         CambStata = new CambStatDTO();
                         CambFech = new CambFecDTO();
-                        IdDiv = null;
+                        IdDiv = 0;
                         equiposfiltro = null;
                         selectedEquipoName = selectedEquipoId = null;
                         fechatrabajo = DateTime.Today;
@@ -444,7 +451,7 @@
         Reuniondb = new ReuDiumDTO();
         CambStata = new CambStatDTO();
         CambFech = new CambFecDTO();
-        IdDiv = null;
+        IdDiv = 0;
         fechatrabajo = DateTime.Today;
     }
 
