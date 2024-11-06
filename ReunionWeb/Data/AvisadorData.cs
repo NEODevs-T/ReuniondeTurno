@@ -35,7 +35,7 @@ public class AvisadorData: IAvisadorData
 
     public async Task<List<CambStatDTO>> GetCambioStatus(int idreu)
     {
-        url = $"{BaseUrl}GetCambioStatus/{idreu}";
+        url = $"{BaseUrl}/GetCambioStatus/{idreu}";
         return cambiostatus = await _http.GetFromJsonAsync<List<CambStatDTO>>(url) ?? new List<CambStatDTO>();
     }
 

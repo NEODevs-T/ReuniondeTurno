@@ -20,7 +20,7 @@ public class CargoReuData : ICargoReuData
 
     }
 
-    private const string BaseUrl = "http://neo.paveca.com.ve/apineomaster/api/CargoReuControllers";
+    private const string BaseUrl = "http://neo.paveca.com.ve/apineomaster/api/CargoReuController";
     private HttpClient cliente { get; set; } = new HttpClient();
     private HttpClient _http { get; set; } = new HttpClient();
     private HttpResponseMessage? mensaje { get; set; } = new HttpResponseMessage();
