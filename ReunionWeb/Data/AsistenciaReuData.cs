@@ -20,7 +20,7 @@ public class AsistenciaReuData : IAsistenciaReuData
 
     }
 
-    private const string BaseUrl = "http://neo.paveca.com.ve/apineomaster/api/AsistenciaReuController";
+    private const string BaseUrl = "http://neo.paveca.com.ve/apineomaster/api/AsistenciaReu";
     // private const string BaseUrl2 = "http://localhost:5021/api/AsistenciaReuController";
 
     private HttpClient cliente { get; set; } = new HttpClient();
