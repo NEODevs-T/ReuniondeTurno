@@ -116,6 +116,13 @@ public class MaestraData : IMaestraData
         return divicent = await _http.GetFromJsonAsync<CentroDivisionDTO>(url) ?? new CentroDivisionDTO();
     }
 
+        public async Task<List<EquipoEamDTO>> GetEquiposEAMPorLinea(int idLinea)
+        {
+        url = $"{BaseUrl}/GetEquiposEAMPorLinea/{idLinea}";
+        cliente = _clientFactory.CreateClient();
+        return equipos = await cliente.GetFromJsonAsync<List<EquipoEamDTO>>(url) ?? new List<EquipoEamDTO>();
+        }
+
 
 }
 
