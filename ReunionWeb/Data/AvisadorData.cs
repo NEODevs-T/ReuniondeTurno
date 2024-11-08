@@ -20,6 +20,7 @@ public class AvisadorData: IAvisadorData
     }
 
     private const string BaseUrl = "http://neo.paveca.com.ve/apineomaster/api/Avisador";
+    private const string BaseUrl2 = "http://localhost:5021/api/Avisador";
 
     private readonly IHttpClientFactory _clientFactory;
     private HttpClient cliente { get; set; } = new HttpClient();
@@ -81,7 +82,7 @@ public class AvisadorData: IAvisadorData
     public async Task<bool> InsertarRegistros(RegistroCambiosDTO registroCambios)
     {
         bool band = false;
-        url = $"{BaseUrl}/AddRegistrosCambios";
+        url = $"{BaseUrl2}/AddRegistrosCambios";
         cliente = _clientFactory.CreateClient();
         mensaje = await cliente.PostAsJsonAsync(url, registroCambios);
 

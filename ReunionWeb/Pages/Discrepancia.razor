@@ -329,7 +329,7 @@
         //Reuniondb.Fecha = fecha;
         try
         {
-            Reuniondb.Rdarea = MaestraData.lineas.Select(x => x.Linea).FirstOrDefault();
+            Reuniondb.Rdarea = MaestraData.lineas.Where(x => x.IdLinea == idLin).FirstOrDefault().Linea;
             Reuniondb.Rdstatus = "Pendiente";
             Reuniondb.IdPais = int.Parse(claims.FirstOrDefault(c => c.Type == "IdPais")?.Value);
             Reuniondb.IdEmpresa = int.Parse(claims.FirstOrDefault(c => c.Type == "IdEmpresa")?.Value);
@@ -345,7 +345,6 @@
             {
                 Reuniondb.RdfecReu = (fechahoy = DateTime.Now);
                 Reuniondb.RdfecTra = fechatrabajo;
-
                 Reuniondb.Rdcentro = MaestraData.centro.Where(c => c.IdCentro == idCent).FirstOrDefault(c => c.IdCentro.Equals(idCent)).Centro;
                 //Asigno el id de la division al form
                 foreach (var e in MaestraData.divisions)
@@ -386,7 +385,7 @@
                 {
                     CambStata = new CambStatDTO();
                     CambFech = new CambFecDTO();
-                    regisReuDia = new ReuDiumDTO();
+                    regisReuDia = Reuniondb;
 
                     CambStata.Cbfecha = DateTime.Now;
                     CambStata.Cbstat = "Pendiente";
