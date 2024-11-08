@@ -30,7 +30,7 @@ else
         <BSCol ColumnLarge="3" ColumnSmall="6">
             <BSLabel>Centro</BSLabel>
             <BSInput InputType="InputType.Select" Value=IdCentro ValueChanged="@((int value) => DivReset(value))" @onchange="BuscarDivision" >>
-                <option value=0>Seleccione</option>
+                <option value= 0 > Seleccione </option>
                 @foreach (var d in MaestraData.centro)
                 {
                     <option value="@d.IdCentro">@d.Centro</option>
@@ -554,10 +554,19 @@ else if (dataIsLoaded == 2 && PizarraData.reudiatablas.Count() == 0)
         fecha2 = DateTime.Now;
         await CreateData();
 
+        //Cargar Listas
+        await DivReset(IdCentro = int.Parse(claims.FirstOrDefault(c => c.Type.Equals("IdCentro"))?.Value ?? "0"));
+        IdDiv = int.Parse(claims.FirstOrDefault(c => c.Type.Contains("IdDiv"))?.Value ?? "0");
+        await KsfData.Getksf();
+        await RespoReuData.GetResReu();
+        RespoReuData.resporeus = RespoReuData.resporeus.Where(a => a.Rrdesc == claims.FirstOrDefault(c => c.Type.Contains("Empresa"))?.Value | string.IsNullOrEmpty(a.Rrdesc)).ToList();
+        PizarraData.reudiatablas = new List<ReuDiumDTO>();
+
 
         //TODO: Crear logica con funcion qur retorne esto.se usa en hoistoricos e impresiones tambien
         switch (claims.FirstOrDefault(c => c.Type.Contains("role"))?.Value)
         {
+            
             case "Admin":
             case "SuperAdmin":
                 UsrAdmin = "SuperAdmin";
@@ -602,13 +611,6 @@ else if (dataIsLoaded == 2 && PizarraData.reudiatablas.Count() == 0)
                 break;
         }
 
-        //Cargar Listas
-        await DivReset(IdCentro = int.Parse(claims.FirstOrDefault(c => c.Type.Equals("IdCentro"))?.Value ?? "0"));
-        IdDiv = int.Parse(claims.FirstOrDefault(c => c.Type.Contains("IdDiv"))?.Value ?? "0");
-        await KsfData.Getksf();
-        await RespoReuData.GetResReu();
-        RespoReuData.resporeus = RespoReuData.resporeus.Where(a => a.Rrdesc == claims.FirstOrDefault(c => c.Type.Contains("Empresa"))?.Value | string.IsNullOrEmpty(a.Rrdesc)).ToList();
-        PizarraData.reudiatablas = new List<ReuDiumDTO>();
 
         //Eliminar el ODT para un  nuevo cargado
 

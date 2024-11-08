@@ -328,6 +328,7 @@
         //Reuniondb.Fecha = fecha;
         try
         {
+            //TODO: Seleccionar el ID que el ususario selecciono
             Reuniondb.Rdarea = MaestraData.lineas.Select(x => x.Linea).FirstOrDefault();
             Reuniondb.Rdstatus = "Pendiente";
             Reuniondb.IdPais = int.Parse(claims.FirstOrDefault(c => c.Type == "IdPais")?.Value);
@@ -344,7 +345,7 @@
             {
                 Reuniondb.RdfecReu = (fechahoy = DateTime.Now);
                 Reuniondb.RdfecTra = fechatrabajo;
-
+                Reuniondb.Rdarea
                 Reuniondb.Rdcentro = MaestraData.centro.Where(c => c.IdCentro == idCent).FirstOrDefault(c => c.IdCentro.Equals(idCent)).Centro;
                 //Asigno el id de la division al form
                 foreach (var e in MaestraData.divisions)
@@ -398,7 +399,7 @@
                     CambFech.Cfuser = claims[2].Value + " " + claims[3].Value;
 
                     AvisadorData.listaRegistro = new RegistroCambiosDTO(CambFech, CambStata);
-                    
+                    //TODO: esta duplicando los registros
                     var result = await AvisadorData.InsertarRegistros(AvisadorData.listaRegistro);
                     if (result)
                     {
