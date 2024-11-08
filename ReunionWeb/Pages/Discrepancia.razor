@@ -242,6 +242,7 @@
     private string tipoequipo { get; set; } = "1";//validar si es lista o busqueda de equipo
     CambStatDTO CambStata = new CambStatDTO();//Formulario para agregar que usuario hizo el cambio de status.
     CambFecDTO CambFech = new CambFecDTO();//Formulario para agregar que usuario hizo el cambio de fecha.
+    ReuDiumDTO regisReuDia = new ReuDiumDTO();
 
     private int idCent { get; set; }
     private int idDiv { get; set; }
@@ -385,19 +386,18 @@
                 {
                     CambStata = new CambStatDTO();
                     CambFech = new CambFecDTO();
+                    regisReuDia = new ReuDiumDTO();
 
-                    CambStata.ReuDia = Reuniondb;
                     CambStata.Cbfecha = DateTime.Now;
                     CambStata.Cbstat = "Pendiente";
                     CambStata.Cbuser = claims[2].Value + " " + claims[3].Value;
 
 
-                    CambFech.ReuDia = Reuniondb;
                     CambFech.Cffec = DateTime.Now;
                     CambFech.CffecNew = DateTime.Now;
                     CambFech.Cfuser = claims[2].Value + " " + claims[3].Value;
 
-                    AvisadorData.listaRegistro = new RegistroCambiosDTO(CambFech, CambStata);
+                    AvisadorData.listaRegistro = new RegistroCambiosDTO(CambFech, CambStata, regisReuDia);
                     
                     var result = await AvisadorData.InsertarRegistros(AvisadorData.listaRegistro);
                     if (result)
