@@ -22,7 +22,7 @@ public class PizarraData : IPizarraData
     }
 
     private const string BaseUrl = "http://neo.paveca.com.ve/apineomaster/api/Pizarra";
-    // private const string BaseUrl2 = "http://localhost:5021/api/Pizarra";
+    private const string BaseUrl2 = "http://localhost:5021/api/Pizarra";
     private HttpClient cliente { get; set; } = new HttpClient();
     private HttpClient _http { get; set; } = new HttpClient();
     private HttpResponseMessage? mensaje { get; set; } = new HttpResponseMessage();
