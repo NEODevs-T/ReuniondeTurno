@@ -129,7 +129,7 @@ public class PizarraData : IPizarraData
     public async Task<bool> UpdateDiscrepancia2(ReuDiumDTO d, int id, int tipo, string f1, string f2, string estado, string linea)
     {
         bool band = false;
-        url = $"{BaseUrl2}/UpdateDiscrepancia2/{id}";
+        url = $"{BaseUrl}/UpdateDiscrepancia2/{id}";
         cliente.Timeout = TimeSpan.FromMinutes(5);
         cliente = _clientFactory.CreateClient();
         mensaje = await cliente.PutAsJsonAsync(url, d);

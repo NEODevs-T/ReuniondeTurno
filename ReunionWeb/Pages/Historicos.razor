@@ -28,6 +28,7 @@
             <BSCol Column="3" ColumnSmall="2">
                 <BSLabel>Centro</BSLabel>
                 <BSInput InputType="InputType.Select" @onchange="BuscarDivision" @bind-Value="IdCentro">
+                    <option value="0"> Seleccione </option>
                     @foreach (var d in MaestraData.centro)
                     {
                         <option value="@d.IdCentro">@d.Centro</option>
@@ -39,6 +40,7 @@
             <BSCol Column="3" ColumnSmall="2">
                 <BSLabel>División</BSLabel>
                 <BSInput InputType="InputType.Select" @bind-Value="IdDiv">
+                    <option value="0">Seleccione</option>
                     @foreach (var d in MaestraData.divisions)
                     {
                         <option value="@d.IdDivision">@d.Ndivision</option>
@@ -251,9 +253,9 @@ else if (dataIsLoaded == 2 && tabla.Count() == 0)
 
 
     [Required(ErrorMessage = "Seleccione el Centro")]
-    private int IdCentro { get; set; } //id del Centro
+    private int IdCentro { get; set; } = 0; //id del Centro
     [Required(ErrorMessage = "Seleccione la división.")]
-    private int IdDiv { get; set; } //id de la division
+    private int IdDiv { get; set; } = 0; //id de la division
 
     private int CentroComedor;//Variable para verificar si es el comedor venezuela;
 
@@ -380,8 +382,6 @@ else if (dataIsLoaded == 2 && tabla.Count() == 0)
                 break;
         }
 
-        IdCentro = int.Parse(claims[11].Value);
-        IdDiv = int.Parse(claims[12].Value);
 
         await KsfData.Getksf();
         await RespoReuData.GetResReu();

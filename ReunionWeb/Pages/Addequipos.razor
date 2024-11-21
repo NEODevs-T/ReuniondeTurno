@@ -46,7 +46,7 @@ else
                     <BSCol Column="4" ColumnSmall="2">
                         <BSLabel>Centro</BSLabel>
                         <BSInput InputType="InputType.Select" @onchange="BuscarDivision" @bind-Value="IdCent">
-                            <option value="">Seleccione</option>
+                            <option value="0">Seleccione</option>
                             @foreach (var d in MaestraData.centro)
                             {
                                 <option value="@d.IdCentro">@d.Centro</option>
@@ -58,7 +58,7 @@ else
                     <BSCol Column="4" ColumnSmall="2">
                         <BSLabel>División</BSLabel>
                         <BSInput InputType="InputType.Select" @onchange='BuscarLinea' @bind-Value="IdDiv">
-                            <option value="">Seleccione</option>
+                            <option value="0">Seleccione</option>
                             @foreach (var d in MaestraData.divisions)
                             {
                                     <option value="@d.IdDivision">@d.Ndivision</option>                           
@@ -71,7 +71,7 @@ else
                     <BSCol Column="4">
                         <BSLabel>Línea</BSLabel>
                         <BSInput InputType="InputType.Select" @bind-Value="IdLin">
-                            <option value="">Seleccione...</option>
+                            <option value="0">Seleccione...</option>
                             @foreach (var d in MaestraData.lineas)
                             {
                                     <option value="@d.IdLinea">@d.Linea</option>                         
@@ -129,7 +129,7 @@ else
             <BSCol Column="3">
                 <BSLabel>Centro</BSLabel>
                 <BSInput InputType="InputType.Select" @onchange="BuscarDivision" @bind-Value="IdCent" >
-                    <option value="">Seleccione</option>
+                    <option value="0">Seleccione</option>
                     @foreach (var d in MaestraData.centro)
                     {
                         <option value="@d.IdCentro">@d.Centro</option>
@@ -141,7 +141,7 @@ else
             <BSCol Column="3" >
                 <BSLabel>División</BSLabel>
                 <BSInput InputType="InputType.Select" @onchange='BuscarLinea' @bind-Value="IdDiv" >
-                    <option value="">Seleccione</option>
+                    <option value="0">Seleccione</option>
                   
                     {
                     @foreach (var d in MaestraData.divisions)
@@ -157,7 +157,7 @@ else
             <BSCol Column="3">
                 <BSLabel>Línea</BSLabel>
                 <BSInput InputType="InputType.Select" @bind-Value="IdLin">
-                    <option value="">Seleccione...</option>
+                    <option value="0">Seleccione...</option>
                     @foreach (var d in MaestraData.lineas)
                     {
                                 <option value="@d.IdLinea">@d.Linea</option>                         
@@ -416,9 +416,9 @@ else
 
 @code {
     [Required(ErrorMessage = "Seleccione el Centro.")]
-    private int IdCent { get; set; } //para cargar los datos del trazabilidad
+    private int IdCent { get; set; }
     [Required(ErrorMessage = "Seleccione la división.")]
-    private int IdDiv { get; set; }
+    private int IdDiv { get; set; } 
     [Required(ErrorMessage = "Seleccione la Línea.")]
     private int IdLin { get; set; }
 

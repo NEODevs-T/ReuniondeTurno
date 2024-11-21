@@ -30,7 +30,7 @@ else
         <BSCol ColumnLarge="3" ColumnSmall="6">
             <BSLabel>Centro</BSLabel>
             <BSInput InputType="InputType.Select" Value=IdCentro ValueChanged="@((int value) => DivReset(value))" @onchange="BuscarDivision" >>
-                <option value= 0 > Seleccione </option>
+                <option value="0"> Seleccione </option>
                 @foreach (var d in MaestraData.centro)
                 {
                     <option value="@d.IdCentro">@d.Centro</option>
@@ -41,7 +41,7 @@ else
         <BSCol ColumnLarge="3" ColumnSmall="6">
             <BSLabel>División</BSLabel>
             <BSInput InputType="InputType.Select" @bind-Value="IdDiv">
-                <option value=0>Seleccione</option>
+                <option value="0">Seleccione</option>
                 @foreach (var d in MaestraData.divisions)
                 {
                     <option value="@d.IdDivision">@d.Ndivision</option>
@@ -555,8 +555,8 @@ else if (dataIsLoaded == 2 && PizarraData.reudiatablas.Count() == 0)
         await CreateData();
 
         //Cargar Listas
-        await DivReset(IdCentro = int.Parse(claims.FirstOrDefault(c => c.Type.Equals("IdCentro"))?.Value ?? "0"));
-        IdDiv = int.Parse(claims.FirstOrDefault(c => c.Type.Contains("IdDiv"))?.Value ?? "0");
+        @* await DivReset(IdCentro = int.Parse(claims.FirstOrDefault(c => c.Type.Equals("IdCentro"))?.Value ?? "0")); *@
+        @* IdDiv = int.Parse(claims.FirstOrDefault(c => c.Type.Contains("IdDiv"))?.Value ?? "0"); *@
         await KsfData.Getksf();
         await RespoReuData.GetResReu();
         RespoReuData.resporeus = RespoReuData.resporeus.Where(a => a.Rrdesc == claims.FirstOrDefault(c => c.Type.Contains("Empresa"))?.Value | string.IsNullOrEmpty(a.Rrdesc)).ToList();

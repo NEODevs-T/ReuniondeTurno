@@ -32,7 +32,7 @@ Mantenimiento,Calidad,Seguridad,Efluentes, PendientesChempro, MttoAdmin")]*@
             <BSCol Column="3" ColumnSmall="2">
                 <BSLabel>Centro</BSLabel>
                 <BSInput InputType="InputType.Select" @onchange="BuscarDivision" @bind-Value="IdCentro">
-                    <option value="">Seleccione</option>
+                    <option value="0">Seleccione</option>
                     @foreach (var d in MaestraData.centro)
                     {
                         <option value="@d.IdCentro">@d.Centro</option>
@@ -43,7 +43,7 @@ Mantenimiento,Calidad,Seguridad,Efluentes, PendientesChempro, MttoAdmin")]*@
             <BSCol Column="3">
                 <BSLabel>División</BSLabel>
                 <BSInput InputType="InputType.Select" @bind-Value="IdDiv">
-                    <option value="">Seleccione</option>
+                    <option value="0">Seleccione</option>
                     @foreach (var d in MaestraData.divisions)
                     {
                             <option value="@d.IdDivision">@d.Ndivision</option>
@@ -213,8 +213,8 @@ else if (dataIsLoaded == 2 && PizarraData.reudiatablas.Count() == 0)
     string ayer = DateTime.Now.AddDays(-1).ToString("yyyyMMdd");
     string error;
 
-    private int IdCentro { get; set; } //id del Centro
-    private int IdDiv { get; set; } //id de la division
+    private int IdCentro { get; set; } = 0; //id del Centro
+    private int IdDiv { get; set; } = 0; //id de la division
     private int CentroComedor;//Variable para verificar si es el comedor venezuela;
 
     //private string Div { get; set; } //Centro
@@ -258,8 +258,7 @@ else if (dataIsLoaded == 2 && PizarraData.reudiatablas.Count() == 0)
             await MaestraData.GetCentrosxEmpresa(claims[11].Value);
         }
 
-        IdCentro = int.Parse(claims[11].Value);
-        IdDiv = int.Parse(claims[12].Value);
+
         await KsfData.Getksf();
         await RespoReuData.GetResReu();
 
