@@ -1,0 +1,457 @@
+﻿@page "/stats_asistencia"
+@inject IAsistenciaReuData AsistenciaReuData
+@inject IAvisadorData AvisadorData
+@inject ICargoReuData CargoReuData
+@inject IKsfData KsfData
+@inject IPizarraData PizarraData
+@inject IRespoReuData RespoReuData
+@inject IMaestraData MaestraData
+@inject NavigationManager NavigationManager
+@inject HttpClient Http
+@inject AuthenticationStateProvider AuthStateProvider
+@inject ILocalStorageService LocalStorage
+@inject NotificationService NotificationService
+@attribute [Authorize(Roles = "Admin, AdminChempro, SupIntendente, SupIntendenteGeneral, SuperAdmin, MttoAdmin,SeguridadAdmin, CalidadAdmin")]
+
+
+
+
+<h3>Porcentaje de Asistencia</h3>
+<p></p>
+
+
+
+
+
+<BSContainer>
+
+    @if (MaestraData.centro.Count() == 0)
+    {
+        <div class="loader"></div>
+    }
+    else
+    {
+
+
+        <BSRow>
+            <BSCol Column="3">
+
+                <BSLabel>Centro</BSLabel>
+                <BSInput InputType="InputType.Select" @bind-Value="Div">
+                    <option value="">Seleccione</option>
+                    @foreach (var d in MaestraData.centro)
+                    {
+                        <option value="@d.Centro">@d.Centro</option>
+                    }
+                </BSInput>
+            </BSCol>
+
+            <BSCol Column="2">
+                <BSLabel>Fecha Inicial</BSLabel>
+                <BSInput InputType="InputType.Date" @bind-Value="fecha1" />
+            </BSCol>
+
+            <BSCol Column="2">
+                <BSLabel>Fecha Final</BSLabel>
+                <BSInput InputType="InputType.Date" @bind-Value="fecha2" />
+            </BSCol>
+
+            <BSCol Column="2">
+                <BSLabel>Días Feriados/Libres</BSLabel>
+                <BSInput InputType="InputType.Number" @bind-Value="feriados" />
+            </BSCol>
+
+            <BSCol Column="3">
+                <BSRow><BSLabel> Buscar</BSLabel></BSRow>
+                <BSButton IsOutlined Color="BSColor.Success" Size="Size.ExtraSmall" @onclick="Get">   Estadísticas  <span class="oi oi-check"></span></BSButton>
+             </BSCol>
+
+
+         </BSRow>
+
+    }
+
+</BSContainer>
+
+<p></p>
+
+
+
+
+
+@if (AsistenciaReuData.StatsAsisDtos.Count() > 0 && dataIsLoaded == 2)
+{
+    <p><h5>@dias Días de reunión. </h5></p>
+
+    <p></p>
+    <BSRow>
+        <BSCol ColumnSmall="6" Column="3">
+
+
+            <BSInputRadio CheckedValue="@(0)" @bind-Value="Lista" IsToggle="true" Size="Size.ExtraSmall" Color="BSColor.Success" IsOutlined="true">
+                Porcentaje  %
+            </BSInputRadio>
+
+
+            <BSInputRadio CheckedValue="@(1)" @bind-Value="Lista" IsToggle="true" Size="Size.ExtraSmall" Color="BSColor.Success" IsOutlined="true">
+                Lista Diaria
+                <span class="oi oi-list"></span>
+            </BSInputRadio>
+
+        </BSCol>
+    </BSRow>
+    <p></p>
+   
+        @if (AsistenciaReuData.asistenreus.Where(c => c.Cargo.Crbloque == 1).Count() > 0)
+        {
+            <BSCol Column="4">
+                <BSLabel>Bloque: @bloque</BSLabel>
+
+                    <BSInput InputType="InputType.Range" step="1" min="1" max="3" @bind-Value="bloque" /><BSButton IsOutlined Color="BSColor.Success" Size="Size.ExtraSmall" @onclick="Porcentaje">   Obtener Porcentajes  <span class="oi oi-check"></span></BSButton>
+
+             </BSCol>
+            <p></p>
+        } if (Lista == 0 && !carga)
+    {
+
+        <BSCol Column="6">
+            <BSTable IsResponsive="true" IsStriped="true" IsBordered="true">
+                <BSTHead Class="cabecera">
+                    <BSTR>
+
+
+                        <BSTD>Personal</BSTD>
+                        <BSTD>Presencia</BSTD>
+                        <BSTD>% Asistencia</BSTD>
+
+                    </BSTR>
+                </BSTHead>
+                <BSTBody>
+
+
+                    @foreach (var d in porasis)
+                    {
+                        <BSTR>
+       @if (AsistenciaReuData.asistenreus.Where(c => c.Cargo.Crbloque == 1).Count() > 0)
+                            {
+
+                                @if ((AsistenciaReuData.asistenreus.FirstOrDefault(c => c.Cargo.Crnombre == d.Cargo).Cargo.Crbloque) == bloque)
+                                {
+
+                                    <BSTD>@d.Cargo</BSTD>
+                                    <BSTD>@d.Asistencias</BSTD>
+                                    <BSTD>@d.Total %</BSTD>
+                                }
+
+                            }
+                            else
+                            {
+
+                                <BSTD>@d.Cargo</BSTD>
+                                <BSTD>@d.Asistencias</BSTD>
+                                <BSTD>@d.Total %</BSTD>
+
+                            }
+
+                        </BSTR>
+                    }
+
+
+                </BSTBody>
+                <BSTR>
+                    <BSTD>Total</BSTD>
+                    <BSTD> </BSTD>
+                    <BSTD>@asistotal %</BSTD>
+                </BSTR>
+            </BSTable>
+        </BSCol>
+
+
+    }
+    else if (Lista == 1)
+    {
+        @if (AsistenciaReuData.asistenreus.Where(c => c.Cargo.Crbloque == 1).Count() > 0)
+        {
+            <BSCol Column="4">
+                <BSLabel>Bloque: @bloque</BSLabel>
+
+                    <BSInput InputType="InputType.Range" step="1" min="1" max="3" @bind-Value="bloque" />
+                </BSCol>
+        }
+        <BSCol Column="10">
+            <BSTable IsResponsive="true" IsStriped="true" IsBordered="true">
+                <BSTHead Class="cabecera">
+                    <BSTR>
+
+
+                        <BSTD>Fecha</BSTD>
+                        <BSTD>Personal</BSTD>
+                        <BSTD>Asitencia</BSTD>
+                        <BSTD>Asistencia Suplente</BSTD>
+
+                    </BSTR>
+                </BSTHead>
+                <BSTBody>
+                    @foreach (var d in AsistenciaReuData.asistenreus)
+                    {
+
+
+                        <BSTR>
+
+                            @if (AsistenciaReuData.asistenreus.Where(c => c.Cargo.Crbloque == 1).Count() > 0)
+                            {
+                                @if ((AsistenciaReuData.asistenreus.FirstOrDefault(c => c.Ararea == d.Ararea).Cargo.Crbloque) == bloque)
+                                {
+                                    <BSTD>@d.Arfecha</BSTD>
+                                    <BSTD>@d.Cargo.Crnombre</BSTD>
+
+                                    @if (@d.ArAsistente == 1)
+                                    {
+                                        <BSTD>Asistió </BSTD>
+                                    }
+                                    else
+                                    {
+                                        <BSTD>Ausente</BSTD>
+                                    }
+
+
+                                    @if (@d.ArSuplente == 1)
+                                    {
+                                        <BSTD>Suplencia</BSTD>
+                                    }
+                                    else
+                                    {
+                                        <BSTD>-</BSTD>
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                <BSTD>@d.Arfecha</BSTD>
+                                <BSTD>@d.Cargo.Crnombre</BSTD>
+
+                                @if (@d.ArAsistente == 1)
+                                {
+                                    <BSTD>Asistió </BSTD>
+                                }
+                                else
+                                {
+                                    <BSTD>Ausente</BSTD>
+                                }
+
+
+                                @if (@d.ArSuplente == 1)
+                                {
+                                    <BSTD>Suplencia</BSTD>
+                                }
+                                else
+                                {
+                                    <BSTD>-</BSTD>
+                                }
+                            }
+
+
+                        </BSTR>
+
+
+                    }
+
+
+                </BSTBody>
+
+            </BSTable>
+        </BSCol>
+    }
+    else if (carga)
+    {
+        <div class="loader"></div>
+    }
+
+}
+
+else if (CargoReuData.cargoreuss.Count() == 0 && dataIsLoaded == 2)
+{
+    <p>No se ha cargado personal a este centro.</p>
+}
+else if (dataIsLoaded == 1 && porasis.Count() == 0)
+{
+    <div class="loader"></div>
+}
+
+
+
+@code {
+
+    private List<StatsAsisDto> porasis = new List<StatsAsisDto>();
+    private List<StatsAsisDto> listafiltradabloque = new List<StatsAsisDto>();
+    private List<AsistenReuDTO> listaasistencia = new List<AsistenReuDTO>();
+    private List<CargoReuDTO> listacargos = new List<CargoReuDTO>();
+
+    bool carga = false;
+    int dataIsLoaded = 0;
+    private string mensaje = "", f1 = "", f2 = "";
+    private string Div { get; set; }
+    private int feriados { get; set; } = 0;
+    private int Lista { get; set; } = 0;
+    private int bloque { get; set; } = 1;
+    private DateTime fecha1 = DateTime.Now;
+    private DateTime fecha2 = DateTime.Now;
+    public double asistotal { get; set; } = 0;
+    private NotifiRadzen Notificar = new NotifiRadzen();//Logic para crear las noyificaciones radzen
+
+    int dias = 0;
+
+    private List<Claim> claims { get; set; }
+    
+
+    private async Task CreateData()
+
+    {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        claims = Enumerable.ToList(user.Claims);
+
+    }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        await CreateData();
+        if (claims.FirstOrDefault(c => c.Type.Contains("role"))?.Value == "Admin" | claims.FirstOrDefault(c => c.Type.Contains("role"))?.Value == "SuperAdmin" | claims.FirstOrDefault(c => c.Type.Contains("role"))?.Value == "MttoAdmin")
+        {
+
+            await MaestraData.GetCentrosxEmpresa("All" + claims.FirstOrDefault(c => c.Type.Contains("IdEmpresa"))?.Value);
+        }
+        else
+        {
+
+            await MaestraData.GetCentrosxEmpresa(claims.FirstOrDefault(c => c.Type.Contains("IdCentro"))?.Value);
+        }
+        Div = claims.FirstOrDefault(c => c.Type.Contains("Centro"))?.Value;
+
+
+
+    }
+
+    protected int GetDias()
+    {
+        int diascount = 0;
+        DateTime inicio = fecha1, hasta = fecha2;
+
+        while (inicio <= hasta)
+        {
+            if (inicio.DayOfWeek != DayOfWeek.Saturday && inicio.DayOfWeek != DayOfWeek.Sunday)
+                diascount++;
+            inicio = inicio.AddDays(1);
+        }
+        return diascount;
+    }
+
+    protected async Task Porcentaje()
+    {
+        try
+        {
+            carga = true;
+            DateTime inicio = fecha1, hasta = fecha2;
+            dias = GetDias();
+            asistotal = 0;
+
+            listafiltradabloque = new List<StatsAsisDto>();
+            listacargos = new List<CargoReuDTO>();
+
+            int filtrocount = 0;
+
+
+            if (dataIsLoaded != 1)
+            {
+                dataIsLoaded = 1;
+                await AsistenciaReuData.GetListaAsist(Div, claims[5].Value, f1, f2);
+                await AsistenciaReuData.GetStatsAsist(Div, claims[5].Value, f1, f2);
+                await CargoReuData.GetAsistencia(Div, claims.FirstOrDefault(c => c.Type.Equals("Empresa"))?.Value);
+
+                listacargos = CargoReuData.cargoreuss;
+                listafiltradabloque = AsistenciaReuData.StatsAsisDtos;
+
+                dias = dias - feriados;
+
+                if (bloque > 0)
+                {
+                    var elementosParaEliminar = listafiltradabloque
+                        .Where((elemento, index) => listacargos.Any(lista =>
+                            lista.Crbloque != bloque &&
+                            lista.Crnombre == elemento.Cargo))
+                        .ToList();
+
+                    foreach (var elemento in elementosParaEliminar)
+                    {
+                        listafiltradabloque.Remove(elemento);
+                    }
+                }
+                porasis = listafiltradabloque;
+                foreach (var a in porasis)
+                {
+
+                    filtrocount++;
+                    a.Total = Math.Round((a.Asistencias / dias) * 100);
+                    asistotal = asistotal + a.Total;
+
+                }
+
+                asistotal = Math.Round(asistotal / porasis.Count);
+                dataIsLoaded = 2;
+                carga = false;
+            }
+
+        }
+        catch (Exception ex)
+        {
+
+            NotificationService.Notify(Notificar.Notificacion("error", "Ocurrió un error", "Por favor recargue la página." + ex.Message));
+        }
+
+    }
+
+    protected async Task Get()
+    {
+        f1 = fecha1.ToString("dd-MM-yyyy");
+        f2 = fecha2.ToString("dd-MM-yyyy");
+
+        DateTime inicio = fecha1, hasta = fecha2;
+        dias = GetDias();
+        asistotal = 0;
+
+
+        if (dataIsLoaded != 1)
+        {
+            dataIsLoaded = 1;
+            await AsistenciaReuData.GetListaAsist(Div, claims[5].Value, f1, f2);
+            await AsistenciaReuData.GetStatsAsist(Div, claims[5].Value, f1, f2);
+            porasis = AsistenciaReuData.StatsAsisDtos;
+            dias = dias - feriados;
+
+            foreach (var a in porasis)
+            {
+                a.Total = Math.Round((a.Asistencias / dias) * 100);
+                asistotal = asistotal + a.Total;
+            }
+            asistotal = Math.Round((asistotal / porasis.Count));
+
+            dataIsLoaded = 2;
+
+
+            if (AsistenciaReuData.asistenreus.Any(c => c.Cargo.Crbloque == bloque))
+            {
+
+                await Porcentaje();
+            }
+
+
+        }
+    }
+
+
+
+
+
+}

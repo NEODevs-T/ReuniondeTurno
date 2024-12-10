@@ -1,0 +1,122 @@
+﻿<div class="top-row ps-3 navbar navbar-dark">
+    <div class="container-fluid">
+        <small class="text-muted"> Powered By  </small><img src="./images/LogoNeo.png" alt="PAVECA" width="60px" />
+        <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+    </div>
+</div>
+
+<div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
+    <nav class="flex-column">
+
+        <AuthorizeView Roles="Admin,AdminChempro, SupIntendente, SupIntendenteGeneral">
+
+            <Authorized>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                        <span class="oi oi-home" aria-hidden="true"></span> Home
+                    </NavLink>
+                </div>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="discrepancia">
+                        <span class="oi oi-warning" aria-hidden="true"></span> Discrepancias
+                    </NavLink>
+                </div>
+
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="pendientes">
+                        <span class="oi oi-tags" aria-hidden="true"></span> Asuntos
+                    </NavLink>
+                </div>
+
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="asistencia">
+                        <span class="oi oi-list" aria-hidden="true"></span> Asistencia
+                    </NavLink>
+                </div>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="reunion">
+                        <span class="oi oi-people" aria-hidden="true"></span> Pizarra
+                    </NavLink>
+                </div>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="historicos">
+                        <span class="oi oi-spreadsheet" aria-hidden="true"></span> Históricos
+                    </NavLink>
+                </div>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="calendario">
+                        <span class=" oi oi-calendar" aria-hidden="true"></span> Calendario
+                    </NavLink>
+                </div>
+
+            </Authorized>
+
+
+            <NotAuthorized>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                        <span class="oi oi-home" aria-hidden="true"></span> Home
+                    </NavLink>
+                </div>
+
+
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="pendientes">
+                        <span class="oi oi-tags" aria-hidden="true"></span> Asuntos
+                    </NavLink>
+                </div>
+
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="reunion">
+                        <span class="oi oi-people" aria-hidden="true"></span> Pizarra
+                    </NavLink>
+                </div>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="historicos">
+                        <span class="oi oi-spreadsheet" aria-hidden="true"></span> Históricos
+                    </NavLink>
+                </div>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="calendario">
+                        <span class=" oi oi-calendar" aria-hidden="true"></span> Calendario
+                    </NavLink>
+                </div>
+
+            </NotAuthorized>
+
+        </AuthorizeView>
+        <AuthorizeView Roles="Admin,AdminChempro, SupIntendente,SupIntendenteGeneral,MttoAdmin">
+            <Authorized>
+
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="stats_asistencia">
+                        <span class="oi oi-graph" aria-hidden="true"></span> %Asistencias
+                    </NavLink>
+                </div>
+            </Authorized>
+        </AuthorizeView>
+
+        <AuthorizeView Roles="Admin,AdminChempro,SuperAdmin">
+            <Authorized>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="addequipo">
+                        <span class="oi oi-wrench" aria-hidden="true"></span> Equipos
+                    </NavLink>
+                </div>
+            </Authorized>
+        </AuthorizeView>
+    </nav>
+</div>
+
+@code {
+    private bool collapseNavMenu = true;
+
+    private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+
+    private void ToggleNavMenu()
+    {
+        collapseNavMenu = !collapseNavMenu;
+    }
+}

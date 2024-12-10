@@ -1,0 +1,686 @@
+﻿@page "/EditDisc/{id:int}/{tipo:int}/{linea}/{f1}/{f2}/{est}"
+@inject NotificationService NotificationService
+@inject IAsistenciaReuData AsistenciaReuData
+@inject IAvisadorData AvisadorData
+@inject ICargoReuData CargoReuData
+@inject IKsfData KsfData
+@inject IPizarraData PizarraData
+@inject IRespoReuData RespoReuData
+@inject IMaestraData MaestraData
+@inject NavigationManager NavigationManager
+@inject AuthenticationStateProvider AuthStateProvider
+@inject ILocalStorageService LocalStorage
+
+<h3>Editar Discrepancia</h3>
+
+<h4></h4>
+<AuthorizeView Roles="Admin,AdminChempro, SupIntendente">
+
+    <Authorized>
+
+        @if (!loader)
+        {
+            <BSForm Model="DiscForm" IsRow="true" Gutters="Gutters.Medium" OnSubmit="Editar">
+                <DataAnnotationsValidator />
+                <BSCol ColumnMedium="12">
+                    @_message
+                    <BSValidationSummary />
+                </BSCol>
+                <BSRow>
+
+                    <BSCol Column="2">
+                        <BSLabel>Centro</BSLabel>
+                        <BSInput InputType="InputType.Text" IsDisabled @bind-Value="DiscForm.Rdcentro" />
+
+                         <BSFeedback For="@(() => DiscForm.Rdcentro)" ValidMessage="Correcto." />
+                     </BSCol>
+
+
+                     <BSCol Column="2">
+                         <BSLabel>División</BSLabel>
+                         <BSInput InputType="InputType.Text" IsDisabled @bind-Value="DiscForm.Rddiv">
+                         </BSInput>
+                         <BSFeedback For="@(() => DiscForm.Rddiv)" ValidMessage="Correcto." />
+                     </BSCol>
+
+                     <BSCol Column="2">
+                         <BSLabel>Área</BSLabel>
+                         <BSInput InputType="InputType.Text" IsDisabled @bind-Value="DiscForm.Rdarea">
+                         </BSInput>
+                         <BSFeedback For="@(() => DiscForm.Rdarea)" ValidMessage="Correcto." />
+                     </BSCol>
+
+
+                     <BSCol Column="3">
+                         <BSLabel>Ksf</BSLabel>
+                         <BSInput InputType="InputType.Select" @bind-Value="DiscForm.Idksf">
+
+                             <option value="">Seleccione...</option>
+                             @foreach (var d in KsfData.ksfs)
+                            {
+                                <option value="@d.Idksf">@d.KsfNombre</option>
+                            }
+
+                        </BSInput>
+                        <BSFeedback For="@(() => DiscForm.Idksf)" ValidMessage="Correcto." />
+                    </BSCol>
+
+                    <BSCol Column="3">
+                        <BSLabel>C. Equipo</BSLabel>
+                        <BSInput InputType="InputType.Text" @bind-Value="DiscForm.RdcodEq" ValidateOnInput="true" />
+                        <BSFeedback For="@(() => DiscForm.RdcodEq)" ValidMessage="Correcto." />
+                    </BSCol>
+
+
+                </BSRow>
+                <p></p>
+                <BSRow>
+                    <BSCol Column="6">
+                        <BSLabel>Discrepancia</BSLabel>
+                        <BSInput InputType="InputType.TextArea" @bind-Value="DiscForm.Rddisc" />
+                        <BSFeedback For="@(() => DiscForm.Rddisc)" ValidMessage="Correcto." />
+                    </BSCol>
+                </BSRow>
+                <p></p>
+
+                <BSRow>
+                    @if (tipo == 0 || tipo == 2)
+                    {
+                        <BSCol Column="6">
+                            <BSLabel>Plan de Acción</BSLabel>
+                            <BSInput InputType="InputType.Text" @bind-Value="DiscForm.RdplanAcc" />
+                        </BSCol>
+                    }
+                    else
+                    {
+                        <BSCol Column="6">
+                            <BSLabel>Plan de Acción</BSLabel>
+                            <BSInput InputType="InputType.Text" @bind-Value="DiscForm.RdplanAcc" />
+                        </BSCol>
+                    }
+
+                </BSRow>
+
+                <p></p>
+                <p></p>
+
+                <BSRow>
+
+                    @if (tipo == 0 || tipo == 2)
+                    {
+                        <BSCol Column="2">
+                            <BSLabel>Tiempo (Horas)</BSLabel>
+                            <BSInput InputType="InputType.Number" IsDisabled @bind-Value="DiscForm.Rdtiempo" />
+                     </BSCol>
+
+                    }
+                    else
+                    {
+                        <BSCol Column="2">
+                            <BSLabel>Tiempo (Horas)</BSLabel>
+                            <BSInput InputType="InputType.Number" @bind-Value="DiscForm.Rdtiempo" />
+                        </BSCol>
+                    }
+
+
+                    @if (tipo == 0 || tipo == 2)
+                    {
+                        <BSCol Column="2">
+                            <BSLabel>Fecha del Trabajo</BSLabel>
+                            <BSInput InputType="InputType.Date" IsDisabled @bind-Value="DiscForm.RdfecTra" />
+                     </BSCol>
+                    }
+                    else
+                    {
+                        <BSCol Column="2">
+                            <BSLabel>Fecha del Trabajo</BSLabel>
+                            <BSInput InputType="InputType.Date" @bind-Value="DiscForm.RdfecTra" />
+                        </BSCol>
+                    }
+
+                    <BSCol ColumnSmall="2">
+                        <BSLabel>Responsable</BSLabel>
+                        <BSInput InputType="InputType.Select" @bind-Value="DiscForm.IdResReu">
+                            <option value="">Seleccione...</option>
+                            @foreach (var d in RespoReuData.resporeus)
+                            {
+                                <option value="@d.IdResReu">@d.Rrnombre</option>
+                            }
+
+                        </BSInput>
+                        <BSFeedback For="@(() => DiscForm.IdResReu)" ValidMessage="Correcto." />
+                    </BSCol>
+
+                    @if (tipo == 0 || tipo == 2)
+                    {
+                        <BSCol Column="2">
+                            <BSLabel>Fecha Reunión</BSLabel>
+                            <BSInput InputType="InputType.Date" @bind-Value="DiscForm.RdfecReu" ValidateOnInput="true" />
+                        </BSCol>
+                    }
+                </BSRow>
+                <p></p>
+                <BSRow>
+
+                    @if (tipo == 0 || tipo == 2)
+                    {
+                        <BSCol ColumnSmall="2">
+                            <BSLabel>Código</BSLabel>
+                            <BSInput InputType="InputType.Select" IsDisabled @bind-Value="DiscForm.RdcodDis">
+                             <option value="">Seleccione...</option>
+                             <option value="1">1- En Curso</option>
+                             <option value="2">2- Próxima Parada</option>
+                             <option value="3">3- Falta Repuesto</option>
+                             <option value="4">4- Falta de Personal</option>
+                             <option value="5">5- Eq. no Disponible</option>
+
+
+                         </BSInput>
+                     </BSCol>
+                    }
+                    else
+                    {
+                        <BSCol ColumnSmall="2">
+                            <BSLabel>Código</BSLabel>
+                            <BSInput InputType="InputType.Select" @bind-Value="DiscForm.RdcodDis">
+                                <option value="">Seleccione...</option>
+                                <option value="1">1- En Curso</option>
+                                <option value="2">2- Próxima Parada</option>
+                                <option value="3">3- Falta Repuesto</option>
+                                <option value="4">4- Falta de Personal</option>
+                                <option value="5">5- Eq. no Disponible</option>
+
+
+                            </BSInput>
+                        </BSCol>
+                    }
+
+
+                    <BSCol ColumnSmall="2">
+                        <BSLabel>Status</BSLabel>
+                        <BSInput InputType="InputType.Select" @bind-Value="DiscForm.Rdstatus">
+
+                            @if (tipo == 0 || tipo == 2)
+                            {
+                                <option value="Listo">Listo</option>
+                                <option value="Cerrado">Cerrado</option>
+
+                            }
+                            else
+                            {
+                                <option value="Revisar">Revisar</option>
+                            }
+                            @if (DiscForm.Rdodt is not null)
+                            {
+                                <option value="Pendiente/Responsable">Pendiente/Responsable</option>
+                            }
+                            else
+                            {
+                                <option value="Pendiente">Pendiente</option>
+                            }
+
+                            <BSFeedback For="@(() => DiscForm.Rdstatus)" ValidMessage="Correcto." />
+                        </BSInput>
+                    </BSCol>
+
+                    @if (RespoReuData.resporeus.Count() > 0)
+                    {
+                        if (planificador == "Admin" || planificador == "Planificador" || planificador == "SuperAdmin")
+                        {
+                            <BSCol Column="2">
+                                <BSLabel>ODT</BSLabel>
+                                <BSInput InputType="InputType.Text" @bind-Value="DiscForm.Rdodt" ValidateOnInput="true" />
+                            </BSCol>
+                        }
+                        else
+                        {
+                            <BSCol Column="2">
+                                <BSLabel>ODT</BSLabel>
+                                <BSInput InputType="InputType.Text" IsDisabled @bind-Value="DiscForm.Rdodt" ValidateOnInput="true" />
+                         </BSCol>
+                        }
+                    }
+
+                </BSRow>
+                <p></p>
+                <p></p>
+                <BSCol Column="12">
+                    <BSButton Color="BSColor.Success" Size="Size.ExtraSmall" IsSubmit>  Guardar <span class="oi oi-check"></span></BSButton>
+                 <BSButton Color="BSColor.Danger" Size="Size.ExtraSmall" OnClick=Back>  Atras <span class="oi oi-arrow-left"></span></BSButton>
+
+             </BSCol>
+         </BSForm>
+        }
+
+    </Authorized>
+
+
+    <NotAuthorized>
+
+        @if (!loader)
+        {
+            <BSForm Model="DiscForm" IsRow="true" Gutters="Gutters.Medium" OnSubmit="Editar">
+                <DataAnnotationsValidator />
+                <BSCol ColumnMedium="12">
+                    @_message
+                    <BSValidationSummary />
+                </BSCol>
+                <BSRow>
+
+                    <BSCol Column="3">
+                        <BSLabel>Centro</BSLabel>
+                        <BSInput InputType="InputType.Text" IsDisabled @bind-Value="DiscForm.Rdcentro" />
+                     </BSCol>
+
+
+                     <BSCol Column="2">
+                         <BSLabel>División</BSLabel>
+                         <BSInput InputType="InputType.Text" IsDisabled @bind-Value="DiscForm.Rddiv">
+                         </BSInput>
+                     </BSCol>
+
+                     <BSCol Column="2">
+                         <BSLabel>Área</BSLabel>
+                         <BSInput InputType="InputType.Text" IsDisabled @bind-Value="DiscForm.Rdarea">
+                         </BSInput>
+                     </BSCol>
+
+
+
+                     <BSInput InputType="InputType.Select" hidden @bind-Value="DiscForm.Idksf">
+
+                         <option value="">Seleccione...</option>
+                         @foreach (var d in KsfData.ksfs)
+                        {
+                            <option value="@d.Idksf">@d.KsfNombre</option>
+                        }
+
+                    </BSInput>
+
+
+                    <BSCol Column="2">
+                        <BSLabel>C. Equipo</BSLabel>
+                        <BSInput InputType="InputType.Text" IsDisabled @bind-Value="DiscForm.RdcodEq" />
+                     </BSCol>
+
+
+                 </BSRow>
+                 <p></p>
+                 <BSRow>
+                     <BSCol Column="6">
+                         <BSLabel>Discrepancia</BSLabel>
+                         <BSInput InputType="InputType.Text" @bind-Value="DiscForm.Rddisc" />
+                     </BSCol>
+                 </BSRow>
+                 <BSRow>
+
+                     <BSCol Column="6">
+                         <BSLabel>Plan de Acción</BSLabel>
+                         <BSInput InputType="InputType.Text" @bind-Value="DiscForm.RdplanAcc" />
+                     </BSCol>
+                 </BSRow>
+
+
+                 <p></p>
+                 <p></p>
+
+                 <BSRow>
+
+
+                     <BSInput InputType="InputType.Text" hidden @bind-Value="DiscForm.Rdtiempo" />
+
+                     @if (planificador == "Admin" || planificador == "Planificador" || planificador == "SuperAdmin")
+                    {
+                        <BSCol Column="2">
+                            <BSLabel>Fecha del Trabajo</BSLabel>
+                            <BSInput InputType="InputType.Date" @bind-Value="DiscForm.RdfecTra" />
+                        </BSCol>
+
+                    }
+                    else
+                    {
+                        <BSCol Column="2">
+                            <BSLabel>Fecha del Trabajo</BSLabel>
+                            <BSInput InputType="InputType.Date" @bind-Value="DiscForm.RdfecTra" />
+                        </BSCol>
+                    }
+
+
+                    <BSCol ColumnSmall="2">
+                        <BSLabel>Responsable</BSLabel>
+                        <BSInput InputType="InputType.Select" IsDisabled @bind-Value="DiscForm.IdResReu">
+                             <option value="">Seleccione...</option>
+                             @foreach (var d in RespoReuData.resporeus)
+                            {
+                                <option value="@d.IdResReu">@d.Rrnombre</option>
+                            }
+                        </BSInput>
+
+                    </BSCol>
+
+
+
+                    <BSCol ColumnSmall="2">
+                        <BSLabel>Código</BSLabel>
+                        <BSInput InputType="InputType.Select" @bind-Value="DiscForm.RdcodDis">
+                            <option value="">Seleccione...</option>
+                            <option value="1">1- En Curso</option>
+                            <option value="2">2- Próxima Parada</option>
+                            <option value="3">3- Falta Repuesto</option>
+                            <option value="4">4- Falta de Personal</option>
+                            <option value="5">5- Eq. no Disponible</option>
+                        </BSInput>
+                    </BSCol>
+
+                    @if (RespoReuData.resporeus.Count() > 0)
+                    {
+                        if (planificador == "Admin" || planificador == "Planificador" || planificador == "SuperAdmin")
+                        {
+                            <BSCol ColumnSmall="2">
+                                <BSLabel>Status</BSLabel>
+                                <BSInput InputType="InputType.Select" @bind-Value="DiscForm.Rdstatus">
+
+                                    @if (tipo == 0 || tipo == 2)
+                            {
+                                <option value="Listo">Listo</option>
+                                <option value="Pendiente/Responsable">Pendiente/Responsable</option>
+
+                            }
+                            else
+                            {
+                                <option value="Revisar">Revisar</option>
+                            }
+
+                            <option value="Pendiente">Pendiente</option>
+                            <BSFeedback For="@(() => DiscForm.Rdstatus)" ValidMessage="Correcto." />
+                        </BSInput>
+                    </BSCol>
+                        }
+
+                        else
+                        {
+                            if (DiscForm.Rdstatus == "Cerrado")
+                            {
+                                <BSCol ColumnSmall="2">
+                                    <BSLabel>Status</BSLabel>
+                                    <BSInput InputType="InputType.Select" @bind-Value="DiscForm.Rdstatus">
+                                        <option value="Cerrado">Cerrado</option>
+
+                                        <BSFeedback For="@(() => DiscForm.Rdstatus)" ValidMessage="Correcto." />
+                                    </BSInput>
+                                </BSCol>
+                            }
+                            else
+                            {
+                                <BSCol ColumnSmall="2">
+                                    <BSLabel>Status</BSLabel>
+                                    <BSInput InputType="InputType.Select" @bind-Value="DiscForm.Rdstatus">
+
+                                        @if (tipo == 0 || tipo == 2)
+                            {
+                                <option value="Listo">Listo</option>
+                            }
+                            else
+                            {
+                                <option value="Revisar">Revisar</option>
+                            }
+
+                            <option value="Pendiente">Pendiente</option>
+                            <BSFeedback For="@(() => DiscForm.Rdstatus)" ValidMessage="Correcto." />
+                        </BSInput>
+                    </BSCol>
+                            }
+
+                        }
+
+
+                        if (planificador == "Admin" || planificador == "Planificador" || planificador == "SuperAdmin")
+                        {
+                            <BSCol Column="2">
+                                <BSLabel>ODT</BSLabel>
+                                <BSInput InputType="InputType.Text" @bind-Value="DiscForm.Rdodt" />
+                            </BSCol>
+                        }
+                        else
+                        {
+                            <BSCol Column="2">
+                                <BSLabel>ODT</BSLabel>
+                                <BSInput InputType="InputType.Text" IsDisabled @bind-Value="DiscForm.Rdodt" />
+                         </BSCol>
+                        }
+                    }
+
+
+
+
+                </BSRow>
+                <p></p>
+                <p></p>
+                <BSCol Column="12">
+                    <BSButton Color="BSColor.Success" Size="Size.ExtraSmall" IsSubmit>  Guardar <span class="oi oi-check"></span></BSButton>
+                 <BSButton Color="BSColor.Danger" Size="Size.ExtraSmall" OnClick=Back>  Atras <span class="oi oi-arrow-left"></span></BSButton>
+             </BSCol>
+         </BSForm>
+        }
+
+    </NotAuthorized>
+
+</AuthorizeView>
+@if (loader)
+{
+    <div class="loader"></div>
+}
+<p></p>
+<p></p>
+
+@if (CambiosFecha.Count() > 0)
+{
+    <p> Cambios de  Fecha de Trabajo Restantes: @(4 - CambiosFecha.Count()) </p>
+    <div style="width: 40vw;">
+        <BSTable IsResponsive="true" IsStriped="true" IsBordered="true">
+            <BSTHead Class="cabecera">
+                <BSTR>
+                    <BSTD>#</BSTD>
+                    <BSTD>Fecha del Cambio</BSTD>
+                    <BSTD>Nueva Fecha de Trabajo</BSTD>
+                    <BSTD>Usuario</BSTD>
+                </BSTR>
+            </BSTHead>
+            <BSTBody>
+                @foreach (var d in CambiosFecha)
+                {
+                    <BSTR>
+                        <BSTD>@(CambiosFecha.IndexOf(d) + 1)</BSTD>
+                        <BSTD>@d.Cffec.ToString("yyyy/MM/dd")</BSTD>
+                            <BSTD>@d.CffecNew.ToString("yyyy/MM/dd")</BSTD>
+                            <BSTD>@d.Cfuser</BSTD>
+                        </BSTR>
+                }
+            </BSTBody>
+        </BSTable>
+    </div>
+}
+
+@code {
+
+    [Parameter]
+    public int? Id { get; set; }
+    [Parameter]
+    public int? tipo { get; set; }
+    [Parameter]
+    public string? f1 { get; set; }
+    [Parameter]
+    public string? linea { get; set; }
+    [Parameter]
+    public string? f2 { get; set; }
+    [Parameter]
+    public string? est { get; set; }
+
+    string _message = "";
+    bool cambio = true;
+    bool loader = true;
+
+    ReuDiumDTO DiscForm = new ReuDiumDTO();//Formulario para editar, la discrepancia
+    CambStatDTO CambStat = new CambStatDTO();//Formulario para agregar que usuario hizo el cambio de status.
+    CambFecDTO CambFec = new CambFecDTO();//Formulario para agregar que usuario hizo el cambio de fecha.
+
+    List<CambFecDTO> CambiosFecha = new List<CambFecDTO>();//Lista para  cambio de fecha.
+
+    private NotifiRadzen Notificar = new NotifiRadzen();//Logic para crear las noyificaciones radzen
+
+    private DateTime fechahoy, fechatrabajo = DateTime.Today;
+    private string fechahoy2, Emp = "";//Empresa
+    private string planificador;//Variable para verificar si es el usuario del planificador;
+    private string camStat;//Variable para verificar si es el usuario cambio el Status;
+    private string PlanOld;//Variable para verificar si es el usuario cambio el plan de accion;
+    private DateTime? camFec;//Variable para verificar si es el usuario cambio la Fecha;
+
+    private List<Claim> claims { get; set; }//obtener datos del token
+
+
+
+    private async Task CreateData()
+    {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        claims = Enumerable.ToList(user.Claims);
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+
+        await CreateData();
+        loader = true;
+        Emp = claims[5].Value;
+        planificador = claims[1].Value;
+        DiscForm = await PizarraData.GetDiscrepantacia((int)Id);
+        await AvisadorData.GetCambioFecha((int)Id);
+        CambiosFecha = AvisadorData.cambiofecha;
+
+        camStat = DiscForm.Rdstatus;
+        camFec = DiscForm.RdfecTra;
+        PlanOld = DiscForm.RdplanAcc;
+
+        await KsfData.Getksf();
+        await RespoReuData.GetResReu();
+        RespoReuData.resporeus = RespoReuData.resporeus.Where(a => a.Rrdesc == claims.FirstOrDefault(c => c.Type.Contains("Empresa"))?.Value || string.IsNullOrEmpty(a.Rrdesc)).ToList();
+        loader = false;
+    }
+
+    async Task Back()
+    {
+        string backcentro = DiscForm.Rdcentro;
+        string backdiv = DiscForm.Rddiv;
+
+        CentroDivisionDTO centrodiv = await PizarraData.GetCentroDivi(backcentro, backdiv, 1);
+
+        if (tipo == 0)
+        {
+
+            NavigationManager.NavigateTo($"pendientes/{centrodiv.IdCentro}/{centrodiv.IdDivision}/{linea}/{f1}/{f2}/{tipo}/{est}", forceLoad: true);
+        }
+        else if (tipo == 2)
+        {
+            NavigationManager.NavigateTo($"pendientes/{centrodiv.IdCentro}/{centrodiv.IdDivision}/{linea}/{f1}/{f2}/{tipo}/{est}", forceLoad: true);
+        }
+        else
+        {
+            NavigationManager.NavigateTo($"reunion/{centrodiv.IdCentro}/{centrodiv.IdDivision}/Re/{f1}/{f2}/{tipo}/{est}", forceLoad: true);
+        }
+    }
+    async Task Editar()
+    {
+        try
+        {
+
+
+            if (DiscForm.RdfecTra  >= DiscForm.RdfecReu && (int)tipo == 1 || (int)tipo == 0 || (int)tipo == 2)
+            {
+                if (CambiosFecha.Count() >= 3 & camFec != DiscForm.RdfecTra)
+                {
+                    NotificationService.Notify(Notificar.Notificacion("error", "Atención", "Alcanzó el límite de cambios de Fecha de Trabajo."));
+                }
+                else if (String.IsNullOrEmpty(DiscForm.RdplanAcc) && DiscForm.Rdstatus == "Cerrado")
+                {
+                    NotificationService.Notify(Notificar.Notificacion("advertencia", "Atención", "No se puede cerrar sin Plan de Acción."));
+                }
+                else if (PlanOld != DiscForm.RdplanAcc && String.IsNullOrEmpty(DiscForm.RdplanAcc))
+                {
+                    NotificationService.Notify(Notificar.Notificacion("advertencia", "Atención", "No se guardar con Plan de Acción vacío."));
+                    DiscForm.RdplanAcc = PlanOld;
+                }
+                else
+                {
+                    //Prueba con sin Update
+                    // cambio = await DbReunionService.UpdateDiscrepancia(DiscForm, (int)Id, (int)tipo, f1, f2, est);
+
+                    // if (camStat != DiscForm.Rdstatus && cambio == true)
+                    // {
+                    //     CambStat.IdReuDia = (int)Id;
+                    //     CambStat.Cbfecha = DateTime.Now;
+                    //     CambStat.Cbstat = DiscForm.Rdstatus;
+                    //     CambStat.Cbuser = claims[2].Value + " " + claims[3].Value;
+
+                    //     await DbReunionService.InsertCambioStatus(CambStat);
+                    // }
+                    // if (camFec != DiscForm.RdfecTra && cambio == true)
+                    // {
+                    //     CambFec.IdReuDia = (int)Id;
+                    //     CambFec.Cffec = DateTime.Now;
+                    //     CambFec.CffecNew = DiscForm.RdfecTra;
+                    //     CambFec.Cfuser = claims[2].Value + " " + claims[3].Value;
+
+                    //     await DbReunionService.InsertCambioFec(CambFec);
+                    // }
+
+                    /// CON UPDATE ///////////
+                    if (camStat != DiscForm.Rdstatus)
+                    {
+                        CambStat.IdReuDia = DiscForm.IdReuDia;
+                        CambStat.Cbfecha = DateTime.Now;
+                        CambStat.Cbstat = DiscForm.Rdstatus;
+                        CambStat.Cbuser = claims[2].Value + " " + claims[3].Value;
+
+                    }
+                    if (camFec != DiscForm.RdfecTra)
+                    {
+                        CambFec.IdReuDia = DiscForm.IdReuDia;
+                        CambFec.Cffec = DateTime.Now;
+                        CambFec.CffecNew = DiscForm.RdfecTra;
+                        CambFec.Cfuser = claims[2].Value + " " + claims[3].Value;
+                    }
+
+                    await AvisadorData.InsertCambioStatus(CambStat);
+                    await AvisadorData.InsertCambioFec(CambFec);
+                    cambio = await PizarraData.UpdateDiscrepancia2(DiscForm, (int)Id, (int)tipo, f1, f2, est, linea);
+
+
+                }
+            }
+
+            else
+            {
+                NotificationService.Notify(Notificar.Notificacion("advertencia", "Revise los datos", "La fecha de trabajo no puede ser menor a la fecha de reunión."));
+
+            }
+
+            if (cambio == false)
+            {
+                NotificationService.Notify(Notificar.Notificacion("advertencia", "Falló el registro, intente de nuevo.", "Si el problema persiste,  recargue la página."));
+
+            }
+
+        }
+        catch (Exception ex)
+        {
+
+            NotificationService.Notify(Notificar.Notificacion("error", "Ocurrió un error inesperado.", "Por favor,  recargue la página."));//LLamar notificacion con el objeto de logic
+
+        }
+
+    }
+
+
+
+
+}

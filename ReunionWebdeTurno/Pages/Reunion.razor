@@ -1,0 +1,332 @@
+﻿@page "/reunion"
+@page "/reunion/{accion}/{division}/{linea}/{f1}/{f2}/{tipo}/{est}"
+@inject IAsistenciaReuData AsistenciaReuData
+@inject IAvisadorData AvisadorData
+@inject ICargoReuData CargoReuData
+@inject IKsfData KsfData
+@inject IPizarraData PizarraData
+@inject IRespoReuData RespoReuData
+@inject IMaestraData MaestraData
+@inject AuthenticationStateProvider AuthStateProvider
+@inject IJSRuntime IJS
+@inject NavigationManager NavigationManager
+
+@*@attribute [Authorize(Roles = "Admin,AdminChempro, SupIntendente,SupIntendenteGeneral,SuperAdmin, Planificador,
+Mantenimiento,Calidad,Seguridad,Efluentes, PendientesChempro, MttoAdmin")]*@
+
+<h3>Formato de Reunión</h3>
+
+
+<BSContainer>
+
+    @if (MaestraData.centro.Count() == 0)
+    {
+
+
+        <div class="loader"></div>
+    }
+    else
+    {
+        @error
+        <BSRow>
+            <BSCol Column="3" ColumnSmall="2">
+                <BSLabel>Centro</BSLabel>
+                <BSInput InputType="InputType.Select" @onchange="BuscarDivision" @bind-Value="IdCentro">
+                    <option value="0">Seleccione</option>
+                    @foreach (var d in MaestraData.centro)
+                    {
+                        <option value="@d.IdCentro">@d.Centro</option>
+                    }
+                </BSInput>
+            </BSCol>
+
+            <BSCol Column="3">
+                <BSLabel>División</BSLabel>
+                <BSInput InputType="InputType.Select" @bind-Value="IdDiv">
+                    <option value="0">Seleccione</option>
+                    @foreach (var d in MaestraData.divisions)
+                    {
+                            <option value="@d.IdDivision">@d.Ndivision</option>
+                    }
+                </BSInput>
+            </BSCol>
+
+            <BSCol Column="3">
+                <BSLabel>Código</BSLabel>
+                <BSInput InputType="InputType.Select" @bind-Value="Codigo">
+                    <option value="Todo">Todo</option>
+                    <option value="1">1- En Curso</option>
+                    <option value="2">2- Próxima Parada</option>
+                    <option value="3">3- Falta Repuesto</option>
+                    <option value="4">4- Falta de Personal</option>
+                    <option value="5">5- Eq. no Disponible</option>
+                </BSInput>
+            </BSCol>
+            <BSCol Column="2">
+                <BSRow>
+                    <BSLabel>Aceptar</BSLabel>
+                </BSRow>
+                <BSButton IsOutlined Color="BSColor.Success" Size="Size.ExtraSmall" @onclick="Get"> Reunión <span
+                        class="oi oi-check"></span></BSButton>
+            </BSCol>
+            @if (PizarraData.reudiatablas.Count() > 0 && dataIsLoaded == 2)
+            {
+                <BSCol ColumnSmall="2">
+                    <BSRow>
+                        <BSLabel>Imprimir</BSLabel>
+                    </BSRow>
+                    <BSButton IsOutlined Color="BSColor.Success" Size="Size.ExtraSmall" @onclick="PrintDocument"> <span
+                            class="oi oi-print"></span></BSButton>
+                </BSCol>
+            }
+        </BSRow>
+    }
+
+</BSContainer>
+
+<p>
+</p>
+
+@if (PizarraData.reudiatablas.Count() > 0 && dataIsLoaded == 2)
+{
+    <BSContainer>
+
+        <BSTable IsResponsive="true" IsStriped="true" IsBordered="true">
+            <BSTHead Class="cabecera">
+                <BSTR>
+
+                    @*<BSTD>Id</BSTD>*@
+
+                    <BSTD>Área</BSTD>
+                    <BSTD>Ksf</BSTD>
+                    <BSTD>Código de Equipo</BSTD>
+                    <BSTD ColSpan="4">Discrepancia</BSTD>
+                    <BSTD>Código</BSTD>
+                    <BSTD>Plan de Acción</BSTD>
+                    <BSTD>Tiempo</BSTD>
+                    <BSTD ColSpan="1">Responsable</BSTD>
+                    <BSTD>Status</BSTD>
+                    <BSTD>ODT</BSTD>
+                    <BSTD>Fecha del Trabajo</BSTD>@*Fecha de listo el trabajo*@
+                    @if (Rol == "Admin" | Rol == "AdminChempro" | Rol == "SupIntendente" | Rol == "SupIntendenteGeneral")
+                    {
+                        <BSTD></BSTD>
+
+                    }
+
+                </BSTR>
+            </BSTHead>
+            <BSTBody>
+                @foreach (var d in PizarraData.reudiatablas)
+                {
+                    @if (d.Rdstatus != "Listo" & d.RdfecTra <= DateTime.Now | (d.Rdstatus != "Listo" & (d.Rdodt == "" | d.Rdodt is null)))
+                    //@if (d.Rdstatus != "Listo")
+                    {
+                        @if (Codigo == d.RdcodDis | Codigo == "Todo")
+                        {
+
+                            <BSTR>
+
+                                @*<BSTD>@d.IdReuDia</BSTD>*@
+                                @* <BSTD>@d.Rddiv</BSTD>*@
+                                <BSTD>@d.Rdarea</BSTD>
+                                <BSTD>@d.Ksf</BSTD>
+                                <BSTD>@d.RdcodEq</BSTD>
+                                <BSTD ColSpan="4">@d.Rddisc.ToUpper()</BSTD>
+                                <BSTD>@d.RdcodDis</BSTD>
+                                @if (@d.RdplanAcc is not null)
+                                {
+                                    <BSTD Class="textotabla listo">@d.RdplanAcc</BSTD>
+                                }
+                                else
+                                {
+                                    <BSTD Class="textotabla ">@d.RdplanAcc</BSTD>
+                                }
+                                <BSTD>@d.Rdtiempo</BSTD>
+                                @if (@d.Responsable == "Por Definir")
+                                {
+                                    <BSTD Class="Definir">@d.Responsable </BSTD>
+                                }
+                                else
+                                {
+                                    <BSTD ColSpan="1">@d.Responsable</BSTD>
+                                }
+
+                                @if (@d.Rdstatus == "Revisar")
+                                {
+                                    <BSTD Class="cabecera">@d.Rdstatus</BSTD>
+                                }
+                                else
+                                {
+                                    <BSTD Class="">@d.Rdstatus</BSTD>
+                                }
+                                <BSTD>@d.Rdodt</BSTD>
+                                <BSTD>@d.RdfecTra.ToString("dd/MM/yyyy") </BSTD>
+                                @if (Rol == "Admin" | Rol == "AdminChempro" | Rol == "SupIntendente" | Rol == "SupIntendenteGeneral")
+                                {
+                                    <BSTD>
+                                        <button class="btn btn-success" @onclick="(() => Editar(d.IdReuDia))"><i
+                                                class="oi oi-pencil"></i></button>
+                                    </BSTD>
+                                }
+
+                            </BSTR>
+                        }
+                    }
+                }
+
+
+            </BSTBody>
+
+        </BSTable>
+    </BSContainer>
+}
+else if (dataIsLoaded == 1 && PizarraData.reudiatablas.Count() == 0)
+{
+    <div class="loader"></div>
+}
+else if (dataIsLoaded == 2 && PizarraData.reudiatablas.Count() == 0)
+{
+    <p>No hay datos para esta fecha.</p>
+}
+
+
+@code {
+
+    [Parameter]
+    public string? accion { get; set; }//centro
+    [Parameter]
+    public string? division { get; set; }//division
+    [Parameter]
+    public string? linea { get; set; }//linea
+    [Parameter]
+    public string? f1 { get; set; }
+    [Parameter]
+    public string? f2 { get; set; }
+    [Parameter]
+    public string? tipo { get; set; }
+    [Parameter]
+    public string? est { get; set; }
+
+
+    int dataIsLoaded = 0, filtrocod = 0;
+    string ayer = DateTime.Now.AddDays(-1).ToString("yyyyMMdd");
+    string error;
+
+    private int IdCentro { get; set; } = 0; //id del Centro
+    private int IdDiv { get; set; } = 0; //id de la division
+    private int CentroComedor;//Variable para verificar si es el comedor venezuela;
+
+    //private string Div { get; set; } //Centro
+    //private string Division { get; set; } //División
+
+
+    private string Codigo { get; set; } = "Todo"; //Codigo
+    private string Rol { get; set; } = ""; //Rol del usuario
+
+    private string mensaje {get; set; } = "";
+
+
+
+
+    private List<Claim> claims { get; set; }
+
+    private async Task CreateData()
+
+    {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        claims = Enumerable.ToList(user.Claims);
+
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await CreateData();
+        Rol = claims.FirstOrDefault(c => c.Type.Contains("role"))?.Value;
+
+
+        if (Rol == "Admin" || Rol == "SuperAdmin" || Rol == "MttoAdmin" || Rol == "SeguridadAdmin" || Rol == "CalidadAdmin" ||
+        Rol == "Auditores")
+        {
+            // await apiclass.GetCentros("All");
+            await MaestraData.GetCentrosxEmpresa("All" + claims[10].Value);
+        }
+        else
+        {
+            //await apiclass.GetCentros(claims[6].Value.ToString());
+            await MaestraData.GetCentrosxEmpresa(claims[11].Value);
+        }
+
+
+        await KsfData.Getksf();
+        await RespoReuData.GetResReu();
+
+    }
+
+    protected async Task BuscarDivision(ChangeEventArgs e)
+    {
+        if (!string.IsNullOrWhiteSpace(e.Value?.ToString()) && int.TryParse(e.Value.ToString(), out int IdCentro))
+        {
+
+            try
+            {
+                if (IdCentro != 0)
+                {
+                    MaestraData.divisions = await MaestraData.ObtenerDivisionDelCentro(IdCentro);
+                }
+            }
+            catch (Exception ex)
+            {
+                mensaje = "Error: " + ex.Message;
+            }
+        }
+        else
+        {
+            mensaje = "El valor del centro seleccionado no es válido.";
+        }
+    }
+
+
+    protected async Task Get()
+    {
+        if (IdCentro != 0 & IdDiv != 0)
+        {
+            error = null;
+            if (dataIsLoaded != 1)
+            {
+                dataIsLoaded = 1;
+                await PizarraData.GetPendientes(IdCentro.ToString(), IdDiv.ToString(), DateTime.Now.AddDays(-1), DateTime.Now, "1",
+                "Reunion");
+                dataIsLoaded = 2;
+            }
+        }
+        else
+        {
+
+            error = "Seleccione los valores en las listas*";
+
+        }
+    }
+    void Editar(int id)
+    {
+        NavigationManager.NavigateTo($"EditDisc/{id}/1/Re/{DateTime.Now.AddDays(-1).ToString("dd-MM-yyyy")}/{DateTime.Now.ToString("dd-MM-yyyy")}/Reunion");
+    }
+    protected override async Task OnParametersSetAsync()
+    {
+        if (accion != null)
+        {
+            dataIsLoaded = 1;
+            IdCentro = int.Parse(accion);
+            IdDiv = int.Parse(division);
+            await PizarraData.GetPendientes(accion, division, DateTime.Now.AddDays(-1), DateTime.Now, tipo, "Reunion");
+            dataIsLoaded = 2;
+        }
+
+    }
+    public async Task PrintDocument()
+    {
+        await IJS.InvokeAsync<object>("open", new object[] { $"TablaReunion/{IdCentro.ToString()}/{IdDiv.ToString()}/{DateTime.Now.AddDays(-1).ToString("dd-MM-yyyy")}/{DateTime.Now.ToString("dd-MM-yyyy")}/1", "_blank" });
+    }
+
+}

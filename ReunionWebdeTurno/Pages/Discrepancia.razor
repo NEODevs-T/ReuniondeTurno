@@ -1,0 +1,476 @@
+﻿@page "/discrepancia"
+
+
+@inject IAsistenciaReuData AsistenciaReuData
+@inject IAvisadorData AvisadorData
+@inject ICargoReuData CargoReuData
+@inject IKsfData KsfData
+@inject IPizarraData PizarraData
+@inject IRespoReuData RespoReuData
+@inject IMaestraData MaestraData
+@inject HttpClient Http
+@inject AuthenticationStateProvider AuthStateProvider
+@inject ILocalStorageService LocalStorage
+@inject NotificationService NotificationService
+
+@attribute [Authorize(Roles = "Admin, AdminChempro, SupIntendente, SupIntendenteGeneral,SuperAdmin")]
+
+
+<h3>Discrepancias</h3>
+
+<p></p>
+
+<BSForm Model="Reuniondb" Class="boxhome" IsRow="true" Gutters="Gutters.Medium" OnSubmit="Insert" OnReset="Reset">
+    <DataAnnotationsValidator />
+    <BSCol ColumnMedium="8">
+        @_message
+        <BSValidationSummary />
+    </BSCol>
+    <BSRow>
+
+    
+        <BSCol Column="3">
+            <BSLabel>Centro</BSLabel>
+            <BSInput InputType="InputType.Select" @onchange="BuscarDivision" @bind-Value="idCent">
+                <option value="0">Seleccione...</option>
+                @foreach (var d in MaestraData.centro)
+                {
+                    <option value="@d.IdCentro">@d.Centro</option>
+                }
+            </BSInput>
+        </BSCol>
+
+
+
+        <BSCol Column="3">
+            <BSLabel>Division</BSLabel>
+            <BSInput InputType="InputType.Select" @onchange='BuscarLinea' @bind-Value="idDiv">
+                <option value="0">Seleccione...</option>
+                @if(MaestraData.centro != null){
+                    @foreach (var d in MaestraData.divisions)
+                    {
+                            <option value="@d.IdDivision">@d.Ndivision</option>
+
+                    }
+                }
+            </BSInput>
+        
+        </BSCol>
+
+
+        <BSCol Column="3">
+            <BSLabel>Línea</BSLabel>
+            <BSInput InputType="InputType.Select" @onchange='BuscarEquipo' @bind-Value="idLin">
+                <option value="0">Seleccione...</option>
+                @foreach (var d in MaestraData.lineas)
+                {
+                    <option value="@d.IdLinea">@d.Linea</option>
+                }
+            </BSInput>
+          
+        </BSCol>
+
+    </BSRow>
+    <p></p>
+    <BSRow>
+
+        <BSCol Column="2">
+            <BSRow>
+                <BSLabel>Filtrar: </BSLabel>
+            </BSRow>
+
+
+            <BSInputRadio CheckedValue="@("0")" @bind-Value="tipoequipo" IsToggle="true" Size="Size.ExtraSmall" Color="BSColor.Success" IsOutlined="true">
+                <span class="oi oi-list"></span>
+            </BSInputRadio>
+
+            <BSInputRadio CheckedValue="@("1")" @bind-Value="tipoequipo" IsToggle="true" Size="Size.ExtraSmall" Color="BSColor.Success" IsOutlined="true">
+                <span class="oi oi-magnifying-glass"></span>
+            </BSInputRadio>
+
+
+        </BSCol>
+        @if (MaestraData.centro.Count > 0 & tipoequipo == "0")
+        {
+          
+            @if (Reuniondb.Rdcentro != "Chempro")
+            {
+                <BSCol Column="4">
+                    <BSLabel>C. Equipo</BSLabel>
+                    <BSInput InputType="InputType.Select" @bind-Value="Reuniondb.RdcodEq">
+
+                        <option value="">Seleccione...</option>
+                        @foreach (var d in MaestraData.equipos)
+                        {
+                                <option value="@d.EcodEquiEam">@d.EcodEquiEam - @d.EnombreEam</option>
+                        }
+
+
+                    </BSInput>
+               
+                </BSCol>
+
+            }
+            else
+            {
+                <BSCol Column="4">
+                    <BSLabel>C. Equipo</BSLabel>
+                    <BSInput InputType="InputType.Text" @bind-Value="Reuniondb.RdcodEq" />
+                  
+                </BSCol>
+            }
+        }
+        else if (MaestraData.centro.Count > 0 & tipoequipo == "1")
+        {
+            <BSCol Column="4">
+                <BSLabel>C. Equipo</BSLabel>
+                <div class="autocomplete">
+                    <input @bind=selectedEquipoId @oninput=HandleInput class="form-control filter" />
+                    @if (equiposfiltro is not null)
+                    {
+                        <ul class="options">
+                            @if (equiposfiltro.Any())
+                            {
+
+                                @foreach (var e in equiposfiltro)
+                                {
+                                        <li class="option" @onclick=@(_ => SelectEquipo(e.EcodEquiEam))>
+                                            <span class="option-text">@e.EcodEquiEam - @e.EnombreEam</span>
+                                        </li>
+                                }
+                            }
+                            else
+                            {
+                                <li class="disabled option">No results</li>
+                            }
+                        </ul>
+                    }
+                </div>
+                @if (!string.IsNullOrWhiteSpace(selectedEquipoId))
+                {
+                    <p class="mt-4">
+                        @selectedEquipoName - <strong>@selectedEquipoId</strong>
+                    </p>
+                }
+              
+            </BSCol>
+        }
+      
+
+
+        <BSCol Column="3">
+            <BSLabel>Ksf</BSLabel>
+
+            <BSInput InputType="InputType.Select" @bind-Value="Reuniondb.Idksf">
+
+                <option value="">Seleccione...</option>
+                @foreach (var d in KsfData.ksfs)
+                {
+                    <option value="@d.Idksf">@d.KsfNombre</option>
+                }
+
+            </BSInput>
+          
+        </BSCol>
+
+
+    </BSRow>
+    <p></p>
+    <BSRow>
+        <BSCol Column="9">
+            <BSLabel>Discrepancia</BSLabel>
+            <BSInput InputType="InputType.Text" @bind-Value="Reuniondb.Rddisc" />
+         
+        </BSCol>
+    </BSRow>
+
+    <p></p>
+
+    <BSRow>
+        <p></p>
+
+        <BSCol Column="3">
+            <BSLabel>Responsable</BSLabel>
+            <BSInput InputType="InputType.Select" @bind-Value="Reuniondb.IdResReu">
+                <option value="">Seleccione...</option>
+
+                @foreach (var d in RespoReuData.resporeus)
+                {
+                    <option value="@d.IdResReu">@d.Rrnombre</option>
+                }
+            </BSInput>
+        </BSCol>
+
+    </BSRow>
+
+
+    <p></p>
+    <p></p>
+
+    <BSCol Column="12">
+        <BSButton Color="BSColor.Success" Size="Size.ExtraSmall" IsDisabled="isDesactivado" IsSubmit>  Guardar <span class="oi oi-check"></span></BSButton>
+        <BSButton Color="BSColor.Primary" Size="Size.ExtraSmall" IsReset>  Nuevo </BSButton>
+    </BSCol>
+</BSForm>
+
+
+
+@code {
+
+    [CascadingParameter]
+    //private Task<AuthenticationState> authenticationStateTask { get; set; }
+
+    private List<Claim> claims { get; set; }
+
+    private async Task CreateData()
+
+    {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        claims = Enumerable.ToList(user.Claims);
+
+    }
+
+
+    ReuDiumDTO Reuniondb = new ReuDiumDTO();
+
+    private NotifiRadzen Notificar = new NotifiRadzen();//Logic para crear las noyificaciones radzen
+    private string _message = "";
+    private DateTime fechahoy, fechatrabajo = DateTime.Today;
+    private string fechahoy2;
+    private int Idretornado;
+    private string tipoequipo { get; set; } = "1";//validar si es lista o busqueda de equipo
+    CambStatDTO CambStata = new CambStatDTO();//Formulario para agregar que usuario hizo el cambio de status.
+    CambFecDTO CambFech = new CambFecDTO();//Formulario para agregar que usuario hizo el cambio de fecha.
+    ReuDiumDTO regisReuDia = new ReuDiumDTO();
+
+    private int idCent { get; set; }
+    private int idDiv { get; set; }
+    private int idLin { get; set; }
+    private int idEqui { get; set; }
+    private string mensaje = "";
+    private string Notificacion = "";
+    private bool isDesactivado { get; set; } = false;
+    private List<AsistenReuDTO> listaAsistencia { get; set; } = new List<AsistenReuDTO>();
+
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        await CreateData();
+        await KsfData.Getksf();
+        await RespoReuData.GetResReu();
+
+        if (claims != null && claims.Count > 1 && (claims[1]?.Value == "Admin" || claims[1]?.Value == "SuperAdmin"))
+        {
+
+            await MaestraData.GetCentrosxEmpresa("All" + claims[10].Value);
+        }
+        else
+        {
+            await MaestraData.GetCentrosxEmpresa(claims[11].Value);
+        }
+
+        idCent = 0;
+        idDiv = 0;
+        idLin = 0;
+        idEqui = 0;
+
+        RespoReuData.resporeus = RespoReuData.resporeus.Where(a => a.Rrdesc == claims.FirstOrDefault(c => c.Type.Contains("Empresa"))?.Value || string.IsNullOrEmpty(a.Rrdesc)).ToList();
+    }
+
+
+
+    protected async Task BuscarDivision(ChangeEventArgs e){
+        idCent = int.Parse(e.Value.ToString());
+        idDiv = 0;
+        idLin = 0;
+        idEqui = 0;
+        try{
+            if(idCent != 0){
+                MaestraData.divisions = await MaestraData.ObtenerDivisionDelCentro(idCent);
+            }
+        }catch(Exception ex){
+            mensaje = "Error: " + ex.Message;
+        }
+    }
+
+    protected async Task BuscarLinea(ChangeEventArgs e){
+        idDiv = int.Parse(e.Value.ToString());
+        idLin = 0;
+        idEqui = 0;
+
+        try{
+            if(idCent != 0){
+                MaestraData.lineas = await MaestraData.ObtenerLasLineasPorDivision(idDiv);
+            }
+        }catch(Exception ex){
+            mensaje = "Error: " + ex.Message;
+        }
+    }
+    protected async Task BuscarEquipo(ChangeEventArgs e){
+        idLin = int.Parse(e.Value.ToString());
+        idEqui = 0;
+        try{
+            if(idCent != 0){
+                MaestraData.equipos = await MaestraData.GetEquiposEAMPorLinea(idLin);
+            }
+        }catch(Exception ex){
+            mensaje = "Error: " + ex.Message;
+        }
+    }
+
+
+
+
+    protected async Task Insert(EditContext d)
+    {
+        isDesactivado = true;
+        //Reuniondb.Fecha = fecha;
+        try
+        {
+            Reuniondb.Rdarea = MaestraData.lineas.Where(x => x.IdLinea == idLin).FirstOrDefault().Linea;
+            Reuniondb.Rdstatus = "Pendiente";
+            Reuniondb.IdPais = int.Parse(claims.FirstOrDefault(c => c.Type == "IdPais")?.Value);
+            Reuniondb.IdEmpresa = int.Parse(claims.FirstOrDefault(c => c.Type == "IdEmpresa")?.Value);
+
+            //Guara cod equipo si es por la lista
+            if (tipoequipo == "1")
+            {
+                Reuniondb.RdcodEq = selectedEquipoId;
+
+            }
+
+            if (d.Validate())
+            {
+                Reuniondb.RdfecReu = (fechahoy = DateTime.Now);
+                Reuniondb.RdfecTra = fechatrabajo;
+                Reuniondb.Rdcentro = MaestraData.centro.Where(c => c.IdCentro == idCent).FirstOrDefault(c => c.IdCentro.Equals(idCent)).Centro;
+                //Asigno el id de la division al form
+                foreach (var e in MaestraData.divisions)
+                {
+                        if (idDiv == e.IdDivision)
+                        {
+                            Reuniondb.Rddiv = e.Ndivision;
+                        }
+                }
+
+                if (Reuniondb.Rdarea is null)
+                {
+
+                    mensaje = "Seleccione el area.";
+                    NotificationService.Notify(Notificar.Notificacion("advertencia", mensaje, ""));
+
+                }
+                else if (Reuniondb.Rddiv is null)
+                {
+                    mensaje = "Seleccione la division.";
+                    NotificationService.Notify(Notificar.Notificacion("advertencia", mensaje, ""));
+
+                }
+                else if (Reuniondb.Rddisc is null)
+                {
+                    mensaje = "Llene la discrepancia";
+                    NotificationService.Notify(Notificar.Notificacion("advertencia", mensaje, ""));
+
+                }
+
+                else if (Reuniondb.Rdstatus is null)
+                {
+                    mensaje = "Seleccione status";
+                    NotificationService.Notify(Notificar.Notificacion("advertencia", mensaje, ""));
+
+                }
+                else
+                {
+                    CambStata = new CambStatDTO();
+                    CambFech = new CambFecDTO();
+                    regisReuDia = Reuniondb;
+
+                    CambStata.Cbfecha = DateTime.Now;
+                    CambStata.Cbstat = "Pendiente";
+                    CambStata.Cbuser = claims[2].Value + " " + claims[3].Value;
+
+
+                    CambFech.Cffec = DateTime.Now;
+                    CambFech.CffecNew = DateTime.Now;
+                    CambFech.Cfuser = claims[2].Value + " " + claims[3].Value;
+
+                    AvisadorData.listaRegistro = new RegistroCambiosDTO(CambFech, CambStata, regisReuDia);
+                    
+                    var result = await AvisadorData.InsertarRegistros(AvisadorData.listaRegistro);
+                    if (result)
+                    {
+                        mensaje = "Registro Exitoso";
+                        Reuniondb = new ReuDiumDTO();
+                        CambStata = new CambStatDTO();
+                        CambFech = new CambFecDTO();
+                        idDiv = 0;
+                        equiposfiltro = null;
+                        selectedEquipoName = selectedEquipoId = null;
+                        fechatrabajo = DateTime.Today;
+                        NotificationService.Notify(Notificar.Notificacion("exito", mensaje, ""));
+                    }
+                    else
+                    {
+                        NotificationService.Notify(Notificar.Notificacion("error", "Error al insertar, intente de nuevo.",""));
+                    }
+                }
+            }
+        }
+        catch (Microsoft.EntityFrameworkCore.DbUpdateException ex)
+        {
+            NotificationService.Notify(Notificar.Notificacion("advertencia", "Error de conexión", "Error de conexión de datos.Intente de nuevo "));
+        }
+        catch (Exception ex)
+        {
+            NotificationService.Notify(Notificar.Notificacion("error", "Error inesperado.",  ex.Message));
+        }
+
+        isDesactivado = false;
+    }
+
+
+    protected async Task Reset()
+    {
+        Reuniondb = new ReuDiumDTO();
+        CambStata = new CambStatDTO();
+        CambFech = new CambFecDTO();
+        idDiv = 0;
+        fechatrabajo = DateTime.Today;
+    }
+
+    public async Task cambio(ChangeEventArgs e)
+    {
+        Reuniondb.Rdarea = "";
+        idDiv = int.Parse(e.Value.ToString());
+    }
+
+    List<EquipoEamDTO>? equiposfiltro;
+    string? selectedEquipoId;
+        string? selectedEquipoName;
+    string? filter;
+    bool codsuccess = false;
+    async Task HandleInput(ChangeEventArgs d)
+    {
+        filter = d.Value?.ToString();
+        if (filter?.Length > 0)
+        {
+            equiposfiltro = MaestraData.equipos.Where(a => a.EcodEquiEam.Contains(filter) | a.EcodEquiEam.Contains(filter.ToUpper())).ToList();
+        }
+        else
+        {
+            equiposfiltro = null;
+            selectedEquipoName = selectedEquipoId = null;
+        }
+    }
+
+    void SelectEquipo(string id)
+    {
+        selectedEquipoId = id;
+        selectedEquipoName = equiposfiltro!.First(c => c.EcodEquiEam.Equals(selectedEquipoId)).EnombreEam;
+        equiposfiltro = null;
+    }
+
+
+}

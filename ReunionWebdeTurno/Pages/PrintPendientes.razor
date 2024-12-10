@@ -1,0 +1,300 @@
+﻿@layout EmptyLayout
+@page "/TablaPendientes"
+@page "/TablaPendientes/{accion}/{division}/{linea}/{f1}/{f2}/{tipo}/{est}/{idrespo:int}"
+
+@inject IDbReunionService DbReunionService
+@inject IAPIReunionService APIReunionService
+@inject AuthenticationStateProvider AuthStateProvider
+@inject ILocalStorageService LocalStorage
+
+<BSRow>
+    <BSCol ColumnSmall="1" Column="2">
+        <BSLabel>Código</BSLabel>
+        <BSInput InputType="InputType.Select" @bind-Value="Codigo">
+            <option value="Todo">Todo</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+        </BSInput>
+    </BSCol>
+
+    <BSCol ColumnSmall="1" Column="2">
+        <BSLabel>Estado</BSLabel>
+        <BSInput InputType="InputType.Select" @bind-Value="Status">
+            <option value="Total Pendiente">Total Pendiente</option>
+            <option value="Todo">Todo</option>
+            <option value="Pendiente">Pendiente</option>
+            <option value="Pendiente/Responsable">Pendiente/Responsable</option>
+            <option value="Listo">Listo</option>
+            <option value="Cerrado">Cerrado</option>
+            <option value="Vencidos">Vencidos</option>
+        </BSInput>
+    </BSCol>
+
+    <BSCol Column="3">
+        <BSLabel>Responsable</BSLabel>
+        <BSInput InputType="InputType.Select" @bind-Value="idrespo">
+            <option value=0>Todo</option>
+            @foreach (var d in resporeu)
+            {
+
+                <option value="@d.IdResReu">@d.Rrnombre</option>
+
+            }
+        </BSInput>
+    </BSCol>
+    <BSCol Column="3">
+        <BSLabel>Línea</BSLabel>
+        <BSInput InputType="InputType.Text" @bind-Value="linea" IsReadonly=true />
+    </BSCol>
+
+</BSRow>
+<button type="button" onclick="window.print()" class="btn btn-success"><span class="oi oi-print"></span></button>
+<p></p>
+
+<body>
+    @if (reudiatablas.Count() > 0 && dataIsLoaded == 2)
+    {
+
+
+        <BSTable IsStriped="true" IsBordered="true">
+            <BSTHead Class="cabecera">
+                <BSTR>
+
+                    @*<BSTD>Id</BSTD>*@
+                    @*Centro para validar el comedor*@
+
+                    <BSTD>Área</BSTD>
+                    <BSTD>Ksf</BSTD>
+                    <BSTD>C. Equipo</BSTD>
+                    <BSTD ColSpan="4">Discrepancia</BSTD>
+                    <BSTD>Código</BSTD>
+                    <BSTD>Plan de Acción</BSTD>
+                    <BSTD>Tiempo</BSTD>
+                    <BSTD>Responsable</BSTD>
+                    <BSTD>Status</BSTD>
+                    <BSTD>ODT</BSTD>
+                    <BSTD>Fecha de Reunión</BSTD> @*Fecha del dia de reunion*@
+                    <BSTD>Fecha del Trabajo</BSTD>@*Fecha de listo el trabajo*@
+
+
+                </BSTR>
+            </BSTHead>
+            <BSTBody>
+                @* @if (UsrRol == "Calidad" | UsrRol == "Seguridad" | UsrRol.Substring(0,4).ToString()=="Mtto")
+            @if (UsrRol == "Calidad" | UsrRol == "Seguridad" | UsrRol=="Mtto")*@
+                @if (UsrRol != "")
+                {
+                    listareu = reudiatablas.Where(r => r.Responsable.StartsWith(UsrRol)).ToList();
+                }
+                else
+                {
+                    listareu = reudiatablas;
+
+                }
+                @* @foreach (var d in DbReunionService.reudiatablas)*@
+                @foreach (var d in listareu)
+                {
+                    @if (linea == "Todo" | linea == d.Rdarea)
+                    {
+                        @if (Codigo == d.RdcodDis | Codigo == "Todo")
+                        {
+                            @if (Status == d.Rdstatus | Status == "Todo" | Status == "Total Pendiente" & (d.Rdstatus == "Pendiente" |
+                           d.Rdstatus == "Pendiente/Responsable"))
+                            {
+                                @if (idrespo == 0 | idrespo == d.IdResReu)
+                                {
+                                    <BSTR>
+                                        @*<BSTD>@d.IdReuDia</BSTD>*@
+
+                                        <BSTD>@d.Rdarea</BSTD>
+                                        <BSTD>@d.Ksf</BSTD>
+                                        <BSTD>@d.RdcodEq</BSTD>
+                                        <BSTD ColSpan="4">@d.Rddisc.ToUpperInvariant()</BSTD>
+                                        <BSTD>@d.RdcodDis</BSTD>
+                                        <BSTD Class="textotabla">@d.RdplanAcc</BSTD>
+                                        <BSTD>@d.Rdtiempo</BSTD>
+                                        @if (@d.Responsable == "Por Definir")
+                                        {
+                                            <BSTD Class="Definir">@d.Responsable </BSTD>
+                                        }
+                                        else
+                                        {
+                                            <BSTD>@d.Responsable </BSTD>
+                                        }
+
+                                        @if (@d.Rdstatus == "Listo")
+                                        {
+                                            <BSTD Class="listo">@d.Rdstatus</BSTD>
+                                        }
+                                        else if (@d.Rdstatus == "Cerrado")
+                                        {
+                                            <BSTD Class="Cerrado">@d.Rdstatus</BSTD>
+                                        }
+                                        else
+                                        {
+                                            <BSTD Class="pendiente">@d.Rdstatus</BSTD>
+                                        }
+                                        <BSTD>@d.Rdodt</BSTD>
+                                        <BSTD>@d.RdfecReu.ToString("dd/MM/yyyy")</BSTD>
+                                        <BSTD>@d.RdfecTra.ToString("dd/MM/yyyy")</BSTD>
+
+                                    </BSTR>
+
+                                }
+                            }
+                        }
+                    }
+
+
+
+                }
+
+
+            </BSTBody>
+
+        </BSTable>
+    }
+</body>
+
+@code {
+    [Parameter]
+    public string? accion { get; set; }//centro
+    [Parameter]
+    public string? division { get; set; }//division
+    [Parameter]
+    public string? f1 { get; set; }
+    [Parameter]
+    public string? linea { get; set; }
+    [Parameter]
+    public string? f2 { get; set; }
+    [Parameter]
+    public string? tipo { get; set; }
+    [Parameter]
+    public string? est { get; set; }
+    [Parameter]
+    public int? idrespo { get; set; }//responsable a filtar
+
+    int dataIsLoaded = 0;
+    int CentroComedor = 0;
+
+    private string Codigo { get; set; } = "Todo"; //Codigo
+    private string Status { get; set; } = "Total Pendiente"; //Status
+    private string UsrAdmin { get; set; } = ""; //permisos de admin
+    private string UsrRol { get; set; } = ""; //rol para filtrar
+
+    private List<AsistenReuDTO> listaAsistencia { get; set; }
+    private List<LineaDTO> lineas { get; set; }
+    private List<DivisionDTO> divisions { get; set; }
+    private List<MaestraVDTO> centro { get; set; }
+    private List<KsfDTO> ksfs { get; set; }
+    private List<RespoReuDTO> resporeu { get; set; }
+    private List<ReuDiumDTO> reunionditabla { get; set; }
+    private List<ReuDiumDTO> reudiatabla { get; set; }
+    private List<AsistenReuDTO> asistenreus { get; set; }
+    private List<CargoReuDTO> cargoreus { get; set; }
+    private List<StatsAsisDto> StatsAsisDtos { get; set; }
+    private List<EquiposEamVDTO> equipos { get; set; }
+    private List<EquiposEamVDTO> equiposlinea { get; set; }
+    private List<EquipoEamDTO> listaEqupis { get; set; }
+    private RegistroCambiosDTO listaRegistro { get; set; }
+    private List<CalendarioTrabajoDTO> calentrabajo { get; set; }
+    private List<CambFecDTO> cambiofecha { get; set; }
+    private List<ReuDiumDTO> reudiatablas { get; set; }
+
+
+
+
+    List<ReuDiumDTO> listareu = new List<ReuDiumDTO>();//filtar los responsables
+
+    private List<Claim> claims { get; set; }
+
+    private async Task CreateData()
+
+    {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        claims = Enumerable.ToList(user.Claims);
+
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        await APIReunionService.GetResReu();
+
+
+
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await CreateData();
+
+        switch (claims.FirstOrDefault(c => c.Type.Contains("role"))?.Value)
+        {
+            case "Admin":
+            case "SuperAdmin":
+                UsrAdmin = "SuperAdmin";
+                await APIReunionService.GetCentrosxEmpresa("All" + claims.FirstOrDefault(c => c.Type.Contains("IdEmpresa"))?.Value);
+                break;
+
+            case "SupIntendenteGeneral":
+                UsrAdmin = "SupIntendenteGeneral";
+                await APIReunionService.GetCentrosxEmpresa(claims.FirstOrDefault(c => c.Type.Contains("IdCentro"))?.Value);
+                break;
+
+            case "Planificador":
+            case "SupIntendente":
+                await APIReunionService.GetCentrosxEmpresa(claims.FirstOrDefault(c => c.Type.Contains("IdCentro"))?.Value);
+                break;
+
+            case "MttoAdmin":
+                UsrRol = "Mtto";
+                await APIReunionService.GetCentrosxEmpresa("All" + claims.FirstOrDefault(c => c.Type.Contains("IdEmpresa"))?.Value);
+                break;
+            case "SeguridadAdmin":
+                UsrRol = "Seguridad";//Seguridad para filtar por seguridad
+                await APIReunionService.GetCentrosxEmpresa("All" + claims.FirstOrDefault(c => c.Type.Contains("IdEmpresa"))?.Value);
+                break;
+            case "CalidadAdmin":
+                UsrRol = "Calidad";//Seguridad para filtar por calidad
+                await APIReunionService.GetCentrosxEmpresa("All" + claims.FirstOrDefault(c => c.Type.Contains("IdEmpresa"))?.Value);
+                break;
+
+            case "Mantenimiento":
+                UsrRol = "Mtto";
+                await APIReunionService.GetCentrosxEmpresa(claims.FirstOrDefault(c => c.Type.Contains("IdCentro"))?.Value);
+                break;
+
+            case "Auditores":
+                await APIReunionService.GetCentrosxEmpresa("All" + claims.FirstOrDefault(c => c.Type.Contains("IdEmpresa"))?.Value);
+                break;
+
+            default:
+                UsrRol = claims.FirstOrDefault(c => c.Type.Contains("role"))?.Value;
+                await APIReunionService.GetCentrosxEmpresa(claims.FirstOrDefault(c => c.Type.Contains("IdCentro"))?.Value);
+                break;
+        }
+
+
+
+        if (accion != null)
+        {
+            string[] fec1 = f1.Split('-');
+            string[] fec2 = f2.Split('-');
+
+            //año, mes dia
+            DateTime date1 = new DateTime(int.Parse(fec1[2]), int.Parse(fec1[1]), int.Parse(fec1[0]));
+            DateTime date2 = new DateTime(int.Parse(fec2[2]), int.Parse(fec2[1]), int.Parse(fec2[0]));
+
+            dataIsLoaded = 1;
+            await DbReunionService.GetPendientes(accion, division, date1, date2, tipo, est);
+            dataIsLoaded = 2;
+
+        }
+
+    }
+}

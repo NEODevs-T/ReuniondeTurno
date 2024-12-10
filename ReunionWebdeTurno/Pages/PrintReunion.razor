@@ -1,0 +1,191 @@
+﻿@layout EmptyLayout
+@page "/TablaReunion"
+@page "/TablaReunion/{accion}/{division}/{f1}/{f2}/{tipo}"
+
+@inject IDbReunionService DbReu
+@inject IAPIReunionService APIReunionService
+
+
+
+
+<body>
+
+    @if (reudiatablas.Count() > 0 && dataIsLoaded == 2)
+    {
+
+
+                <BSTable IsStriped="true" IsBordered="true">
+                    <BSTHead Class="cabecera">
+                        <BSTR>
+
+                    @*<BSTD>Id</BSTD>*@
+                    @*Centro para validar el comedor*@
+                    @if (CentroComedor == 11)
+                    {
+                                    <BSTD>N. Equipo</BSTD>
+                    }
+                    else
+                    {
+
+                        @*  <BSTD>División</BSTD>*@
+                                    <BSTD>Área</BSTD>
+                                    <BSTD>Ksf</BSTD>
+
+                    }
+
+                            <BSTD>Código de Equipo</BSTD>
+                            <BSTD ColSpan="4">Discrepancia</BSTD>
+                            <BSTD>Código</BSTD>
+                            <BSTD>Plan de Acción</BSTD>
+                            <BSTD>Tiempo</BSTD>
+                            <BSTD ColSpan="1">Responsable</BSTD>
+                            <BSTD>Status</BSTD>
+                            <BSTD>ODT</BSTD>
+                            <BSTD>Fecha del Trabajo</BSTD>@*Fecha de listo el trabajo*@
+
+
+                        </BSTR>
+                    </BSTHead>
+                    <BSTBody>
+                @foreach (var d in reudiatablas)
+                {
+                    @if (d.Rdstatus != "Listo" & d.RdfecTra <= DateTime.Now | (d.Rdstatus != "Listo" & (d.Rdodt == "" | d.Rdodt is null)))
+                    //@if (d.Rdstatus != "Listo")
+                    {
+
+
+                                        <BSTR>
+
+                            @*<BSTD>@d.IdReuDia</BSTD>*@
+                            @*Centro para validar el comedor*@
+                            @if (CentroComedor == 11)
+                            {
+                                @if (equiposlinea.Any(e => e.CodigoEq == d.RdcodEq) is true)
+                                {
+
+
+                                    @foreach (var eq in equiposlinea)
+                                    {
+
+                                        if (eq.CodigoEq == d.RdcodEq)
+                                        {
+                                                                            <BSTD>@eq.Equipo</BSTD>
+
+                                        }
+
+
+                                    }
+                                }
+                                else
+                                {
+                                                            <BSTD>No hay desctripción.</BSTD>
+
+                                }
+
+                            }
+                            else
+                            {
+                                @*  <BSTD>@d.Rddiv</BSTD>*@
+                                                    <BSTD>@d.Rdarea</BSTD>
+                                                    <BSTD>@d.Ksf</BSTD>
+                            }
+
+
+                                            <BSTD>@d.RdcodEq</BSTD>
+                                            <BSTD ColSpan="4">@d.Rddisc.ToUpper()</BSTD>
+                                            <BSTD>@d.RdcodDis</BSTD>
+                            @if (@d.RdplanAcc is not null)
+                            {
+                                                    <BSTD Class="textotabla listo">@d.RdplanAcc</BSTD>
+                            }
+                            else
+                            {
+                                                    <BSTD Class="textotabla ">@d.RdplanAcc</BSTD>
+                            }
+                                            <BSTD>@d.Rdtiempo</BSTD>
+                            @if (@d.Ksf == "Por Definir")
+                            {
+                                                    <BSTD Class="Definir">@d.Responsable </BSTD>
+                            }
+                            else
+                            {
+                                                    <BSTD ColSpan="1">@d.Responsable</BSTD>
+                            }
+
+                            @if (@d.Rdstatus == "Revisar")
+                            {
+                                                    <BSTD Class="cabecera">@d.Rdstatus</BSTD>
+                            }
+                            else
+                            {
+                                                    <BSTD Class="">@d.Rdstatus</BSTD>
+                            }
+                                            <BSTD>@d.Rdodt</BSTD>
+                                            <BSTD>@d.RdfecTra.ToString("dd/MM/yyyy") </BSTD>
+
+
+                                        </BSTR>
+
+                    }
+                }
+
+
+                    </BSTBody>
+
+                </BSTable>
+
+    }
+     <button type="button" onclick="window.print()" class="btn btn-success"><span class="oi oi-print"></span></button>
+</body>
+
+
+
+@code {
+
+    [Parameter]
+    public string? accion { get; set; }//centro
+    [Parameter]
+    public string? division { get; set; }//division
+    [Parameter]
+    public string? f1 { get; set; }
+    [Parameter]
+    public string? f2 { get; set; }
+    [Parameter]
+    public string? tipo { get; set; }
+
+    private List<AsistenReuDTO> listaAsistencia { get; set; }
+    private List<LineaDTO> lineas { get; set; }
+    private List<DivisionDTO> divisions { get; set; }
+    private List<MaestraVDTO> centro { get; set; }
+    private List<KsfDTO> ksfs { get; set; }
+    private List<RespoReuDTO> resporeu { get; set; }
+    private List<ReuDiumDTO> reunionditabla { get; set; }
+    private List<ReuDiumDTO> reudiatabla { get; set; }
+    private List<AsistenReuDTO> asistenreus { get; set; }
+    private List<CargoReuDTO> cargoreus { get; set; }
+    private List<StatsAsisDto> StatsAsisDtos { get; set; }
+    private List<EquiposEamVDTO> equipos { get; set; }
+    private List<EquiposEamVDTO> equiposlinea { get; set; }
+    private List<EquipoEamDTO> listaEqupis { get; set; }
+    private RegistroCambiosDTO listaRegistro { get; set; }
+    private List<CalendarioTrabajoDTO> calentrabajo { get; set; }
+    private List<CambFecDTO> cambiofecha { get; set; }
+    private List<ReuDiumDTO> reudiatablas { get; set; }
+
+
+
+
+    int dataIsLoaded = 0;
+    int CentroComedor = 0;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (accion != null)
+        {
+            dataIsLoaded = 1;
+            await DbReu.GetPendientes(accion, division, DateTime.Now.AddDays(-1), DateTime.Now, tipo, "Reunion");
+            dataIsLoaded = 2;
+        }
+
+    }
+}
