@@ -385,7 +385,7 @@ else if (dataIsLoaded == 2 && PizarraData.reudiatablas.Count() == 0)
         listareu = DbReunionService.reudiatablas;
 
     }
-    <RadzenDataGrid TItem="ReuDium" Data="@listareu" AllowFiltering="true" FilterMode="FilterMode.Advanced" AllowSorting="true"
+    <RadzenDataGrid TItem="ReunionDTO" Data="@listareu" AllowFiltering="true" FilterMode="FilterMode.Advanced" AllowSorting="true"
     PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
     LogicalFilterOperator="LogicalFilterOperator.Or"
     AllowColumnResize=true
@@ -395,16 +395,16 @@ else if (dataIsLoaded == 2 && PizarraData.reudiatablas.Count() == 0)
 
         <Columns>
 
-            <RadzenDataGridColumn TItem="ReuDium" Property="Rdarea" Title="Área" Frozen=true MinWidth="40px"  TextAlign="TextAlign.Left" />
-            <RadzenDataGridColumn TItem="ReuDium" Property="IdksfNavigation.KsfNombre" Title="Ksf" Width="90px" />
-            <RadzenDataGridColumn TItem="ReuDium" Property="RdcodEq" Title="C. Equipo"  />
-            <RadzenDataGridColumn TItem="ReuDium" Property="Rddisc" Title="Discrepancia" MinWidth="300px" Width="350" TextAlign="TextAlign.Left" />
-            <RadzenDataGridColumn TItem="ReuDium" Property="RdcodDis" Title="Código" Width="60px" />
-             <RadzenDataGridColumn TItem="ReuDium" Property="RdplanAcc" Title="Plan de Acción" MinWidth="180px" Width="250" />
-            <RadzenDataGridColumn TItem="ReuDium" Property="Rdtiempo" Title="Tiempo" Width="60px" />
-                <RadzenDataGridColumn TItem="ReuDium" Property="IdResReuNavigation.Rrnombre" Title="Responsable" Width="110px"  />
+            <RadzenDataGridColumn TItem="ReunionDTO" Property="Rdarea" Title="Área" Frozen=true MinWidth="40px"  TextAlign="TextAlign.Left" />
+            <RadzenDataGridColumn TItem="ReunionDTO" Property="IdksfNavigation.KsfNombre" Title="Ksf" Width="90px" />
+            <RadzenDataGridColumn TItem="ReunionDTO" Property="RdcodEq" Title="C. Equipo"  />
+            <RadzenDataGridColumn TItem="ReunionDTO" Property="Rddisc" Title="Discrepancia" MinWidth="300px" Width="350" TextAlign="TextAlign.Left" />
+            <RadzenDataGridColumn TItem="ReunionDTO" Property="RdcodDis" Title="Código" Width="60px" />
+             <RadzenDataGridColumn TItem="ReunionDTO" Property="RdplanAcc" Title="Plan de Acción" MinWidth="180px" Width="250" />
+            <RadzenDataGridColumn TItem="ReunionDTO" Property="Rdtiempo" Title="Tiempo" Width="60px" />
+                <RadzenDataGridColumn TItem="ReunionDTO" Property="IdResReuNavigation.Rrnombre" Title="Responsable" Width="110px"  />
 
-            <RadzenDataGridColumn TItem="ReuDium" Property="Rdstatus" Title="Estado" Width="120px">
+            <RadzenDataGridColumn TItem="ReunionDTO" Property="Rdstatus" Title="Estado" Width="120px">
                 <Template Context="d">
                     @if (d.Rdstatus == "Listo")
                     {
@@ -420,21 +420,21 @@ else if (dataIsLoaded == 2 && PizarraData.reudiatablas.Count() == 0)
                     }
                 </Template>
             </RadzenDataGridColumn>
-            <RadzenDataGridColumn TItem="ReuDium" Property="Rdodt" Title="ODT" Width="60px" />
+            <RadzenDataGridColumn TItem="ReunionDTO" Property="Rdodt" Title="ODT" Width="60px" />
 
-            <RadzenDataGridColumn TItem="ReuDium" Property="RdfecReu" Title="Fecha Reunión" Sortable=true>
+            <RadzenDataGridColumn TItem="ReunionDTO" Property="RdfecReu" Title="Fecha Reunión" Sortable=true>
                 <Template Context="d">
                     @d.RdfecReu.ToString("dd/MM/yyyy")
                 </Template>
             </RadzenDataGridColumn>
 
-            <RadzenDataGridColumn TItem="ReuDium" Property="RdfecTra" Title="Fecha Trabajo" Sortable=true >
+            <RadzenDataGridColumn TItem="ReunionDTO" Property="RdfecTra" Title="Fecha Trabajo" Sortable=true >
                 <Template Context="d">
                     @d.RdfecTra.ToString("dd/MM/yyyy")
                 </Template>
             </RadzenDataGridColumn>
 
-            <RadzenDataGridColumn TItem="ReuDium" Title="" Width="50px" Filterable=false>
+            <RadzenDataGridColumn TItem="ReunionDTO" Title="" Width="50px" Filterable=false>
                 <Template Context="d">
                     <RadzenButton ButtonStyle="ButtonStyle.Success" Size="ButtonSize.Medium" Text="" Variant="Variant.Outlined" Shade="Shade.Darker" Click="(() => Editar(d.IdReuDia))" Icon="edit" />
                     @if (UsrAdmin != "")
@@ -528,7 +528,7 @@ else if (dataIsLoaded == 2 && PizarraData.reudiatablas.Count() == 0)
     private int idrespo { get; set; }  //responsable a filtarint.Parse(claims[9].Value)
     public DateTime fecha1;
     public DateTime fecha2;
-    List<ReuDiumDTO> listareu = new List<ReuDiumDTO>();//filtar los responsables
+    List<ReunionDTO> listareu = new List<ReunionDTO>();//filtar los responsables
     List<CambFecDTO> cambiofechas = new List<CambFecDTO>();
     List<CambStatDTO> cambiostatuss = new List<CambStatDTO>();
     List<MaestraVDTO> _divisiones = new List<MaestraVDTO>();
@@ -560,7 +560,7 @@ else if (dataIsLoaded == 2 && PizarraData.reudiatablas.Count() == 0)
         await KsfData.Getksf();
         await RespoReuData.GetResReu();
         RespoReuData.resporeus = RespoReuData.resporeus.Where(a => a.Rrdesc == claims.FirstOrDefault(c => c.Type.Contains("Empresa"))?.Value | string.IsNullOrEmpty(a.Rrdesc)).ToList();
-        PizarraData.reudiatablas = new List<ReuDiumDTO>();
+        PizarraData.reudiatablas = new List<ReunionDTO>();
 
 
         //TODO: Crear logica con funcion qur retorne esto.se usa en hoistoricos e impresiones tambien

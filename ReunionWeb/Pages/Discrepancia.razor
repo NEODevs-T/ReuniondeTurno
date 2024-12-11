@@ -232,7 +232,7 @@
     }
 
 
-    ReuDiumDTO Reuniondb = new ReuDiumDTO();
+    ReunionDTO Reuniondb = new ReunionDTO();
 
     private NotifiRadzen Notificar = new NotifiRadzen();//Logic para crear las noyificaciones radzen
     private string _message = "";
@@ -242,7 +242,7 @@
     private string tipoequipo { get; set; } = "1";//validar si es lista o busqueda de equipo
     CambStatDTO CambStata = new CambStatDTO();//Formulario para agregar que usuario hizo el cambio de status.
     CambFecDTO CambFech = new CambFecDTO();//Formulario para agregar que usuario hizo el cambio de fecha.
-    ReuDiumDTO regisReuDia = new ReuDiumDTO();
+    ReunionDTO regisReuDia = new ReunionDTO();
 
     private int idCent { get; set; }
     private int idDiv { get; set; }
@@ -402,7 +402,7 @@
                     if (result)
                     {
                         mensaje = "Registro Exitoso";
-                        Reuniondb = new ReuDiumDTO();
+                        Reuniondb = new ReunionDTO();
                         CambStata = new CambStatDTO();
                         CambFech = new CambFecDTO();
                         idDiv = 0;
@@ -433,7 +433,7 @@
 
     protected async Task Reset()
     {
-        Reuniondb = new ReuDiumDTO();
+        Reuniondb = new ReunionDTO();
         CambStata = new CambStatDTO();
         CambFech = new CambFecDTO();
         idDiv = 0;

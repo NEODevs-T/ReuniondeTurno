@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using ReunionWeb.ReunionDiaria.DTOs;
 
-using ReunionWeb.NeoDbs;
+
 using static System.Net.WebRequestMethods;
 using ReunionWeb.DTOs.Maestra;
 
@@ -36,8 +36,8 @@ public class APIReunionService : IAPIReunionService
         public List<DivisionesVDTO> divisions { get; set; } = new List<DivisionesVDTO>();
         public List<KsfDTO> ksfs { get; set; } = new List<KsfDTO>();
         public List<RespoReuDTO> resporeu { get; set; } = new List<RespoReuDTO>();
-        public List<ReuDiumDTO> reunionditabla { get; set; } = new List<ReuDiumDTO>();
-        public List<ReuDiumDTO> reudiatabla { get; set; } = new List<ReuDiumDTO>();
+        public List<ReunionDTO> reunionditabla { get; set; } = new List<ReunionDTO>();
+        public List<ReunionDTO> reudiatabla { get; set; } = new List<ReunionDTO>();
         public List<AsistenReuDTO> asistenreus { get; set; } = new List<AsistenReuDTO>();
         public List<CargoReuDTO> cargoreus { get; set; } = new List<CargoReuDTO>();
         public List<StatsAsisDto> StatsAsisDtos { get; set; } = new List<StatsAsisDto>();
@@ -186,11 +186,11 @@ public class APIReunionService : IAPIReunionService
                 return mens;
         }
 
-        public async Task<List<ReuDiumDTO>> GetTrabajosCalendario(string pais, string centro, string division)
+        public async Task<List<ReunionDTO>> GetTrabajosCalendario(string pais, string centro, string division)
         {
                 url = $"{BaseUrlMaestra}/GetTrabajosPorCalendario/{pais}/{centro}/{division}";
                 cliente = _clientFactory.CreateClient();
-                return await cliente.GetFromJsonAsync<List<ReuDiumDTO>>(url) ?? new List<ReuDiumDTO>();
+                return await cliente.GetFromJsonAsync<List<ReunionDTO>>(url) ?? new List<ReunionDTO>();
         }
 
         public async Task<List<EquipoEamDTO>> GetEquiposCentro(string idCentro)

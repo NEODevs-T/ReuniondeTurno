@@ -17,5 +17,5 @@ public class CambStatDTO
 
     public string? Cbuser { get; set; }
 
-    public virtual ReuDiumDTO? ReuDia { get; set; } = null!;
+    public virtual ReunionDTO? ReuDia { get; set; } = null!;
 }

@@ -4,7 +4,7 @@ using ReunionWeb.Interface;
 using BlazorStrap;
 using Microsoft.EntityFrameworkCore;
 using ReunionWeb.Services;
-using ReunionWeb.NeoDbs;
+
 using ReunionWeb;
 using Radzen;
 using ReunionWeb.Data;
@@ -38,8 +38,6 @@ builder.Services.AddBlazorStrap();
 
 
 
-builder.Services.AddDbContext<DbNeoContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("Neo")), ServiceLifetime.Transient);
 
 builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>();
 builder.Services.AddAuthorizationCore();

@@ -132,31 +132,31 @@
 
     <RadzenDataGrid @ref="@ReuTabla" Data="@tabla" class="rz-shadow-2" AllowFiltering="true" AllowColumnResize="true"
         AllowAlternatingRows="true" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="30" AllowPaging="true"
-        PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true" TItem="ReuDiumDTO"
+        PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true" TItem="ReunionDTO"
         LogicalFilterOperator="LogicalFilterOperator.Or" OrOperatorText="O" AndOperatorText="Y" EqualsText="Igual a"
         EditMode="DataGridEditMode.Single" ColumnWidth="200px">
         <Columns>
             @*
-        <RadzenDataGridColumn TItem="ReuDium" Title="Centro" Frozen="true" Property="Rdcentro" Width="80px">
+        <RadzenDataGridColumn TItem="ReunionDTO" Title="Centro" Frozen="true" Property="Rdcentro" Width="80px">
         <Template>
         @context.Rdcentro
         </Template>
 
         </RadzenDataGridColumn>
 
-        <RadzenDataGridColumn TItem="ReuDium" Title="División" Frozen="true" Property="Rddiv" Width="80px">
+        <RadzenDataGridColumn TItem="ReunionDTO" Title="División" Frozen="true" Property="Rddiv" Width="80px">
         <Template>
         @context.Rddiv
         </Template>
         </RadzenDataGridColumn>*@
 
-            <RadzenDataGridColumn TItem="ReuDiumDTO" Title="#" Frozen="true" Width="35px" Filterable=false>
+            <RadzenDataGridColumn TItem="ReunionDTO" Title="#" Frozen="true" Width="35px" Filterable=false>
                 <Template>
 
                     @(tabla.IndexOf(context) + 1)
                 </Template>
             </RadzenDataGridColumn>
-            <RadzenDataGridColumn TItem="ReuDium" Title="Línea" Frozen="true" Property="Rdarea" Width="80px">
+            <RadzenDataGridColumn TItem="ReunionDTO" Title="Línea" Frozen="true" Property="Rdarea" Width="80px">
                 <Template>
                     @context.Rdarea
                 </Template>
@@ -164,67 +164,67 @@
 
 
 
-            <RadzenDataGridColumn TItem="ReuDiumDTO" Title="Equipo" Frozen="true" Property="RdcodEq" Width="80px">
+            <RadzenDataGridColumn TItem="ReunionDTO" Title="Equipo" Frozen="true" Property="RdcodEq" Width="80px">
                 <Template>
                     @context.RdcodEq
                 </Template>
             </RadzenDataGridColumn>
 
-            <RadzenDataGridColumn TItem="ReuDiumDTO" Title="KSF" Property="Ksf" Width="80px">
+            <RadzenDataGridColumn TItem="ReunionDTO" Title="KSF" Property="Ksf" Width="80px">
                 <Template>
                     @context.Ksf
                 </Template>
             </RadzenDataGridColumn>
 
-            <RadzenDataGridColumn TItem="ReuDiumDTO" Title="Discrepancia" Property="Rddisc" Width="220px">
+            <RadzenDataGridColumn TItem="ReunionDTO" Title="Discrepancia" Property="Rddisc" Width="220px">
                 <Template>
                     @context.Rddisc
                 </Template>
             </RadzenDataGridColumn>
 
-            <RadzenDataGridColumn TItem="ReuDiumDTO" Title="Código" Property="RdcodDis" Width="60px">
+            <RadzenDataGridColumn TItem="ReunionDTO" Title="Código" Property="RdcodDis" Width="60px">
                 <Template>
                     @context.RdcodDis
                 </Template>
             </RadzenDataGridColumn>
 
-            <RadzenDataGridColumn TItem="ReuDiumDTO" Title="Acción" Property="RdplanAcc" Width="200px">
+            <RadzenDataGridColumn TItem="ReunionDTO" Title="Acción" Property="RdplanAcc" Width="200px">
                 <Template>
                     @context.RdplanAcc
                 </Template>
             </RadzenDataGridColumn>
 
-            <RadzenDataGridColumn TItem="ReuDiumDTO" Title="Tiempo" Property="Rdtiempo" Width="60px">
+            <RadzenDataGridColumn TItem="ReunionDTO" Title="Tiempo" Property="Rdtiempo" Width="60px">
                 <Template>
                     @context.Rdtiempo
                 </Template>
             </RadzenDataGridColumn>
 
-            <RadzenDataGridColumn TItem="ReuDiumDTO" Title="Responsable" Property="Responsable" Width="100px">
+            <RadzenDataGridColumn TItem="ReunionDTO" Title="Responsable" Property="Responsable" Width="100px">
                 <Template>
                     @context.Responsable
                 </Template>
             </RadzenDataGridColumn>
 
-            <RadzenDataGridColumn TItem="ReuDiumDTO" Title="ODT" Property="Rdodt" Width="100px">
+            <RadzenDataGridColumn TItem="ReunionDTO" Title="ODT" Property="Rdodt" Width="100px">
                 <Template>
                     @context.Rdodt
                 </Template>
             </RadzenDataGridColumn>
 
-            <RadzenDataGridColumn TItem="ReuDiumDTO" Title="Estado" Property="Rdstatus" Width="90px">
+            <RadzenDataGridColumn TItem="ReunionDTO" Title="Estado" Property="Rdstatus" Width="90px">
                 <Template>
                     @context.Rdstatus
                 </Template>
             </RadzenDataGridColumn>
 
-            <RadzenDataGridColumn TItem="ReuDiumDTO" Title="F. Reunión" Property="RdfecReu" Width="90px">
+            <RadzenDataGridColumn TItem="ReunionDTO" Title="F. Reunión" Property="RdfecReu" Width="90px">
                 <Template>
                     @context.RdfecReu.ToString("yyyy/MM/dd")
                 </Template>
             </RadzenDataGridColumn>
 
-            <RadzenDataGridColumn TItem="ReuDiumDTO" Title="F. Trabajo" Property="RdfecTra" Width="90px">
+            <RadzenDataGridColumn TItem="ReunionDTO" Title="F. Trabajo" Property="RdfecTra" Width="90px">
                 <Template>
                     @context.RdfecTra.ToString("yyyy/MM/dd")
                 </Template>
@@ -244,8 +244,8 @@ else if (dataIsLoaded == 2 && tabla.Count() == 0)
     <p>No hay datos para esta fecha.</p>
 }
 @code {
-    RadzenDataGrid<ReuDiumDTO> ReuTabla;
-    List<ReuDiumDTO> tabla = new List<ReuDiumDTO>();
+    RadzenDataGrid<ReunionDTO> ReuTabla;
+    List<ReunionDTO> tabla = new List<ReunionDTO>();
 
     int dataIsLoaded = 0;
     string ayer = DateTime.Now.AddDays(-1).ToString("yyyyMMdd"), error;
@@ -385,7 +385,7 @@ else if (dataIsLoaded == 2 && tabla.Count() == 0)
 
         await KsfData.Getksf();
         await RespoReuData.GetResReu();
-        PizarraData.reudiatablas = new List<ReuDiumDTO>();
+        PizarraData.reudiatablas = new List<ReunionDTO>();
 
 
     }
