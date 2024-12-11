@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace ReunionWeb.ReunionDiaria.DTOs;
 
 
-public partial class ReuDiumDTO
+public partial class ReunionDTO
 {
     public int IdReuDia { get; set; }
 

@@ -528,7 +528,7 @@ else if (dataIsLoaded == 2 && PizarraData.reudiatablas.Count() == 0)
     private int idrespo { get; set; }  //responsable a filtarint.Parse(claims[9].Value)
     public DateTime fecha1;
     public DateTime fecha2;
-    List<ReuDiumDTO> listareu = new List<ReuDiumDTO>();//filtar los responsables
+    List<ReunionDTO> listareu = new List<ReunionDTO>();//filtar los responsables
     List<CambFecDTO> cambiofechas = new List<CambFecDTO>();
     List<CambStatDTO> cambiostatuss = new List<CambStatDTO>();
     List<MaestraVDTO> _divisiones = new List<MaestraVDTO>();
@@ -560,7 +560,7 @@ else if (dataIsLoaded == 2 && PizarraData.reudiatablas.Count() == 0)
         await KsfData.Getksf();
         await RespoReuData.GetResReu();
         RespoReuData.resporeus = RespoReuData.resporeus.Where(a => a.Rrdesc == claims.FirstOrDefault(c => c.Type.Contains("Empresa"))?.Value | string.IsNullOrEmpty(a.Rrdesc)).ToList();
-        PizarraData.reudiatablas = new List<ReuDiumDTO>();
+        PizarraData.reudiatablas = new List<ReunionDTO>();
 
 
         //TODO: Crear logica con funcion qur retorne esto.se usa en hoistoricos e impresiones tambien

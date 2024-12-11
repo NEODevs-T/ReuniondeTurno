@@ -43,8 +43,8 @@ public class DbReunionService : IDbReunionService
         public List<DivisionesVDTO> divs { get; set; } = new List<DivisionesVDTO>();
         public List<KsfDTO> ksfss { get; set; } = new List<KsfDTO>();
         public List<RespoReuDTO> resporeus { get; set; } = new List<RespoReuDTO>();
-        public List<ReuDiumDTO> reunionditablas { get; set; } = new List<ReuDiumDTO>();
-        public ReuDiumDTO reuniondia { get; set; } = new ReuDiumDTO();
+        public List<ReunionDTO> reunionditablas { get; set; } = new List<ReunionDTO>();
+        public ReunionDTO reuniondia { get; set; } = new ReunionDTO();
         public List<DivisionesVDTO> divisionss { get; set; } = new List<DivisionesVDTO>();
         public List<AsistenReuDTO> asistenreus { get; set; } = new List<AsistenReuDTO>();
         public List<CargoReuDTO> cargoreuss { get; set; } = new List<CargoReuDTO>();
@@ -57,35 +57,35 @@ public class DbReunionService : IDbReunionService
     private readonly NavigationManager _navigationManager;
 
 
-    public async Task<List<ReuDiumDTO>> GetByODT(string ODT, string idcentro, string iddiv)
+    public async Task<List<ReunionDTO>> GetByODT(string ODT, string idcentro, string iddiv)
     {
         url = $"{BaseUrl}GetByODT/{ODT}/{idcentro}/{iddiv}";
-        return reunionditablas = await _http.GetFromJsonAsync<List<ReuDiumDTO>>(url) ?? new List<ReuDiumDTO>();
+        return reunionditablas = await _http.GetFromJsonAsync<List<ReunionDTO>>(url) ?? new List<ReunionDTO>();
 
     }
 
     //obtener discrepancias para pendientes y reunion 
-    public async Task<List<ReuDiumDTO>> GetPendientes(string idcentro, string iddiv, DateTime f1, DateTime f2, string tipo, string estado)
+    public async Task<List<ReunionDTO>> GetPendientes(string idcentro, string iddiv, DateTime f1, DateTime f2, string tipo, string estado)
     {
         string f1Formatiado = f1.ToString("yyyy-MM-dd");
         string f2Formatiado = f2.ToString("yyyy-MM-dd");
         url = $"{BaseUrl}/GetPendientes/{idcentro}/{iddiv}/{f1Formatiado}/{f2Formatiado}/{tipo}/{estado}";
-        return reunionditablas = await _http.GetFromJsonAsync<List<ReuDiumDTO>>(url) ?? new List<ReuDiumDTO>();
+        return reunionditablas = await _http.GetFromJsonAsync<List<ReunionDTO>>(url) ?? new List<ReunionDTO>();
 
     }
 
     //historicos
-    public async Task<List<ReuDiumDTO>> GetHistoricos(string idcentro, string iddiv, DateTime f1, DateTime f2, string tipo, string estado)
+    public async Task<List<ReunionDTO>> GetHistoricos(string idcentro, string iddiv, DateTime f1, DateTime f2, string tipo, string estado)
     {
         string f1Formatiado = f1.ToString("yyyy-MM-dd");
         string f2Formatiado = f2.ToString("yyyy-MM-dd");
         url = $"{BaseUrl}/GetHistoricos/{idcentro}/{iddiv}/{f1Formatiado}/{f2Formatiado}/{tipo}/{estado}";
-        return reunionditablas = await _http.GetFromJsonAsync<List<ReuDiumDTO>>(url) ?? new List<ReuDiumDTO>();
+        return reunionditablas = await _http.GetFromJsonAsync<List<ReunionDTO>>(url) ?? new List<ReunionDTO>();
 
     }
 
     //Update Discrepancia
-    public async Task<bool> UpdateDiscrepancia(ReuDiumDTO d, int id, int tipo, string f1, string f2, string estado)
+    public async Task<bool> UpdateDiscrepancia(ReunionDTO d, int id, int tipo, string f1, string f2, string estado)
     {
         bool band = false;
         url = $"{BaseUrl}/UpdateDiscrepancia/{id}";
@@ -145,7 +145,7 @@ public class DbReunionService : IDbReunionService
 
 
 
-    public async Task<bool> UpdateDiscrepancia2(ReuDiumDTO d, int id, int tipo, string f1, string f2, string estado, string linea)
+    public async Task<bool> UpdateDiscrepancia2(ReunionDTO d, int id, int tipo, string f1, string f2, string estado, string linea)
     {
         bool band = false;
         url = $"{BaseUrl}/UpdateDiscrepancia2/{id}";
@@ -212,15 +212,15 @@ public class DbReunionService : IDbReunionService
 
 
     //obtener discrepancia a editar
-    public async Task<ReuDiumDTO> GetDiscrepantacia(int id)
+    public async Task<ReunionDTO> GetDiscrepantacia(int id)
     {
         url = $"{BaseUrl}GetDiscrepantaciaJT/{id}";
-        return reuniondia = await _http.GetFromJsonAsync<ReuDiumDTO>(url) ?? new ReuDiumDTO();
+        return reuniondia = await _http.GetFromJsonAsync<ReunionDTO>(url) ?? new ReunionDTO();
 
     }
 
 
-    public async Task<int> InsertDiscrepancia(ReuDiumDTO discre)
+    public async Task<int> InsertDiscrepancia(ReunionDTO discre)
     {
         int data = 0;
         url = $"{BaseUrl}/AddDiscrepancia";
