@@ -17,8 +17,10 @@ interface IMaestraData
     List<DivisionesVDTO> divisions { get; set; }
     List<EquipoEamDTO> equipos { get; set; }
     List<EquipoEamDTO> equiposlinea { get; set; }
+    List<MaestraVDTO> maestra { get; set; }
 
 
+    Task<List<MaestraVDTO>> GetMaestraXLinea(int idlinea);
     Task<List<EquipoEamDTO>> GetEquiposEAM(string cent);
     Task<List<EquipoEamDTO>> GetEquiposID(string idCentro);
     Task<List<EquipoEamDTO>> GetEquiposxlinea(string idLinea);

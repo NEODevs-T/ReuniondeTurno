@@ -253,7 +253,7 @@
     private bool isDesactivado { get; set; } = false;
     private List<AsistenReuDTO> listaAsistencia { get; set; } = new List<AsistenReuDTO>();
 
-
+    int reunionDia = 1;
     protected override async Task OnInitializedAsync()
     {
 
@@ -311,6 +311,7 @@
     protected async Task BuscarEquipo(ChangeEventArgs e){
         idLin = int.Parse(e.Value.ToString());
         idEqui = 0;
+        await BuscarIdMaster(idLin);
         try{
             if(idCent != 0){
                 MaestraData.equipos = await MaestraData.GetEquiposEAMPorLinea(idLin);
@@ -320,6 +321,16 @@
         }
     }
 
+    protected async Task BuscarIdMaster(int e){
+        idLin = e;
+        try{
+            if(idCent != 0){
+                MaestraData.maestra = await MaestraData.GetMaestraXLinea(idLin);
+            }
+        }catch(Exception ex){
+            mensaje = "Error: " + ex.Message;
+        }
+    }
 
 
 
@@ -329,8 +340,11 @@
         //Reuniondb.Fecha = fecha;
         try
         {
+            Reuniondb.IdMaster = MaestraData.maestra.Where(x => x.IdLinea == idLin).FirstOrDefault().IdMaster;
             Reuniondb.Rdarea = MaestraData.lineas.Where(x => x.IdLinea == idLin).FirstOrDefault().Linea;
             Reuniondb.Rdstatus = "Pendiente";
+            Reuniondb.IdTipReu = reunionDia;
+            Reuniondb.IdCausaCal = 1;
             Reuniondb.IdPais = int.Parse(claims.FirstOrDefault(c => c.Type == "IdPais")?.Value);
             Reuniondb.IdEmpresa = int.Parse(claims.FirstOrDefault(c => c.Type == "IdEmpresa")?.Value);
 
