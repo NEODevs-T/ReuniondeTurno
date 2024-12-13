@@ -38,7 +38,7 @@ public class MaestraData : IMaestraData
     public async Task<List<MaestraVDTO>> GetMaestraXLinea(int idlinea)
     {
 
-        url = $"{BaseUrl2}/GetMaestraXLinea/{idlinea}";
+        url = $"{BaseUrl}/GetMaestraXLinea/{idlinea}";
         cliente = _clientFactory.CreateClient();
         return maestra = await _http.GetFromJsonAsync<List<MaestraVDTO>>(url) ?? new List<MaestraVDTO>();
     }
