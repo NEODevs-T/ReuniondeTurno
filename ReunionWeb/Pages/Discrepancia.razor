@@ -201,7 +201,7 @@
             </BSInput>
         </BSCol>
 
-
+@* 
         <BSCol Column="2">
             <BSLabel>PruebaNR01</BSLabel>
             <BSInput InputType="InputType.Select" @bind-Value="Reuniondb.IdResReu">
@@ -224,7 +224,7 @@
                     <option value="@d.IdResReu">@d.IdResReu</option>
                 }
             </BSInput>
-        </BSCol>
+        </BSCol> *@
 
     </BSRow>
 
@@ -278,7 +278,7 @@
     private bool isDesactivado { get; set; } = false;
     private List<AsistenReuDTO> listaAsistencia { get; set; } = new List<AsistenReuDTO>();
 
-    int reunionDia = 1;
+    int reunionTurno = 2;
     protected override async Task OnInitializedAsync()
     {
 
@@ -368,7 +368,7 @@
             Reuniondb.IdMaster = MaestraData.maestra.Where(x => x.IdLinea == idLin).FirstOrDefault().IdMaster;
             Reuniondb.Rdarea = MaestraData.lineas.Where(x => x.IdLinea == idLin).FirstOrDefault().Linea;
             Reuniondb.Rdstatus = "Pendiente";
-            Reuniondb.IdTipReu = reunionDia;
+            Reuniondb.IdTipReu = reunionTurno;
             Reuniondb.IdCausaCal = 1;
             Reuniondb.IdPais = int.Parse(claims.FirstOrDefault(c => c.Type == "IdPais")?.Value);
             Reuniondb.IdEmpresa = int.Parse(claims.FirstOrDefault(c => c.Type == "IdEmpresa")?.Value);
