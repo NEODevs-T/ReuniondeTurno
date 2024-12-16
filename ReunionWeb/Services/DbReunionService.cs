@@ -266,7 +266,7 @@ public class DbReunionService : IDbReunionService
     public async Task<bool> InsertarRegistros(RegistroCambiosDTO registroCambios)
     {
         bool band = false;
-        url = $"{BaseUrl}/AddRegistros";
+        url = $"{BaseUrl}/AddRegistrosCambios";
         cliente = _clientFactory.CreateClient();
         mensaje = await cliente.PostAsJsonAsync(url, registroCambios);
 
