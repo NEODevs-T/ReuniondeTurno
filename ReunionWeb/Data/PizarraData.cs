@@ -37,7 +37,9 @@ public class PizarraData : IPizarraData
 
     public async Task<List<CalendarioTrabajoDTO>> GetTrabajosCalendario(string pais, string centro, string division)
     {
-        url = $"{BaseUrl}/GetTrabajosPorCalendario/{pais}/{centro}/{division}";
+
+        int reunionDiaria = 1;
+        url = $"{BaseUrl}/GetTrabajosPorCalendario/{pais}/{centro}/{division}/{reunionDiaria}";
         cliente = _clientFactory.CreateClient();
         return calentrabajo = await cliente.GetFromJsonAsync<List<CalendarioTrabajoDTO>>(url) ?? new List<CalendarioTrabajoDTO>();
     }
@@ -52,9 +54,10 @@ public class PizarraData : IPizarraData
     //obtener discrepancias para pendientes y reunion 
     public async Task<List<ReunionDTO>> GetPendientes(string idcentro, string iddiv, DateTime f1, DateTime f2, string tipo, string estado)
     {
+        int reunionDiaria = 1;
         string f1Formatiado = f1.ToString("yyyy-MM-dd");
         string f2Formatiado = f2.ToString("yyyy-MM-dd");
-        url = $"{BaseUrl}/GetPendientes/{idcentro}/{iddiv}/{f1Formatiado}/{f2Formatiado}/{tipo}/{estado}";
+        url = $"{BaseUrl}/GetPendientes/{idcentro}/{iddiv}/{f1Formatiado}/{f2Formatiado}/{tipo}/{estado}/{reunionDiaria}";
         return reudiatablas = await _http.GetFromJsonAsync<List<ReunionDTO>>(url) ?? new List<ReunionDTO>();
 
     }
@@ -62,9 +65,10 @@ public class PizarraData : IPizarraData
     //historicos
     public async Task<List<ReunionDTO>> GetHistoricos(string idcentro, string iddiv, DateTime f1, DateTime f2, string tipo, string estado)
     {
+        int reunionDiaria = 1;
         string f1Formatiado = f1.ToString("yyyy-MM-dd");
         string f2Formatiado = f2.ToString("yyyy-MM-dd");
-        url = $"{BaseUrl}/GetHistoricos/{idcentro}/{iddiv}/{f1Formatiado}/{f2Formatiado}/{tipo}/{estado}";
+        url = $"{BaseUrl}/GetHistoricos/{idcentro}/{iddiv}/{f1Formatiado}/{f2Formatiado}/{tipo}/{estado}/{reunionDiaria}";
         return reunionditablas = await _http.GetFromJsonAsync<List<ReunionDTO>>(url) ?? new List<ReunionDTO>();
 
     }
