@@ -201,6 +201,20 @@
             </BSInput>
         </BSCol>
 
+                <BSCol Column="3">
+            <BSLabel>Responsable</BSLabel>
+            <BSInput InputType="InputType.Select" @bind-Value="Reuniondb.IdResReu">
+                <option value="">Seleccione...</option>
+
+                @foreach (var d in RespoReuData.resporeus)
+                {
+                    <option value="@d.IdResReu">@d.Rrnombre</option>
+                }
+            </BSInput>
+        </BSCol>
+
+
+
 @* 
         <BSCol Column="2">
             <BSLabel>PruebaNR01</BSLabel>
