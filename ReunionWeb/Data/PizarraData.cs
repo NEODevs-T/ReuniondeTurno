@@ -62,6 +62,13 @@ public class PizarraData : IPizarraData
 
     }
 
+    public async Task<List<ReunionDTO>> GetPendientesTurno(string idcentro, string iddiv)
+    {
+        url = $"{BaseUrl}/GetPendientesTurno/{idcentro}/{iddiv}";
+        return reudiatablas = await _http.GetFromJsonAsync<List<ReunionDTO>>(url) ?? new List<ReunionDTO>();
+
+    }
+
     //historicos
     public async Task<List<ReunionDTO>> GetHistoricos(string idcentro, string iddiv, DateTime f1, DateTime f2, string tipo, string estado)
     {
@@ -178,7 +185,22 @@ public class PizarraData : IPizarraData
             return false;
         }
     }
-
+    
+        public async Task<bool> UpdateDiscrepancia3(ReunionDTO d, int id)
+    {
+        bool band = false;
+        url = $"{BaseUrl}/UpdateDiscrepancia2/{id}";
+        cliente = _clientFactory.CreateClient();
+        mensaje = await cliente.PutAsJsonAsync(url, d);
+            if (mensaje.IsSuccessStatusCode)
+            {
+                band = await mensaje.Content.ReadFromJsonAsync<bool>();
+                return band;
+            } else
+            {
+                return band;
+            }
+    }
     public async Task<ReunionDTO> GetDiscrepantacia(int id)
     {
         url = $"{BaseUrl}/GetDiscrepantacia/{id}";

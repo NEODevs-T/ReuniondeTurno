@@ -1,0 +1,42 @@
+.box-reuform{
+    padding-top: 20px;
+    display: flex;
+    justify-content: center; /* O flex-start para alinear a la izquierda */
+    align-items: center;
+    /* height: 100vh; */
+}
+
+h3{
+    padding: 30px;
+}
+
+.box-reuCent{
+    margin: 10px;
+}
+.box-reuDiv{
+    margin: 10px;
+
+}
+.box-reuLin{
+    margin: 10px;
+}
+#btn-disc{
+    background-color: #00aa7b;
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+    position: relative; /* o absolute, dependiendo de tus necesidades */
+    bottom: 10px; /* Ajusta según sea necesario */
+    left: 20px; /* Ajusta según sea necesario */
+}
+#btn-disc:hover{
+        background-color: #00b356;
+}

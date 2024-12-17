@@ -281,33 +281,33 @@
 
 
 
-    protected async Task BuscarDivision(ChangeEventArgs e){
-        idCent = int.Parse(e.Value.ToString());
-        idDiv = 0;
-        idLin = 0;
-        idEqui = 0;
-        try{
-            if(idCent != 0){
-                MaestraData.divisions = await MaestraData.ObtenerDivisionDelCentro(idCent);
+        protected async Task BuscarDivision(ChangeEventArgs e){
+            idCent = int.Parse(e.Value.ToString());
+            idDiv = 0;
+            idLin = 0;
+            idEqui = 0;
+            try{
+                if(idCent != 0){
+                    MaestraData.divisions = await MaestraData.ObtenerDivisionDelCentro(idCent);
+                }
+            }catch(Exception ex){
+                mensaje = "Error: " + ex.Message;
             }
-        }catch(Exception ex){
-            mensaje = "Error: " + ex.Message;
         }
-    }
 
-    protected async Task BuscarLinea(ChangeEventArgs e){
-        idDiv = int.Parse(e.Value.ToString());
-        idLin = 0;
-        idEqui = 0;
+        protected async Task BuscarLinea(ChangeEventArgs e){
+            idDiv = int.Parse(e.Value.ToString());
+            idLin = 0;
+            idEqui = 0;
 
-        try{
-            if(idCent != 0){
-                MaestraData.lineas = await MaestraData.ObtenerLasLineasPorDivision(idDiv);
+            try{
+                if(idCent != 0){
+                    MaestraData.lineas = await MaestraData.ObtenerLasLineasPorDivision(idDiv);
+                }
+            }catch(Exception ex){
+                mensaje = "Error: " + ex.Message;
             }
-        }catch(Exception ex){
-            mensaje = "Error: " + ex.Message;
         }
-    }
     protected async Task BuscarEquipo(ChangeEventArgs e){
         idLin = int.Parse(e.Value.ToString());
         idEqui = 0;
