@@ -29,7 +29,7 @@ else
     <BSRow>
         <BSCol ColumnLarge="3" ColumnSmall="6">
             <BSLabel>Centro</BSLabel>
-            <BSInput InputType="InputType.Select" Value=IdCentro ValueChanged="@((int value) => DivReset(value))" @onchange="BuscarDivision" >>
+            <BSInput InputType="InputType.Select" @bind-Value="IdCentro" @onchange="BuscarDivision" >>
                 <option value="0"> Seleccione </option>
                 @foreach (var d in MaestraData.centro)
                 {
@@ -185,7 +185,7 @@ else
 }
 
 @*Tabla vieja*@
-@if (PizarraData.reudiatablas.Count() > 0 && dataIsLoaded == 2)
+@if (PizarraData.reudiatablas.Count() > 0 &&  dataIsLoaded == 2)
 {
     <div class=" pt-3">
 
@@ -213,68 +213,71 @@ else
 
                 @foreach (var d in listareu)
                 {
-                    @if (Codigo == d.RdcodDis | Codigo == "Todo")
+                    @if(d.Rdstatus != "Rechazada")
                     {
-
-                        @if (NombreLinea == "Todo" | NombreLinea == d.Rdarea)
+                        @if (Codigo == d.RdcodDis | Codigo == "Todo")
                         {
-                            @if (idrespo == 0 | idrespo == d.IdResReu)
-                            {
 
-                                @if (IdKsf == 0 | IdKsf == d.Idksf)
+                            @if (NombreLinea == "Todo" | NombreLinea == d.Rdarea)
+                            {
+                                @if (idrespo == 0 | idrespo == d.IdResReu)
                                 {
 
-                                    <BSTR Class="@GetClassVencido(d.RdfecTra, d.Rdstatus)">
+                                    @if (IdKsf == 0 | IdKsf == d.Idksf)
+                                    {
 
-                                        @*<BSTD>@d.IdReuDia</BSTD>*@
-                                        <BSTD>@d.Rdarea</BSTD>
-                                            <BSTD>@d.Ksf</BSTD>
-                                            <BSTD>@d.RdcodEq</BSTD>
-                                            <BSTD>@d.Rddisc.ToUpperInvariant()</BSTD>
-                                            <BSTD>@d.RdcodDis</BSTD>
-                                            <BSTD Class="textotabla">@d.RdplanAcc</BSTD>
-                                            <BSTD>@d.Rdtiempo</BSTD>
+                                        <BSTR Class="@GetClassVencido(d.RdfecTra, d.Rdstatus)">
 
-                                            @if (@d.Responsable == "Por Definir")
-                                        {
-                                            <BSTD Class="Definir">@d.Responsable </BSTD>
-                                        }
-                                        else
-                                        {
-                                            <BSTD>@d.Responsable </BSTD>
-                                        }
+                                            @*<BSTD>@d.IdReuDia</BSTD>*@
+                                            <BSTD>@d.Rdarea</BSTD>
+                                                <BSTD>@d.Ksf</BSTD>
+                                                <BSTD>@d.RdcodEq</BSTD>
+                                                <BSTD>@d.Rddisc.ToUpperInvariant()</BSTD>
+                                                <BSTD>@d.RdcodDis</BSTD>
+                                                <BSTD Class="textotabla">@d.RdplanAcc</BSTD>
+                                                <BSTD>@d.Rdtiempo</BSTD>
 
-                                        @if (@d.Rdstatus == "Listo")
-                                        {
-                                            <BSTD Class="listo">@d.Rdstatus</BSTD>
-                                        }
-                                        else if (@d.Rdstatus == "Cerrado")
-                                        {
-                                            <BSTD Class="Cerrado">@d.Rdstatus</BSTD>
-                                        }
-                                        else
-                                        {
-                                            <BSTD Class="pendiente">@d.Rdstatus</BSTD>
-                                        }
-                                        <BSTD>@d.Rdodt</BSTD>
-                                            <BSTD>@d.RdfecReu.ToString("dd/MM/yyyy")</BSTD>
-                                            <BSTD>@d.RdfecTra.ToString("dd/MM/yyyy")</BSTD>
-                                            <BSTD>
-                                                <BSRow>
-                                                    <BSCol>
-                                                    @if(isEditar){
-                                                        <button class="btn btn-success" @onclick="(() => Editar(d.IdReuDia))"><i class="oi oi-pencil"></i></button>
-                                                    }
+                                                @if (@d.Responsable == "Por Definir")
+                                            {
+                                                <BSTD Class="Definir">@d.Responsable </BSTD>
+                                            }
+                                            else
+                                            {
+                                                <BSTD>@d.Responsable </BSTD>
+                                            }
+
+                                            @if (@d.Rdstatus == "Listo")
+                                            {
+                                                <BSTD Class="listo">@d.Rdstatus</BSTD>
+                                            }
+                                            else if (@d.Rdstatus == "Cerrado")
+                                            {
+                                                <BSTD Class="Cerrado">@d.Rdstatus</BSTD>
+                                            }
+                                            else
+                                            {
+                                                <BSTD Class="pendiente">@d.Rdstatus</BSTD>
+                                            }
+                                            <BSTD>@d.Rdodt</BSTD>
+                                                <BSTD>@d.RdfecReu.ToString("dd/MM/yyyy")</BSTD>
+                                                <BSTD>@d.RdfecTra.ToString("dd/MM/yyyy")</BSTD>
+                                                <BSTD>
+                                                    <BSRow>
+                                                        <BSCol>
+                                                        @if(isEditar){
+                                                            <button class="btn btn-success" @onclick="(() => Editar(d.IdReuDia))"><i class="oi oi-pencil"></i></button>
+                                                        }
+                                                        </BSCol>
+                                                        <BSCol>
+                                                            @if (UsrAdmin != "")
+                                                        {
+                                                            <BSButton Color="BSColor.Primary" IsOutlined @onclick="(() => GetHistory(d.IdReuDia))" Target="History"><i class="oi oi-eye"></i></BSButton>
+                                                        }
                                                     </BSCol>
-                                                    <BSCol>
-                                                        @if (UsrAdmin != "")
-                                                    {
-                                                        <BSButton Color="BSColor.Primary" IsOutlined @onclick="(() => GetHistory(d.IdReuDia))" Target="History"><i class="oi oi-eye"></i></BSButton>
-                                                    }
-                                                </BSCol>
-                                            </BSRow>
-                                        </BSTD>
-                                    </BSTR>
+                                                </BSRow>
+                                            </BSTD>
+                                        </BSTR>
+                                    }
                                 }
                             }
                         }
@@ -629,25 +632,15 @@ else if (dataIsLoaded == 2 && PizarraData.reudiatablas.Count() == 0)
 
     protected async Task BuscarDivision(ChangeEventArgs e)
     {
-        if (!string.IsNullOrWhiteSpace(e.Value?.ToString()) && int.TryParse(e.Value.ToString(), out int IdCentro))
-        {
-
-            try
-            {
-                if (IdCentro != 0)
-                {
+            IdCentro = int.Parse(e.Value.ToString());
+            IdDiv = 0;
+            try{
+                if(IdCentro != 0){
                     MaestraData.divisions = await MaestraData.ObtenerDivisionDelCentro(IdCentro);
                 }
-            }
-            catch (Exception ex)
-            {
+            }catch(Exception ex){
                 mensaje = "Error: " + ex.Message;
             }
-        }
-        else
-        {
-            mensaje = "El valor del centro seleccionado no es válido.";
-        }
     }
 
 
