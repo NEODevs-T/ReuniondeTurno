@@ -52,7 +52,7 @@ else
         {
             <BSCol ColumnLarge="3" ColumnSmall="6">
                 <BSLabel>Línea</BSLabel>
-                <BSInput InputType="InputType.Select" @bind-Value="NombreLinea" IsDisabled=@valueodt>
+                <BSInput InputType="InputType.Select" @bind-Value="NombreLinea">
                     <option value="Todo">Todo</option>
                     @foreach (var d in MaestraData.lineas)
                     {
@@ -64,7 +64,7 @@ else
         }
         <BSCol ColumnLarge="3" ColumnSmall="6">
             <BSLabel>Estado</BSLabel>
-            <BSInput InputType="InputType.Select" @bind-Value="Status" IsDisabled=@valueodt>
+            <BSInput InputType="InputType.Select" @bind-Value="Status">
                 <option value="Total Pendiente">Total Pendiente</option>
                 <option value="Todo">Todo</option>
                 <option value="Pendiente">Pendiente</option>
@@ -91,7 +91,7 @@ else
 
         <BSCol ColumnLarge="3" ColumnSmall="4">
             <BSLabel>Código</BSLabel>
-            <BSInput InputType="InputType.Select" @bind-Value="Codigo" IsDisabled=@valueodt>
+            <BSInput InputType="InputType.Select" @bind-Value="Codigo">
                 <option value="Todo">Todo</option>
                 <option value="1">1- En Curso</option>
                 <option value="2">2- Próxima Parada</option>
@@ -106,12 +106,12 @@ else
             <BSRow>
                 <BSLabel>  Ordenar </BSLabel>
             </BSRow>
-            <BSInputRadio CheckedValue="@("2")" IsDisabled=@valueodt @bind-Value="tipoconsulta" IsToggle="true" Size="Size.ExtraSmall" Color="BSColor.Success" IsOutlined="true" style="width:50%;">
+            @* <BSInputRadio CheckedValue="@("2")" @bind-Value="tipoconsulta" IsToggle="true" Size="Size.ExtraSmall" Color="BSColor.Success" IsOutlined="true" style="width:50%;">
                 F.Trabajo
                 <span class="oi oi-cog"></span>
-            </BSInputRadio>
+            </BSInputRadio> *@
 
-            <BSInputRadio CheckedValue="@("0")" IsDisabled=@valueodt @bind-Value="tipoconsulta" IsToggle="true" Size="Size.ExtraSmall" Color="BSColor.Success" IsOutlined="true" style="width:50%;">
+            <BSInputRadio CheckedValue="@("0")" @bind-Value="tipoconsulta" IsToggle="true" Size="Size.ExtraSmall" Color="BSColor.Success" IsOutlined="true" style="width:50%;">
                 F. Reunión
                 <span class="oi oi-people"></span>
             </BSInputRadio>
@@ -122,7 +122,7 @@ else
             <BSRow>
                 <BSLabel>Buscar</BSLabel>
             </BSRow>
-            <BSButton IsOutlined Color="BSColor.Success" Size="Size.ExtraSmall" IsDisabled=@valueodt @onclick="Get" style="width:70%;">  Consultar <span class="oi oi-check"></span></BSButton>
+            <BSButton IsOutlined Color="BSColor.Success" Size="Size.ExtraSmall" @onclick="Get" style="width:70%;">  Consultar <span class="oi oi-check"></span></BSButton>
          </BSCol>
 
 
@@ -147,7 +147,7 @@ else
         {
             <BSCol Column="3">
                 <BSLabel>Responsable</BSLabel>
-                <BSInput InputType="InputType.Select" IsDisabled=@valueodt @bind-Value="idrespo">
+                <BSInput InputType="InputType.Select" @bind-Value="idrespo">
                     <option value=0>Todo</option>
                     @foreach (var d in RespoReuData.resporeus)
                     {
@@ -162,7 +162,7 @@ else
             <BSCol Column="3">
                 <BSLabel>Ksf</BSLabel>
 
-                <BSInput InputType="InputType.Select" IsDisabled=@valueodt @bind-Value="IdKsf">
+                <BSInput InputType="InputType.Select" @bind-Value="IdKsf">
 
                     <option value="0">Todo</option>
                     @foreach (var d in KsfData.ksfs)
@@ -177,7 +177,7 @@ else
                 <BSRow>
                     <BSLabel>Imprimir</BSLabel>
                 </BSRow>
-                <BSButton IsOutlined Color="BSColor.Success" Size="Size.ExtraSmall" IsDisabled=@valueodt @onclick="PrintDocument">  <span class="oi oi-print"></span></BSButton>
+                <BSButton IsOutlined Color="BSColor.Success" Size="Size.ExtraSmall" @onclick="PrintDocument">  <span class="oi oi-print"></span></BSButton>
              </BSCol>
 
         }
@@ -202,7 +202,6 @@ else
                     <BSTD>Tiempo</BSTD>
                     <BSTD>Responsable</BSTD>
                     <BSTD>Estado</BSTD>
-                    <BSTD>ODT</BSTD>
                     <BSTD>Fecha de Reunión</BSTD> @*Fecha del dia de reunion*@
                     <BSTD>Fecha del Trabajo</BSTD>@*Fecha de listo el trabajo*@
                     <BSTD></BSTD>
