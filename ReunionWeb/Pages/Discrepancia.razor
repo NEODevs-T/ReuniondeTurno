@@ -189,54 +189,17 @@
     <BSRow>
         <p></p>
 
-@code {
-    // Propiedad para capturar el valor del primer select
-    private string selectedResponsable = "";
-
-    // Verificar si se seleccionó "Calidad"
-    private bool IsCalidadSelected => selectedResponsable == "Calidad";
-}
-
-<!-- Primer Select -->
 <BSCol Column="3">
-    <BSLabel>Responsable</BSLabel>
-    <BSInput InputType="InputType.Select" @bind-Value="selectedResponsable">
-        <option value="">Seleccione...</option>
+            <BSLabel>Responsable</BSLabel>
+            <BSInput InputType="InputType.Select" @bind-Value="Reuniondb.IdResReu">
+                <option value="">Seleccione...</option>
 
-        @foreach (var d in RespoReuData.resporeus)
-        {
-            <option value="@d.Rrnombre">@d.Rrnombre</option>
-        }
-    </BSInput>
-</BSCol>
-
-<!-- Segundo Select: Solo se muestra si se selecciona "Calidad" -->
-@* Mostrar la columna solo si "Calidad" está seleccionada *@
-@if (IsCalidadSelected)
-{
-    <BSCol Column="3">
-        <BSLabel>Sin Información</BSLabel>
-        <BSInput InputType="InputType.Select" @bind-Value="Reuniondb.IdResReu">
-            <option value="">Seleccione...</option>
-            <option value="Opción A">Opción A</option>
-            <option value="Opción B">Opción B</option>
-        </BSInput>
-    </BSCol>
-}
-
-<!-- Tercer Select: Solo se muestra si se selecciona "Calidad" -->
-@if (IsCalidadSelected)
-{
-    <BSCol Column="3">
-        <BSLabel>Sin Data</BSLabel>
-        <BSInput InputType="InputType.Select" @bind-Value="Reuniondb.IdResReu">
-            <option value="">Seleccione...</option>
-            <option value="Opción X">Opción X</option>
-            <option value="Opción Y">Opción Y</option>
-        </BSInput>
-    </BSCol>
-}
-
+                @foreach (var d in RespoReuData.resporeus)
+                {
+                    <option value="@d.IdResReu">@d.Rrnombre</option>
+                }
+            </BSInput>
+        </BSCol>
 
     </BSRow>
 
