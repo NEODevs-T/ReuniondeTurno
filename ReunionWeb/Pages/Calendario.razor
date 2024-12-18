@@ -214,25 +214,15 @@ else if (dataIsLoaded == 2 && PizarraData.calentrabajo.Count() == 0)
 
         protected async Task BuscarDivision(ChangeEventArgs e)
     {
-        if (!string.IsNullOrWhiteSpace(e.Value?.ToString()) && int.TryParse(e.Value.ToString(), out int IdCentro))
-        {
-
-            try
-            {
-                if (IdCentro != 0)
-                {
+            IdCentro = int.Parse(e.Value.ToString());
+            IdDiv = 0;
+            try{
+                if(IdCentro != 0){
                     MaestraData.divisions = await MaestraData.ObtenerDivisionDelCentro(IdCentro);
                 }
-            }
-            catch (Exception ex)
-            {
+            }catch(Exception ex){
                 mensaje = "Error: " + ex.Message;
             }
-        }
-        else
-        {
-            mensaje = "El valor del centro seleccionado no es válido.";
-        }
     }
 
 
