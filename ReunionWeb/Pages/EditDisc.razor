@@ -102,11 +102,10 @@
                 </BSRow>
 
                 <p></p>
-                <p></p>
 
                 <BSRow>
 
-                    @if (tipo == 0 || tipo == 2)
+                    @* @if (tipo == 0 || tipo == 2)
                     {
                         <BSCol Column="2">
                             <BSLabel>Tiempo (Horas)</BSLabel>
@@ -121,7 +120,7 @@
                             <BSInput InputType="InputType.Number" @bind-Value="DiscForm.Rdtiempo" />
                         </BSCol>
                     }
-
+                    
 
                     @if (tipo == 0 || tipo == 2)
                     {
@@ -136,7 +135,35 @@
                             <BSLabel>Fecha del Trabajo</BSLabel>
                             <BSInput InputType="InputType.Date" @bind-Value="DiscForm.RdfecTra" />
                         </BSCol>
-                    }
+                    } *@
+
+                    @* <BSCol ColumnSmall="2">
+                        <BSLabel>Status</BSLabel>
+                        <BSInput InputType="InputType.Select" @bind-Value="DiscForm.Rdstatus">
+
+                            @if (tipo == 0 || tipo == 2)
+                            {
+                                <option value="">Seleccione...</option>
+                                <option value="">Pendiente</option>
+                                <option value="Cerrado">Cerrado</option>
+
+                            }
+                            else
+                            {
+                                <option value="Revisar">Revisar</option>
+                            }
+                            @if (DiscForm.Rdodt is not null)
+                            {
+                            }
+                            else
+                            {
+                                <option value="Pendiente">Pendiente</option>
+                            }
+
+                            <BSFeedback For="@(() => DiscForm.Rdstatus)" ValidMessage="Correcto." />
+                        </BSInput>
+                    </BSCol> *@
+
 
                     <BSCol ColumnSmall="2">
                         <BSLabel>Responsable</BSLabel>
@@ -155,11 +182,11 @@
                     {
                         <BSCol Column="2">
                             <BSLabel>Fecha Reunión</BSLabel>
-                            <BSInput InputType="InputType.Date" @bind-Value="DiscForm.RdfecReu" ValidateOnInput="true" />
+                            <BSInput InputType="InputType.Date" IsDisabled @bind-Value="DiscForm.RdfecReu" ValidateOnInput="true" />
                         </BSCol>
                     }
                 </BSRow>
-                <p></p>
+
                 <BSRow>
 
                     @if (tipo == 0 || tipo == 2)
@@ -167,12 +194,7 @@
                         <BSCol ColumnSmall="2">
                             <BSLabel>Código</BSLabel>
                             <BSInput InputType="InputType.Select" IsDisabled @bind-Value="DiscForm.RdcodDis">
-                             <option value="">Seleccione...</option>
-                             <option value="1">1- En Curso</option>
-                             <option value="2">2- Próxima Parada</option>
-                             <option value="3">3- Falta Repuesto</option>
-                             <option value="4">4- Falta de Personal</option>
-                             <option value="5">5- Eq. no Disponible</option>
+                            <option value="6">En Curso</option>
 
 
                          </BSInput>
@@ -182,13 +204,8 @@
                     {
                         <BSCol ColumnSmall="2">
                             <BSLabel>Código</BSLabel>
-                            <BSInput InputType="InputType.Select" @bind-Value="DiscForm.RdcodDis">
-                                <option value="">Seleccione...</option>
-                                <option value="1">1- En Curso</option>
-                                <option value="2">2- Próxima Parada</option>
-                                <option value="3">3- Falta Repuesto</option>
-                                <option value="4">4- Falta de Personal</option>
-                                <option value="5">5- Eq. no Disponible</option>
+                            <BSInput InputType="InputType.Select" IsDisabled @bind-Value="DiscForm.RdcodDis">
+                                <option value="6">En Curso</option>
 
 
                             </BSInput>
@@ -202,21 +219,21 @@
 
                             @if (tipo == 0 || tipo == 2)
                             {
-                                <option value="Listo">Listo</option>
+                                <option value="">Seleccione...</option>
+                                <option value="Pendiente">Pendiente</option>
                                 <option value="Cerrado">Cerrado</option>
 
                             }
                             else
                             {
-                                <option value="Revisar">Revisar</option>
+                                <option value="Cerrado">Cerrado</option>
                             }
                             @if (DiscForm.Rdodt is not null)
                             {
-                                <option value="Pendiente/Responsable">Pendiente/Responsable</option>
                             }
                             else
                             {
-                                <option value="Pendiente">Pendiente</option>
+                               // <option value="Listo">Listo</option>
                             }
 
                             <BSFeedback For="@(() => DiscForm.Rdstatus)" ValidMessage="Correcto." />
@@ -227,23 +244,21 @@
                     {
                         if (planificador == "Admin" || planificador == "Planificador" || planificador == "SuperAdmin")
                         {
-                            <BSCol Column="2">
+                            @* <BSCol Column="2">
                                 <BSLabel>ODT</BSLabel>
                                 <BSInput InputType="InputType.Text" @bind-Value="DiscForm.Rdodt" ValidateOnInput="true" />
-                            </BSCol>
+                            </BSCol> *@
                         }
                         else
                         {
-                            <BSCol Column="2">
+                            @* <BSCol Column="2">
                                 <BSLabel>ODT</BSLabel>
                                 <BSInput InputType="InputType.Text" IsDisabled @bind-Value="DiscForm.Rdodt" ValidateOnInput="true" />
-                         </BSCol>
+                         </BSCol> *@
                         }
                     }
 
                 </BSRow>
-                <p></p>
-                <p></p>
                 <BSCol Column="12">
                     <BSButton Color="BSColor.Success" Size="Size.ExtraSmall" IsSubmit>  Guardar <span class="oi oi-check"></span></BSButton>
                  <BSButton Color="BSColor.Danger" Size="Size.ExtraSmall" OnClick=Back>  Atras <span class="oi oi-arrow-left"></span></BSButton>
@@ -331,18 +346,18 @@
 
                      @if (planificador == "Admin" || planificador == "Planificador" || planificador == "SuperAdmin")
                     {
-                        <BSCol Column="2">
+                        @* <BSCol Column="2">
                             <BSLabel>Fecha del Trabajo</BSLabel>
                             <BSInput InputType="InputType.Date" @bind-Value="DiscForm.RdfecTra" />
-                        </BSCol>
+                        </BSCol> *@
 
                     }
                     else
                     {
-                        <BSCol Column="2">
+                        @* <BSCol Column="2">
                             <BSLabel>Fecha del Trabajo</BSLabel>
                             <BSInput InputType="InputType.Date" @bind-Value="DiscForm.RdfecTra" />
-                        </BSCol>
+                        </BSCol> *@
                     }
 
 
@@ -363,12 +378,7 @@
                     <BSCol ColumnSmall="2">
                         <BSLabel>Código</BSLabel>
                         <BSInput InputType="InputType.Select" @bind-Value="DiscForm.RdcodDis">
-                            <option value="">Seleccione...</option>
-                            <option value="1">1- En Curso</option>
-                            <option value="2">2- Próxima Parada</option>
-                            <option value="3">3- Falta Repuesto</option>
-                            <option value="4">4- Falta de Personal</option>
-                            <option value="5">5- Eq. no Disponible</option>
+                            <option value="6">En Curso</option>
                         </BSInput>
                     </BSCol>
 
@@ -382,13 +392,13 @@
 
                                     @if (tipo == 0 || tipo == 2)
                             {
-                                <option value="Listo">Listo</option>
-                                <option value="Pendiente/Responsable">Pendiente/Responsable</option>
+                                <option value="Pendiente">Pendiente</option>
+                                <option value="Cerrado">Cerrado</option>
 
                             }
                             else
                             {
-                                <option value="Revisar">Revisar</option>
+                                <option value="Pendiente">Pendiente</option>
                             }
 
                             <option value="Pendiente">Pendiente</option>
@@ -404,6 +414,7 @@
                                 <BSCol ColumnSmall="2">
                                     <BSLabel>Status</BSLabel>
                                     <BSInput InputType="InputType.Select" @bind-Value="DiscForm.Rdstatus">
+                                        <option value="Pendiente">Pendiente</option>
                                         <option value="Cerrado">Cerrado</option>
 
                                         <BSFeedback For="@(() => DiscForm.Rdstatus)" ValidMessage="Correcto." />
@@ -422,7 +433,7 @@
                             }
                             else
                             {
-                                <option value="Revisar">Revisar</option>
+                                <option value="Pendiente">Pendiente</option>
                             }
 
                             <option value="Pendiente">Pendiente</option>
@@ -437,15 +448,15 @@
                         if (planificador == "Admin" || planificador == "Planificador" || planificador == "SuperAdmin")
                         {
                             <BSCol Column="2">
-                                <BSLabel>ODT</BSLabel>
-                                <BSInput InputType="InputType.Text" @bind-Value="DiscForm.Rdodt" />
+                                @* <BSLabel>ODT</BSLabel> *@
+                                @* <BSInput InputType="InputType.Text" @bind-Value="DiscForm.Rdodt" /> *@
                             </BSCol>
                         }
                         else
                         {
                             <BSCol Column="2">
-                                <BSLabel>ODT</BSLabel>
-                                <BSInput InputType="InputType.Text" IsDisabled @bind-Value="DiscForm.Rdodt" />
+                                @* <BSLabel>ODT</BSLabel> *@
+                                @* <BSInput InputType="InputType.Text" IsDisabled @bind-Value="DiscForm.Rdodt" /> *@
                          </BSCol>
                         }
                     }
@@ -594,7 +605,7 @@
         {
 
 
-            if (DiscForm.RdfecTra  >= DiscForm.RdfecReu && (int)tipo == 1 || (int)tipo == 0 || (int)tipo == 2)
+            if ((int)tipo == 1 || (int)tipo == 0 || (int)tipo == 2)
             {
                 if (CambiosFecha.Count() >= 3 & camFec != DiscForm.RdfecTra)
                 {

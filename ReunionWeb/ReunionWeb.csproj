@@ -30,9 +30,9 @@
     <PackageReference Include="Radzen.Blazor" Version="4.10.1" />
   </ItemGroup>
 
-  <ItemGroup>
+  <!-- <ItemGroup>
     <ProjectReference Include="..\ReunionDiaApi\ReunionDiaApi.csproj" />
-  </ItemGroup>
+  </ItemGroup> -->
 
   <ItemGroup>
     <Folder Include="Pages\Prints\" />

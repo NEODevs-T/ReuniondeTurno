@@ -32,6 +32,7 @@ builder.Services.AddScoped<IPizarraData, PizarraData>();
 builder.Services.AddScoped<IRespoReuData, RespoReuData>();
 builder.Services.AddScoped<DialogService>();//para calendario de radzen
 builder.Services.AddScoped<NotificationService>(); ;//para notificaciones de radzen
+builder.Services.AddScoped<ICausaCalidadData, CausaCalidadData>();
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddBlazorStrap();

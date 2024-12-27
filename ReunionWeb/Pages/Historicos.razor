@@ -60,28 +60,19 @@
                 <BSInput InputType="InputType.Date" @bind-Value="fecha2" />
             </BSCol>
 
-            <BSCol ColumnSmall="1" Column="2">
+            <BSCol ColumnSmall="2" Column="3">
                 <BSLabel>Código</BSLabel>
-                <BSInput InputType="InputType.Select" @bind-Value="Codigo">
-                    <option value="Todo">Todo</option>
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                    <option value="4">4</option>
-                    <option value="5">5</option>
+                <BSInput InputType="InputType.Select" IsDisabled @bind-Value="Codigo">
+                    <option value="Todo">En Curso</option>
                 </BSInput>
             </BSCol>
 
             <BSCol ColumnSmall="2" Column="3">
                 <BSLabel>Estado</BSLabel>
                 <BSInput InputType="InputType.Select" @bind-Value="Status">
-                    <option value="Total Pendiente">Total Pendiente</option>
                     <option value="Todo">Todo</option>
                     <option value="Pendiente">Pendiente</option>
-                    <option value="Pendiente/Responsable">Pendiente/Responsable</option>
-                    <option value="Listo">Listo</option>
                     <option value="Cerrado">Cerrado</option>
-                    <option value="Vencidos">Vencidos</option>
                 </BSInput>
             </BSCol>
 
@@ -90,7 +81,7 @@
         </p>
         <BSRow>
 
-            <BSCol ColumnSmall="2" Column="1">
+            @* <BSCol ColumnSmall="2" Column="1">
                 <BSRow>
                     <BSLabel> Filtro Fecha de Trabajo</BSLabel>
                 </BSRow>
@@ -99,7 +90,7 @@
                     Fecha Trabajo
                     <span class="oi oi-cog"></span>
                 </BSInputRadio>
-            </BSCol>
+            </BSCol> *@
 
             <BSCol ColumnSmall="2" Column="1">
                 <BSRow>
@@ -182,11 +173,11 @@
                 </Template>
             </RadzenDataGridColumn>
 
-            <RadzenDataGridColumn TItem="ReunionDTO" Title="Código" Property="RdcodDis" Width="60px">
+            @* <RadzenDataGridColumn TItem="ReunionDTO" Title="Código" Property="RdcodDis" Width="60px">
                 <Template>
                     @context.RdcodDis
                 </Template>
-            </RadzenDataGridColumn>
+            </RadzenDataGridColumn> *@
 
             <RadzenDataGridColumn TItem="ReunionDTO" Title="Acción" Property="RdplanAcc" Width="200px">
                 <Template>
@@ -194,11 +185,11 @@
                 </Template>
             </RadzenDataGridColumn>
 
-            <RadzenDataGridColumn TItem="ReunionDTO" Title="Tiempo" Property="Rdtiempo" Width="60px">
+            @* <RadzenDataGridColumn TItem="ReunionDTO" Title="Tiempo" Property="Rdtiempo" Width="60px">
                 <Template>
                     @context.Rdtiempo
                 </Template>
-            </RadzenDataGridColumn>
+            </RadzenDataGridColumn> *@
 
             <RadzenDataGridColumn TItem="ReunionDTO" Title="Responsable" Property="Responsable" Width="100px">
                 <Template>
@@ -206,11 +197,11 @@
                 </Template>
             </RadzenDataGridColumn>
 
-            <RadzenDataGridColumn TItem="ReunionDTO" Title="ODT" Property="Rdodt" Width="100px">
+            @* <RadzenDataGridColumn TItem="ReunionDTO" Title="ODT" Property="Rdodt" Width="100px">
                 <Template>
                     @context.Rdodt
                 </Template>
-            </RadzenDataGridColumn>
+            </RadzenDataGridColumn> *@
 
             <RadzenDataGridColumn TItem="ReunionDTO" Title="Estado" Property="Rdstatus" Width="90px">
                 <Template>
@@ -224,11 +215,11 @@
                 </Template>
             </RadzenDataGridColumn>
 
-            <RadzenDataGridColumn TItem="ReunionDTO" Title="F. Trabajo" Property="RdfecTra" Width="90px">
+            @* <RadzenDataGridColumn TItem="ReunionDTO" Title="F. Trabajo" Property="RdfecTra" Width="90px">
                 <Template>
                     @context.RdfecTra.ToString("yyyy/MM/dd")
                 </Template>
-            </RadzenDataGridColumn>
+            </RadzenDataGridColumn> *@
 
 
 
@@ -258,12 +249,13 @@ else if (dataIsLoaded == 2 && tabla.Count() == 0)
     private int IdDiv { get; set; } = 0; //id de la division
 
     private int CentroComedor;//Variable para verificar si es el comedor venezuela;
+    private string errorMessage = string.Empty; //variable para que aparezca mensaje
 
     //private string Div { get; set; } //Centro
     //private string Division { get; set; } //División
 
     private string Codigo { get; set; } = "Todo"; //Codigo
-    private string Status { get; set; } = "Total Pendiente"; //Status
+    private string Status { get; set; } = "Todo"; //Status
     private string UsrAdmin { get; set; } = ""; //permisos de admin
     private string UsrRol { get; set; } = ""; //rol para filtrar
     private bool cargandocambio { get; set; } = false; //para cargar los datos del trazabilidad
@@ -401,13 +393,33 @@ else if (dataIsLoaded == 2 && tabla.Count() == 0)
                 mensaje = "Error: " + ex.Message;
             }
     }
-    protected async Task Get()
+protected async Task Get()
+{
+    if (dataIsLoaded != 1)
     {
-        if (dataIsLoaded != 1)
+        if (IdCentro == 0 || IdDiv == 0) // Verifica si IdCentro o IdDiv son 0
         {
-            dataIsLoaded = 1;
-            tabla = await PizarraData.GetHistoricos(IdCentro.ToString(), IdDiv.ToString(), fecha1, fecha2, tipoconsulta, Status);
-            dataIsLoaded = 2;
+            // Establecer el mensaje de error
+            errorMessage = "Por favor, seleccione un valor para las columnas";  
+            return; // Salir del método si los valores no están seleccionados
         }
+
+        dataIsLoaded = 1;
+
+        try
+        {
+            tabla = await PizarraData.GetHistoricos(IdCentro.ToString(), IdDiv.ToString(), fecha1, fecha2, tipoconsulta, Status);
+        }
+        catch (HttpRequestException ex)
+        {
+            // Manejo de la excepción
+            errorMessage = $"Ocurrió un error en la solicitud: {ex.Message}";
+            // Aquí puedes implementar lógica adicional de manejo de errores si es necesario
+        }
+
+        dataIsLoaded = 2;
     }
+}
+
+
 }

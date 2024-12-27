@@ -1,6 +1,6 @@
 ﻿@page "/discrepancia"
 
-
+@inject ICausaCalidadData CausaCalidadData  
 @inject IAsistenciaReuData AsistenciaReuData
 @inject IAvisadorData AvisadorData
 @inject ICargoReuData CargoReuData
@@ -186,37 +186,44 @@
 
     <p></p>
 
-    <BSRow>
-        <p></p>
 
-        <BSCol Column="3">
+    <BSCol Column="3">
             <BSLabel>Responsable</BSLabel>
             <BSInput InputType="InputType.Select" @bind-Value="Reuniondb.IdResReu">
-                <option value="">Seleccione...</option>
+            <option value="">Seleccione...</option>
 
-                @foreach (var d in RespoReuData.resporeus)
+            @foreach (var d in RespoReuData.resporeus)
+            {
+                <option value="@d.IdResReu">@d.Rrnombre</option>
+            }
+            </BSInput>
+        </BSCol>
+
+        <BSCol Column="4">
+            <BSLabel>Observaciones</BSLabel>
+            <BSInput InputType="InputType.Select" @bind-Value="Reuniondb.IdCausaCal">
+                <option value="">Seleccione...</option>
+                @foreach (var e in CausaCalidadData.causaCals)
                 {
-                    <option value="@d.IdResReu">@d.Rrnombre</option>
+                    <option value="@e.IdCausaCal">@e.Ccnombre</option>
                 }
             </BSInput>
         </BSCol>
 
-    </BSRow>
-
-
-    <p></p>
     <p></p>
 
     <BSCol Column="12">
         <BSButton Color="BSColor.Success" Size="Size.ExtraSmall" IsDisabled="isDesactivado" IsSubmit>  Guardar <span class="oi oi-check"></span></BSButton>
         <BSButton Color="BSColor.Primary" Size="Size.ExtraSmall" IsReset>  Nuevo </BSButton>
     </BSCol>
+
+
+
 </BSForm>
 
-
-
 @code {
-
+    
+    
     [CascadingParameter]
     //private Task<AuthenticationState> authenticationStateTask { get; set; }
 
@@ -240,8 +247,8 @@
     private string fechahoy2;
     private int Idretornado;
     private string tipoequipo { get; set; } = "1";//validar si es lista o busqueda de equipo
-    CambStatDTO CambStata = new CambStatDTO();//Formulario para agregar que usuario hizo el cambio de status.
-    CambFecDTO CambFech = new CambFecDTO();//Formulario para agregar que usuario hizo el cambio de fecha.
+    CambStatDTO CambStata = new CambStatDTO();
+    CambFecDTO CambFech = new CambFecDTO();
     ReunionDTO regisReuDia = new ReunionDTO();
 
     private int idCent { get; set; }
@@ -253,13 +260,15 @@
     private bool isDesactivado { get; set; } = false;
     private List<AsistenReuDTO> listaAsistencia { get; set; } = new List<AsistenReuDTO>();
 
-    int reunionDia = 1;
+    int reunionTurno = 2;
     protected override async Task OnInitializedAsync()
     {
 
         await CreateData();
         await KsfData.Getksf();
         await RespoReuData.GetResReu();
+        await CausaCalidadData.GetCausasCalidad();
+        Reuniondb.IdCausaCal = 1;
 
         if (claims != null && claims.Count > 1 && (claims[1]?.Value == "Admin" || claims[1]?.Value == "SuperAdmin"))
         {
@@ -343,11 +352,13 @@
             Reuniondb.IdMaster = MaestraData.maestra.Where(x => x.IdLinea == idLin).FirstOrDefault().IdMaster;
             Reuniondb.Rdarea = MaestraData.lineas.Where(x => x.IdLinea == idLin).FirstOrDefault().Linea;
             Reuniondb.Rdstatus = "Pendiente";
-            Reuniondb.IdTipReu = reunionDia;
-            Reuniondb.IdCausaCal = 1;
+            Reuniondb.IdTipReu = reunionTurno;
+            Reuniondb.IdCausaCal = int.Parse(Reuniondb.IdCausaCal.ToString());
             Reuniondb.IdPais = int.Parse(claims.FirstOrDefault(c => c.Type == "IdPais")?.Value);
             Reuniondb.IdEmpresa = int.Parse(claims.FirstOrDefault(c => c.Type == "IdEmpresa")?.Value);
-
+            Reuniondb.Ksf = KsfData.ksfs.Where(k => k.Idksf == Reuniondb.Idksf).FirstOrDefault().KsfNombre;
+            Reuniondb.IdResReu = RespoReuData.resporeus.Where(k => k.IdResReu == Reuniondb.IdResReu).FirstOrDefault().IdResReu;
+ 
             //Guara cod equipo si es por la lista
             if (tipoequipo == "1")
             {

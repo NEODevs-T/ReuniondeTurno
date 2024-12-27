@@ -52,7 +52,7 @@ else
         {
             <BSCol ColumnLarge="3" ColumnSmall="6">
                 <BSLabel>Línea</BSLabel>
-                <BSInput InputType="InputType.Select" @bind-Value="NombreLinea" IsDisabled=@valueodt>
+                <BSInput InputType="InputType.Select" @bind-Value="NombreLinea">
                     <option value="Todo">Todo</option>
                     @foreach (var d in MaestraData.lineas)
                     {
@@ -64,14 +64,10 @@ else
         }
         <BSCol ColumnLarge="3" ColumnSmall="6">
             <BSLabel>Estado</BSLabel>
-            <BSInput InputType="InputType.Select" @bind-Value="Status" IsDisabled=@valueodt>
-                <option value="Total Pendiente">Total Pendiente</option>
-                <option value="Todo">Todo</option>
-                <option value="Pendiente">Pendiente</option>
-                <option value="Pendiente-Responsable">Pendiente/Responsable</option>
-                <option value="Listo">Listo</option>
-                <option value="Cerrado">Cerrado</option>
-                <option value="Vencidos">Vencidos</option>
+            <BSInput InputType="InputType.Select" @bind-Value="Status">>
+            <option value="Todo">Todos</option>
+            <option value="Pendiente">Pendiente</option>
+            <option value="Cerrado">Cerrado</option>
             </BSInput>
         </BSCol>
 
@@ -81,7 +77,7 @@ else
     <BSInput InputType="InputType.Date" @bind-Value="fecha1" />
     </BSCol>
 
-    <BSCol ColumnLarge="2" ColumnSmall="5">
+    <BSCol ColumnLarge="2" ColumnSmall="5"> 
     <BSLabel>Hasta</BSLabel>
     <BSInput InputType="InputType.Date" @bind-Value="fecha2" />
     </BSCol> *@
@@ -89,9 +85,9 @@ else
     <p></p>
     <BSRow>
 
-        <BSCol ColumnLarge="3" ColumnSmall="4">
+        @* <BSCol ColumnLarge="3" ColumnSmall="4">
             <BSLabel>Código</BSLabel>
-            <BSInput InputType="InputType.Select" @bind-Value="Codigo" IsDisabled=@valueodt>
+            <BSInput InputType="InputType.Select" @bind-Value="Codigo">
                 <option value="Todo">Todo</option>
                 <option value="1">1- En Curso</option>
                 <option value="2">2- Próxima Parada</option>
@@ -99,19 +95,19 @@ else
                 <option value="4">4- Falta de Personal</option>
                 <option value="5">5- Eq. no Disponible</option>
             </BSInput>
-        </BSCol>
+        </BSCol> *@
 
 
         <BSCol ColumnLarge="3" ColumnSmall="8">
             <BSRow>
                 <BSLabel>  Ordenar </BSLabel>
             </BSRow>
-            <BSInputRadio CheckedValue="@("2")" IsDisabled=@valueodt @bind-Value="tipoconsulta" IsToggle="true" Size="Size.ExtraSmall" Color="BSColor.Success" IsOutlined="true" style="width:50%;">
+            @* <BSInputRadio CheckedValue="@("2")" IsDisabled=@valueodt @bind-Value="tipoconsulta" IsToggle="true" Size="Size.ExtraSmall" Color="BSColor.Success" IsOutlined="true" style="width:50%;">
                 F.Trabajo
                 <span class="oi oi-cog"></span>
-            </BSInputRadio>
+            </BSInputRadio> *@
 
-            <BSInputRadio CheckedValue="@("0")" IsDisabled=@valueodt @bind-Value="tipoconsulta" IsToggle="true" Size="Size.ExtraSmall" Color="BSColor.Success" IsOutlined="true" style="width:50%;">
+            <BSInputRadio CheckedValue="@("0")" @bind-Value="tipoconsulta" IsToggle="true" Size="Size.ExtraSmall" Color="BSColor.Success" IsOutlined="true" style="width:50%;">
                 F. Reunión
                 <span class="oi oi-people"></span>
             </BSInputRadio>
@@ -122,11 +118,11 @@ else
             <BSRow>
                 <BSLabel>Buscar</BSLabel>
             </BSRow>
-            <BSButton IsOutlined Color="BSColor.Success" Size="Size.ExtraSmall" IsDisabled=@valueodt @onclick="Get" style="width:70%;">  Consultar <span class="oi oi-check"></span></BSButton>
+            <BSButton IsOutlined Color="BSColor.Success" Size="Size.ExtraSmall" @onclick="Get" style="width:70%;">  Consultar <span class="oi oi-check"></span></BSButton>
          </BSCol>
 
 
-         <BSCol ColumnLarge="3" ColumnSmall="6">
+         @* <BSCol ColumnLarge="3" ColumnSmall="6">
              <BSLabel>ODT</BSLabel>  <RadzenSwitch @bind-Value=@valuvisualeodt Change="Cambio" />
              <BSRow>
                  <BSCol>
@@ -136,7 +132,7 @@ else
                      <BSButton IsOutlined Color="BSColor.Success" Size="Size.ExtraSmall" @onclick="BuscarxOdt" IsDisabled=@(!valueodt)>  <span class="oi oi-magnifying-glass"></span></BSButton>
                  </BSCol>
              </BSRow>
-         </BSCol>
+         </BSCol> *@
 
      </BSRow>
 
@@ -147,7 +143,7 @@ else
         {
             <BSCol Column="3">
                 <BSLabel>Responsable</BSLabel>
-                <BSInput InputType="InputType.Select" IsDisabled=@valueodt @bind-Value="idrespo">
+                <BSInput InputType="InputType.Select" @bind-Value="idrespo">
                     <option value=0>Todo</option>
                     @foreach (var d in RespoReuData.resporeus)
                     {
@@ -162,7 +158,7 @@ else
             <BSCol Column="3">
                 <BSLabel>Ksf</BSLabel>
 
-                <BSInput InputType="InputType.Select" IsDisabled=@valueodt @bind-Value="IdKsf">
+                <BSInput InputType="InputType.Select" @bind-Value="IdKsf">
 
                     <option value="0">Todo</option>
                     @foreach (var d in KsfData.ksfs)
@@ -177,8 +173,8 @@ else
                 <BSRow>
                     <BSLabel>Imprimir</BSLabel>
                 </BSRow>
-                <BSButton IsOutlined Color="BSColor.Success" Size="Size.ExtraSmall" IsDisabled=@valueodt @onclick="PrintDocument">  <span class="oi oi-print"></span></BSButton>
-             </BSCol>
+                <BSButton IsOutlined Color="BSColor.Success" Size="Size.ExtraSmall"  @onclick="PrintDocument">  <span class="oi oi-print"></span></BSButton>
+            </BSCol>
 
         }
     </BSRow>
@@ -197,92 +193,78 @@ else
                     <BSTD>Ksf</BSTD>
                     <BSTD>C. Equipo</BSTD>
                     <BSTD Class="col-5">Discrepancia</BSTD>
-                    <BSTD>Código</BSTD>
+                    @* <BSTD>Código</BSTD> *@
                     <BSTD Class="col-4">Plan de Acción</BSTD>
-                    <BSTD>Tiempo</BSTD>
                     <BSTD>Responsable</BSTD>
                     <BSTD>Estado</BSTD>
-                    <BSTD>ODT</BSTD>
-                    <BSTD>Fecha de Reunión</BSTD> @*Fecha del dia de reunion*@
-                    <BSTD>Fecha del Trabajo</BSTD>@*Fecha de listo el trabajo*@
-                    <BSTD></BSTD>
+                    <BSTD>Fecha de Reunión</BSTD>
+                    <BSTD>ajflakjsflkasjf</BSTD>
                 </BSTR>
             </BSTHead>
             <BSTBody>
 
 
-                @foreach (var d in listareu)
+@foreach (var d in listareu)
+{
+    @if(d.Rdstatus != "Rechazada")
+    {
+        @if (Codigo == d.RdcodDis || Codigo == "Todo")
+        {
+            @if (NombreLinea == "Todo" || NombreLinea == d.Rdarea)
+            {
+                @if (idrespo == 0 || idrespo == d.IdResReu)
                 {
-                    @if(d.Rdstatus != "Rechazada")
+                    @if (IdKsf == 0 || IdKsf == d.Idksf)
                     {
-                        @if (Codigo == d.RdcodDis | Codigo == "Todo")
-                        {
+                        <BSTR Class="@GetClassVencido(d.RdfecReu, d.Rdstatus)">
+                            <BSTD>@d.Rdarea</BSTD>
+                            <BSTD>@d.Ksf</BSTD>
+                            <BSTD>@d.RdcodEq</BSTD>
+                            <BSTD>@d.Rddisc.ToUpperInvariant()</BSTD>
+                            <BSTD Class="textotabla">@d.RdplanAcc</BSTD>
 
-                            @if (NombreLinea == "Todo" | NombreLinea == d.Rdarea)
+                            @if (@d.Responsable == "Por Definir")
                             {
-                                @if (idrespo == 0 | idrespo == d.IdResReu)
-                                {
-
-                                    @if (IdKsf == 0 | IdKsf == d.Idksf)
-                                    {
-
-                                        <BSTR Class="@GetClassVencido(d.RdfecTra, d.Rdstatus)">
-
-                                            @*<BSTD>@d.IdReuDia</BSTD>*@
-                                            <BSTD>@d.Rdarea</BSTD>
-                                                <BSTD>@d.Ksf</BSTD>
-                                                <BSTD>@d.RdcodEq</BSTD>
-                                                <BSTD>@d.Rddisc.ToUpperInvariant()</BSTD>
-                                                <BSTD>@d.RdcodDis</BSTD>
-                                                <BSTD Class="textotabla">@d.RdplanAcc</BSTD>
-                                                <BSTD>@d.Rdtiempo</BSTD>
-
-                                                @if (@d.Responsable == "Por Definir")
-                                            {
-                                                <BSTD Class="Definir">@d.Responsable </BSTD>
-                                            }
-                                            else
-                                            {
-                                                <BSTD>@d.Responsable </BSTD>
-                                            }
-
-                                            @if (@d.Rdstatus == "Listo")
-                                            {
-                                                <BSTD Class="listo">@d.Rdstatus</BSTD>
-                                            }
-                                            else if (@d.Rdstatus == "Cerrado")
-                                            {
-                                                <BSTD Class="Cerrado">@d.Rdstatus</BSTD>
-                                            }
-                                            else
-                                            {
-                                                <BSTD Class="pendiente">@d.Rdstatus</BSTD>
-                                            }
-                                            <BSTD>@d.Rdodt</BSTD>
-                                                <BSTD>@d.RdfecReu.ToString("dd/MM/yyyy")</BSTD>
-                                                <BSTD>@d.RdfecTra.ToString("dd/MM/yyyy")</BSTD>
-                                                <BSTD>
-                                                    <BSRow>
-                                                        <BSCol>
-                                                        @if(isEditar){
-                                                            <button class="btn btn-success" @onclick="(() => Editar(d.IdReuDia))"><i class="oi oi-pencil"></i></button>
-                                                        }
-                                                        </BSCol>
-                                                        <BSCol>
-                                                            @if (UsrAdmin != "")
-                                                        {
-                                                            <BSButton Color="BSColor.Primary" IsOutlined @onclick="(() => GetHistory(d.IdReuDia))" Target="History"><i class="oi oi-eye"></i></BSButton>
-                                                        }
-                                                    </BSCol>
-                                                </BSRow>
-                                            </BSTD>
-                                        </BSTR>
-                                    }
-                                }
+                                <BSTD Class="Definir">@d.Responsable</BSTD>
                             }
-                        }
+                            else
+                            {
+                                <BSTD>@d.Responsable</BSTD> 
+                            }
+
+                            @if (@d.Rdstatus == "Cerrado")
+                            {
+                                <BSTD Class="Cerrado">@d.Rdstatus</BSTD>
+                            }
+                            else
+                            {
+                                <BSTD Class="pendiente">@d.Rdstatus</BSTD>
+                            }
+
+                            <BSTD>@d.RdfecReu.ToString("dd/MM/yyyy")</BSTD>
+                            <BSTD>
+                                <BSRow>
+                                    <BSCol>
+                                        @if(isEditar)
+                                        {
+                                            <button class="btn btn-success" @onclick="(() => Editar(d.IdReuDia))"><i class="oi oi-pencil"></i></button>
+                                        }
+                                    </BSCol>
+                                    <BSCol>
+                                        @if (UsrAdmin != "")
+                                        {
+                                            <BSButton Color="BSColor.Primary" IsOutlined @onclick="(() => GetHistory(d.IdReuDia))" Target="History"><i class="oi oi-eye"></i></BSButton>
+                                        }
+                                    </BSCol>
+                                </BSRow>
+                            </BSTD>
+                        </BSTR>
                     }
                 }
+            }
+        }
+    }
+}
             </BSTBody>
         </BSTable>
     </div>

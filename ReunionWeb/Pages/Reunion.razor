@@ -53,13 +53,9 @@ Mantenimiento,Calidad,Seguridad,Efluentes, PendientesChempro, MttoAdmin")]*@
 
             <BSCol Column="3">
                 <BSLabel>Código</BSLabel>
-                <BSInput InputType="InputType.Select" @bind-Value="Codigo">
-                    <option value="Todo">Todo</option>
-                    <option value="1">1- En Curso</option>
-                    <option value="2">2- Próxima Parada</option>
-                    <option value="3">3- Falta Repuesto</option>
-                    <option value="4">4- Falta de Personal</option>
-                    <option value="5">5- Eq. no Disponible</option>
+                <BSInput InputType="InputType.Select" IsDisabled @bind-Value="Codigo">
+                    <option value="Todo">En Curso</option>
+                    <option value="6">En Curso</option>
                 </BSInput>
             </BSCol>
             <BSCol Column="2">
@@ -101,20 +97,20 @@ Mantenimiento,Calidad,Seguridad,Efluentes, PendientesChempro, MttoAdmin")]*@
                     <BSTD>Ksf</BSTD>
                     <BSTD>Código de Equipo</BSTD>
                     <BSTD ColSpan="4">Discrepancia</BSTD>
-                    <BSTD>Código</BSTD>
+                    @* <BSTD>Código</BSTD> *@
                     <BSTD>Plan de Acción</BSTD>
-                    <BSTD>Tiempo</BSTD>
+                    @* <BSTD>Tiempo</BSTD> *@
                     <BSTD ColSpan="1">Responsable</BSTD>
                     <BSTD>Status</BSTD>
-                    <BSTD>ODT</BSTD>
-                    <BSTD>Fecha del Trabajo</BSTD>@*Fecha de listo el trabajo*@
+                    @* <BSTD>ODT</BSTD> *@
+                    <BSTD>Fecha de Reunión</BSTD>@*Fecha de listo el trabajo*@
                     @if (Rol == "Admin" | Rol == "AdminChempro" | Rol == "SupIntendente" | Rol == "SupIntendenteGeneral")
                     {
                         <BSTD></BSTD>
 
                     }
 
-                </BSTR>
+                </BSTR> 
             </BSTHead>
             <BSTBody>
                 @foreach (var d in PizarraData.reudiatablas)
@@ -133,7 +129,7 @@ Mantenimiento,Calidad,Seguridad,Efluentes, PendientesChempro, MttoAdmin")]*@
                                 <BSTD>@d.Ksf</BSTD>
                                 <BSTD>@d.RdcodEq</BSTD>
                                 <BSTD ColSpan="4">@d.Rddisc.ToUpper()</BSTD>
-                                <BSTD>@d.RdcodDis</BSTD>
+                                @* <BSTD>@d.RdcodDis</BSTD> *@
                                 @if (@d.RdplanAcc is not null)
                                 {
                                     <BSTD Class="textotabla listo">@d.RdplanAcc</BSTD>
@@ -142,7 +138,7 @@ Mantenimiento,Calidad,Seguridad,Efluentes, PendientesChempro, MttoAdmin")]*@
                                 {
                                     <BSTD Class="textotabla ">@d.RdplanAcc</BSTD>
                                 }
-                                <BSTD>@d.Rdtiempo</BSTD>
+                                @* <BSTD>@d.Rdtiempo</BSTD> *@
                                 @if (@d.Responsable == "Por Definir")
                                 {
                                     <BSTD Class="Definir">@d.Responsable </BSTD>
@@ -160,7 +156,7 @@ Mantenimiento,Calidad,Seguridad,Efluentes, PendientesChempro, MttoAdmin")]*@
                                 {
                                     <BSTD Class="">@d.Rdstatus</BSTD>
                                 }
-                                <BSTD>@d.Rdodt</BSTD>
+                                @* <BSTD>@d.Rdodt</BSTD> *@
                                 <BSTD>@d.RdfecTra.ToString("dd/MM/yyyy") </BSTD>
                                 @if (Rol == "Admin" | Rol == "AdminChempro" | Rol == "SupIntendente" | Rol == "SupIntendenteGeneral")
                                 {
