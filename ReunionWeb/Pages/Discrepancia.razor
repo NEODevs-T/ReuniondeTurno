@@ -187,28 +187,31 @@
     <p></p>
 
 
+<BSCol Column="3">
+    <BSLabel>Responsable</BSLabel>
+    <BSInput InputType="InputType.Select" @bind-Value="Reuniondb.IdResReu" @onchange="OnResponsableChanged">
+        <option value="">Seleccione...</option>
+        @foreach (var d in RespoReuData.resporeus)
+        {
+            <option value="@d.IdResReu">@d.Rrnombre</option>
+        }
+    </BSInput>
+</BSCol>
+
+@if (IsObservacionesVisible)
+{
     <BSCol Column="3">
-            <BSLabel>Responsable</BSLabel>
-            <BSInput InputType="InputType.Select" @bind-Value="Reuniondb.IdResReu">
+        <BSLabel>Observaciones de Calidad</BSLabel>
+        <BSInput InputType="InputType.Select" @bind-Value="Reuniondb.IdCausaCal" @onchange="OnCausaCalidadChanged">
             <option value="">Seleccione...</option>
-
-            @foreach (var d in RespoReuData.resporeus)
+            @foreach (var e in CausaCalidadData.causaCals)
             {
-                <option value="@d.IdResReu">@d.Rrnombre</option>
+                <option value="@e.IdCausaCal">@e.Ccnombre</option>
             }
-            </BSInput>
-        </BSCol>
+        </BSInput>
+    </BSCol>
+}
 
-        <BSCol Column="4">
-            <BSLabel>Observaciones</BSLabel>
-            <BSInput InputType="InputType.Select" @bind-Value="Reuniondb.IdCausaCal">
-                <option value="">Seleccione...</option>
-                @foreach (var e in CausaCalidadData.causaCals)
-                {
-                    <option value="@e.IdCausaCal">@e.Ccnombre</option>
-                }
-            </BSInput>
-        </BSCol>
 
     <p></p>
 
@@ -222,10 +225,55 @@
 </BSForm>
 
 @code {
+    private bool IsObservacionesVisible { get; set; } = false;
+
+    private void OnResponsableChanged(ChangeEventArgs e)
+    {
+        var selectedResponsableId = e.Value?.ToString();
+        
+        // Actualiza el valor del Responsable y verifica si mostrar la columna
+        if (!string.IsNullOrEmpty(selectedResponsableId))
+        {
+            Reuniondb.IdResReu = int.Parse(selectedResponsableId);
+            Reuniondb.Responsable = RespoReuData.resporeus
+                .FirstOrDefault(k => k.IdResReu == Reuniondb.IdResReu)?.Rrnombre;
+
+            IsObservacionesVisible = Reuniondb.IdResReu == 9;
+        }
+        else
+        {
+            IsObservacionesVisible = false;
+        }
+
+        StateHasChanged();
+    }
+
+    private void OnCausaCalidadChanged(ChangeEventArgs e)
+    {
+        var selectedCausaCalId = e.Value?.ToString();
+
+        // Asigna valor predeterminado o actualiza el valor seleccionado
+        if (string.IsNullOrEmpty(selectedCausaCalId))
+        {
+            Reuniondb.IdCausaCal = 1; // Valor predeterminado
+        }
+        else
+        {
+            Reuniondb.IdCausaCal = int.Parse(selectedCausaCalId);
+        }
+
+        StateHasChanged();
+    }
+}
+
+
+
+
+
+@code {
     
     
     [CascadingParameter]
-    //private Task<AuthenticationState> authenticationStateTask { get; set; }
 
     private List<Claim> claims { get; set; }
 
@@ -353,12 +401,11 @@
             Reuniondb.Rdarea = MaestraData.lineas.Where(x => x.IdLinea == idLin).FirstOrDefault().Linea;
             Reuniondb.Rdstatus = "Pendiente";
             Reuniondb.IdTipReu = reunionTurno;
-            Reuniondb.IdCausaCal = int.Parse(Reuniondb.IdCausaCal.ToString());
+            Reuniondb.IdCausaCal = string.IsNullOrEmpty(Reuniondb.IdCausaCal.ToString()) ? 1 : int.Parse(Reuniondb.IdCausaCal.ToString());
             Reuniondb.IdPais = int.Parse(claims.FirstOrDefault(c => c.Type == "IdPais")?.Value);
             Reuniondb.IdEmpresa = int.Parse(claims.FirstOrDefault(c => c.Type == "IdEmpresa")?.Value);
             Reuniondb.Ksf = KsfData.ksfs.Where(k => k.Idksf == Reuniondb.Idksf).FirstOrDefault().KsfNombre;
-            Reuniondb.IdResReu = RespoReuData.resporeus.Where(k => k.IdResReu == Reuniondb.IdResReu).FirstOrDefault().IdResReu;
- 
+            Reuniondb.Responsable = RespoReuData.resporeus.Where(k => k.IdResReu == Reuniondb.IdResReu).FirstOrDefault().Rrnombre;
             //Guara cod equipo si es por la lista
             if (tipoequipo == "1")
             {

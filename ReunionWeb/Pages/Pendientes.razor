@@ -189,8 +189,8 @@ else
             <BSTHead Class="cabecera">
                 <BSTR>
                     @*<BSTD>Id</BSTD>*@
-                    <BSTD>Área</BSTD>
                     <BSTD>Ksf</BSTD>
+                    <BSTD>C. Equipo</BSTD>
                     <BSTD>C. Equipo</BSTD>
                     <BSTD Class="col-5">Discrepancia</BSTD>
                     @* <BSTD>Código</BSTD> *@
@@ -218,7 +218,7 @@ else
                     {
                         <BSTR Class="@GetClassVencido(d.RdfecReu, d.Rdstatus)">
                             <BSTD>@d.Rdarea</BSTD>
-                            <BSTD>@d.Ksf</BSTD>
+                            <BSTD>@KsfData.ksfs.Where(x => x.Idksf == d.Idksf).FirstOrDefault()?.KsfNombre</BSTD>
                             <BSTD>@d.RdcodEq</BSTD>
                             <BSTD>@d.Rddisc.ToUpperInvariant()</BSTD>
                             <BSTD Class="textotabla">@d.RdplanAcc</BSTD>
