@@ -51,7 +51,7 @@ Mantenimiento,Calidad,Seguridad,Efluentes, PendientesChempro, MttoAdmin")]*@
                 </BSInput>
             </BSCol>
 
-            <BSCol Column="3">
+            <BSCol Column="3" ColumnSmall="2">
                 <BSLabel>Código</BSLabel>
                 <BSInput InputType="InputType.Select" IsDisabled @bind-Value="Codigo">
                     <option value="Todo">En Curso</option>
@@ -141,11 +141,11 @@ Mantenimiento,Calidad,Seguridad,Efluentes, PendientesChempro, MttoAdmin")]*@
                                 @* <BSTD>@d.Rdtiempo</BSTD> *@
                                 @if (@d.Responsable == "Por Definir")
                                 {
-                                    <BSTD Class="Definir">@d.Responsable </BSTD>
+                                    <BSTD Class="Definir">@RespoReuData.resporeus.Where( x => x.IdResReu == d.IdResReu).FirstOrDefault()?.Rrnombre</BSTD>
                                 }
                                 else
                                 {
-                                    <BSTD ColSpan="1">@d.Responsable</BSTD>
+                                    <BSTD ColSpan="1">@RespoReuData.resporeus.Where( x => x.IdResReu == d.IdResReu).FirstOrDefault()?.Rrnombre</BSTD>
                                 }
 
                                 @if (@d.Rdstatus == "Revisar")

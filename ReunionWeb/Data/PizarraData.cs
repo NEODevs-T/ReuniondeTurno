@@ -76,7 +76,7 @@ public class PizarraData : IPizarraData
         string f1Formatiado = f1.ToString("yyyy-MM-dd");
         string f2Formatiado = f2.ToString("yyyy-MM-dd");
         url = $"{BaseUrl}/GetHistoricos/{idcentro}/{iddiv}/{f1Formatiado}/{f2Formatiado}/{tipo}/{estado}/{reunionTurno}";
-        return reunionditablas = await _http.GetFromJsonAsync<List<ReunionDTO>>(url) ?? new List<ReunionDTO>();
+        return reudiatablas = await _http.GetFromJsonAsync<List<ReunionDTO>>(url) ?? new List<ReunionDTO>();
 
     }
 

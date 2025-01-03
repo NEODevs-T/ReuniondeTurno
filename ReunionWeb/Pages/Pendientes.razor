@@ -85,17 +85,12 @@ else
     <p></p>
     <BSRow>
 
-        @* <BSCol ColumnLarge="3" ColumnSmall="4">
+        <BSCol ColumnLarge="1" ColumnSmall="">
             <BSLabel>Código</BSLabel>
-            <BSInput InputType="InputType.Select" @bind-Value="Codigo">
-                <option value="Todo">Todo</option>
-                <option value="1">1- En Curso</option>
-                <option value="2">2- Próxima Parada</option>
-                <option value="3">3- Falta Repuesto</option>
-                <option value="4">4- Falta de Personal</option>
-                <option value="5">5- Eq. no Disponible</option>
+            <BSInput InputType="InputType.Select" IsDisabled @bind-Value="Codigo">
+                <option value="Todo">En Curso</option>
             </BSInput>
-        </BSCol> *@
+        </BSCol>
 
 
         <BSCol ColumnLarge="3" ColumnSmall="8">
@@ -143,7 +138,7 @@ else
         {
             <BSCol Column="3">
                 <BSLabel>Responsable</BSLabel>
-                <BSInput InputType="InputType.Select" @bind-Value="idrespo">
+                <BSInput InputType="InputType.Select" @bind-Value="IdResReu">
                     <option value=0>Todo</option>
                     @foreach (var d in RespoReuData.resporeus)
                     {
@@ -212,7 +207,7 @@ else
         {
             @if (NombreLinea == "Todo" || NombreLinea == d.Rdarea)
             {
-                @if (idrespo == 0 || idrespo == d.IdResReu)
+                @if (IdResReu == 0 || IdResReu == d.IdResReu)
                 {
                     @if (IdKsf == 0 || IdKsf == d.Idksf)
                     {
@@ -229,7 +224,7 @@ else
                             }
                             else
                             {
-                                <BSTD>@d.Responsable</BSTD> 
+                                <BSTD>@RespoReuData.resporeus.Where( x => x.IdResReu == d.IdResReu).FirstOrDefault()?.Rrnombre</BSTD> 
                             }
 
                             @if (@d.Rdstatus == "Cerrado")
@@ -510,7 +505,7 @@ else if (dataIsLoaded == 2 && PizarraData.reudiatablas.Count() == 0)
     private string UsrRol { get; set; } = ""; //rol para filtrar
     private bool cargandocambio { get; set; } = false; //para cargar los datos del trazabilidad
     private string tipoconsulta { get; set; } = "0"; //1-fecha de reuinion 0 fecha trabajo
-    private int idrespo { get; set; }  //responsable a filtarint.Parse(claims[9].Value)
+    private int IdResReu { get; set; }  //responsable a filtarint.Parse(claims[9].Value)
     public DateTime fecha1;
     public DateTime fecha2;
     List<ReunionDTO> listareu = new List<ReunionDTO>();//filtar los responsables
@@ -803,7 +798,7 @@ else if (dataIsLoaded == 2 && PizarraData.reudiatablas.Count() == 0)
     public async Task PrintDocument()
     {
         //NavigationManager.NavigateTo($"TablaReunion/{IdCentro.ToString()}/{IdDiv.ToString()}/{DateTime.Now.AddDays(-1).ToString("dd-MM-yyyy")}/{DateTime.Now.ToString("dd-MM-yyyy")}/1", forceLoad: true);
-        await IJS.InvokeAsync<object>("open", new object[] { $"TablaPendientes/{IdCentro.ToString()}/{IdDiv.ToString()}/{NombreLinea}/{fecha1.ToString("dd-MM-yyyy")}/{fecha2.ToString("dd-MM-yyyy")}/{tipoconsulta}/{Status}/{idrespo}", "_blank" });
+        await IJS.InvokeAsync<object>("open", new object[] { $"TablaPendientes/{IdCentro.ToString()}/{IdDiv.ToString()}/{NombreLinea}/{fecha2.ToString("dd-MM-yyyy")}/{tipoconsulta}/{Status}/{IdResReu}", "_blank" });
     }
     string GetClassVencido(DateTime ft, string estado)
     {

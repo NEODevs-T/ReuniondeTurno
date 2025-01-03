@@ -221,19 +221,19 @@
                             {
                                 <option value="">Seleccione...</option>
                                 <option value="Pendiente">Pendiente</option>
-                                <option value="Cerrado">Cerrado</option>
+                             //   <option value="Cerrado">Cerrado</option>
 
                             }
                             else
                             {
-                                <option value="Cerrado">Cerrado</option>
+                                <option value="Pendiente">Pendiente</option>
                             }
                             @if (DiscForm.Rdodt is not null)
                             {
                             }
                             else
                             {
-                               // <option value="Listo">Listo</option>
+                                <option value="Cerrado">Cerrado</option>
                             }
 
                             <BSFeedback For="@(() => DiscForm.Rdstatus)" ValidMessage="Correcto." />

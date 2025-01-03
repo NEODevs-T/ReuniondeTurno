@@ -230,19 +230,29 @@
     private void OnResponsableChanged(ChangeEventArgs e)
     {
         var selectedResponsableId = e.Value?.ToString();
-        
-        // Actualiza el valor del Responsable y verifica si mostrar la columna
+
         if (!string.IsNullOrEmpty(selectedResponsableId))
         {
+            // Actualiza el ID y nombre del responsable
             Reuniondb.IdResReu = int.Parse(selectedResponsableId);
             Reuniondb.Responsable = RespoReuData.resporeus
                 .FirstOrDefault(k => k.IdResReu == Reuniondb.IdResReu)?.Rrnombre;
 
-            IsObservacionesVisible = Reuniondb.IdResReu == 9;
+            // Muestra o esconde la columna de observaciones
+            if (Reuniondb.IdResReu == 9)
+            {
+                IsObservacionesVisible = true;
+            }
+            else
+            {
+                IsObservacionesVisible = false;
+                Reuniondb.IdCausaCal = 1; // Reinicia la causa de calidad a su valor predeterminado
+            }
         }
         else
         {
             IsObservacionesVisible = false;
+            Reuniondb.IdCausaCal = 1; // Reinicia la causa de calidad a su valor predeterminado
         }
 
         StateHasChanged();
@@ -252,7 +262,6 @@
     {
         var selectedCausaCalId = e.Value?.ToString();
 
-        // Asigna valor predeterminado o actualiza el valor seleccionado
         if (string.IsNullOrEmpty(selectedCausaCalId))
         {
             Reuniondb.IdCausaCal = 1; // Valor predeterminado
@@ -265,7 +274,6 @@
         StateHasChanged();
     }
 }
-
 
 
 
