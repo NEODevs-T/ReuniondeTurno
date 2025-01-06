@@ -6,6 +6,7 @@
 @inject IKsfData KsfData
 @inject IPizarraData PizarraData
 @inject IRespoReuData RespoReuData
+@inject ICausaCalidadData CausaCalidadData
 @inject IMaestraData MaestraData
 @inject AuthenticationStateProvider AuthStateProvider
 @inject IJSRuntime IJS
@@ -101,6 +102,7 @@ Mantenimiento,Calidad,Seguridad,Efluentes, PendientesChempro, MttoAdmin")]*@
                     <BSTD>Plan de Acción</BSTD>
                     @* <BSTD>Tiempo</BSTD> *@
                     <BSTD ColSpan="1">Responsable</BSTD>
+                    <BSTD>Obsevaciones de Calidad</BSTD>
                     <BSTD>Status</BSTD>
                     @* <BSTD>ODT</BSTD> *@
                     <BSTD>Fecha de Reunión</BSTD>@*Fecha de listo el trabajo*@
@@ -147,6 +149,8 @@ Mantenimiento,Calidad,Seguridad,Efluentes, PendientesChempro, MttoAdmin")]*@
                                 {
                                     <BSTD ColSpan="1">@RespoReuData.resporeus.Where( x => x.IdResReu == d.IdResReu).FirstOrDefault()?.Rrnombre</BSTD>
                                 }
+
+                                <BSTD>@CausaCalidadData.causaCals.Where(x => x.IdCausaCal == d.IdCausaCal).FirstOrDefault()?.Ccnombre</BSTD>
 
                                 @if (@d.Rdstatus == "Revisar")
                                 {
@@ -257,6 +261,8 @@ else if (dataIsLoaded == 2 && PizarraData.reudiatablas.Count() == 0)
 
         await KsfData.Getksf();
         await RespoReuData.GetResReu();
+        await CausaCalidadData.GetCausasCalidad();
+
 
     }
 

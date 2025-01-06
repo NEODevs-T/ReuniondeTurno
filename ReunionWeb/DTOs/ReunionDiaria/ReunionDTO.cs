@@ -57,4 +57,7 @@ public partial class ReunionDTO
 
     public int? IdPais {get; set; }
 
+    public string? CausaCalNombre {get; set; }
+
+
 }

@@ -4,6 +4,7 @@
 @inject IAvisadorData AvisadorData
 @inject ICargoReuData CargoReuData
 @inject IKsfData KsfData
+@inject ICausaCalidadData CausaCalidadData
 @inject IPizarraData PizarraData
 @inject IRespoReuData RespoReuData
 @inject IMaestraData MaestraData
@@ -184,16 +185,17 @@ else
             <BSTHead Class="cabecera">
                 <BSTR>
                     @*<BSTD>Id</BSTD>*@
+                    <BSTD>Area</BSTD>
                     <BSTD>Ksf</BSTD>
-                    <BSTD>C. Equipo</BSTD>
                     <BSTD>C. Equipo</BSTD>
                     <BSTD Class="col-5">Discrepancia</BSTD>
                     @* <BSTD>Código</BSTD> *@
                     <BSTD Class="col-4">Plan de Acción</BSTD>
                     <BSTD>Responsable</BSTD>
+                    <BSTD>Obsevaciones de Calidad</BSTD>
                     <BSTD>Estado</BSTD>
                     <BSTD>Fecha de Reunión</BSTD>
-                    <BSTD>ajflakjsflkasjf</BSTD>
+                    <BSTD>  </BSTD>
                 </BSTR>
             </BSTHead>
             <BSTBody>
@@ -224,7 +226,8 @@ else
                             }
                             else
                             {
-                                <BSTD>@RespoReuData.resporeus.Where( x => x.IdResReu == d.IdResReu).FirstOrDefault()?.Rrnombre</BSTD> 
+                                <BSTD>@RespoReuData.resporeus.Where(x => x.IdResReu == d.IdResReu).FirstOrDefault()?.Rrnombre</BSTD>
+                                <BSTD>@CausaCalidadData.causaCals.Where(x => x.IdCausaCal == d.IdCausaCal).FirstOrDefault()?.Ccnombre</BSTD>
                             }
 
                             @if (@d.Rdstatus == "Cerrado")
@@ -539,6 +542,7 @@ else if (dataIsLoaded == 2 && PizarraData.reudiatablas.Count() == 0)
         @* IdDiv = int.Parse(claims.FirstOrDefault(c => c.Type.Contains("IdDiv"))?.Value ?? "0"); *@
         await KsfData.Getksf();
         await RespoReuData.GetResReu();
+        await CausaCalidadData.GetCausasCalidad();
         RespoReuData.resporeus = RespoReuData.resporeus.Where(a => a.Rrdesc == claims.FirstOrDefault(c => c.Type.Contains("Empresa"))?.Value | string.IsNullOrEmpty(a.Rrdesc)).ToList();
         PizarraData.reudiatablas = new List<ReunionDTO>();
 

@@ -7,6 +7,7 @@
 @inject IKsfData KsfData
 @inject IPizarraData PizarraData
 @inject IRespoReuData RespoReuData
+@inject ICausaCalidadData CausaCalidadData
 @inject IMaestraData MaestraData
 @inject NavigationManager NavigationManager
 @inject HttpClient Http
@@ -81,6 +82,9 @@
         <p>
         </p>
         <BSRow>
+
+
+
 
             @* <BSCol ColumnSmall="2" Column="1">
                 <BSRow>
@@ -198,11 +202,11 @@
                 </Template>
             </RadzenDataGridColumn>
 
-            @* <RadzenDataGridColumn TItem="ReunionDTO" Title="ODT" Property="Rdodt" Width="100px">
+            <RadzenDataGridColumn TItem="ReunionDTO" Title="Obs. Calidad" Property="CausaCalNombre" Width="100px">
                 <Template>
-                    @context.Rdodt
+                    @context.CausaCalNombre
                 </Template>
-            </RadzenDataGridColumn> *@
+            </RadzenDataGridColumn>
 
             <RadzenDataGridColumn TItem="ReunionDTO" Title="Estado" Property="Rdstatus" Width="90px">
                 <Template>
@@ -261,6 +265,8 @@ else if (dataIsLoaded == 2 && tabla.Count() == 0)
     private string UsrRol { get; set; } = ""; //rol para filtrar
     private bool cargandocambio { get; set; } = false; //para cargar los datos del trazabilidad
     private string tipoconsulta { get; set; } = "0"; //1-fecha de reuinion 0 fecha trabajo
+
+    private string IdCausaCald { get; set; } = "IdCausaCal";
     private List<Claim> claims { get; set; }
     public DateTime fecha1;
     public DateTime fecha2;
@@ -378,6 +384,8 @@ else if (dataIsLoaded == 2 && tabla.Count() == 0)
 
         await KsfData.Getksf();
         await RespoReuData.GetResReu();
+        await CausaCalidadData.GetCausasCalidad();
+
         PizarraData.reudiatablas = new List<ReunionDTO>();
 
 
@@ -416,6 +424,7 @@ else if (dataIsLoaded == 2 && tabla.Count() == 0)
             {
                 d.Ksf = KsfData.ksfs.Where(x => x.Idksf == d.Idksf).FirstOrDefault().KsfNombre;
                 d.Responsable = RespoReuData.resporeus.Where(x => x.IdResReu == d.IdResReu).FirstOrDefault().Rrnombre;
+                d.CausaCalNombre = CausaCalidadData.causaCals.FirstOrDefault(x => x.IdCausaCal == d.IdCausaCal)?.Ccnombre;
             }
             
             dataIsLoaded = 2;
