@@ -19,6 +19,10 @@ interface IMaestraData
     List<EquipoEamDTO> equiposlinea { get; set; }
     List<MaestraVDTO> maestra { get; set; }
 
+    List<CausaCalidadVDTO> causas { get; set; }
+
+
+
 
     Task<List<MaestraVDTO>> GetMaestraXLinea(int idlinea);
     Task<List<EquipoEamDTO>> GetEquiposEAM(string cent);
@@ -33,4 +37,7 @@ interface IMaestraData
     Task<List<EquipoEamDTO>> GetEquiposCentro(string idCentro);
     Task<CentroDivisionDTO> GetCentroDiv(string centro, string division, int tipo);
     Task<List<EquipoEamDTO>> GetEquiposEAMPorLinea(int idLinea);
+
+    Task<List<CausaCalidadVDTO>> GetPRueba01(int Idcausa);
+
 }

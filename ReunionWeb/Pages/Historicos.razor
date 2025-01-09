@@ -83,7 +83,7 @@
         </p>
         <BSRow>
 
-
+            
 
 
             @* <BSCol ColumnSmall="2" Column="1">
@@ -108,6 +108,16 @@
                 </BSInputRadio>
             </BSCol>
 
+            <BSCol Column="3" ColumnSmall="2">
+    <BSLabel>Obs. Calidad</BSLabel>
+    <BSInput InputType="InputType.Select" @bind-Value="SelectedCausaCalidad">
+        <option value="0">Todo</option>
+        @foreach (var d in CausaCalidadData.causaCals)
+        {
+            <option value="@d.IdCausaCal">@d.Ccnombre</option>
+        }
+    </BSInput>
+</BSCol>
             <BSCol ColumnSmall="2" Column="2">
                 <BSRow>
                     <BSLabel>Buscar</BSLabel>
@@ -253,6 +263,8 @@ else if (dataIsLoaded == 2 && tabla.Count() == 0)
     [Required(ErrorMessage = "Seleccione la división.")]
     private int IdDiv { get; set; } = 0; //id de la division
 
+    private int SelectedCausaCalidad { get; set; } = 0;
+
     private int CentroComedor;//Variable para verificar si es el comedor venezuela;
     private string errorMessage = string.Empty; //variable para que aparezca mensaje
 
@@ -266,7 +278,6 @@ else if (dataIsLoaded == 2 && tabla.Count() == 0)
     private bool cargandocambio { get; set; } = false; //para cargar los datos del trazabilidad
     private string tipoconsulta { get; set; } = "0"; //1-fecha de reuinion 0 fecha trabajo
 
-    private string IdCausaCald { get; set; } = "IdCausaCal";
     private List<Claim> claims { get; set; }
     public DateTime fecha1;
     public DateTime fecha2;
@@ -390,6 +401,8 @@ else if (dataIsLoaded == 2 && tabla.Count() == 0)
 
 
     }
+    
+    
     protected async Task BuscarDivision(ChangeEventArgs e)
     {
             IdCentro = int.Parse(e.Value.ToString());
@@ -424,11 +437,30 @@ else if (dataIsLoaded == 2 && tabla.Count() == 0)
             {
                 d.Ksf = KsfData.ksfs.Where(x => x.Idksf == d.Idksf).FirstOrDefault().KsfNombre;
                 d.Responsable = RespoReuData.resporeus.Where(x => x.IdResReu == d.IdResReu).FirstOrDefault().Rrnombre;
-                d.CausaCalNombre = CausaCalidadData.causaCals.FirstOrDefault(x => x.IdCausaCal == d.IdCausaCal)?.Ccnombre;
+                int idBusqueda = CausaCalidadData.causaCals.Where(x => x.IdCausaCal == d.IdCausaCal).FirstOrDefault().IdCausaCal;
+                MaestraData.GetPRueba01(idBusqueda);
+                d.CausaCalNombre = CausaCalidadData.causaCals.Where(x => x.IdCausaCal == d.IdCausaCal).FirstOrDefault().Ccnombre;
             }
-            
+               {
+        if (SelectedCausaCalidad == 0)
+        {
+            // Mostrar todo
+            PizarraData.reudiatablas = PizarraData.reudiatablas; // Asegúrate de mantener una copia sin filtrar
+        }
+        else
+        {
+            // Filtrar por IdCausaCalidad
+            PizarraData.reudiatablas = PizarraData.reudiatablas
+                .Where(x => x.IdCausaCal == SelectedCausaCalidad)
+                .ToList();
+        }
+    }
+   
+
             dataIsLoaded = 2;
     }
+    
+
 }
 
 

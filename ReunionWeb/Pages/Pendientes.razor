@@ -152,25 +152,26 @@ else
 
 
             <BSCol Column="3">
-                <BSLabel>Ksf</BSLabel>
+    <BSLabel>Ksf</BSLabel>
 
-                <BSInput InputType="InputType.Select" @bind-Value="IdKsf">
+    <BSInput InputType="InputType.Select" @bind-Value="IdKsf">
+        <option value="0">Todo</option>
+        @foreach (var d in KsfData.ksfs.Where(x => x.Idksf != 6))
+        {
+            <option value="@d.Idksf">@d.KsfNombre</option>
+        }
+    </BSInput>
+</BSCol>
 
-                    <option value="0">Todo</option>
-                    @foreach (var d in KsfData.ksfs)
-                    {
-                        <option value="@d.Idksf">@d.KsfNombre</option>
-                    }
+<BSCol Column="3">
+    <BSRow>
+        <BSLabel>Imprimir</BSLabel>
+    </BSRow>
+    <BSButton IsOutlined Color="BSColor.Success" Size="Size.ExtraSmall" @onclick="PrintDocument"> 
+        <span class="oi oi-print"></span>
+    </BSButton>
+</BSCol>
 
-                </BSInput>
-            </BSCol>
-
-            <BSCol Column="3">
-                <BSRow>
-                    <BSLabel>Imprimir</BSLabel>
-                </BSRow>
-                <BSButton IsOutlined Color="BSColor.Success" Size="Size.ExtraSmall"  @onclick="PrintDocument">  <span class="oi oi-print"></span></BSButton>
-            </BSCol>
 
         }
     </BSRow>
@@ -804,6 +805,7 @@ else if (dataIsLoaded == 2 && PizarraData.reudiatablas.Count() == 0)
         //NavigationManager.NavigateTo($"TablaReunion/{IdCentro.ToString()}/{IdDiv.ToString()}/{DateTime.Now.AddDays(-1).ToString("dd-MM-yyyy")}/{DateTime.Now.ToString("dd-MM-yyyy")}/1", forceLoad: true);
         await IJS.InvokeAsync<object>("open", new object[] { $"TablaPendientes/{IdCentro.ToString()}/{IdDiv.ToString()}/{NombreLinea}/{fecha2.ToString("dd-MM-yyyy")}/{tipoconsulta}/{Status}/{IdResReu}", "_blank" });
     }
+
     string GetClassVencido(DateTime ft, string estado)
     {
         return ft.Date < DateTime.Now.Date && estado.StartsWith("Pendiente") ? "Vencido" : "";

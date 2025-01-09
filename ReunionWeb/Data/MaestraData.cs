@@ -30,6 +30,8 @@ public class MaestraData : IMaestraData
     public List<MaestraVDTO> maestra { get; set; } = new List<MaestraVDTO>();
     public List<CentrosVDTO> centro { get; set; } = new List<CentrosVDTO>();
     public List<LineaVDTO> lineas { get; set; } = new List<LineaVDTO>();
+
+    public List<CausaCalidadVDTO> causas { get; set; } = new List<CausaCalidadVDTO>();
     public List<DivisionesVDTO> divisions { get; set; } = new List<DivisionesVDTO>();
     public List<EquipoEamDTO> equipos { get; set; } = new List<EquipoEamDTO>();
     public List<EquipoEamDTO> equiposlinea { get; set; } = new List<EquipoEamDTO>();
@@ -129,6 +131,14 @@ public class MaestraData : IMaestraData
         cliente = _clientFactory.CreateClient();
         return equipos = await cliente.GetFromJsonAsync<List<EquipoEamDTO>>(url) ?? new List<EquipoEamDTO>();
         }
+
+        public async Task<List<CausaCalidadVDTO>> GetPRueba01(int Idcausa)
+        {
+            url = $"{BaseUrl}/GetPRueba01/{Idcausa}";
+            cliente = _clientFactory.CreateClient();
+            return causas = await cliente.GetFromJsonAsync<List<CausaCalidadVDTO>>(url) ?? new List<CausaCalidadVDTO>();
+        }
+
 
 
 }
