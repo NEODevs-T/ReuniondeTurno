@@ -318,7 +318,7 @@ else if (dataIsLoaded == 2 && PizarraData.reudiatablas.Count() == 0)
     }
     public async Task PrintDocument()
     {
-        await IJS.InvokeAsync<object>("open", new object[] { $"TablaReunion/{IdCentro.ToString()}/{IdDiv.ToString()}/{DateTime.Now.AddDays(-1).ToString("dd-MM-yyyy")}/{DateTime.Now.ToString("dd-MM-yyyy")}/1", "_blank" });
+        await IJS.InvokeAsync<object>("open", new object[] { $"TablaReunion/{IdCentro.ToString()}/{IdDiv.ToString()}/1", "_blank" });
     }
 
 }

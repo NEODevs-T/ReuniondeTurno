@@ -180,7 +180,7 @@
 
 @if (IsDiscObservacionesVisible)
 {
-    <BSCol ColumnSmall="3">
+    <BSCol ColumnSmall="2">
         <BSLabel>Observaciones de Calidad</BSLabel>
         <BSInput InputType="InputType.Select" @bind-Value="DiscForm.IdCausaCal" @onchange="OnCausaCalidadChanged">
             <option value="">Seleccione...</option>
@@ -388,9 +388,9 @@
     <BSFeedback For="@(() => DiscForm.IdResReu)" ValidMessage="Correcto." />
 </BSCol>
 
-@if (IsDiscObservacionesVisible)
+@if (IsDiscObservacionesVisible )
 {
-    <BSCol ColumnSmall="3">
+    <BSCol ColumnSmall="2">
         <BSLabel>Observaciones de Calidad</BSLabel>
         <BSInput InputType="InputType.Select" @bind-Value="DiscForm.IdCausaCal">
             <option value="">Seleccione...</option>
@@ -533,7 +533,7 @@
                         <BSTD>@d.Cffec.ToString("yyyy/MM/dd")</BSTD>
                             <BSTD>@d.CffecNew.ToString("yyyy/MM/dd")</BSTD>
                             <BSTD>@d.Cfuser</BSTD>
-                        </BSTR>
+                        </BSTR> 
                 }
             </BSTBody>
         </BSTable>
@@ -541,11 +541,11 @@
 }
 
 @code {
+
+    
     private bool IsDiscObservacionesVisible { get; set; } = false;
     private bool ObservacionesGuardadas { get; set; } = false;
     private int? PreviousCausaCal { get; set; } = null;
-
-    
 
     private void OnDiscResponsableChanged(ChangeEventArgs e)
     {
@@ -606,8 +606,24 @@
 
         StateHasChanged();
     }
-}
 
+    protected override async void OnInitialized()
+    {
+        DiscForm = await PizarraData.GetDiscrepantacia((int)Id);
+        // Verificar el valor inicial del responsable
+        if (DiscForm.IdResReu == 9)
+        {
+            IsDiscObservacionesVisible = true;
+        }
+        else
+        {
+            IsDiscObservacionesVisible = false;
+        }
+
+        base.OnInitialized();
+    }
+
+}
 @code {
 
     [Parameter]
@@ -653,18 +669,12 @@
     }
 
 
-    protected override async Task OnInitializedAsync()
-    {
-
-    }
-
     protected override async Task OnParametersSetAsync()
 {
     await CreateData();
     loader = true;
     Emp = claims[5].Value;
     planificador = claims[1].Value;
-    DiscForm = await PizarraData.GetDiscrepantacia((int)Id);
     await AvisadorData.GetCambioFecha((int)Id);
     CambiosFecha = AvisadorData.cambiofecha;
 
