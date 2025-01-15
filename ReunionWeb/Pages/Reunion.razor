@@ -103,6 +103,7 @@ Mantenimiento,Calidad,Seguridad,Efluentes, PendientesChempro, MttoAdmin")]*@
                     @* <BSTD>Tiempo</BSTD> *@
                     <BSTD ColSpan="1">Responsable</BSTD>
                     <BSTD>Obsevaciones de Calidad</BSTD>
+                    <BSTD>Ubicacion</BSTD>
                     <BSTD>Status</BSTD>
                     @* <BSTD>ODT</BSTD> *@
                     <BSTD>Fecha de Reunión</BSTD>@*Fecha de listo el trabajo*@
@@ -121,6 +122,7 @@ Mantenimiento,Calidad,Seguridad,Efluentes, PendientesChempro, MttoAdmin")]*@
                     //@if (d.Rdstatus != "Listo")
                     {
                         @if (Codigo == d.RdcodDis | Codigo == "Todo")
+                        @if (Origencalidad == "Todo" || Origencalidad == d.OrigenCal)
                         {
 
                             <BSTR>
@@ -151,6 +153,8 @@ Mantenimiento,Calidad,Seguridad,Efluentes, PendientesChempro, MttoAdmin")]*@
                                 }
 
                                 <BSTD>@CausaCalidadData.causaCals.Where(x => x.IdCausaCal == d.IdCausaCal).FirstOrDefault()?.Ccnombre</BSTD>
+                                <BSTD>@d.OrigenCal</BSTD>
+
 
                                 @if (@d.Rdstatus == "Revisar")
                                 {
@@ -212,7 +216,8 @@ else if (dataIsLoaded == 2 && PizarraData.reudiatablas.Count() == 0)
     int dataIsLoaded = 0, filtrocod = 0;
     string ayer = DateTime.Now.AddDays(-1).ToString("yyyyMMdd");
     string error;
-
+    
+    private string? Origencalidad { get; set; } ="Todo";
     private int IdCentro { get; set; } = 0; //id del Centro
     private int IdDiv { get; set; } = 0; //id de la division
     private int CentroComedor;//Variable para verificar si es el comedor venezuela;

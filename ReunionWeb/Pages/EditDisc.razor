@@ -190,7 +190,13 @@
             }
         </BSInput>
     </BSCol>
+
+    <BSCol ColumnSmall="2">
+        <BSLabel>Ubicación</BSLabel>
+        <BSInput InputType="InputType.Text" @bind-Value="DiscForm.OrigenCal" @oninput="OnUbicacionChanged" />
+    </BSCol>
 }
+
 
 
                     @if (tipo == 0 || tipo == 2)
@@ -376,7 +382,7 @@
                     }
 
 
-                    <BSCol ColumnSmall="2">
+    <BSCol ColumnSmall="2">
     <BSLabel>Responsable</BSLabel>
     <BSInput InputType="InputType.Select" @bind-Value="DiscForm.IdResReu" @onchange="OnDiscResponsableChanged">
         <option value="">Seleccione...</option>
@@ -388,11 +394,11 @@
     <BSFeedback For="@(() => DiscForm.IdResReu)" ValidMessage="Correcto." />
 </BSCol>
 
-@if (IsDiscObservacionesVisible )
+@if (IsDiscObservacionesVisible)
 {
     <BSCol ColumnSmall="2">
         <BSLabel>Observaciones de Calidad</BSLabel>
-        <BSInput InputType="InputType.Select" @bind-Value="DiscForm.IdCausaCal">
+        <BSInput InputType="InputType.Select" @bind-Value="DiscForm.IdCausaCal" @onchange="OnCausaCalidadChanged">
             <option value="">Seleccione...</option>
             @foreach (var e in CausaCalidadData.causaCals)
             {
@@ -400,7 +406,13 @@
             }
         </BSInput>
     </BSCol>
+
+    <BSCol ColumnSmall="2">
+        <BSLabel>Ubicación</BSLabel>
+        <BSInput InputType="InputType.Text" @bind-Value="DiscForm.OrigenCal" @oninput="OnUbicacionChanged" />
+    </BSCol>
 }
+
 
 
                     <BSCol ColumnSmall="2">
@@ -607,6 +619,22 @@
         StateHasChanged();
     }
 
+    private void OnUbicacionChanged(ChangeEventArgs e)
+    {
+        var selectedUbicacion = e.Value?.ToString();
+        if (!string.IsNullOrEmpty(selectedUbicacion))
+        {
+            DiscForm.OrigenCal = selectedUbicacion;
+        }
+        else
+        {
+            DiscForm.OrigenCal = ""; // Limpia y establece en 1 la causa de calidad si no se selecciona nada
+        }
+
+        StateHasChanged();
+    }
+    
+
     protected override async void OnInitialized()
     {
         DiscForm = await PizarraData.GetDiscrepantacia((int)Id);
@@ -771,7 +799,6 @@ async Task Editar()
         NotificationService.Notify(Notificar.Notificacion("error", "Ocurrió un error inesperado.", "Por favor, recargue la página."));
     }
 }
-
 
 
 

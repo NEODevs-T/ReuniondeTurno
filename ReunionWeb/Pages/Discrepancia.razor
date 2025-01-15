@@ -298,33 +298,38 @@
     }
 
     private void OnResponsableChanged(ChangeEventArgs e)
+{
+    var selectedResponsableId = e.Value?.ToString();
+
+    if (!string.IsNullOrEmpty(selectedResponsableId))
     {
-        var selectedResponsableId = e.Value?.ToString();
+        Reuniondb.IdResReu = int.Parse(selectedResponsableId);
+        Reuniondb.Responsable = RespoReuData.resporeus
+            .FirstOrDefault(k => k.IdResReu == Reuniondb.IdResReu)?.Rrnombre;
 
-        if (!string.IsNullOrEmpty(selectedResponsableId))
+        IsObservacionesVisible = Reuniondb.IdResReu == 9;
+
+        // Si el responsable es 9, limpiar el campo de Ubicación
+        if (Reuniondb.IdResReu == 9)
         {
-            Reuniondb.IdResReu = int.Parse(selectedResponsableId);
-            Reuniondb.Responsable = RespoReuData.resporeus
-                .FirstOrDefault(k => k.IdResReu == Reuniondb.IdResReu)?.Rrnombre;
-
-            IsObservacionesVisible = Reuniondb.IdResReu == 9;
-            if (!IsObservacionesVisible)
-            {
-                Reuniondb.IdCausaCal = 1;
-                Reuniondb.OrigenCal = string.Empty;
-                //Ubicacion = Reuniondb.OrigenCal
-            }
-
+            Ubicacion = ""; // Limpiamos el valor de Ubicación
         }
         else
         {
-            IsObservacionesVisible = false;
             Reuniondb.IdCausaCal = 1;
             Reuniondb.OrigenCal = string.Empty;
         }
 
-        StateHasChanged();
     }
+    else
+    {
+        IsObservacionesVisible = false;
+        Reuniondb.IdCausaCal = 1;
+        Reuniondb.OrigenCal = "N/A";
+    }
+
+    StateHasChanged();
+}
 
     private void OnCausaCalidadChanged(ChangeEventArgs e)
     {
@@ -421,7 +426,8 @@
             Reuniondb.RdfecTra = fechatrabajo;
             Reuniondb.Rdcentro = MaestraData.centro.First(c => c.IdCentro == idCent).Centro;
 
-            if (Ubicacion == null)
+            // Aquí aseguramos que si Ubicacion está vacío, se asigna "N/A"
+            if (string.IsNullOrEmpty(Ubicacion))
             {
                 Reuniondb.OrigenCal = "N/A";
             }
@@ -440,8 +446,6 @@
                 var result = await AvisadorData.InsertarRegistros(new RegistroCambiosDTO(CambFech, CambStata, Reuniondb));
                 if (result)
                 {
-                    IsObservacionesVisible = false; // Oculta las columnas
-                    Ubicacion = null; 
                     ResetFields();
                     NotificationService.Notify(Notificar.Notificacion("exito", "Registro Exitoso", ""));
                 }
@@ -459,6 +463,7 @@
 
     isDesactivado = false;
 }
+
 
 
     private bool ValidateFields(ReunionDTO reunion)

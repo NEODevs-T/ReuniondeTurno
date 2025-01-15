@@ -194,6 +194,7 @@ else
                     <BSTD Class="col-4">Plan de Acción</BSTD>
                     <BSTD>Responsable</BSTD>
                     <BSTD>Obsevaciones de Calidad</BSTD>
+                    <BSTD>Ubicacion</BSTD>
                     <BSTD>Estado</BSTD>
                     <BSTD>Fecha de Reunión</BSTD>
                     <BSTD>  </BSTD>
@@ -210,6 +211,7 @@ else
         {
             @if (NombreLinea == "Todo" || NombreLinea == d.Rdarea)
             {
+                @if (Origencalidad == "Todo" || Origencalidad == d.OrigenCal)
                 @if (IdResReu == 0 || IdResReu == d.IdResReu)
                 {
                     @if (IdKsf == 0 || IdKsf == d.Idksf)
@@ -229,6 +231,7 @@ else
                             {
                                 <BSTD>@RespoReuData.resporeus.Where(x => x.IdResReu == d.IdResReu).FirstOrDefault()?.Rrnombre</BSTD>
                                 <BSTD>@CausaCalidadData.causaCals.Where(x => x.IdCausaCal == d.IdCausaCal).FirstOrDefault()?.Ccnombre</BSTD>
+                                <BSTD>@d.OrigenCal</BSTD>
                             }
 
                             @if (@d.Rdstatus == "Cerrado")
@@ -501,6 +504,7 @@ else if (dataIsLoaded == 2 && PizarraData.reudiatablas.Count() == 0)
     private int IdCentro { get; set; } //id del Centro
     private int IdDiv { get; set; } //id de la division
     private int IdKsf { get; set; } //id del Ksf
+    private string? Origencalidad { get; set; } ="Todo";
     private string NombreLinea { get; set; } = "Todo";//id de la linea
     private string? BuscarOdt { get; set; } = null;//valor de Odt
     private string Codigo { get; set; } = "Todo"; //Codigo
