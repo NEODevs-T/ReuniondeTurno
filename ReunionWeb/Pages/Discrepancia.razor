@@ -209,7 +209,7 @@
     </BSCol>
     <BSCol Column="3">
         <BSLabel>Ubicación</BSLabel>
-        <BSInput InputType="InputType.Text" @bind-Value="@Ubicacion" @oninput="OnUbicacionChanged" />
+        <BSInput InputType="InputType.Text" @bind-Value="Reuniondb.OrigenCal" @oninput="OnUbicacionChanged" />
     </BSCol>
 }
 
@@ -233,7 +233,7 @@
     [CascadingParameter]
     private List<Claim> claims { get; set; }
 
-    private string Ubicacion { get; set; } = null;
+   // private string Ubicacion { get; set; } = null;
     ReunionDTO Reuniondb = new ReunionDTO();
     private NotifiRadzen Notificar = new NotifiRadzen();
     private string _message = "";
@@ -312,12 +312,12 @@
         // Si el responsable es 9, limpiar el campo de Ubicación
         if (Reuniondb.IdResReu == 9)
         {
-            Ubicacion = ""; // Limpiamos el valor de Ubicación
+            Reuniondb.OrigenCal = ""; // Limpiamos el valor de Ubicación
         }
         else
         {
             Reuniondb.IdCausaCal = 1;
-            Reuniondb.OrigenCal = string.Empty;
+            Reuniondb.OrigenCal = "N/A";
         }
 
     }
@@ -338,11 +338,15 @@
         StateHasChanged();
     }
 
-    private void OnUbicacionChanged(ChangeEventArgs e)
-    {
-        Reuniondb.OrigenCal = e.Value?.ToString() ?? string.Empty;
-        StateHasChanged();
-    }
+private void OnUbicacionChanged(ChangeEventArgs e)
+{
+    // Obtiene el valor del evento y asigna "N/A" si es nulo o vacío
+    Reuniondb.OrigenCal = string.IsNullOrEmpty(e.Value?.ToString()) ? "N/A" : e.Value.ToString();
+    
+    // Notifica a Blazor que el estado del componente ha cambiado
+    StateHasChanged();
+}
+
 
     protected async Task BuscarDivision(ChangeEventArgs e)
     {
@@ -406,6 +410,7 @@
 
     protected async Task Insert(EditContext d)
 {
+    
     isDesactivado = true;
     try
     {
@@ -422,20 +427,10 @@
 
         if (d.Validate())
         {
+            Reuniondb.RdfecCrea = DateTime.Now;
             Reuniondb.RdfecReu = fechahoy = DateTime.Now;
             Reuniondb.RdfecTra = fechatrabajo;
             Reuniondb.Rdcentro = MaestraData.centro.First(c => c.IdCentro == idCent).Centro;
-
-            // Aquí aseguramos que si Ubicacion está vacío, se asigna "N/A"
-            if (string.IsNullOrEmpty(Ubicacion))
-            {
-                Reuniondb.OrigenCal = "N/A";
-            }
-            else
-            {
-                Reuniondb.OrigenCal = Ubicacion;
-            }
-
             Reuniondb.Rddiv = MaestraData.divisions.FirstOrDefault(e => e.IdDivision == idDiv)?.Ndivision;
 
             if (ValidateFields(Reuniondb))
@@ -460,7 +455,7 @@
     {
         NotificationService.Notify(Notificar.Notificacion("error", "Error inesperado.", ex.Message));
     }
-
+    IsObservacionesVisible = false;
     isDesactivado = false;
 }
 
