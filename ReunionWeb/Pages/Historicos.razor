@@ -218,6 +218,12 @@
                 </Template>
             </RadzenDataGridColumn>
 
+            <RadzenDataGridColumn TItem="ReunionDTO" Title="Ubicación" Property="OrigenCal" Width="100px">
+                <Template>
+                    @context.OrigenCal
+                </Template>
+
+            </RadzenDataGridColumn>
             <RadzenDataGridColumn TItem="ReunionDTO" Title="Estado" Property="Rdstatus" Width="90px">
                 <Template>
                     @context.Rdstatus
