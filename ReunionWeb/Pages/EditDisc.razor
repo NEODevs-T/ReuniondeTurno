@@ -554,7 +554,6 @@
 
 @code {
 
-    
     private bool IsDiscObservacionesVisible { get; set; } = false;
     private bool ObservacionesGuardadas { get; set; } = false;
     private int? PreviousCausaCal { get; set; } = null;
@@ -587,18 +586,30 @@
                 {
                     DiscForm.IdCausaCal = 1; // Establece un valor inicial válido
                 }
+                // Borra la información de la columna Ubicación cuando el responsable es 9
+                DiscForm.OrigenCal = "";
             }
             else
             {
                 IsDiscObservacionesVisible = false;
                 DiscForm.IdCausaCal = 1; // Limpia y establece en 1 la causa de calidad al cambiar responsable
                 PreviousCausaCal = DiscForm.IdCausaCal; // Guarda el último valor de causa de calidad
+                // Si el responsable no es 9 y la columna de ubicación tiene información, guarda "N/A"
+                if (!string.IsNullOrEmpty(DiscForm.OrigenCal))
+                {
+                    DiscForm.OrigenCal = "N/A"; // Guarda "N/A" si la ubicación tiene algo escrito
+                }
             }
         }
         else
         {
             IsDiscObservacionesVisible = false;
             DiscForm.IdCausaCal = 1; // Limpia y establece en 1 la causa de calidad si no hay responsable seleccionado
+            // Si se desactiva el responsable y la ubicación está vacía, guarda "N/A"
+            if (string.IsNullOrEmpty(DiscForm.OrigenCal))
+            {
+                DiscForm.OrigenCal = "N/A"; // Guarda "N/A" si la ubicación está vacía
+            }
         }
 
         StateHasChanged();
@@ -628,11 +639,12 @@
         }
         else
         {
-            DiscForm.OrigenCal = ""; // Limpia y establece en 1 la causa de calidad si no se selecciona nada
+            DiscForm.OrigenCal = "N/A"; // Si está vacío, guarda "N/A"
         }
 
         StateHasChanged();
     }
+
     
 
     protected override async void OnInitialized()
@@ -760,7 +772,7 @@ async Task Editar()
             }
             else if (PlanOld != DiscForm.RdplanAcc && String.IsNullOrEmpty(DiscForm.RdplanAcc))
             {
-                NotificationService.Notify(Notificar.Notificacion("advertencia", "Atención", "No se guardar con Plan de Acción vacío."));
+                NotificationService.Notify(Notificar.Notificacion("advertencia", "Atención", "No se puede guardar con Plan de Acción vacío."));
                 DiscForm.RdplanAcc = PlanOld;
             }
             else
