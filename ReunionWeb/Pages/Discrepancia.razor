@@ -188,13 +188,12 @@
     <BSLabel>Responsable</BSLabel>
     <BSInput InputType="InputType.Select" @bind-Value="Reuniondb.IdResReu" @onchange="OnResponsableChanged">
         <option value="">Seleccione...</option>
-        @foreach (var d in RespoReuData.resporeus)
+        @foreach (var d in RespoReuData.resporeus.Where(x => !ResponsablesExcluidos.ContainsKey(x.IdResReu)))
         {
             <option value="@d.IdResReu">@d.Rrnombre</option>
         }
     </BSInput>
 </BSCol>
-
 @if (IsObservacionesVisible)
 {
     <BSCol Column="3">
@@ -218,13 +217,12 @@
 
     <BSCol Column="12">
         <BSButton Color="BSColor.Success" Size="Size.ExtraSmall" IsDisabled="isDesactivado" IsSubmit>  Guardar <span class="oi oi-check"></span></BSButton>
-        <BSButton Color="BSColor.Primary" Size="Size.ExtraSmall" IsReset>  Nuevo </BSButton>
+        <BSButton Color="BSColor.Primary" Size="Size.ExtraSmall" IsReset>  Borrar </BSButton>
     </BSCol>
 
 
 
 </BSForm>
-
 
 
 @code {
@@ -260,6 +258,15 @@
     string? selectedEquipoName;
     string? filter;
     bool codsuccess = false;
+
+        // Diccionario que asocia los IDs con sus nombres
+    private readonly Dictionary<int, string> ResponsablesExcluidos = new Dictionary<int, string>
+    {
+        { 12, "Compras" },
+        { 13, "Mtto. Instrumentación" },
+        { 15, "Mtto. Infraestructura" },
+        { 16, "Efluentes" }
+    };
 
     protected override async Task OnInitializedAsync()
     {
@@ -325,7 +332,7 @@
     {
         IsObservacionesVisible = false;
         Reuniondb.IdCausaCal = 1;
-        Reuniondb.OrigenCal = "N/A";
+        Reuniondb.OrigenCal = "";
     }
 
     StateHasChanged();
@@ -341,7 +348,7 @@
 private void OnUbicacionChanged(ChangeEventArgs e)
 {
     // Obtiene el valor del evento y asigna "N/A" si es nulo o vacío
-    Reuniondb.OrigenCal = string.IsNullOrEmpty(e.Value?.ToString()) ? "N/A" : e.Value.ToString();
+    Reuniondb.OrigenCal = string.IsNullOrEmpty(e.Value?.ToString()) ? "" : e.Value.ToString();
     
     // Notifica a Blazor que el estado del componente ha cambiado
     StateHasChanged();

@@ -138,17 +138,15 @@ else
         @if (PizarraData.reudiatablas.Count() > 0 && dataIsLoaded == 2)
         {
             <BSCol Column="3">
-                <BSLabel>Responsable</BSLabel>
-                <BSInput InputType="InputType.Select" @bind-Value="IdResReu">
-                    <option value=0>Todo</option>
-                    @foreach (var d in RespoReuData.resporeus)
-                    {
-
-                        <option value="@d.IdResReu">@d.Rrnombre</option>
-
-                    }
-                </BSInput>
-            </BSCol>
+    <BSLabel>Responsable</BSLabel>
+    <BSInput InputType="InputType.Select" @bind-Value="IdResReu">
+        <option value=0>Todo</option>
+        @foreach (var d in RespoReuData.resporeus.Where(x => !ResponsablesExcluidos.ContainsKey(x.IdResReu)))
+        {
+            <option value="@d.IdResReu">@d.Rrnombre</option>
+        }
+    </BSInput>
+</BSCol>
 
 
             <BSCol Column="3">
@@ -524,6 +522,15 @@ else if (dataIsLoaded == 2 && PizarraData.reudiatablas.Count() == 0)
     private bool isEditar { get; set; } = true;
     private List<Claim> claims { get; set; }    
 
+    
+    // Diccionario que asocia los IDs con sus nombres
+    private readonly Dictionary<int, string> ResponsablesExcluidos = new Dictionary<int, string>
+    {
+        { 12, "Compras" },
+        { 13, "Mtto. Instrumentación" },
+        { 15, "Mtto. Infraestructura" },
+        { 16, "Efluentes" }
+    };
 
     private async Task CreateData()
 
