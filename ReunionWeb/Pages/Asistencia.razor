@@ -26,21 +26,21 @@
     {
 
         <BSRow>
-            <BSCol Column="4">
+            <BSCol Column="3">
 
-                <BSInput InputType="InputType.Select"  @bind-Value="Div">
-                    @foreach (var d in MaestraData.centro)
-                    {
-                    <option value="@d.Centro">@d.Centro</option>
-                    }
+            <BSInput InputType="InputType.Select"  @bind-Value="Div" disabled>
+                @foreach (var d in MaestraData.centro)
+                {
+                <option value="@d.Centro">@d.Centro</option>
+                }
             </BSInput>
         </BSCol>
 
         <BSCol ColumnSmall="3">
-            <BSButton IsOutlined Color="BSColor.Success" Size="Size.ExtraSmall" @onclick="Get">   Asistentes  <span class="oi oi-check"></span></BSButton>
+            <BSButton IsOutlined Color="BSColor.Success" Size="Size.ExtraSmall" @onclick="Get" disabled>   Asistentes  <span class="oi oi-check"></span></BSButton>
         </BSCol>
 
-    </BSRow>
+        </BSRow>
 
     }
 

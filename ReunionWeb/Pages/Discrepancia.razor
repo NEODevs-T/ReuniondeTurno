@@ -197,7 +197,7 @@
 @if (IsObservacionesVisible)
 {
     <BSCol Column="3">
-        <BSLabel>Observaciones de Calidad</BSLabel>
+        <BSLabel>Detalles de Calidad</BSLabel>
         <BSInput InputType="InputType.Select" @bind-Value="Reuniondb.IdCausaCal" @onchange="OnCausaCalidadChanged">
             <option value="">Seleccione...</option>
             @foreach (var e in CausaCalidadData.causaCals)
@@ -207,7 +207,7 @@
         </BSInput>
     </BSCol>
     <BSCol Column="3">
-        <BSLabel>Ubicación</BSLabel>
+        <BSLabel>Origen del Producto</BSLabel>
         <BSInput InputType="InputType.Text" @bind-Value="Reuniondb.OrigenCal" @oninput="OnUbicacionChanged" />
     </BSCol>
 }
