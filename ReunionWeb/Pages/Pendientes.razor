@@ -191,8 +191,8 @@ else
                     @* <BSTD>Código</BSTD> *@
                     <BSTD Class="col-4">Plan de Acción</BSTD>
                     <BSTD>Responsable</BSTD>
-                    <BSTD>Detalles de Calidad</BSTD>
-                    <BSTD>Org. del Producto</BSTD>
+                    <BSTD>Det. Calidad</BSTD>
+                    <BSTD>Origen del Producto</BSTD>
                     <BSTD>Estado</BSTD>
                     <BSTD>Fecha de Reunión</BSTD>
                     <BSTD>  </BSTD>
@@ -229,7 +229,7 @@ else
                             {
                                 <BSTD>@RespoReuData.resporeus.Where(x => x.IdResReu == d.IdResReu).FirstOrDefault()?.Rrnombre</BSTD>
                                 <BSTD>@CausaCalidadData.causaCals.Where(x => x.IdCausaCal == d.IdCausaCal).FirstOrDefault()?.Ccnombre</BSTD>
-                                <BSTD>@d.OrigenCal</BSTD>
+                                <BSTD>@d.OrigenCal.ToUpperInvariant()</BSTD>
                             }
 
                             @if (@d.Rdstatus == "Cerrado")

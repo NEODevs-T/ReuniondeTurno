@@ -184,7 +184,7 @@
 
             <RadzenDataGridColumn TItem="ReunionDTO" Title="Discrepancia" Property="Rddisc" Width="220px">
                 <Template>
-                    @context.Rddisc
+                    @context.Rddisc.ToUpperInvariant()
                 </Template>
             </RadzenDataGridColumn>
 
@@ -212,15 +212,15 @@
                 </Template>
             </RadzenDataGridColumn>
 
-            <RadzenDataGridColumn TItem="ReunionDTO" Title="Detalles de Calidad" Property="CausaCalNombre" Width="100px">
+            <RadzenDataGridColumn TItem="ReunionDTO" Title="Det. Calidad" Property="CausaCalNombre" Width="100px">
                 <Template>
                     @context.CausaCalNombre
                 </Template>
             </RadzenDataGridColumn>
 
-            <RadzenDataGridColumn TItem="ReunionDTO" Title="Org. del Producto" Property="OrigenCal" Width="100px">
+            <RadzenDataGridColumn TItem="ReunionDTO" Title="Origen del Producto" Property="OrigenCal" Width="100px">
                 <Template>
-                    @context.OrigenCal
+                    @context.OrigenCal.ToUpperInvariant()
                 </Template>
 
             </RadzenDataGridColumn>

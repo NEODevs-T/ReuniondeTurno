@@ -153,7 +153,7 @@ Mantenimiento,Calidad,Seguridad,Efluentes, PendientesChempro, MttoAdmin")]*@
                                 }
 
                                 <BSTD>@CausaCalidadData.causaCals.Where(x => x.IdCausaCal == d.IdCausaCal).FirstOrDefault()?.Ccnombre</BSTD>
-                                <BSTD>@d.OrigenCal</BSTD>
+                                <BSTD>@d.OrigenCal.ToUpperInvariant()</BSTD>
 
 
                                 @if (@d.Rdstatus == "Revisar")
