@@ -286,41 +286,71 @@ else if (dataIsLoaded == 2 && PizarraData.reudiatablas.Count() == 0)
 
 
     protected async Task Get()
+{
+    if (IdCentro != 0 && IdDiv != 0)
     {
-        if (IdCentro != 0 & IdDiv != 0)
-        {
-            error = null;
-            if (dataIsLoaded != 1)
-            {
-                dataIsLoaded = 1;
-                await PizarraData.GetPendientes(IdCentro.ToString(), IdDiv.ToString(), DateTime.Now.AddDays(-1), DateTime.Now, "1",
-                "Reunion");
-                dataIsLoaded = 2;
-            }
-        }
-        else
-        {
-
-            error = "Seleccione los valores en las listas*";
-
-        }
-    }
-    void Editar(int id)
-    {
-        NavigationManager.NavigateTo($"EditDisc/{id}/1/Re/{DateTime.Now.AddDays(-1).ToString("dd-MM-yyyy")}/{DateTime.Now.ToString("dd-MM-yyyy")}/Reunion");
-    }
-    protected override async Task OnParametersSetAsync()
-    {
-        if (accion != null)
+        error = null;
+        if (dataIsLoaded != 1)
         {
             dataIsLoaded = 1;
-            IdCentro = int.Parse(accion);
-            IdDiv = int.Parse(division);
-            await PizarraData.GetPendientes(accion, division, DateTime.Now.AddDays(-1), DateTime.Now, tipo, "Reunion");
+
+            // Obtiene las reuniones filtrando únicamente las de hoy
+            DateTime fechaHoyInicio = DateTime.Today; // Inicio del día de hoy (00:00)
+            DateTime fechaHoyFin = DateTime.Today.AddDays(1).AddTicks(-1); // Fin del día de hoy (23:59:59.999)
+
+            await PizarraData.GetPendientes(
+                IdCentro.ToString(),
+                IdDiv.ToString(),
+                fechaHoyInicio,
+                fechaHoyFin,
+                "1", // Suponiendo que este parámetro es constante
+                "Reunion"
+            );
+
             dataIsLoaded = 2;
         }
+    }
+    else
+    {
+        error = "Seleccione los valores en las listas*";
+    }
+
 
     }
+void Editar(int id)
+{
+    // Utiliza la fecha del día actual
+    string fechaHoy = DateTime.Today.ToString("dd-MM-yyyy");
+    NavigationManager.NavigateTo($"EditDisc/{id}/1/Re/{fechaHoy}/{fechaHoy}/Reunion");
+}
+
+protected override async Task OnParametersSetAsync()
+{
+    if (accion != null)
+    {
+        dataIsLoaded = 1;
+
+        // Convertir los parámetros recibidos
+        IdCentro = int.Parse(accion);
+        IdDiv = int.Parse(division);
+
+        // Filtrar por el día actual
+        DateTime fechaHoyInicio = DateTime.Today; // Inicio del día actual (00:00:00)
+        DateTime fechaHoyFin = DateTime.Today.AddDays(1).AddTicks(-1); // Fin del día actual (23:59:59.999)
+
+        await PizarraData.GetPendientes(
+            accion,
+            division,
+            fechaHoyInicio,
+            fechaHoyFin,
+            tipo, // Asumiendo que `tipo` ya tiene un valor válido
+            "Reunion"
+        );
+
+        dataIsLoaded = 2;
+    }
+}
+
     public async Task PrintDocument()
     {
         await IJS.InvokeAsync<object>("open", new object[] { $"TablaReunion/{IdCentro.ToString()}/{IdDiv.ToString()}/1", "_blank" });
