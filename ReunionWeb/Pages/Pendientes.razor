@@ -637,27 +637,34 @@ else if (dataIsLoaded == 2 && PizarraData.reudiatablas.Count() == 0)
     }
 
 
-    protected async Task Get()
+protected async Task Get()
+{
+    if (IdCentro != 0 && IdDiv != 0)
     {
-        if (IdCentro != 0 & IdDiv != 0)
+        if (dataIsLoaded != 1)
         {
-            // error = null;
-            if (dataIsLoaded != 1)
-            {
-                dataIsLoaded = 1;
-                await PizarraData.GetPendientes(IdCentro.ToString(), IdDiv.ToString(), fecha1, fecha2, tipoconsulta, Status);
-                ObtenerReunionesPorRol();//actualizar tabla
-                dataIsLoaded = 2;
+            dataIsLoaded = 1;
+            await PizarraData.GetPendientes(IdCentro.ToString(), IdDiv.ToString(), fecha1, fecha2, tipoconsulta, Status);
 
+            // Verifica que los datos estén correctamente cargados
+            if (PizarraData.reudiatablas != null)
+            {
+                ObtenerReunionesPorRol(); // Actualizar tabla
+            }
+            else
+            {
+                NotificationService.Notify(Notificar.Notificacion("error", "Error", "No se encontraron datos para procesar."));
             }
 
-        }
-        else
-        {
-
-            NotificationService.Notify(Notificar.Notificacion("advertencia", "Atención", "Seleccione los valores en las listas"));
+            dataIsLoaded = 2;
         }
     }
+    else
+    {
+        NotificationService.Notify(Notificar.Notificacion("advertencia", "Atención", "Seleccione los valores en las listas"));
+    }
+}
+
 
     private async Task BuscarxOdt()
     {
@@ -797,18 +804,28 @@ else if (dataIsLoaded == 2 && PizarraData.reudiatablas.Count() == 0)
 
     }
     public void ObtenerReunionesPorRol()
+{
+    if (PizarraData.reudiatablas == null)
     {
-        if (!string.IsNullOrEmpty(UsrRol))
-        {
-            listareu = PizarraData.reudiatablas.Where(r => r.Responsable.StartsWith(UsrRol)).ToList();
-
-        }
-        else
-        {
-            listareu = PizarraData.reudiatablas;
-
-        }
+        // Asegúrate de manejar este caso adecuadamente
+        listareu = new List<ReunionDTO>();
+        return;
     }
+
+    if (!string.IsNullOrEmpty(UsrRol))
+    {
+        // Filtrar validando elementos nulos y propiedades nulas
+        listareu = PizarraData.reudiatablas
+            .Where(r => r != null && !string.IsNullOrEmpty(r.Responsable) && r.Responsable.StartsWith(UsrRol))
+            .ToList();
+    }
+    else
+    {
+        // Si UsrRol está vacío, asigna toda la lista evitando elementos nulos
+        listareu = PizarraData.reudiatablas.Where(r => r != null).ToList();
+    }
+}
+
 
 
     public async Task PrintDocument()

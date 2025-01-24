@@ -83,7 +83,7 @@
                 else
                 {
                     Console.WriteLine(ValidarToken);
-                    await LocalStorage.SetItemAsync("ReunionWebToken", ValidarToken);
+                    await LocalStorage.SetItemAsync("ReunionTurnoToken", ValidarToken);
                     await AuthStateProvider.GetAuthenticationStateAsync();
                 }
             }

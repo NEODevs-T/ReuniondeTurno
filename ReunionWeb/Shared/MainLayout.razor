@@ -128,7 +128,7 @@
     protected async Task HandleLogin(EditContext e)
     {
         mensaje = "";
-        user.Proyecto = "ReunionWeb";
+        user.Proyecto = "ReunionTurno";
         if (e.Validate())
         {
             carga = true;
@@ -165,7 +165,7 @@
                     
 
                     Console.WriteLine(ValidarToken);
-                    await LocalStorage.SetItemAsync("ReunionWebToken", ValidarToken);
+                    await LocalStorage.SetItemAsync("ReunionTurnoToken", ValidarToken);
                     var authState = await AuthStateProvider.GetAuthenticationStateAsync();
                     var userA = authState.User;
                     claims = Enumerable.ToList(userA.Claims);

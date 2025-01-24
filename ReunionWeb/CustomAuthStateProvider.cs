@@ -26,7 +26,7 @@ namespace ReunionWeb
 
         public override async  Task<AuthenticationState>  GetAuthenticationStateAsync()
         {
-           string token = await _localStorage.GetItemAsStringAsync("ReunionWebToken");
+           string token = await _localStorage.GetItemAsStringAsync("ReunionTurnoToken");
            
 
             var identity = new ClaimsIdentity();
