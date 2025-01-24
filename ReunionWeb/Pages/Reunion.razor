@@ -294,16 +294,15 @@ else if (dataIsLoaded == 2 && PizarraData.reudiatablas.Count() == 0)
         {
             dataIsLoaded = 1;
 
-            // Obtiene las reuniones filtrando únicamente las de hoy
-            DateTime fechaHoyInicio = DateTime.Today; // Inicio del día de hoy (00:00)
-            DateTime fechaHoyFin = DateTime.Today.AddDays(1).AddTicks(-1); // Fin del día de hoy (23:59:59.999)
-
+            DateTime fechaHoyInicio = DateTime.Today;
+            DateTime fechaHoyFin = DateTime.Today.AddDays(1).AddTicks(-1); 
+            
             await PizarraData.GetPendientes(
                 IdCentro.ToString(),
                 IdDiv.ToString(),
                 fechaHoyInicio,
                 fechaHoyFin,
-                "1", // Suponiendo que este parámetro es constante
+                "1",
                 "Reunion"
             );
 
@@ -319,7 +318,7 @@ else if (dataIsLoaded == 2 && PizarraData.reudiatablas.Count() == 0)
     }
 void Editar(int id)
 {
-    // Utiliza la fecha del día actual
+    
     string fechaHoy = DateTime.Today.ToString("dd-MM-yyyy");
     NavigationManager.NavigateTo($"EditDisc/{id}/1/Re/{fechaHoy}/{fechaHoy}/Reunion");
 }
@@ -330,20 +329,20 @@ protected override async Task OnParametersSetAsync()
     {
         dataIsLoaded = 1;
 
-        // Convertir los parámetros recibidos
+        
         IdCentro = int.Parse(accion);
         IdDiv = int.Parse(division);
 
-        // Filtrar por el día actual
-        DateTime fechaHoyInicio = DateTime.Today; // Inicio del día actual (00:00:00)
-        DateTime fechaHoyFin = DateTime.Today.AddDays(1).AddTicks(-1); // Fin del día actual (23:59:59.999)
+        
+        DateTime fechaHoyInicio = DateTime.Today;
+        DateTime fechaHoyFin = DateTime.Today.AddDays(1).AddTicks(-1);
 
         await PizarraData.GetPendientes(
             accion,
             division,
             fechaHoyInicio,
             fechaHoyFin,
-            tipo, // Asumiendo que `tipo` ya tiene un valor válido
+            tipo,
             "Reunion"
         );
 
