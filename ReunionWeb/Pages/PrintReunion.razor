@@ -2,59 +2,67 @@
 @page "/TablaReunion"
 @page "/TablaReunion/{accion}/{division}/{f1}/{f2}/{tipo}"
 
-@inject IDbReunionService DbReu
-@inject IAPIReunionService APIReunionService
+@inject AuthenticationStateProvider AuthStateProvider
+@inject ILocalStorageService LocalStorage
+@inject IAsistenciaReuData AsistenciaReuData
+@inject IAvisadorData AvisadorData
+@inject ICargoReuData CargoReuData
+@inject IKsfData KsfData
+@inject IPizarraData PizarraData
+@inject IRespoReuData RespoReuData
+@inject IMaestraData MaestraData
 
 
 
 
 <body>
 
-    @if (reudiatablas.Count() > 0 && dataIsLoaded == 2)
+    @if (PizarraData.reudiatablas.Count() > 0 && dataIsLoaded == 2)
     {
 
 
-                <BSTable IsStriped="true" IsBordered="true">
-                    <BSTHead Class="cabecera">
-                        <BSTR>
+        <BSTable IsStriped="true" IsBordered="true">
+            <BSTHead Class="cabecera">
+                <BSTR>
 
                     @*<BSTD>Id</BSTD>*@
                     @*Centro para validar el comedor*@
                     @if (CentroComedor == 11)
                     {
-                                    <BSTD>N. Equipo</BSTD>
+                        <BSTD>N. Equipo</BSTD>
                     }
                     else
                     {
 
                         @*  <BSTD>División</BSTD>*@
-                                    <BSTD>Área</BSTD>
-                                    <BSTD>Ksf</BSTD>
+                        <BSTD>Área</BSTD>
+                        <BSTD>Ksf</BSTD>
 
                     }
 
-                            <BSTD>Código de Equipo</BSTD>
-                            <BSTD ColSpan="4">Discrepancia</BSTD>
-                            <BSTD>Código</BSTD>
-                            <BSTD>Plan de Acción</BSTD>
-                            <BSTD>Tiempo</BSTD>
-                            <BSTD ColSpan="1">Responsable</BSTD>
-                            <BSTD>Status</BSTD>
-                            <BSTD>ODT</BSTD>
-                            <BSTD>Fecha del Trabajo</BSTD>@*Fecha de listo el trabajo*@
+                    <BSTD>Código de Equipo</BSTD>
+                    <BSTD ColSpan="4">Discrepancia</BSTD>
+                    <BSTD>Código</BSTD>
+                    <BSTD>Plan de Acción</BSTD>
+                    <BSTD>Tiempo</BSTD>
+                    <BSTD ColSpan="1">Responsable</BSTD>
+                    <BSTD>Status</BSTD>
+                    <BSTD>ODT</BSTD>
+                    <BSTD>Fecha del Trabajo</BSTD>@*Fecha de listo el trabajo*@
 
 
-                        </BSTR>
-                    </BSTHead>
-                    <BSTBody>
-                @foreach (var d in reudiatablas)
+                </BSTR>
+            </BSTHead>
+            <BSTBody>
+                @foreach (var d in PizarraData.reudiatablas)
                 {
-                    @if (d.Rdstatus != "Listo" & d.RdfecTra <= DateTime.Now | (d.Rdstatus != "Listo" & (d.Rdodt == "" | d.Rdodt is null)))
+                    @if (d.Rdstatus != "Listo" & d.RdfecTra <= DateTime.Now | (d.Rdstatus != "Listo" & (d.Rdodt == "" | d.Rdodt
+                   is null)))
                     //@if (d.Rdstatus != "Listo")
                     {
 
 
-                                        <BSTR>
+                        <BSTR>
 
                             @*<BSTD>@d.IdReuDia</BSTD>*@
                             @*Centro para validar el comedor*@
@@ -69,7 +77,7 @@
 
                                         if (eq.CodigoEq == d.RdcodEq)
                                         {
-                                                                            <BSTD>@eq.Equipo</BSTD>
+                                            <BSTD>@eq.Equipo</BSTD>
 
                                         }
 
@@ -78,7 +86,7 @@
                                 }
                                 else
                                 {
-                                                            <BSTD>No hay desctripción.</BSTD>
+                                    <BSTD>No hay desctripción.</BSTD>
 
                                 }
 
@@ -86,56 +94,56 @@
                             else
                             {
                                 @*  <BSTD>@d.Rddiv</BSTD>*@
-                                                    <BSTD>@d.Rdarea</BSTD>
-                                                    <BSTD>@d.Ksf</BSTD>
+                                <BSTD>@d.Rdarea</BSTD>
+                                <BSTD>@d.Ksf</BSTD>
                             }
 
 
-                                            <BSTD>@d.RdcodEq</BSTD>
-                                            <BSTD ColSpan="4">@d.Rddisc.ToUpper()</BSTD>
-                                            <BSTD>@d.RdcodDis</BSTD>
+                            <BSTD>@d.RdcodEq</BSTD>
+                            <BSTD ColSpan="4">@d.Rddisc.ToUpper()</BSTD>
+                            <BSTD>@d.RdcodDis</BSTD>
                             @if (@d.RdplanAcc is not null)
                             {
-                                                    <BSTD Class="textotabla listo">@d.RdplanAcc</BSTD>
+                                <BSTD Class="textotabla listo">@d.RdplanAcc</BSTD>
                             }
                             else
                             {
-                                                    <BSTD Class="textotabla ">@d.RdplanAcc</BSTD>
+                                <BSTD Class="textotabla ">@d.RdplanAcc</BSTD>
                             }
-                                            <BSTD>@d.Rdtiempo</BSTD>
+                            <BSTD>@d.Rdtiempo</BSTD>
                             @if (@d.Ksf == "Por Definir")
                             {
-                                                    <BSTD Class="Definir">@d.Responsable </BSTD>
+                                <BSTD Class="Definir">@d.Responsable </BSTD>
                             }
                             else
                             {
-                                                    <BSTD ColSpan="1">@d.Responsable</BSTD>
+                                <BSTD ColSpan="1">@d.Responsable</BSTD>
                             }
 
                             @if (@d.Rdstatus == "Revisar")
                             {
-                                                    <BSTD Class="cabecera">@d.Rdstatus</BSTD>
+                                <BSTD Class="cabecera">@d.Rdstatus</BSTD>
                             }
                             else
                             {
-                                                    <BSTD Class="">@d.Rdstatus</BSTD>
+                                <BSTD Class="">@d.Rdstatus</BSTD>
                             }
-                                            <BSTD>@d.Rdodt</BSTD>
-                                            <BSTD>@d.RdfecTra.ToString("dd/MM/yyyy") </BSTD>
+                            <BSTD>@d.Rdodt</BSTD>
+                            <BSTD>@d.RdfecTra.ToString("dd/MM/yyyy") </BSTD>
 
 
-                                        </BSTR>
+                        </BSTR>
 
                     }
                 }
 
 
-                    </BSTBody>
+            </BSTBody>
 
-                </BSTable>
+        </BSTable>
 
     }
-     <button type="button" onclick="window.print()" class="btn btn-success"><span class="oi oi-print"></span></button>
+    <button type="button" onclick="window.print()" class="btn btn-success"><span class="oi oi-print"></span></button>
 </body>
 
 
@@ -183,7 +191,7 @@
         if (accion != null)
         {
             dataIsLoaded = 1;
-            await DbReu.GetPendientes(accion, division, DateTime.Now.AddDays(-1), DateTime.Now, tipo, "Reunion");
+            await PizarraData.GetPendientes(accion, division, DateTime.Now.AddDays(-1), DateTime.Now, tipo, "Reunion");
             dataIsLoaded = 2;
         }
 

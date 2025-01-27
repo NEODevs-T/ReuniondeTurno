@@ -285,18 +285,21 @@ else if (dataIsLoaded == 2 && PizarraData.reudiatablas.Count() == 0)
     }
 
 
-    protected async Task Get()
+protected async Task Get()
 {
     if (IdCentro != 0 && IdDiv != 0)
     {
         error = null;
+
         if (dataIsLoaded != 1)
         {
             dataIsLoaded = 1;
 
+            // Definir el rango de fechas para el día actual
             DateTime fechaHoyInicio = DateTime.Today;
-            DateTime fechaHoyFin = DateTime.Today.AddDays(1).AddTicks(-1); 
-            
+            DateTime fechaHoyFin = DateTime.Today.AddDays(1).AddTicks(-1);
+
+            // Obtener los datos
             await PizarraData.GetPendientes(
                 IdCentro.ToString(),
                 IdDiv.ToString(),
@@ -306,6 +309,14 @@ else if (dataIsLoaded == 2 && PizarraData.reudiatablas.Count() == 0)
                 "Reunion"
             );
 
+            // Filtrar los datos para asegurar que solo queden reuniones del día actual
+            if (PizarraData.reudiatablas != null)
+            {
+                PizarraData.reudiatablas = PizarraData.reudiatablas
+                    .Where(r => r != null && r.RdfecReu.Date == DateTime.Today) // Filtrar por la fecha de reunión
+                    .ToList();
+            }
+
             dataIsLoaded = 2;
         }
     }
@@ -313,12 +324,10 @@ else if (dataIsLoaded == 2 && PizarraData.reudiatablas.Count() == 0)
     {
         error = "Seleccione los valores en las listas*";
     }
-
-
-    }
+}
 void Editar(int id)
 {
-    
+    // Usar la fecha de hoy formateada en el formato "dd-MM-yyyy"
     string fechaHoy = DateTime.Today.ToString("dd-MM-yyyy");
     NavigationManager.NavigateTo($"EditDisc/{id}/1/Re/{fechaHoy}/{fechaHoy}/Reunion");
 }
@@ -329,14 +338,14 @@ protected override async Task OnParametersSetAsync()
     {
         dataIsLoaded = 1;
 
-        
         IdCentro = int.Parse(accion);
         IdDiv = int.Parse(division);
 
-        
+        // Definir el rango de fechas para el día actual
         DateTime fechaHoyInicio = DateTime.Today;
         DateTime fechaHoyFin = DateTime.Today.AddDays(1).AddTicks(-1);
 
+        // Obtener los datos
         await PizarraData.GetPendientes(
             accion,
             division,
@@ -345,6 +354,14 @@ protected override async Task OnParametersSetAsync()
             tipo,
             "Reunion"
         );
+
+        // Filtrar los datos para mostrar solo las reuniones del día actual
+        if (PizarraData.reudiatablas != null)
+        {
+            PizarraData.reudiatablas = PizarraData.reudiatablas
+                .Where(r => r != null && r.RdfecReu.Date == DateTime.Today) // Filtrar por fecha de reunión
+                .ToList();
+        }
 
         dataIsLoaded = 2;
     }
