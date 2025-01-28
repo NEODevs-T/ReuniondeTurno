@@ -829,8 +829,18 @@ protected async Task Get()
 }
 
 
+public async Task PrintDocument()
+    {
+        //NavigationManager.NavigateTo($"TablaReunion/{IdCentro.ToString()}/{IdDiv.ToString()}/{DateTime.Now.AddDays(-1).ToString("dd-MM-yyyy")}/{DateTime.Now.ToString("dd-MM-yyyy")}/1", forceLoad: true);
+        await IJS.InvokeAsync<object>("open", new object[] { $"TablaPendientes/{IdCentro.ToString()}/{IdDiv.ToString()}/{NombreLinea}/{fecha1.ToString("dd-MM-yyyy")}/{fecha2.ToString("dd-MM-yyyy")}/{tipoconsulta}/{Status}/{IdResReu}", "_blank" });
+    }
+    string GetClassVencido(DateTime ft, string estado)
+    {
+        return ft.Date < DateTime.Now.Date && estado.StartsWith("Pendiente") ? "Vencido" : "";
+    }
 
-    public async Task PrintDocument()
+
+    @* public async Task PrintDocument()
     {
         //NavigationManager.NavigateTo($"TablaReunion/{IdCentro.ToString()}/{IdDiv.ToString()}/{DateTime.Now.AddDays(-1).ToString("dd-MM-yyyy")}/{DateTime.Now.ToString("dd-MM-yyyy")}/1", forceLoad: true);
         await IJS.InvokeAsync<object>("open", new object[] { $"TablaPendientes/{IdCentro.ToString()}/{IdDiv.ToString()}/{NombreLinea}/{fecha2.ToString("dd-MM-yyyy")}/{tipoconsulta}/{Status}/{IdResReu}", "_blank" });
@@ -839,5 +849,5 @@ protected async Task Get()
     string GetClassVencido(DateTime ft, string estado)
     {
         return ft.Date < DateTime.Now.Date && estado.StartsWith("Pendiente") ? "Vencido" : "";
-    }
+    } *@
 }
