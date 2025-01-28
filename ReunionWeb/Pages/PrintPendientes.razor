@@ -11,45 +11,37 @@
 @inject IPizarraData PizarraData
 @inject IRespoReuData RespoReuData
 @inject IMaestraData MaestraData
+@inject ICausaCalidadData CausaCalidadData
+
 
 <BSRow>
     <BSCol ColumnSmall="1" Column="2">
         <BSLabel>Código</BSLabel>
-        <BSInput InputType="InputType.Select" @bind-Value="Codigo">
-            <option value="Todo">Todo</option>
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4">4</option>
-            <option value="5">5</option>
-        </BSInput>
+                <BSInput InputType="InputType.Select" IsDisabled @bind-Value="Codigo">
+                    <option value="Todo">En Curso</option>
+                    <option value="6">En Curso</option>
+                </BSInput>
     </BSCol>
 
     <BSCol ColumnSmall="1" Column="2">
         <BSLabel>Estado</BSLabel>
         <BSInput InputType="InputType.Select" @bind-Value="Status">
-            <option value="Total Pendiente">Total Pendiente</option>
             <option value="Todo">Todo</option>
             <option value="Pendiente">Pendiente</option>
-            <option value="Pendiente/Responsable">Pendiente/Responsable</option>
-            <option value="Listo">Listo</option>
             <option value="Cerrado">Cerrado</option>
-            <option value="Vencidos">Vencidos</option>
         </BSInput>
     </BSCol>
 
-    <BSCol Column="3">
-        <BSLabel>Responsable</BSLabel>
-        <BSInput InputType="InputType.Select" @bind-Value="idrespo">
-            <option value=0>Todo</option>
-            @foreach (var d in RespoReuData.resporeus)
-            {
-
-                <option value="@d.IdResReu">@d.Rrnombre</option>
-
-            }
-        </BSInput>
-    </BSCol>
+<BSCol Column="3">
+    <BSLabel>Responsable</BSLabel>
+    <BSInput InputType="InputType.Select" @bind-Value="idrespo">
+        <option value=0>Todo</option>
+        @foreach (var d in RespoReuData.resporeus.Where(x => AllowedResponsables.Contains(x.IdResReu)))
+        {
+            <option value="@d.IdResReu">@d.Rrnombre</option>
+        }
+    </BSInput>
+</BSCol>
     <BSCol Column="3">
         <BSLabel>Línea</BSLabel>
         <BSInput InputType="InputType.Text" @bind-Value="linea" IsReadonly=true />
@@ -75,14 +67,16 @@
                     <BSTD>Ksf</BSTD>
                     <BSTD>C. Equipo</BSTD>
                     <BSTD ColSpan="4">Discrepancia</BSTD>
-                    <BSTD>Código</BSTD>
+                    @* <BSTD>Código</BSTD> *@
                     <BSTD>Plan de Acción</BSTD>
-                    <BSTD>Tiempo</BSTD>
+                    @* <BSTD>Tiempo</BSTD> *@
                     <BSTD>Responsable</BSTD>
+                    <BSTD>Det. de Calidad</BSTD>
+                    <BSTD>Org. del Producto</BSTD>
                     <BSTD>Status</BSTD>
-                    <BSTD>ODT</BSTD>
+                    @* <BSTD>ODT</BSTD> *@
                     <BSTD>Fecha de Reunión</BSTD> @*Fecha del dia de reunion*@
-                    <BSTD>Fecha del Trabajo</BSTD>@*Fecha de listo el trabajo*@
+                    @* <BSTD>Fecha del Trabajo</BSTD>Fecha de listo el trabajo *@
 
 
                 </BSTR>
@@ -115,20 +109,22 @@
                                         @*<BSTD>@d.IdReuDia</BSTD>*@
 
                                         <BSTD>@d.Rdarea</BSTD>
-                                        <BSTD>@d.Ksf</BSTD>
+                                        <BSTD>@KsfData.ksfs.Where(x => x.Idksf == d.Idksf).FirstOrDefault()?.KsfNombre</BSTD>
                                         <BSTD>@d.RdcodEq</BSTD>
                                         <BSTD ColSpan="4">@d.Rddisc.ToUpperInvariant()</BSTD>
-                                        <BSTD>@d.RdcodDis</BSTD>
+                                        @* <BSTD>@d.RdcodDis</BSTD> *@
                                         <BSTD Class="textotabla">@d.RdplanAcc</BSTD>
-                                        <BSTD>@d.Rdtiempo</BSTD>
-                                        @if (@d.Responsable == "Por Definir")
+                                        @* <BSTD>@d.Rdtiempo</BSTD> *@
+                                        @if (@RespoReuData.resporeus.Where( x => x.IdResReu == d.IdResReu).FirstOrDefault()?.Rrnombre == "Por Definir")
                                         {
-                                            <BSTD Class="Definir">@d.Responsable </BSTD>
+                                            <BSTD Class="Definir">@RespoReuData.resporeus.Where( x => x.IdResReu == d.IdResReu).FirstOrDefault()?.Rrnombre </BSTD>
                                         }
                                         else
                                         {
-                                            <BSTD>@d.Responsable </BSTD>
+                                            <BSTD>@RespoReuData.resporeus.Where( x => x.IdResReu == d.IdResReu).FirstOrDefault()?.Rrnombre </BSTD>
                                         }
+                                        <BSTD>@CausaCalidadData.causaCals.Where(x => x.IdCausaCal == d.IdCausaCal).FirstOrDefault()?.Ccnombre</BSTD>
+                                        <BSTD>@d.OrigenCal.ToUpperInvariant()</BSTD>
 
                                         @if (@d.Rdstatus == "Listo")
                                         {
@@ -142,9 +138,9 @@
                                         {
                                             <BSTD Class="pendiente">@d.Rdstatus</BSTD>
                                         }
-                                        <BSTD>@d.Rdodt</BSTD>
+                                        @* <BSTD>@d.Rdodt</BSTD> *@
                                         <BSTD>@d.RdfecReu.ToString("dd/MM/yyyy")</BSTD>
-                                        <BSTD>@d.RdfecTra.ToString("dd/MM/yyyy")</BSTD>
+                                        @* <BSTD>@d.RdfecTra.ToString("dd/MM/yyyy")</BSTD> *@
 
                                     </BSTR>
 
@@ -233,10 +229,15 @@
 
 
     }
+    
+    private readonly List<int> AllowedResponsables = new List<int> { 2, 4, 8, 9, 10, 11 };
 
     protected override async Task OnParametersSetAsync()
     {
         await CreateData();
+        await KsfData.Getksf();
+        await RespoReuData.GetResReu();
+        await CausaCalidadData.GetCausasCalidad();
 
         switch (claims.FirstOrDefault(c => c.Type.Contains("role"))?.Value)
         {

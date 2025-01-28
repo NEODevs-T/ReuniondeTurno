@@ -224,15 +224,15 @@ else
                             @if (@RespoReuData.resporeus.Where(x => x.IdResReu == d.IdResReu).FirstOrDefault()?.Rrnombre == "Por Definir")
                             {
                                 <BSTD Class="Definir">@RespoReuData.resporeus.Where(x => x.IdResReu == d.IdResReu).FirstOrDefault()?.Rrnombre</BSTD>
-                                <BSTD>@CausaCalidadData.causaCals.Where(x => x.IdCausaCal == d.IdCausaCal).FirstOrDefault()?.Ccnombre</BSTD>
-                                <BSTD>@d.OrigenCal.ToUpperInvariant()</BSTD>
+
                             }
                             else
                             {
                                 <BSTD>@RespoReuData.resporeus.Where(x => x.IdResReu == d.IdResReu).FirstOrDefault()?.Rrnombre</BSTD>
-                                <BSTD>@CausaCalidadData.causaCals.Where(x => x.IdCausaCal == d.IdCausaCal).FirstOrDefault()?.Ccnombre</BSTD>
-                                <BSTD>@d.OrigenCal.ToUpperInvariant()</BSTD>
                             }
+
+                            <BSTD>@CausaCalidadData.causaCals.Where(x => x.IdCausaCal == d.IdCausaCal).FirstOrDefault()?.Ccnombre</BSTD>
+                            <BSTD>@d.OrigenCal.ToUpperInvariant()</BSTD>
 
                             @if (@d.Rdstatus == "Cerrado")
                             {
@@ -838,16 +838,4 @@ public async Task PrintDocument()
     {
         return ft.Date < DateTime.Now.Date && estado.StartsWith("Pendiente") ? "Vencido" : "";
     }
-
-
-    @* public async Task PrintDocument()
-    {
-        //NavigationManager.NavigateTo($"TablaReunion/{IdCentro.ToString()}/{IdDiv.ToString()}/{DateTime.Now.AddDays(-1).ToString("dd-MM-yyyy")}/{DateTime.Now.ToString("dd-MM-yyyy")}/1", forceLoad: true);
-        await IJS.InvokeAsync<object>("open", new object[] { $"TablaPendientes/{IdCentro.ToString()}/{IdDiv.ToString()}/{NombreLinea}/{fecha2.ToString("dd-MM-yyyy")}/{tipoconsulta}/{Status}/{IdResReu}", "_blank" });
-    }
-
-    string GetClassVencido(DateTime ft, string estado)
-    {
-        return ft.Date < DateTime.Now.Date && estado.StartsWith("Pendiente") ? "Vencido" : "";
-    } *@
 }

@@ -143,7 +143,7 @@ Mantenimiento,Calidad,Seguridad,Efluentes, PendientesChempro, MttoAdmin")]*@
                                     <BSTD Class="textotabla ">@d.RdplanAcc</BSTD>
                                 }
                                 @* <BSTD>@d.Rdtiempo</BSTD> *@
-                                @if (@d.Responsable == "Por Definir")
+                                @if (@RespoReuData.resporeus.Where( x => x.IdResReu == d.IdResReu).FirstOrDefault()?.Rrnombre == "Por Definir")
                                 {
                                     <BSTD Class="Definir">@RespoReuData.resporeus.Where( x => x.IdResReu == d.IdResReu).FirstOrDefault()?.Rrnombre</BSTD>
                                 }
