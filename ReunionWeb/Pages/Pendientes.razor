@@ -306,7 +306,7 @@ else
             {
                 <p>No hay registros aún...</p>
             }
-            <p></p>
+            @* <p></p>
             <p></p>
             <h5>Cambios de Fecha de Trabajo:</h5>
 
@@ -339,7 +339,7 @@ else
             else if (cambiofechas.Count() == 0 && cargandocambio == true)
             {
                 <p>No hay registros aún...</p>
-            }
+            } *@
         </Content>
         <Footer Context="modal">
             <BSButton MarginStart="Margins.Auto" Color="BSColor.Success" @onclick="modal.HideAsync">Aceptar</BSButton>

@@ -542,8 +542,8 @@
                 {
                     <BSTR>
                         <BSTD>@(CambiosFecha.IndexOf(d) + 1)</BSTD>
-                        <BSTD>@d.Cffec.ToString("yyyy/MM/dd")</BSTD>
-                            <BSTD>@d.CffecNew.ToString("yyyy/MM/dd")</BSTD>
+                        <BSTD>@d.Cffec.ToString("dd/MM/yyyy")</BSTD>
+                            <BSTD>@d.CffecNew.ToString("dd/MM/yyyy")</BSTD>
                             <BSTD>@d.Cfuser</BSTD>
                         </BSTR> 
                 }
@@ -553,273 +553,177 @@
 }
 
 @code {
-
     private bool IsDiscObservacionesVisible { get; set; } = false;
     private bool ObservacionesGuardadas { get; set; } = false;
     private int? PreviousCausaCal { get; set; } = null;
-
-    private void OnDiscResponsableChanged(ChangeEventArgs e)
-    {
-        var selectedResponsableId = e.Value?.ToString();
-
-        if (!string.IsNullOrEmpty(selectedResponsableId))
-        {
-            // Guardar la causa de calidad previa si cambia el responsable
-            if (DiscForm.IdResReu == 9 && PreviousCausaCal.HasValue)
-            {
-                ObservacionesGuardadas = true;
-            }
-            else
-            {
-                ObservacionesGuardadas = false;
-            }
-
-            // Actualiza el ID del responsable en DiscForm
-            DiscForm.IdResReu = int.Parse(selectedResponsableId);
-
-            // Muestra u oculta la columna de observaciones
-            if (DiscForm.IdResReu == 9)
-            {
-                IsDiscObservacionesVisible = true;
-                // Si el usuario vuelve a seleccionar 9, inicializa las opciones si están vacías
-                if (DiscForm.IdCausaCal == null || DiscForm.IdCausaCal == 0)
-                {
-                    DiscForm.IdCausaCal = 1; // Establece un valor inicial válido
-                }
-                // Borra la información de la columna Ubicación cuando el responsable es 9
-                DiscForm.OrigenCal = "";
-            }
-            else
-            {
-                IsDiscObservacionesVisible = false;
-                DiscForm.IdCausaCal = 1; // Limpia y establece en 1 la causa de calidad al cambiar responsable
-                PreviousCausaCal = DiscForm.IdCausaCal; // Guarda el último valor de causa de calidad
-                // Si el responsable no es 9 y la columna de ubicación tiene información, guarda "N/A"
-                if (!string.IsNullOrEmpty(DiscForm.OrigenCal))
-                {
-                    DiscForm.OrigenCal = "N/A"; // Guarda "N/A" si la ubicación tiene algo escrito
-                }
-            }
-        }
-        else
-        {
-            IsDiscObservacionesVisible = false;
-            DiscForm.IdCausaCal = 1; // Limpia y establece en 1 la causa de calidad si no hay responsable seleccionado
-            // Si se desactiva el responsable y la ubicación está vacía, guarda "N/A"
-            if (string.IsNullOrEmpty(DiscForm.OrigenCal))
-            {
-                DiscForm.OrigenCal = "N/A"; // Guarda "N/A" si la ubicación está vacía
-            }
-        }
-
-        StateHasChanged();
-    }
-
-    private void OnCausaCalidadChanged(ChangeEventArgs e)
-    {
-        var selectedCausaCalidad = e.Value?.ToString();
-        if (!string.IsNullOrEmpty(selectedCausaCalidad))
-        {
-            DiscForm.IdCausaCal = int.Parse(selectedCausaCalidad);
-        }
-        else
-        {
-            DiscForm.IdCausaCal = 1; // Limpia y establece en 1 la causa de calidad si no se selecciona nada
-        }
-
-        StateHasChanged();
-    }
-
-    private void OnUbicacionChanged(ChangeEventArgs e)
-    {
-        var selectedUbicacion = e.Value?.ToString();
-        if (!string.IsNullOrEmpty(selectedUbicacion))
-        {
-            DiscForm.OrigenCal = selectedUbicacion;
-        }
-        else
-        {
-            DiscForm.OrigenCal = ""; // Si está vacío, guarda "N/A"
-        }
-
-        StateHasChanged();
-    }
-
     
-
-    protected override async void OnInitialized()
-    {
-        DiscForm = await PizarraData.GetDiscrepantacia((int)Id);
-        // Verificar el valor inicial del responsable
-        if (DiscForm.IdResReu == 9)
-        {
-            IsDiscObservacionesVisible = true;
-        }
-        else
-        {
-            IsDiscObservacionesVisible = false;
-        }
-
-        base.OnInitialized();
-    }
-
-     private readonly Dictionary<int, string> ResponsablesExcluidos = new Dictionary<int, string>
+    [Parameter] public int? Id { get; set; }
+    [Parameter] public int? tipo { get; set; }
+    [Parameter] public string? f1 { get; set; }
+    [Parameter] public string? linea { get; set; }
+    [Parameter] public string? f2 { get; set; }
+    [Parameter] public string? est { get; set; }
+    
+    string _message = "";
+    bool cambio = true;
+    bool loader = true;
+    
+    ReunionDTO DiscForm = new ReunionDTO();
+    CambStatDTO CambStat = new CambStatDTO();
+    CambFecDTO CambFec = new CambFecDTO();
+    List<CambFecDTO> CambiosFecha = new List<CambFecDTO>();
+    
+    private NotifiRadzen Notificar = new NotifiRadzen();
+    private DateTime fechahoy, fechatrabajo = DateTime.Today;
+    private string fechahoy2, Emp = "";
+    private string planificador, camStat, PlanOld;
+    private DateTime? camFec;
+    private List<Claim> claims { get; set; }
+    
+    private readonly Dictionary<int, string> ResponsablesExcluidos = new()
     {
         { 12, "Compras" },
         { 13, "Mtto. Instrumentación" },
         { 15, "Mtto. Infraestructura" },
         { 16, "Efluentes" }
     };
-
-}
-@code {
-
-    [Parameter]
-    public int? Id { get; set; }
-    [Parameter]
-    public int? tipo { get; set; }
-    [Parameter]
-    public string? f1 { get; set; }
-    [Parameter]
-    public string? linea { get; set; }
-    [Parameter]
-    public string? f2 { get; set; }
-    [Parameter]
-    public string? est { get; set; }
-
-    string _message = "";
-    bool cambio = true;
-    bool loader = true;
-
-    ReunionDTO DiscForm = new ReunionDTO();//Formulario para editar, la discrepancia
-    CambStatDTO CambStat = new CambStatDTO();//Formulario para agregar que usuario hizo el cambio de status.
-    CambFecDTO CambFec = new CambFecDTO();//Formulario para agregar que usuario hizo el cambio de fecha.
-
-    List<CambFecDTO> CambiosFecha = new List<CambFecDTO>();//Lista para  cambio de fecha.
-
-    private NotifiRadzen Notificar = new NotifiRadzen();//Logic para crear las noyificaciones radzen
-
-    private DateTime fechahoy, fechatrabajo = DateTime.Today;
-    private string fechahoy2, Emp = "";//Empresa
-    private string planificador;//Variable para verificar si es el usuario del planificador;
-    private string camStat;//Variable para verificar si es el usuario cambio el Status;
-    private string PlanOld;//Variable para verificar si es el usuario cambio el plan de accion;
-    private DateTime? camFec;//Variable para verificar si es el usuario cambio la Fecha;
-
-    private List<Claim> claims { get; set; }//obtener datos del token
-
-
+    
     private async Task CreateData()
     {
         var authState = await AuthStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;
-        claims = Enumerable.ToList(user.Claims);
+        claims = user.Claims.ToList();
     }
-
-
+    
     protected override async Task OnParametersSetAsync()
-{
-    await CreateData();
-    loader = true;
-    Emp = claims[5].Value;
-    planificador = claims[1].Value;
-    await AvisadorData.GetCambioFecha((int)Id);
-    CambiosFecha = AvisadorData.cambiofecha;
-
-    camStat = DiscForm.Rdstatus;
-    camFec = DiscForm.RdfecTra;
-    PlanOld = DiscForm.RdplanAcc;
-
-    await KsfData.Getksf();
-    await RespoReuData.GetResReu();
-    await CausaCalidadData.GetCausasCalidad();
-    RespoReuData.resporeus = RespoReuData.resporeus.Where(a => a.Rrdesc == claims.FirstOrDefault(c => c.Type.Contains("Empresa"))?.Value || string.IsNullOrEmpty(a.Rrdesc)).ToList();
-    loader = false;
-}
-
-async Task Back()
-{
-    string backcentro = DiscForm.Rdcentro;
-    string backdiv = DiscForm.Rddiv;
-
-    // Conservar el valor actual de IdCausaCal antes de navegar
-    int currentIdCausaCal = DiscForm.IdCausaCal;
-
-    CentroDivisionDTO centrodiv = await PizarraData.GetCentroDivi(backcentro, backdiv, 1);
-
-    if (tipo == 0)
     {
-        NavigationManager.NavigateTo($"pendientes/{centrodiv.IdCentro}/{centrodiv.IdDivision}/{linea}/{f1}/{f2}/{tipo}/{est}", forceLoad: true);
+        await CreateData();
+        loader = true;
+        Emp = claims[5].Value;
+        planificador = claims[1].Value;
+        await AvisadorData.GetCambioFecha((int)Id);
+        CambiosFecha = AvisadorData.cambiofecha;
+        camStat = DiscForm.Rdstatus;
+        camFec = DiscForm.RdfecTra;
+        PlanOld = DiscForm.RdplanAcc;
+        await KsfData.Getksf();
+        await RespoReuData.GetResReu();
+        await CausaCalidadData.GetCausasCalidad();
+        loader = false;
     }
-    else if (tipo == 2)
+    
+    private void OnDiscResponsableChanged(ChangeEventArgs e)
     {
-        NavigationManager.NavigateTo($"pendientes/{centrodiv.IdCentro}/{centrodiv.IdDivision}/{linea}/{f1}/{f2}/{tipo}/{est}", forceLoad: true);
-    }
-    else
-    {
-        NavigationManager.NavigateTo($"reunion/{centrodiv.IdCentro}/{centrodiv.IdDivision}/Re/{f1}/{f2}/{tipo}/{est}", forceLoad: true);
-    }
-
-    // Restaurar IdCausaCal después de la navegación
-    DiscForm.IdCausaCal = currentIdCausaCal;
-}
-
-async Task Editar()
-{
-    try
-    {
-        if ((int)tipo == 1 || (int)tipo == 0 || (int)tipo == 2)
+        var selectedResponsableId = e.Value?.ToString();
+        if (!string.IsNullOrEmpty(selectedResponsableId))
         {
-            if (CambiosFecha.Count() >= 3 & camFec != DiscForm.RdfecTra)
+            if (DiscForm.IdResReu == 9 && PreviousCausaCal.HasValue)
+                ObservacionesGuardadas = true;
+            else
+                ObservacionesGuardadas = false;
+
+            DiscForm.IdResReu = int.Parse(selectedResponsableId);
+
+            if (DiscForm.IdResReu == 9)
             {
-               // NotificationService.Notify(Notificar.Notificacion("error", "Atención", "Alcanzó el límite de cambios de Fecha de Trabajo."));
-            }
-            else if (String.IsNullOrEmpty(DiscForm.RdplanAcc) && DiscForm.Rdstatus == "Cerrado")
-            {
-                NotificationService.Notify(Notificar.Notificacion("advertencia", "Atención", "No se puede cerrar sin Plan de Acción."));
-            }
-            else if (PlanOld != DiscForm.RdplanAcc && String.IsNullOrEmpty(DiscForm.RdplanAcc))
-            {
-                NotificationService.Notify(Notificar.Notificacion("advertencia", "Atención", "No se puede guardar con Plan de Acción vacío."));
-                DiscForm.RdplanAcc = PlanOld;
+                IsDiscObservacionesVisible = true;
+                if (DiscForm.IdCausaCal == null || DiscForm.IdCausaCal == 0)
+                    DiscForm.IdCausaCal = 1;
+                DiscForm.OrigenCal = "";
             }
             else
             {
-                if (camStat != DiscForm.Rdstatus)
-                {
-                    CambStat.IdReuDia = DiscForm.IdReuDia;
-                    CambStat.Cbfecha = DateTime.Now;
-                    CambStat.Cbstat = DiscForm.Rdstatus;
-                    CambStat.Cbuser = claims[2].Value + " " + claims[3].Value;
-                }
-                if (camFec != DiscForm.RdfecTra)
-                {
-                    CambFec.IdReuDia = DiscForm.IdReuDia;
-                    CambFec.Cffec = DateTime.Now;
-                    CambFec.CffecNew = DiscForm.RdfecTra;
-                    CambFec.Cfuser = claims[2].Value + " " + claims[3].Value;
-                }
-
-                // Asegurar que se guarde IdCausaCal correctamente
-                cambio = await PizarraData.UpdateDiscrepancia2(DiscForm, (int)Id, (int)tipo, f1, f2, est, linea);
+                IsDiscObservacionesVisible = false;
+                DiscForm.IdCausaCal = 1;
+                PreviousCausaCal = DiscForm.IdCausaCal;
+                if (!string.IsNullOrEmpty(DiscForm.OrigenCal))
+                    DiscForm.OrigenCal = "N/A";
             }
         }
         else
         {
-            NotificationService.Notify(Notificar.Notificacion("advertencia", "Revise los datos", "La fecha de trabajo no puede ser menor a la fecha de reunión."));
+            IsDiscObservacionesVisible = false;
+            DiscForm.IdCausaCal = 1;
+            if (string.IsNullOrEmpty(DiscForm.OrigenCal))
+                DiscForm.OrigenCal = "N/A";
         }
-
-        if (cambio == false)
-        {
-            NotificationService.Notify(Notificar.Notificacion("advertencia", "Falló el registro, intente de nuevo.", "Si el problema persiste, recargue la página."));
-        }
+        StateHasChanged();
     }
-    catch (Exception ex)
+    
+    private void OnCausaCalidadChanged(ChangeEventArgs e)
     {
-        NotificationService.Notify(Notificar.Notificacion("error", "Ocurrió un error inesperado.", "Por favor, recargue la página."));
+        DiscForm.IdCausaCal = !string.IsNullOrEmpty(e.Value?.ToString()) ? int.Parse(e.Value.ToString()) : 1;
+        StateHasChanged();
     }
-}
+    
+    private void OnUbicacionChanged(ChangeEventArgs e)
+    {
+        DiscForm.OrigenCal = !string.IsNullOrEmpty(e.Value?.ToString()) ? e.Value.ToString() : "";
+        StateHasChanged();
+    }
+    
+    protected override async void OnInitialized()
+    {
+        DiscForm = await PizarraData.GetDiscrepantacia((int)Id);
+        IsDiscObservacionesVisible = DiscForm.IdResReu == 9;
+        base.OnInitialized();
+    }
+    
+    async Task Back()
+    {
+        string backcentro = DiscForm.Rdcentro;
+        string backdiv = DiscForm.Rddiv;
+        int currentIdCausaCal = DiscForm.IdCausaCal;
+        CentroDivisionDTO centrodiv = await PizarraData.GetCentroDivi(backcentro, backdiv, 1);
+        NavigationManager.NavigateTo($"{(tipo == 0 || tipo == 2 ? "pendientes" : "reunion")}/{centrodiv.IdCentro}/{centrodiv.IdDivision}/{linea}/{f1}/{f2}/{tipo}/{est}", true);
+        DiscForm.IdCausaCal = currentIdCausaCal;
+    }
+    
+    async Task Editar()
+    {
+        try
+        {
+            if (tipo == 1 || tipo == 0 || tipo == 2)
+            {
+                if (CambiosFecha.Count() >= 3 && camFec != DiscForm.RdfecTra)
+                    return;
+                if (string.IsNullOrEmpty(DiscForm.RdplanAcc) && DiscForm.Rdstatus == "Cerrado")
+                {
+                    NotificationService.Notify(Notificar.Notificacion("advertencia", "Atención", "No se puede cerrar sin Plan de Acción."));
+                    return;
+                }
+                if (PlanOld != DiscForm.RdplanAcc && string.IsNullOrEmpty(DiscForm.RdplanAcc))
+                {
+                    NotificationService.Notify(Notificar.Notificacion("advertencia", "Atención", "No se puede guardar con Plan de Acción vacío."));
+                    DiscForm.RdplanAcc = PlanOld;
+                    return;
+                }
+                
+               if (camStat != DiscForm.Rdstatus)
+                    {
+                        CambStat.IdReuDia = DiscForm.IdReuDia;
+                        CambStat.Cbfecha = DateTime.Now;
+                        CambStat.Cbstat = DiscForm.Rdstatus;
+                        CambStat.Cbuser = claims[2].Value + " " + claims[3].Value;
 
+                    }
+                    if (camFec != DiscForm.RdfecTra)
+                    {
+                        CambFec.IdReuDia = DiscForm.IdReuDia;
+                        CambFec.Cffec = DateTime.Now;
+                        CambFec.CffecNew = DiscForm.RdfecTra;
+                        CambFec.Cfuser = claims[2].Value + " " + claims[3].Value;
+                    }
 
+                    await AvisadorData.InsertCambioStatus(CambStat);
+                    await AvisadorData.InsertCambioFec(CambFec);
+                    cambio = await PizarraData.UpdateDiscrepancia2(DiscForm, (int)Id, (int)tipo, f1, f2, est, linea);
 
+                }
+        }
+        catch (Exception)
+        {
+            NotificationService.Notify(Notificar.Notificacion("error", "Ocurrió un error inesperado.", "Por favor, recargue la página."));
+        }
+    }
 }
