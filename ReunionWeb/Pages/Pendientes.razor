@@ -805,28 +805,24 @@ protected async Task Get()
         }
 
     }
-    public void ObtenerReunionesPorRol()
-{
-    if (PizarraData.reudiatablas == null)
+       public void ObtenerReunionesPorRol()
     {
-        // Asegúrate de manejar este caso adecuadamente
-        listareu = new List<ReunionDTO>();
-        return;
+        if (!string.IsNullOrEmpty(UsrRol))
+        {
+            foreach (var e in PizarraData.reudiatablas)
+                {
+                    e.Responsable = RespoReuData.resporeus.Where(x => x.IdResReu == e.IdResReu).FirstOrDefault().Rrnombre;
+                }
+            listareu = PizarraData.reudiatablas.Where(r => r.Responsable.StartsWith(UsrRol)).ToList();
+
+        }
+        else
+        {
+            listareu = PizarraData.reudiatablas;
+
+        }
     }
 
-    if (!string.IsNullOrEmpty(UsrRol))
-    {
-        // Filtrar validando elementos nulos y propiedades nulas
-        listareu = PizarraData.reudiatablas
-            .Where(r => r != null && !string.IsNullOrEmpty(r.Responsable) && r.Responsable.StartsWith(UsrRol))
-            .ToList();
-    }
-    else
-    {
-        // Si UsrRol está vacío, asigna toda la lista evitando elementos nulos
-        listareu = PizarraData.reudiatablas.Where(r => r != null).ToList();
-    }
-}
 
 
 public async Task PrintDocument()
