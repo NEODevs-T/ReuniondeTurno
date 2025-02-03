@@ -170,7 +170,7 @@
     <BSLabel>Responsable</BSLabel>
     <BSInput InputType="InputType.Select" @bind-Value="DiscForm.IdResReu" @onchange="OnDiscResponsableChanged">
         <option value="">Seleccione...</option>
-        @foreach (var d in RespoReuData.resporeus.Where(x => !ResponsablesExcluidos.ContainsKey(x.IdResReu)))
+        @foreach (var d in RespoReuData.resporeus.Where(x => ResponsablesPermitidos.Contains(x.IdResReu)))
         {
             <option value="@d.IdResReu">@d.Rrnombre</option>
         }
@@ -192,7 +192,7 @@
     </BSCol>
 
     <BSCol ColumnSmall="2">
-        <BSLabel>Ubicación</BSLabel>
+        <BSLabel>Origen del Producto</BSLabel>
         <BSInput InputType="InputType.Text" @bind-Value="DiscForm.OrigenCal" @oninput="OnUbicacionChanged" />
     </BSCol>
 }
@@ -386,7 +386,7 @@
     <BSLabel>Responsable</BSLabel>
     <BSInput InputType="InputType.Select" @bind-Value="DiscForm.IdResReu" @onchange="OnDiscResponsableChanged">
         <option value="">Seleccione...</option>
-        @foreach (var d in RespoReuData.resporeus)
+        @foreach (var d in RespoReuData.resporeus.Where(x => ResponsablesPermitidos.Contains(x.IdResReu)))
         {
             <option value="@d.IdResReu">@d.Rrnombre</option>
         }
@@ -408,7 +408,7 @@
     </BSCol>
 
     <BSCol ColumnSmall="2">
-        <BSLabel>Ubicación</BSLabel>
+        <BSLabel>Origen del Producto</BSLabel>
         <BSInput InputType="InputType.Text" @bind-Value="DiscForm.OrigenCal" @oninput="OnUbicacionChanged" />
     </BSCol>
 }
@@ -580,13 +580,7 @@
     private DateTime? camFec;
     private List<Claim> claims { get; set; }
     
-    private readonly Dictionary<int, string> ResponsablesExcluidos = new()
-    {
-        { 12, "Compras" },
-        { 13, "Mtto. Instrumentación" },
-        { 15, "Mtto. Infraestructura" },
-        { 16, "Efluentes" }
-    };
+     private readonly List<int> ResponsablesPermitidos = new() { 2, 4, 8, 9, 10, 11 };
     
     private async Task CreateData()
     {
