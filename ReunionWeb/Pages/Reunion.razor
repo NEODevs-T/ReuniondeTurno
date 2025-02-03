@@ -295,25 +295,25 @@ protected async Task Get()
         {
             dataIsLoaded = 1;
 
-            // Definir el rango de fechas para el día actual
-            DateTime fechaHoyInicio = DateTime.Today;
-            DateTime fechaHoyFin = DateTime.Today.AddDays(1).AddTicks(-1);
+            // Definir el rango de fechas para el día de ayer y hoy
+            DateTime fechaInicio = DateTime.Today.AddDays(-1); // Ayer
+            DateTime fechaFin = DateTime.Today.AddDays(1).AddTicks(-1); // Fin del día de hoy
 
             // Obtener los datos
             await PizarraData.GetPendientes(
                 IdCentro.ToString(),
                 IdDiv.ToString(),
-                fechaHoyInicio,
-                fechaHoyFin,
+                fechaInicio,
+                fechaFin,
                 "1",
                 "Reunion"
             );
 
-            // Filtrar los datos para asegurar que solo queden reuniones del día actual
+            // Filtrar los datos para asegurar que solo queden reuniones del día de ayer y hoy
             if (PizarraData.reudiatablas != null)
             {
                 PizarraData.reudiatablas = PizarraData.reudiatablas
-                    .Where(r => r != null && r.RdfecReu.Date == DateTime.Today) // Filtrar por la fecha de reunión
+                    .Where(r => r != null && (r.RdfecReu.Date == DateTime.Today || r.RdfecReu.Date == DateTime.Today.AddDays(-1))) // Filtrar por la fecha de reunión
                     .ToList();
             }
 
@@ -325,6 +325,7 @@ protected async Task Get()
         error = "Seleccione los valores en las listas*";
     }
 }
+
 void Editar(int id)
 {
     // Usar la fecha de hoy formateada en el formato "dd-MM-yyyy"
