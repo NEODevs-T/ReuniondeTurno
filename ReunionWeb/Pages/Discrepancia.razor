@@ -417,14 +417,19 @@ private void OnUbicacionChanged(ChangeEventArgs e)
 
     protected async Task Insert(EditContext d)
 {
-    
-    isDesactivado = true;
     try
     {
         Reuniondb.IdMaster = MaestraData.maestra.First(x => x.IdLinea == idLin).IdMaster;
         Reuniondb.Rdarea = MaestraData.lineas.First(x => x.IdLinea == idLin).Linea;
         Reuniondb.Rdstatus = "Pendiente";
         Reuniondb.IdTipReu = reunionTurno;
+
+        // Excepción para cambiar el IdTipReu si el Idksf es un valor específico
+        if (Reuniondb.Idksf == 29) // Id de la Reunion diaria en el Ksf
+        {
+            Reuniondb.IdTipReu = 1;
+        }
+
         Reuniondb.IdPais = int.Parse(claims.First(c => c.Type == "IdPais")?.Value);
         Reuniondb.IdEmpresa = int.Parse(claims.First(c => c.Type == "IdEmpresa")?.Value);
         Reuniondb.Ksf = KsfData.ksfs.First(k => k.Idksf == Reuniondb.Idksf).KsfNombre;
@@ -465,6 +470,7 @@ private void OnUbicacionChanged(ChangeEventArgs e)
     IsObservacionesVisible = false;
     isDesactivado = false;
 }
+
 
 
 
