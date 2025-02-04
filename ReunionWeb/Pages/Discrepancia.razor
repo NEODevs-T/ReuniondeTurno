@@ -424,7 +424,7 @@ private void OnUbicacionChanged(ChangeEventArgs e)
         Reuniondb.Rdstatus = "Pendiente";
         Reuniondb.IdTipReu = reunionTurno;
 
-        // Excepción para cambiar el IdTipReu si el Idksf es un valor específico
+        // Excepción para cambiar el IdTipReu para cuando el Ksf sea de la ReuniondeTurno
         if (Reuniondb.Idksf == 29) // Id de la Reunion diaria en el Ksf
         {
             Reuniondb.IdTipReu = 1;
