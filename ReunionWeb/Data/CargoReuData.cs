@@ -29,9 +29,9 @@ public class CargoReuData : ICargoReuData
     public List<CargoReuDTO> cargoreuss { get; set; } = new List<CargoReuDTO>();
 
 
-    public async Task<List<CargoReuDTO>> GetAsistencia(string div, string empresa)
+    public async Task<List<CargoReuDTO>> GetAsistenciadeTurno(string div, string empresa)
     {
-        url = $"{BaseUrl}/GetAsistencia/{div}/{empresa}";
+        url = $"{BaseUrl}/GetAsistenciadeTurno/{div}/{empresa}";
         cliente = _clientFactory.CreateClient();
         return cargoreuss = await cliente.GetFromJsonAsync<List<CargoReuDTO>>(url) ?? new List<CargoReuDTO>();
     }
