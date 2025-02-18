@@ -694,13 +694,6 @@
                 DiscForm.RdplanAcc = PlanOld;
                 return;
             }
-
-            // Excepción para cambiar el IdTipReu si el Idksf es un valor específico
-            if (DiscForm.Idksf == 29) // Reemplaza ID_ESPECIFICO con el ID que deseas verificar
-            {
-                DiscForm.IdTipReu = 1;
-            }
-
             if (camStat != DiscForm.Rdstatus)
             {
                 CambStat.IdReuDia = DiscForm.IdReuDia;
