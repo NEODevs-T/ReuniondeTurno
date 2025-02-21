@@ -13,6 +13,8 @@
 @inject HttpClient Http
 @inject AuthenticationStateProvider AuthStateProvider
 @inject ILocalStorageService LocalStorage
+@inject NotificationService NotificationService
+
 <h3>Históricos</h3>
 
 
@@ -253,8 +255,9 @@ else if (dataIsLoaded == 1 && tabla.Count() == 0)
 }
 else if (dataIsLoaded == 2 && tabla.Count() == 0)
 {
+<div style="text-align: center; padding: 20px; font-size: 18px; color: rgb(102, 101, 101);">
     <p>No hay datos para esta fecha.</p>
-}
+</div>}
 @code {
     RadzenDataGrid<ReunionDTO> ReuTabla;
     List<ReunionDTO> tabla = new List<ReunionDTO>();
@@ -283,6 +286,8 @@ else if (dataIsLoaded == 2 && tabla.Count() == 0)
     private string UsrRol { get; set; } = ""; //rol para filtrar
     private bool cargandocambio { get; set; } = false; //para cargar los datos del trazabilidad
     private string tipoconsulta { get; set; } = "0"; //1-fecha de reuinion 0 fecha trabajo
+    private NotifiRadzen Notificar = new NotifiRadzen();//Logic para crear las noyificaciones radzen
+
 
     private List<Claim> claims { get; set; }
     public DateTime fecha1;
@@ -425,13 +430,13 @@ else if (dataIsLoaded == 2 && tabla.Count() == 0)
     {
         if (IdCentro == 0)
         {
-            mensaje = "Seleccione un valor en la columna de IDCentro.";
+           NotificationService.Notify(Notificar.Notificacion("advertencia", "Atención","Seleccione un valor en la columna de Centro."));
             return;
         }
 
         if (IdDiv == 0)
         {
-            mensaje = "Seleccione un valor en la columna de IDDivision.";
+            NotificationService.Notify(Notificar.Notificacion("advertencia", "Atención","Seleccione un valor en la columna de Division."));
             return;
         }
 

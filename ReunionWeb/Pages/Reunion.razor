@@ -11,6 +11,8 @@
 @inject AuthenticationStateProvider AuthStateProvider
 @inject IJSRuntime IJS
 @inject NavigationManager NavigationManager
+@inject NotificationService NotificationService
+
 
 @*@attribute [Authorize(Roles = "Admin,AdminChempro, SupIntendente,SupIntendenteGeneral,SuperAdmin, Planificador,
 Mantenimiento,Calidad,Seguridad,Efluentes, PendientesChempro, MttoAdmin")]*@
@@ -191,7 +193,9 @@ else if (dataIsLoaded == 1 && PizarraData.reudiatablas.Count() == 0)
 }
 else if (dataIsLoaded == 2 && PizarraData.reudiatablas.Count() == 0)
 {
+<div style="text-align: center; padding: 20px; font-size: 18px; color: rgb(102, 101, 101);">
     <p>No hay datos para esta fecha.</p>
+</div>
 }
 
 
@@ -221,6 +225,8 @@ else if (dataIsLoaded == 2 && PizarraData.reudiatablas.Count() == 0)
     private int IdCentro { get; set; } = 0; //id del Centro
     private int IdDiv { get; set; } = 0; //id de la division
     private int CentroComedor;//Variable para verificar si es el comedor venezuela;
+    private NotifiRadzen Notificar = new NotifiRadzen();//Logic para crear las noyificaciones radzen
+
 
     //private string Div { get; set; } //Centro
     //private string Division { get; set; } //División
@@ -322,7 +328,7 @@ protected async Task Get()
     }
     else
     {
-        error = "Seleccione los valores en las listas*";
+        NotificationService.Notify(Notificar.Notificacion("advertencia", "Atención", "Seleccione los valores en las listas"));
     }
 }
 
