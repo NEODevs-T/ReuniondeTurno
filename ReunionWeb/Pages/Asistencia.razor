@@ -28,7 +28,7 @@
         <BSRow>
             <BSCol Column="3">
 
-            <BSInput InputType="InputType.Select" IsDisabled @bind-Value="Div" >
+            <BSInput InputType="InputType.Select"  @bind-Value="Div" >
                 @foreach (var d in MaestraData.centro)
                 {
                 <option value="@d.Centro">@d.Centro</option>
@@ -37,7 +37,7 @@
         </BSCol>
 
         <BSCol ColumnSmall="3">
-            <BSButton IsOutlined Color="BSColor.Success" Size="Size.ExtraSmall" IsDisabled @onclick="Get" >   Asistentes  <span class="oi oi-check"></span></BSButton>
+            <BSButton IsOutlined Color="BSColor.Success" Size="Size.ExtraSmall"  @onclick="Get" >   Asistentes  <span class="oi oi-check"></span></BSButton>
         </BSCol>
 
         </BSRow>

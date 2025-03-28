@@ -525,7 +525,6 @@
 
 @if (CambiosFecha.Count() > 0)
 {
-    <p> Cambios de  Fecha de Trabajo Restantes: @(4 - CambiosFecha.Count()) </p>
     <div style="width: 40vw;">
         <BSTable IsResponsive="true" IsStriped="true" IsBordered="true">
             <BSTHead Class="cabecera">
@@ -542,14 +541,15 @@
                     <BSTR>
                         <BSTD>@(CambiosFecha.IndexOf(d) + 1)</BSTD>
                         <BSTD>@d.Cffec.ToString("dd/MM/yyyy")</BSTD>
-                            <BSTD>@d.CffecNew.ToString("dd/MM/yyyy")</BSTD>
-                            <BSTD>@d.Cfuser</BSTD>
-                        </BSTR> 
+                        <BSTD>@d.CffecNew.ToString("dd/MM/yyyy")</BSTD>
+                        <BSTD>@d.Cfuser</BSTD>
+                    </BSTR> 
                 }
             </BSTBody>
         </BSTable>
     </div>
 }
+
 
 @code {
     private bool IsDiscObservacionesVisible { get; set; } = false;
