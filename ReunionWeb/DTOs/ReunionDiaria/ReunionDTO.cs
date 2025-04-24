@@ -59,5 +59,5 @@ public partial class ReunionDTO
 
     public string? CausaCalNombre {get; set; }
 
-
+    public string? EnombreEam { get; set; }
 }

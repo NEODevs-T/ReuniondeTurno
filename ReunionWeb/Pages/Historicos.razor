@@ -178,6 +178,12 @@
                 </Template>
             </RadzenDataGridColumn>
 
+                        <RadzenDataGridColumn TItem="ReunionDTO" Title="Equipo" Frozen="true" Property="RdcodEq" Width="80px">
+                <Template>
+                    @context.EnombreEam
+                </Template>
+            </RadzenDataGridColumn>
+
             <RadzenDataGridColumn TItem="ReunionDTO" Title="KSF" Property="Ksf" Width="80px">
                 <Template>
                     @context.Ksf
