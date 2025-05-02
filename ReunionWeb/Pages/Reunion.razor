@@ -135,7 +135,7 @@ Mantenimiento,Calidad,Seguridad,Efluentes, PendientesChempro, MttoAdmin")]*@
                                 <BSTD>@d.Rdarea</BSTD>
                                 <BSTD>@KsfData.ksfs.Where(x => x.Idksf == d.Idksf).FirstOrDefault()?.KsfNombre</BSTD>
                                 <BSTD>@d.RdcodEq</BSTD>
-                                <BSTD>@(string.IsNullOrWhiteSpace(d.EnombreEam) ? "Equipo Inexistente" : d.EnombreEam)</BSTD>
+                                <BSTD>@(string.IsNullOrWhiteSpace(d.EnombreEam) ? "EQUIPO NO ENCONTRADO" : d.EnombreEam)</BSTD>
                                 <BSTD ColSpan="4">@d.Rddisc.ToUpper()</BSTD>
                                 @* <BSTD>@d.RdcodDis</BSTD> *@
                                 @if (@d.RdplanAcc is not null)

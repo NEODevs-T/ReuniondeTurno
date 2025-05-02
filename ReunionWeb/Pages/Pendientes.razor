@@ -219,7 +219,7 @@ else
                             <BSTD>@d.Rdarea</BSTD>
                             <BSTD>@KsfData.ksfs.Where(x => x.Idksf == d.Idksf).FirstOrDefault()?.KsfNombre</BSTD>
                             <BSTD>@d.RdcodEq</BSTD>
-                            <BSTD>@(string.IsNullOrWhiteSpace(d.EnombreEam) ? "Equipo Inexistente" : d.EnombreEam)</BSTD>
+                            <BSTD>@(string.IsNullOrWhiteSpace(d.EnombreEam) ? "EQUIPO NO ENCONTRADO" : d.EnombreEam)</BSTD>
                             <BSTD>@d.Rddisc.ToUpperInvariant()</BSTD>
                             <BSTD Class="textotabla">@d.RdplanAcc</BSTD>
 
