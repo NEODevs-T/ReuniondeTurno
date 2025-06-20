@@ -30,6 +30,7 @@ public class AsistenciaReuData : IAsistenciaReuData
     private readonly IHttpClientFactory _clientFactory;
     public List<AsistenReuDTO> asistenreus { get; set; } = new List<AsistenReuDTO>();
     public List<StatsAsisDto> StatsAsisDtos { get; set; } = new List<StatsAsisDto>();
+    public List<AsistenReuPorcetanjeDTO> asistenreuspor { get; set; } = new List<AsistenReuPorcetanjeDTO>();
 
     public async Task<List<StatsAsisDto>> GetStatsAsist(string div, string empresa, string f1, string f2)
     {
@@ -57,4 +58,12 @@ public class AsistenciaReuData : IAsistenciaReuData
         }
         return mens;
     }
+
+    public async Task<List<AsistenReuPorcetanjeDTO>> GetListAsistPorce(string fechaInicio, string fechaFin, string empresa, string area)
+    {
+        url = $"{BaseUrl}/GetListAsistPorce/{fechaInicio}/{fechaFin}/{empresa}/{area}";
+        cliente = _clientFactory.CreateClient();
+        return asistenreuspor = await cliente.GetFromJsonAsync<List<AsistenReuPorcetanjeDTO>>(url) ?? new List<AsistenReuPorcetanjeDTO>();
+    }
+
 }
