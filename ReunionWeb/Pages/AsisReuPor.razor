@@ -1,5 +1,6 @@
 @page "/asisReuPor"
 
+@using Radzen
 @inject IAsistenciaReuData AsistenciaReuData
 @inject IAvisadorData AvisadorData
 @inject ICargoReuData CargoReuData
@@ -12,20 +13,63 @@
 @inject NotificationService NotificationService
 @attribute [Authorize(Roles = "Admin, AdminChempro, SuperUser, SemiAdmin, SuperAdmin")]
 
-<h3>Asistencia Porcentaje</h3>
+<h3>Porcentaje de Asistencia</h3>
 <p></p>
 
-<BSRow>
-    <BSCol Column="3">
-        <BSInput InputType="InputType.Select" TValue="string">
-            <option value="">Seleccione</option>
-        </BSInput>
-    </BSCol>
+<RadzenTemplateForm Data="@this">
+    <RadzenRow>
+        <RadzenColumn Width="200px">
+            <RadzenLabel Text="Fecha Inicial" />
+            <RadzenDatePicker @bind-Value="fechaInicio" Style="width: 100%;" />
+        </RadzenColumn>
+        <RadzenColumn Width="200px">
+            <RadzenLabel Text="Fecha Final" />
+            <RadzenDatePicker @bind-Value="fechaFin" Style="width: 100%;" />
+        </RadzenColumn>
+        <RadzenColumn Width="250px">
+            <RadzenLabel Text="Empresa" />
+            <RadzenDropDown @bind-Value="empresa" Data="@empresas" TextProperty="Nombre" ValueProperty="Id" Style="width: 100%;" Placeholder="Seleccione una empresa"
+                            Change="@(args => OnEmpresaChanged(args))" />
+        </RadzenColumn>
+        <RadzenColumn Width="250px">
+            <RadzenLabel Text="Área" />
+            <RadzenDropDown @bind-Value="area" Data="@areas" TextProperty="Nombre" ValueProperty="Id" Style="width: 100%;" Placeholder="Seleccione un área" />
+        </RadzenColumn>
+    </RadzenRow>
+</RadzenTemplateForm>
 
-    <BSCol ColumnSmall="3">
-        <BSButton IsOutlined Color="BSColor.Success" Size="Size.ExtraSmall">
-            Asistentes <span class="oi oi-check"></span>
-        </BSButton>
-    </BSCol>
-</BSRow>>
+@code {
+    private DateTime fechaInicio = DateTime.Now;
+    private DateTime fechaFin = DateTime.Now;
+    public string area { get; set; } = "";
+    public string empresa { get; set; } = "";
 
+    // Lista fija de empresas
+    private List<Empresa> empresas = new()
+    {
+        new Empresa { Id = "1", Nombre = "Empresa 1" },
+        new Empresa { Id = "2", Nombre = "Empresa 2" }
+        // ...agrega más empresas si quieres
+    };
+
+    // Lista fija de áreas (rellenada manualmente)
+    private List<Area> areas = new()
+    {
+        new Area { Id = "A1", Nombre = "Área 1" },
+        new Area { Id = "A2", Nombre = "Área 2" },
+        new Area { Id = "A3", Nombre = "Área 3" }
+        // ...agrega más áreas si quieres
+    };
+
+    private void OnEmpresaChanged(object value)
+    {
+        empresa = value?.ToString() ?? "";
+        // Si quieres filtrar áreas según empresa, puedes hacerlo aquí.
+        // Por ahora, la lista de áreas es fija.
+        area = "";
+        StateHasChanged();
+    }
+
+    public class Empresa { public string Id { get; set; } public string Nombre { get; set; } }
+    public class Area { public string Id { get; set; } public string Nombre { get; set; } }
+}
