@@ -58,10 +58,9 @@ public class AsistenciaReuData : IAsistenciaReuData
         }
         return mens;
     }
-
     public async Task<List<AsistenReuPorcetanjeDTO>> GetListAsistPorce(string fechaInicio, string fechaFin, string empresa, string area)
     {
-        url = $"{BaseUrl}/GetListAsistPorce/{fechaInicio}/{fechaFin}/{empresa}/{area}";
+        url = $"{BaseUrl}/GetPorcentajeAsistenciaDiaria/{fechaInicio}/{fechaFin}/{empresa}/{area}";
         cliente = _clientFactory.CreateClient();
         return asistenreuspor = await cliente.GetFromJsonAsync<List<AsistenReuPorcetanjeDTO>>(url) ?? new List<AsistenReuPorcetanjeDTO>();
     }

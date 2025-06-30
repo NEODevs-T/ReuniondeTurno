@@ -33,10 +33,29 @@
         </RadzenColumn>
         <RadzenColumn Width="250px">
             <RadzenLabel Text="Área" />
-            <RadzenDropDown @bind-Value="area" Data="@areas" TextProperty="Nombre" ValueProperty="Id" Style="width: 100%;" Placeholder="Seleccione un área" />
+            <RadzenDropDown @bind-Value="area" Data="@areas" TextProperty="Nombre" ValueProperty="Id" Style="width: 100%;" Placeholder="Seleccione un centro" />
+        </RadzenColumn>
+        <RadzenColumn Width="150px" Style="display: flex; align-items: end;">
+            <RadzenButton Text="Consultar" Click="@(async () => await Consultar())" Style="width: 100%;" Icon="search" />
         </RadzenColumn>
     </RadzenRow>
 </RadzenTemplateForm>
+
+@if (registros != null && registros.Any())
+{
+    <RadzenDataGrid Data="@registros" TItem="AsistenReuPorcetanjeDTO" ShowPagingSummary="true" PageSize="10">
+        <Columns>
+            <RadzenDataGridColumn TItem="AsistenReuPorcetanjeDTO" Property="IdCargoR" Title="Cargo" />
+            <RadzenDataGridColumn TItem="AsistenReuPorcetanjeDTO" Property="ReunionesProgramadas" Title="Reuniones Programadas" />
+            <RadzenDataGridColumn TItem="AsistenReuPorcetanjeDTO" Property="ReunionesAsistidas" Title="Reuniones Asistidas" />
+            <RadzenDataGridColumn TItem="AsistenReuPorcetanjeDTO" Property="PorcentajeAsistencia" Title="Porcentaje Asistencia" />
+        </Columns>
+    </RadzenDataGrid>
+}
+else if (registros != null)
+{
+    <div style="margin-top:20px;">No hay registros para los filtros seleccionados.</div>
+}
 
 @code {
     private DateTime fechaInicio = DateTime.Now;
@@ -44,32 +63,46 @@
     public string area { get; set; } = "";
     public string empresa { get; set; } = "";
 
-    // Lista fija de empresas
     private List<Empresa> empresas = new()
     {
-        new Empresa { Id = "1", Nombre = "Empresa 1" },
-        new Empresa { Id = "2", Nombre = "Empresa 2" }
+        new Empresa { Id = "1", Nombre = "PAVECA" },
         // ...agrega más empresas si quieres
     };
 
-    // Lista fija de áreas (rellenada manualmente)
     private List<Area> areas = new()
     {
-        new Area { Id = "A1", Nombre = "Área 1" },
-        new Area { Id = "A2", Nombre = "Área 2" },
-        new Area { Id = "A3", Nombre = "Área 3" }
+        new Area { Id = "1", Nombre = "PPPD" },
         // ...agrega más áreas si quieres
     };
+
+    private List<AsistenReuPorcetanjeDTO> registros;
 
     private void OnEmpresaChanged(object value)
     {
         empresa = value?.ToString() ?? "";
-        // Si quieres filtrar áreas según empresa, puedes hacerlo aquí.
-        // Por ahora, la lista de áreas es fija.
         area = "";
         StateHasChanged();
     }
 
+    private async Task Consultar()
+    {
+        try
+        {
+            registros = await AsistenciaReuData.GetListAsistPorce(
+                fechaInicio.ToString("yyyy-MM-dd"),
+                fechaFin.ToString("yyyy-MM-dd"),
+                empresa,
+                area
+            );
+        }
+        catch (Exception ex)
+        {
+            NotificationService.Notify(NotificationSeverity.Error, "Error", "No se pudo obtener los datos: " + ex.Message);
+            registros = new List<AsistenReuPorcetanjeDTO>();
+        }
+    }
+
     public class Empresa { public string Id { get; set; } public string Nombre { get; set; } }
     public class Area { public string Id { get; set; } public string Nombre { get; set; } }
+    // No necesitas definir AsistenReuPorcetanjeDTO aquí si ya existe en tu proyecto
 }
