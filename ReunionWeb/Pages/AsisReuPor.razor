@@ -2,14 +2,6 @@
 
 @using Radzen
 @inject IAsistenciaReuData AsistenciaReuData
-@inject IAvisadorData AvisadorData
-@inject ICargoReuData CargoReuData
-@inject IKsfData KsfData
-@inject IPizarraData PizarraData
-@inject IRespoReuData RespoReuData
-@inject IMaestraData MaestraData
-@inject AuthenticationStateProvider AuthStateProvider
-@inject ILocalStorageService LocalStorage
 @inject NotificationService NotificationService
 @attribute [Authorize(Roles = "Admin, AdminChempro, SuperUser, SemiAdmin, SuperAdmin")]
 
@@ -20,11 +12,11 @@
     <RadzenRow>
         <RadzenColumn Width="200px">
             <RadzenLabel Text="Fecha Inicial" />
-            <RadzenDatePicker @bind-Value="fechaInicio" Style="width: 100%;" />
+            <RadzenDatePicker @bind-Value="fechaInicio" DateFormat="dd-MM-yyyy" Style="width: 100%;" Max="@DateTime.Today" />
         </RadzenColumn>
         <RadzenColumn Width="200px">
             <RadzenLabel Text="Fecha Final" />
-            <RadzenDatePicker @bind-Value="fechaFin" Style="width: 100%;" />
+            <RadzenDatePicker @bind-Value="fechaFin" DateFormat="dd-MM-yyyy" Style="width: 100%;"  Max="@DateTime.Today"/>
         </RadzenColumn>
         <RadzenColumn Width="250px">
             <RadzenLabel Text="Empresa" />
@@ -33,22 +25,71 @@
         </RadzenColumn>
         <RadzenColumn Width="250px">
             <RadzenLabel Text="Área" />
-            <RadzenDropDown @bind-Value="area" Data="@areas" TextProperty="Nombre" ValueProperty="Id" Style="width: 100%;" Placeholder="Seleccione un centro" />
+            <RadzenDropDown @bind-Value="area" Data="@areas" TextProperty="Nombre" ValueProperty="Id" Style="width: 100%;" Placeholder="Seleccione un centro" Disabled="@((string.IsNullOrEmpty(empresa)) || !areas.Any())"/>
         </RadzenColumn>
         <RadzenColumn Width="150px" Style="display: flex; align-items: end;">
-            <RadzenButton Text="Consultar" Click="@(async () => await Consultar())" Style="width: 100%;" Icon="search" />
+            <RadzenButton Text="Consultar"
+    Click="@(async () => await Consultar())"
+    Style="width: 100%; background-color: #28a745; color: white;"
+    Icon="search"
+    Disabled="@(fechaInicio > fechaFin || fechaInicio == default || fechaFin == default || string.IsNullOrEmpty(empresa) || string.IsNullOrEmpty(area))" />
         </RadzenColumn>
     </RadzenRow>
 </RadzenTemplateForm>
 
 @if (registros != null && registros.Any())
 {
-    <RadzenDataGrid Data="@registros" TItem="AsistenReuPorcetanjeDTO" ShowPagingSummary="true" PageSize="10">
+    <RadzenLabel Text="Filtrar por cargo:" Style="margin-right:10px;" />
+    <RadzenTextBox @bind-Value="filtroCargo"
+                   Placeholder="Buscar cargo..."
+                   Style="margin:15px 0 10px 0; width:250px;"
+                   Change="@(args => FiltrarCargo())" />
+}
+
+@if (registros != null && registros.Any())
+{
+    <div style="margin-bottom:10px;">
+        <b>Porcentaje Global:</b>
+        <span style="color:@GetColor(porcentajeGlobal)">
+            @porcentajeGlobal.ToString("0.00")%
+        </span>
+    </div>
+    @if (registrosFiltrados != null && !registrosFiltrados.Any() && !string.IsNullOrEmpty(filtroCargo))
+    {
+        <div style="color:red; margin-bottom:10px;">No existe ese cargo.</div>
+    }
+    <RadzenDataGrid Data="@registrosFiltrados"
+                    TItem="AsistenReuPorcetanjeDTO"
+                    ShowPagingSummary="true"
+                    PageSize="10"
+                    Responsive="true"
+                    AllowFiltering="false"
+                    AllowSorting="true"
+                    EmptyText="">
         <Columns>
-            <RadzenDataGridColumn TItem="AsistenReuPorcetanjeDTO" Property="IdCargoR" Title="Cargo" />
+            <RadzenDataGridColumn TItem="AsistenReuPorcetanjeDTO" Property="Nombre" Title="Cargo" Frozen="true" />
             <RadzenDataGridColumn TItem="AsistenReuPorcetanjeDTO" Property="ReunionesProgramadas" Title="Reuniones Programadas" />
-            <RadzenDataGridColumn TItem="AsistenReuPorcetanjeDTO" Property="ReunionesAsistidas" Title="Reuniones Asistidas" />
-            <RadzenDataGridColumn TItem="AsistenReuPorcetanjeDTO" Property="PorcentajeAsistencia" Title="Porcentaje Asistencia" />
+            <RadzenDataGridColumn TItem="AsistenReuPorcetanjeDTO" Property="ReunionesAsistidas" Title="Reuniones Asistidas">
+                <FooterTemplate>
+                    <b>Total: @registrosFiltrados.Sum(x => x.ReunionesAsistidas)</b>
+                </FooterTemplate>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="AsistenReuPorcetanjeDTO" Property="PorcentajeAsistencia" Title="Porcentaje Asistencia">
+                <Template Context="data">
+                    <span title="Porcentaje de asistencia"
+                          style="color:@GetColor(data.PorcentajeAsistencia); font-weight:bold;">
+                        @data.PorcentajeAsistencia.ToString("0.00")%
+                        @if (data.PorcentajeAsistencia >= 90)
+                        {
+                            <RadzenIcon Icon="check_circle" Style="color:green;vertical-align:middle;" />
+                        }
+                        else if (data.PorcentajeAsistencia < 60)
+                        {
+                            <RadzenIcon Icon="error" Style="color:red;vertical-align:middle;" />
+                        }
+                    </span>
+                </Template>
+            </RadzenDataGridColumn>
         </Columns>
     </RadzenDataGrid>
 }
@@ -63,46 +104,162 @@ else if (registros != null)
     public string area { get; set; } = "";
     public string empresa { get; set; } = "";
 
+    private string filtroCargo = "";
+    private List<AsistenReuPorcetanjeDTO> registrosFiltrados = new();
+
     private List<Empresa> empresas = new()
     {
-        new Empresa { Id = "1", Nombre = "PAVECA" },
-        // ...agrega más empresas si quieres
+        new Empresa { Id = "PAVECA", Nombre = "PAVECA" },
+        new Empresa { Id = "CHEMPRO", Nombre = "CHEMPRO"},
+        new Empresa { Id = "PANASA", Nombre = "PANASA"},
+        new Empresa { Id = "PAINSA", Nombre = "PAINSA"},
+        new Empresa { Id = "PAPISA", Nombre = "PAPISA"},
+        new Empresa { Id = "BIOPACOL", Nombre = "BIOPACOL"},
+        new Empresa { Id = "TTL", Nombre = "TTL"}
     };
 
-    private List<Area> areas = new()
+    private List<Area> todasLasAreas = new()
     {
-        new Area { Id = "1", Nombre = "PPPD" },
-        // ...agrega más áreas si quieres
+        new Area { Id = "Comedor", Nombre = "Comedor"},
+        new Area { Id = "Conversión", Nombre = "Conversión"},
+        new Area { Id = "Efluentes", Nombre = "Efluentes"},
+        new Area { Id = "Generación de Energía", Nombre = "Generación de Energía"},
+        new Area { Id = "Molinos", Nombre = "Molinos"},
+        new Area { Id = "PPPD", Nombre = "PPPD" },
+        new Area { Id = "Planta de Chempro", Nombre = "Planta de Chempro"},
+        new Area { Id = "Cogeneración", Nombre = "Cogeneración"},
+        new Area { Id = "Conversión PANASA", Nombre = "Conversión PANASA"},
+        new Area { Id = "Producción", Nombre = "Producción"},
+        new Area { Id = "K-10", Nombre = "K-10"},
+        new Area { Id = "K-11", Nombre = "K-11"},
+        new Area { Id = "K-12", Nombre = "K-12"},
+        new Area { Id = "K-129", Nombre = "K-129"},
+        new Area { Id = "K-13", Nombre = "K-13"},
+        new Area { Id = "K-130", Nombre = "K-130"},
+        new Area { Id = "K-131", Nombre = "K-131"},
+        new Area { Id = "K-132", Nombre = "K-132"},
+        new Area { Id = "Producción", Nombre = "Producción"},
+        new Area { Id = "Converting", Nombre = "Converting"},
+        new Area { Id = "Mill", Nombre = "Mill"}
     };
+
+    private List<Area> areas = new();
 
     private List<AsistenReuPorcetanjeDTO> registros;
+    private double porcentajeGlobal = 0;
 
     private void OnEmpresaChanged(object value)
     {
         empresa = value?.ToString() ?? "";
         area = "";
+
+        if (string.IsNullOrEmpty(empresa))
+        {
+            areas = new List<Area>();
+        }
+        else if (empresa == "PAVECA")
+        {
+            int inicio = todasLasAreas.FindIndex(x => x.Id == "Comedor");
+            int fin = todasLasAreas.FindIndex(x => x.Id == "PPPD");
+            areas = todasLasAreas.Skip(inicio).Take(fin - inicio + 1).ToList();
+        }
+        else if (empresa == "CHEMPRO")
+        {
+            areas = todasLasAreas.Where(a => a.Id == "Planta de Chempro").ToList();
+        }
+        else if (empresa == "PANASA")
+        {
+            int inicio = todasLasAreas.FindIndex(x => x.Id == "Cogeneración");
+            int fin = todasLasAreas.FindIndex(x => x.Id == "Producción");
+            areas = todasLasAreas.Skip(inicio).Take(fin - inicio + 1).ToList();
+        }
+        else if (empresa == "PAINSA")
+        {
+            int inicio = todasLasAreas.FindIndex(x => x.Id == "K-10");
+            int fin = todasLasAreas.FindIndex(x => x.Id == "K-132");
+            areas = todasLasAreas.Skip(inicio).Take(fin - inicio + 1).ToList();
+        }
+        else if (empresa == "PAPISA")
+        {
+            areas = new List<Area>();
+            area = "";
+            NotificationService.Notify(NotificationSeverity.Warning, "Sin áreas", "No se encontraron áreas para esta empresa.");
+        }
+        else if (empresa == "BIOPACOL")
+        {
+            var indices = todasLasAreas
+                .Select((a, idx) => new { a.Id, idx })
+                .Where(x => x.Id == "Producción")
+                .Select(x => x.idx)
+                .ToList();
+            if (indices.Count > 1)
+                areas = new List<Area> { todasLasAreas[indices[1]] };
+            else if (indices.Count == 1)
+                areas = new List<Area> { todasLasAreas[indices[0]] };
+            else
+                areas = new List<Area>();
+        }
+        else if (empresa == "TTL")
+        {
+            areas = todasLasAreas.Where(a => a.Id == "Converting" || a.Id == "Mill").ToList();
+        }
+        else
+        {
+            areas = new List<Area>();
+        }
         StateHasChanged();
+    }
+
+    protected override void OnInitialized()
+    {
+        areas = new List<Area>();
     }
 
     private async Task Consultar()
     {
         try
         {
-            registros = await AsistenciaReuData.GetListAsistPorce(
-                fechaInicio.ToString("yyyy-MM-dd"),
-                fechaFin.ToString("yyyy-MM-dd"),
-                empresa,
-                area
-            );
+            var response = await AsistenciaReuData.GetPorcentajeAsistenciaResponse(
+            fechaInicio.ToString("dd-MM-yyyy"),
+            fechaFin.ToString("dd-MM-yyyy"),
+            empresa,
+            area
+        );
+            registros = response?.DetallePorCargo ?? new List<AsistenReuPorcetanjeDTO>();
+            porcentajeGlobal = response?.PorcentajeGlobal ?? 0;
+            FiltrarCargo();
         }
         catch (Exception ex)
         {
             NotificationService.Notify(NotificationSeverity.Error, "Error", "No se pudo obtener los datos: " + ex.Message);
             registros = new List<AsistenReuPorcetanjeDTO>();
+            registrosFiltrados = new List<AsistenReuPorcetanjeDTO>();
+            porcentajeGlobal = 0;
         }
+    }
+
+    private void FiltrarCargo()
+    {
+        if (string.IsNullOrEmpty(filtroCargo))
+        {
+            registrosFiltrados = registros?.ToList() ?? new List<AsistenReuPorcetanjeDTO>();
+        }
+        else
+        {
+            registrosFiltrados = registros?.Where(x => x.Nombre.Contains(filtroCargo, StringComparison.OrdinalIgnoreCase)).ToList() ?? new List<AsistenReuPorcetanjeDTO>();
+        }
+    }
+
+    private string GetColor(double porcentaje)
+    {
+        if (porcentaje >= 90)
+            return "green";
+        else if (porcentaje >= 60)
+            return "orange";
+        else
+            return "red";
     }
 
     public class Empresa { public string Id { get; set; } public string Nombre { get; set; } }
     public class Area { public string Id { get; set; } public string Nombre { get; set; } }
-    // No necesitas definir AsistenReuPorcetanjeDTO aquí si ya existe en tu proyecto
 }

@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Mvc;
 using ReunionWeb.ReunionDiaria.DTOs;
+using ReunionWeb.Data;
 
 
 using static System.Net.WebRequestMethods;
@@ -8,6 +9,12 @@ using ReunionWeb.DTOs.Maestra;
 using ReunionWeb.Interface;
 
 namespace ReunionWeb.Data;
+
+public class PorcentajeAsistenciaDiariaResponseDTO
+{
+    public double PorcentajeGlobal { get; set; }
+    public List<AsistenReuPorcetanjeDTO> DetallePorCargo { get; set; }
+}
 
 public class AsistenciaReuData : IAsistenciaReuData
 {
@@ -58,11 +65,19 @@ public class AsistenciaReuData : IAsistenciaReuData
         }
         return mens;
     }
+    public async Task<PorcentajeAsistenciaDiariaResponseDTO?> GetPorcentajeAsistenciaResponse(string fechaInicio, string fechaFin, string empresa, string area)
+    {
+        url = $"{BaseUrl}/GetPorcentajeAsistenciaDiaria?fechaInicio={Uri.EscapeDataString(fechaInicio)}&fechaFin={Uri.EscapeDataString(fechaFin)}&empresa={Uri.EscapeDataString(empresa)}&area={Uri.EscapeDataString(area)}";
+        cliente = _clientFactory.CreateClient();
+        return await cliente.GetFromJsonAsync<PorcentajeAsistenciaDiariaResponseDTO>(url);
+    }
+
     public async Task<List<AsistenReuPorcetanjeDTO>> GetListAsistPorce(string fechaInicio, string fechaFin, string empresa, string area)
     {
-        url = $"{BaseUrl}/GetPorcentajeAsistenciaDiaria/{fechaInicio}/{fechaFin}/{empresa}/{area}";
+        url = $"{BaseUrl}/GetPorcentajeAsistenciaDiaria?fechaInicio={Uri.EscapeDataString(fechaInicio)}&fechaFin={Uri.EscapeDataString(fechaFin)}&empresa={Uri.EscapeDataString(empresa)}&area={Uri.EscapeDataString(area)}";
         cliente = _clientFactory.CreateClient();
-        return asistenreuspor = await cliente.GetFromJsonAsync<List<AsistenReuPorcetanjeDTO>>(url) ?? new List<AsistenReuPorcetanjeDTO>();
+        var response = await cliente.GetFromJsonAsync<PorcentajeAsistenciaDiariaResponseDTO>(url);
+        return response?.DetallePorCargo ?? new List<AsistenReuPorcetanjeDTO>();
     }
 
 }
