@@ -1,6 +1,7 @@
 @page "/asisReuPor"
 
 @using Radzen
+@using System.Linq
 @inject IAsistenciaReuData AsistenciaReuData
 @inject NotificationService NotificationService
 @attribute [Authorize(Roles = "Admin, AdminChempro, SuperUser, SemiAdmin, SuperAdmin")]
@@ -26,6 +27,30 @@
         <RadzenColumn Width="250px">
             <RadzenLabel Text="Área" />
             <RadzenDropDown @bind-Value="area" Data="@areas" TextProperty="Nombre" ValueProperty="Id" Style="width: 100%;" Placeholder="Seleccione un centro" Disabled="@((string.IsNullOrEmpty(empresa)) || !areas.Any())"/>
+        </RadzenColumn>
+        <RadzenColumn Width="250px">
+            <RadzenCheckBox @bind-Value="diasExcepcionalesLaborables" TValue="bool" />
+            <RadzenLabel Text="¿Días excepcionales laborables?" Style="margin-left: 8px;" />
+        </RadzenColumn>
+        <RadzenColumn With="300px">
+            <RadzenLabel Text="Agregar Evento Externo (Fecha)" />
+            <RadzenDatePicker @bind-Value="fechaEventoTemporal"
+            DateFormat="dd-MM-yyyy"
+            Min="@DateTime.Today"
+            Change="@(args => AgregarEventoExterno())"
+            DisabledDates="@eventosExternosFechas"
+            Style="width: 100%;" />
+        <RadzenLabel Text="Fechas seleccionadas:" style="margin-top: 8px;" />
+        <ul>
+            @foreach(var fecha in eventosExternosFechas.OrderBy(f => f))
+            {
+                <li>
+                    @fecha.ToString("dd-MM-yyyy")
+                    <RadzenButton Icon="close" ButtonStyle="ButtonStyle.Danger" Size="ButtonSize.Small"
+                                  Click="@(args => EliminarEventoExterno(fecha))" style="margin-left:5px;" />
+                </li>
+            }
+        </ul>
         </RadzenColumn>
         <RadzenColumn Width="150px" Style="display: flex; align-items: end;">
             <RadzenButton Text="Consultar"
@@ -103,6 +128,10 @@ else if (registros != null)
     private DateTime fechaFin = DateTime.Now;
     public string area { get; set; } = "";
     public string empresa { get; set; } = "";
+    private bool diasExcepcionalesLaborables = false;
+    private string eventosExternosInput = "";
+    private DateTime? fechaEventoTemporal;
+    private List<DateTime> eventosExternosFechas = new(); 
 
     private string filtroCargo = "";
     private List<AsistenReuPorcetanjeDTO> registrosFiltrados = new();
@@ -215,16 +244,37 @@ else if (registros != null)
         areas = new List<Area>();
     }
 
+    private void AgregarEventoExterno()
+    {
+        if (fechaEventoTemporal.HasValue)
+        {
+            eventosExternosFechas.Add(fechaEventoTemporal.Value);
+            fechaEventoTemporal = null;
+        }
+    }
+
+    private void EliminarEventoExterno(DateTime fecha)
+    {
+        eventosExternosFechas.Remove(fecha);
+    }
+
     private async Task Consultar()
     {
         try
         {
-            var response = await AsistenciaReuData.GetPorcentajeAsistenciaResponse(
-            fechaInicio.ToString("dd-MM-yyyy"),
-            fechaFin.ToString("dd-MM-yyyy"),
-            empresa,
-            area
-        );
+            List<string> eventosExternos = eventosExternosFechas
+                .Select(f => f.ToString("dd-MM-yyyy"))
+                .ToList();
+
+            var response = await AsistenciaReuData.GetPorcentajeAsistenciaResponsee(
+                fechaInicio.ToString("dd-MM-yyyy"),
+                fechaFin.ToString("dd-MM-yyyy"),
+                empresa,
+                area,
+                diasExcepcionalesLaborables,
+                eventosExternos
+            );
+
             registros = response?.DetallePorCargo ?? new List<AsistenReuPorcetanjeDTO>();
             porcentajeGlobal = response?.PorcentajeGlobal ?? 0;
             FiltrarCargo();
