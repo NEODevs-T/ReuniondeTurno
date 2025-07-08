@@ -9,5 +9,11 @@ public partial class AsistenReuPorcetanjeDTO
     public string Nombre { get; set; }
     public int ReunionesProgramadas { get; set; }
     public int ReunionesAsistidas { get; set; }
-    public double  PorcentajeAsistencia { get; set; }
+    public double PorcentajeAsistencia { get; set; }
+}
+
+public class PorcentajeAsistenciaTurnoResponseDTO
+{
+    public double PorcentajeGlobal { get; set; }
+    public List<AsistenReuPorcetanjeDTO> DetallePorCargo { get; set; }
 }

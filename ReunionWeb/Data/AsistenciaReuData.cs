@@ -10,18 +10,6 @@ using ReunionWeb.Interface;
 
 namespace ReunionWeb.Data;
 
-public class PorcentajeAsistenciaDiariaResponseDTO
-{
-    public double PorcentajeGlobal { get; set; }
-    public List<AsistenReuPorcetanjeDTO> DetallePorCargo { get; set; }
-}
-
-public class PorcentajeAsistenciaTurnoResponseDTO
-{
-    public double PorcentajeGlobal { get; set; }
-    public List<AsistenReuPorcetanjeDTO> DetallePorCargo { get; set; }
-}
-
 public class AsistenciaReuData : IAsistenciaReuData
 {
 
@@ -71,12 +59,6 @@ public class AsistenciaReuData : IAsistenciaReuData
         }
         return mens;
     }
-    public async Task<PorcentajeAsistenciaDiariaResponseDTO?> GetPorcentajeAsistenciaResponse(string fechaInicio, string fechaFin, string empresa, string area)
-    {
-        url = $"{BaseUrl}/GetPorcentajeAsistenciaDiaria?fechaInicio={Uri.EscapeDataString(fechaInicio)}&fechaFin={Uri.EscapeDataString(fechaFin)}&empresa={Uri.EscapeDataString(empresa)}&area={Uri.EscapeDataString(area)}";
-        cliente = _clientFactory.CreateClient();
-        return await cliente.GetFromJsonAsync<PorcentajeAsistenciaDiariaResponseDTO>(url);
-    }
 
     public async Task<PorcentajeAsistenciaTurnoResponseDTO> GetPorcentajeAsistenciaResponsee(
     string fechaInicio, string fechaFin, string empresa, string area,
@@ -102,5 +84,7 @@ public class AsistenciaReuData : IAsistenciaReuData
     var response = await cliente.GetFromJsonAsync<PorcentajeAsistenciaTurnoResponseDTO>(url);
     return response ?? new PorcentajeAsistenciaTurnoResponseDTO();
 }
+
+
 }
 
