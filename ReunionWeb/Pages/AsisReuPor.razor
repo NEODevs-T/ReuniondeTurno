@@ -5,6 +5,8 @@
 @inject IAsistenciaReuData AsistenciaReuData
 @inject ICargoReuData CargoReuData
 @inject NotificationService NotificationService
+@inject DialogService DialogService
+
 @attribute [Authorize(Roles = "Admin, AdminChempro, SuperUser, SemiAdmin, SuperAdmin")]
 
 <h3>Porcentaje de Asistencia</h3>
@@ -28,48 +30,29 @@
             <RadzenLabel Text="Área" />
             <RadzenDropDown @bind-Value="area" Data="@areas" TextProperty="Nombre" ValueProperty="Id" Style="width: 100%;" Placeholder="Seleccione un centro" Disabled="@((string.IsNullOrEmpty(empresa)) || !areas.Any())" />
         </RadzenColumn>
-        <RadzenColumn Width="250px">
-            <RadzenCheckBox @bind-Value="diasExcepcionalesLaborables" TValue="bool" />
-            <RadzenLabel Text="¿Días excepcionales laborables?" Style="margin-left: 8px;" />
-        </RadzenColumn>
-        <RadzenColumn Width="300px">
-            <RadzenLabel Text="Agregar Evento Externo (Fecha)" />
-            <RadzenDatePicker @bind-Value="fechaEventoTemporal"
-                              DateFormat="dd-MM-yyyy"
-                              Min="@DateTime.Today"
-                              Change="@(args => AgregarEventoExterno())"
-                              DisabledDates="@eventosExternosFechas"
-                              Style="width: 100%;" />
-            <RadzenLabel Text="Fechas seleccionadas:" style="margin-top: 8px;" />
-            <ul>
-                @foreach (var fecha in eventosExternosFechas.OrderBy(f => f))
-                {
-                    <li>
-                        @fecha.ToString("dd-MM-yyyy")
-                        <RadzenButton Icon="close" ButtonStyle="ButtonStyle.Danger" Size="ButtonSize.Small"
-                                      Click="@(args => EliminarEventoExterno(fecha))" style="margin-left:5px;" />
-                    </li>
-                }
-            </ul>
-        </RadzenColumn>
-        <RadzenColumn Width="150px" Style="display: flex; align-items: end;">
+<RadzenColumn Width="300px">
+    <RadzenLabel Text="¿Desea excluir del cálculo los días no laborables?" />
+    <RadzenCheckBox @bind-Value="diasExcepcionalesLaborables"
+                    TValue="bool"
+                    Change="@(args => AbrirDialogoDiasNoLaborables(args))" />
+</RadzenColumn>
+
+        <RadzenColumn Width="150px" Style="display: flex; align-items: flex-start; padding-top: 30px;">
             <RadzenButton Text="Consultar"
-                          Click="@(async () => await Consultar())"
-                          Style="width: 100%; background-color: #28a745; color: white;"
-                          Icon="search"
-                          Disabled="@(fechaInicio > fechaFin || fechaInicio == default || fechaFin == default || string.IsNullOrEmpty(empresa) || string.IsNullOrEmpty(area))" />
-        </RadzenColumn>
-    </RadzenRow>
-</RadzenTemplateForm>
+                  Click="@(async () => await Consultar())"
+                  Style="width: 100%; background-color: #28a745; color: white;"
+                  Icon="search"
+                  Disabled="@(fechaInicio > fechaFin || fechaInicio == default || fechaFin == default || string.IsNullOrEmpty(empresa) || string.IsNullOrEmpty(area))" />
+            </RadzenColumn>
+        </RadzenRow>
+    </RadzenTemplateForm>
 
-@if (cargando)
+@if (dataIsLoaded == 1)
 {
-    <div style="margin-top: 20px;">
-        <RadzenProadzenProgressBar Mode="Indeterminate" Style="height 20px;" />
-        <p> Cargando datos, por favor espere...</p> 
-    </div>
+    <div class="loader"></div>
 }
-
+@if (dataIsLoaded == 2 && registros != null)
+{
 @if (registros != null && registros.Any())
 {
     <RadzenLabel Text="Filtrar por cargo:" Style="margin-right:10px;" />
@@ -125,11 +108,12 @@
             </RadzenDataGridColumn>
         </Columns>
     </RadzenDataGrid>
-}
-else if (registros != null)
-{
-    <div style="margin-top:20px;">No hay registros para los filtros seleccionados.</div>
-}
+    }
+    else if (registros != null)
+    {
+        <div style="margin-top:20px;">No hay registros para los filtros seleccionados.</div>
+    }
+}    
 
 @code {
     private DateTime fechaInicio = DateTime.Now;
@@ -143,10 +127,10 @@ else if (registros != null)
     private List<AsistenReuPorcetanjeDTO> registrosFiltrados = new();
     private List<AsistenReuPorcetanjeDTO> registros;
     private double porcentajeGlobal = 0;
-    private bool cargando = false;
     private List<Empresa> empresas = new();
     private List<Area> areas = new();
     private List<CargoReuDTO> cargosReunion = new();
+    private int dataIsLoaded = 0;
 
     protected override async Task OnInitializedAsync()
     {
@@ -183,22 +167,56 @@ else if (registros != null)
         StateHasChanged();
     }
 
-    private void AgregarEventoExterno()
+async Task AbrirDialogoDiasNoLaborables(bool value)
+{
+    diasExcepcionalesLaborables = value;
+
+    if (value)
     {
-        if (fechaEventoTemporal.HasValue)
+        var result = await DialogService.OpenAsync<DiasNoLaborablesDialog>(
+            "Días No Laborables",
+            new Dictionary<string, object>
+            {
+                { "FechasIniciales", eventosExternosFechas }
+            },
+            new DialogOptions
+            {
+                Width = "500px",
+                Height = "auto",
+                CloseDialogOnOverlayClick = false
+            });
+
+        if (result is List<DateTime> fechas)
         {
-            eventosExternosFechas.Add(fechaEventoTemporal.Value);
-            fechaEventoTemporal = null;
+            eventosExternosFechas = fechas;
+        }
+    }
+}
+
+
+
+
+
+
+    void AgregarEventoExterno()
+    {
+        if (fechaEventoTemporal.HasValue && !eventosExternosFechas.Contains(fechaEventoTemporal.Value.Date))
+        {
+            eventosExternosFechas.Add(fechaEventoTemporal.Value.Date);
         }
     }
 
-    private void EliminarEventoExterno(DateTime fecha)
+    void EliminarEventoExterno(DateTime fecha)
     {
         eventosExternosFechas.Remove(fecha);
     }
 
+
+
     private async Task Consultar()
     {
+        dataIsLoaded = 1;
+        StateHasChanged();
         try
         {
             List<string> eventosExternos = eventosExternosFechas
@@ -210,7 +228,7 @@ else if (registros != null)
                 fechaFin.ToString("dd-MM-yyyy"),
                 empresa,
                 area,
-                diasExcepcionalesLaborables, 
+                !diasExcepcionalesLaborables, 
                 eventosExternos
         );
 
@@ -225,6 +243,8 @@ else if (registros != null)
         registrosFiltrados = new List<AsistenReuPorcetanjeDTO>();
         porcentajeGlobal = 0;
     }
+        dataIsLoaded = 2;
+        StateHasChanged();
 }
 
 private void FiltrarCargo()

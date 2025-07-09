@@ -1,0 +1,68 @@
+@using Radzen
+@inject DialogService DialogService
+
+<div>
+    <RadzenLabel Text="Seleccione los días no laborables que desea excluir:" />
+    <RadzenDatePicker TValue="DateTime?" @bind-Value="fechaTemp"
+                      DateFormat="dd-MM-yyyy"
+                      Max="@DateTime.Today"
+                      Style="width: 100%;" />
+
+    <RadzenButton Text="Agregar fecha"
+                  Icon="add"
+                  Style="margin-top: 10px; margin-bottom: 10px;"
+                  Click="AgregarFecha" />
+
+    <RadzenLabel Text="Fechas seleccionadas:" style="margin-top: 8px;" />
+    <ul>
+        @foreach (var fecha in fechasTemp.OrderBy(f => f))
+        {
+            <li>
+                @fecha.ToString("dd-MM-yyyy")
+                <RadzenButton Icon="close"
+                              ButtonStyle="ButtonStyle.Danger"
+                              Size="ButtonSize.Small"
+                              Click="() => EliminarFecha(fecha)"
+                              style="margin-left:5px;" />
+            </li>
+        }
+    </ul>
+
+    <div style="margin-top: 10px;">
+        <RadzenButton Text="Guardar"
+                      Click="Guardar"
+                      Style="margin-right: 10px;" />
+        <RadzenButton Text="Cancelar"
+                      ButtonStyle="ButtonStyle.Secondary"
+                      Click="() => DialogService.Close()" />
+    </div>
+</div>
+
+@code {
+    [Parameter] public List<DateTime> FechasIniciales { get; set; } = new();
+    private List<DateTime> fechasTemp = new();
+    private DateTime? fechaTemp;
+
+    protected override void OnInitialized()
+    {
+        fechasTemp = new List<DateTime>(FechasIniciales);
+    }
+
+    void AgregarFecha()
+    {
+        if (fechaTemp.HasValue && !fechasTemp.Contains(fechaTemp.Value.Date))
+        {
+            fechasTemp.Add(fechaTemp.Value.Date);
+        }
+    }
+
+    void EliminarFecha(DateTime fecha)
+    {
+        fechasTemp.Remove(fecha);
+    }
+
+    void Guardar()
+    {
+        DialogService.Close(fechasTemp);
+    }
+}
