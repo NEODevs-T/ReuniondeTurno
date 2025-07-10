@@ -30,13 +30,12 @@
             <RadzenLabel Text="Área" />
             <RadzenDropDown @bind-Value="area" Data="@areas" TextProperty="Nombre" ValueProperty="Id" Style="width: 100%;" Placeholder="Seleccione un centro" Disabled="@((string.IsNullOrEmpty(empresa)) || !areas.Any())" />
         </RadzenColumn>
-<RadzenColumn Width="300px">
-    <RadzenLabel Text="¿Desea excluir del cálculo los días no laborables?" />
-    <RadzenCheckBox @bind-Value="diasExcepcionalesLaborables"
+        <RadzenColumn Width="300px">
+        <RadzenLabel Text="Excluir los días no laborables" />
+        <RadzenCheckBox @bind-Value="diasExcepcionalesLaborables"
                     TValue="bool"
                     Change="@(args => AbrirDialogoDiasNoLaborables(args))" />
-</RadzenColumn>
-
+        </RadzenColumn>
         <RadzenColumn Width="150px" Style="display: flex; align-items: flex-start; padding-top: 30px;">
             <RadzenButton Text="Consultar"
                   Click="@(async () => await Consultar())"
@@ -46,7 +45,6 @@
             </RadzenColumn>
         </RadzenRow>
     </RadzenTemplateForm>
-
 @if (dataIsLoaded == 1)
 {
     <div class="loader"></div>
@@ -61,7 +59,6 @@
                    Style="margin:15px 0 10px 0; width:250px;"
                    Change="@(args => FiltrarCargo())" />
 }
-
 @if (registros != null && registros.Any())
 {
     <div style="margin-bottom:10px;">
@@ -74,6 +71,11 @@
     {
         <div style="color:red; margin-bottom:10px;">No existe ese cargo.</div>
     }
+    <RadzenButton Text="Limpiar Filtros"
+                    Icon="refresh"
+                    ButtonStyle="ButtonStyle.Secondary"
+                    Style="margin-bottom: 10px;"
+                    Click="LimpiarFiltros" />
     <RadzenDataGrid Data="@registrosFiltrados"
                     TItem="AsistenReuPorcetanjeDTO"
                     ShowPagingSummary="true"
@@ -131,25 +133,20 @@
     private List<Area> areas = new();
     private List<CargoReuDTO> cargosReunion = new();
     private int dataIsLoaded = 0;
-
     protected override async Task OnInitializedAsync()
     {
         cargosReunion = await CargoReuData.GetCargosReunion();
-
         empresas = cargosReunion
             .Select(c => c.Crempresa)
             .Distinct()
             .Select(e => new Empresa { Id = e, Nombre = e })
             .ToList();
-
         areas = new List<Area>();
     }
-
     private void OnEmpresaChanged(object value)
     {
         empresa = value?.ToString() ?? "";
         area = "";
-
         if (string.IsNullOrEmpty(empresa))
         {
             areas = new List<Area>();
@@ -163,10 +160,8 @@
                 .Select(a => new Area { Id = a, Nombre = a })
                 .ToList();
         }
-
         StateHasChanged();
     }
-
 async Task AbrirDialogoDiasNoLaborables(bool value)
 {
     diasExcepcionalesLaborables = value;
@@ -192,12 +187,6 @@ async Task AbrirDialogoDiasNoLaborables(bool value)
         }
     }
 }
-
-
-
-
-
-
     void AgregarEventoExterno()
     {
         if (fechaEventoTemporal.HasValue && !eventosExternosFechas.Contains(fechaEventoTemporal.Value.Date))
@@ -205,14 +194,10 @@ async Task AbrirDialogoDiasNoLaborables(bool value)
             eventosExternosFechas.Add(fechaEventoTemporal.Value.Date);
         }
     }
-
     void EliminarEventoExterno(DateTime fecha)
     {
         eventosExternosFechas.Remove(fecha);
     }
-
-
-
     private async Task Consultar()
     {
         dataIsLoaded = 1;
@@ -222,7 +207,6 @@ async Task AbrirDialogoDiasNoLaborables(bool value)
             List<string> eventosExternos = eventosExternosFechas
                 .Select(f => f.ToString("dd-MM-yyyy"))
                 .ToList();
-
             var response = await AsistenciaReuData.GetPorcentajeAsistenciaResponsee(
                 fechaInicio.ToString("dd-MM-yyyy"),
                 fechaFin.ToString("dd-MM-yyyy"),
@@ -231,7 +215,6 @@ async Task AbrirDialogoDiasNoLaborables(bool value)
                 !diasExcepcionalesLaborables, 
                 eventosExternos
         );
-
         registros = response?.DetallePorCargo ?? new List<AsistenReuPorcetanjeDTO>();
         porcentajeGlobal = response?.PorcentajeGlobal ?? 0;
         FiltrarCargo();
@@ -246,7 +229,6 @@ async Task AbrirDialogoDiasNoLaborables(bool value)
         dataIsLoaded = 2;
         StateHasChanged();
 }
-
 private void FiltrarCargo()
 {
     if (string.IsNullOrEmpty(filtroCargo))
@@ -261,6 +243,18 @@ private void FiltrarCargo()
     }
 }
 
+void LimpiarFiltros()
+{
+    fechaInicio = DateTime.Today;
+    fechaFin = DateTime.Today;
+    empresa = string.Empty;
+    area = string.Empty;
+    filtroCargo = string.Empty;
+    diasExcepcionalesLaborables = false;
+    eventosExternosFechas.Clear();
+    registros = null;
+    registrosFiltrados = null;
+}
 private string GetColor(double porcentaje)
 {
     if (porcentaje >= 90)
@@ -270,13 +264,11 @@ private string GetColor(double porcentaje)
     else
         return "red";
 }
-
 public class Empresa
 {
     public string Id { get; set; }
     public string Nombre { get; set; }
 }
-
 public class Area
 {
     public string Id { get; set; }
