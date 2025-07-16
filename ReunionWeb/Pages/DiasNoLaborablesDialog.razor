@@ -5,7 +5,7 @@
     <RadzenLabel Text="Seleccione los días no laborables que desea excluir:" />
     <RadzenDatePicker TValue="DateTime?" @bind-Value="fechaTemp"
                       DateFormat="dd-MM-yyyy"
-                      Max="@DateTime.Today"
+                      Max="@FechaMaxima"
                       Style="width: 100%;" />
 
     <RadzenButton Text="Agregar fecha"
@@ -40,6 +40,7 @@
 
 @code {
     [Parameter] public List<DateTime> FechasIniciales { get; set; } = new();
+    [Parameter] public DateTime FechaMaxima { get; set; }
     private List<DateTime> fechasTemp = new();
     private DateTime? fechaTemp;
 

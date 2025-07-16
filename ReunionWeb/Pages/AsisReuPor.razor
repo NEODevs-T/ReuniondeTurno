@@ -172,7 +172,8 @@ async Task AbrirDialogoDiasNoLaborables(bool value)
             "Días No Laborables",
             new Dictionary<string, object>
             {
-                { "FechasIniciales", eventosExternosFechas }
+                { "FechasIniciales", eventosExternosFechas },
+                { "FechaMaxima", fechaFin}
             },
             new DialogOptions
             {
