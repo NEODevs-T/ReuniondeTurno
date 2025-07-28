@@ -1,4 +1,5 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
+﻿@inject AuthenticationStateProvider AuthenticationStateProvider
+<div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
         <small class="text-muted"> Powered By  </small><img src="./images/LogoNeo.png" alt="PAVECA" width="60px" />
         <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
@@ -19,30 +20,30 @@
                     </NavLink>
                 </div>
                 <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="discrepancia">
-                        <span class="oi oi-warning" aria-hidden="true"></span> <strong>Discrepancias</strong>
+                    <NavLink class="nav-link" href="@discrepanciaHref">
+                        <span class="oi oi-warning" aria-hidden="true"></span> <strong>@labelDiscrepancias</strong>
                     </NavLink>
                 </div>
                 
                 <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="pendientes">
-                        <span class="oi oi-tags" aria-hidden="true"></span> <strong>Asuntos</strong>
+                    <NavLink class="nav-link" href="@pendientesHref">
+                        <span class="oi oi-tags" aria-hidden="true"></span> <strong>@labelAsuntos</strong>
                     </NavLink>
                 </div>
 
                 <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="asistencia">
-                        <span class="oi oi-list" aria-hidden="true"></span> <strong>Asistencia</strong>
+                    <NavLink class="nav-link" href="@asistenciaHref">
+                        <span class="oi oi-list" aria-hidden="true"></span> <strong>@labelAsistencia</strong>
                     </NavLink>
                 </div>
                 <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="reunion">
-                        <span class="oi oi-people" aria-hidden="true"></span> <strong>Pizarra</strong>
+                    <NavLink class="nav-link" href="@reunionHref">
+                        <span class="oi oi-people" aria-hidden="true"></span> <strong>@labelPizarra</strong>
                     </NavLink>
                 </div>
                 <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="historicos">
-                        <span class="oi oi-spreadsheet" aria-hidden="true"></span> <strong>Históricos</strong>
+                    <NavLink class="nav-link" href="@historicosHref">
+                        <span class="oi oi-spreadsheet" aria-hidden="true"></span> <strong>@labelHistoricos</strong>
                     </NavLink>
                 </div>
                 @* <div class="nav-item px-3">
@@ -63,19 +64,19 @@
 
 
                 <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="pendientes">
-                        <span class="oi oi-tags" aria-hidden="true"></span> <strong>Asuntos</strong>
+                    <NavLink class="nav-link" href="@pendientesHref">
+                        <span class="oi oi-tags" aria-hidden="true"></span> <strong>@labelAsuntos</strong>
                     </NavLink>
                 </div>
 
                 <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="reunion">
-                        <span class="oi oi-people" aria-hidden="true"></span> <strong>Pizarra</strong>
+                    <NavLink class="nav-link" href="@reunionHref">
+                        <span class="oi oi-people" aria-hidden="true"></span> <strong>@labelPizarra</strong>
                     </NavLink>
                 </div>
                 <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="historicos">
-                        <span class="oi oi-spreadsheet" aria-hidden="true"></span> <strong>Históricos</strong>
+                    <NavLink class="nav-link" href="@historicosHref">
+                        <span class="oi oi-spreadsheet" aria-hidden="true"></span> <strong>@labelHistoricos</strong>
                     </NavLink>
                 </div>
                 @* <div class="nav-item px-3">
@@ -114,6 +115,44 @@
     private bool collapseNavMenu = true;
 
     private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+    private string labelDiscrepancias = "Discrepancias";
+    private string labelAsuntos = "Asuntos";
+    private string labelAsistencia = "Asistencia";
+    private string labelPizarra = "Pizarra";
+    private string labelHistoricos = "Históricos";
+    private string discrepanciaHref = "/es/discrepancia";
+    private string pendientesHref = "/es/pendientes";
+    private string asistenciaHref = "/es/asistencia";
+    private string reunionHref = "/es/reunion";
+    private string historicosHref = "/es/historicos";
+    private const int TrinidadYTobago = 5;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user.Identity is not null && user.Identity.IsAuthenticated)
+        {
+            int.TryParse(user.FindFirst(c => c.Type == "IdPais")?.Value, out int idPais);
+
+            if (idPais == TrinidadYTobago)
+            {
+                labelDiscrepancias = "Discrepancy";
+                labelAsuntos = "Topics";
+                labelAsistencia = "Attendance";
+                labelPizarra = "Whiteboard";
+                labelHistoricos = "Historical";
+                discrepanciaHref = "/en/discrepancy";
+                pendientesHref = "/en/remaining";
+                asistenciaHref = "/en/attendance";
+                reunionHref = "/en/meeting";
+                historicosHref = "/en/historical";
+
+            }
+        }
+    }
+
 
     private void ToggleNavMenu()
     {
