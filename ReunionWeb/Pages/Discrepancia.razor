@@ -17,7 +17,7 @@
 @attribute [Authorize(Roles = "Admin, AdminChempro, SuperUser, SemiAdmin,SuperAdmin")]
 
 
-<h3>Discrepancias</h3>
+<h3>@labelDiscrepancias</h3>
 
 <p></p>
 
@@ -31,9 +31,9 @@
 
     
         <BSCol Column="3">
-            <BSLabel>Centro</BSLabel>
+            <BSLabel>@labelCentro</BSLabel>
             <BSInput InputType="InputType.Select" @onchange="BuscarDivision" @bind-Value="idCent">
-                <option value="0">Seleccione...</option>
+                <option value="0">@labelSeleccione...</option>
                 @foreach (var d in MaestraData.centro)
                 {
                     <option value="@d.IdCentro">@d.Centro</option>
@@ -44,9 +44,9 @@
 
 
         <BSCol Column="3">
-            <BSLabel>División</BSLabel>
+            <BSLabel>@labelDivision</BSLabel>
             <BSInput InputType="InputType.Select" @onchange='BuscarLinea' @bind-Value="idDiv">
-                <option value="0">Seleccione...</option>
+                <option value="0">@labelSeleccione...</option>
                 @if(MaestraData.centro != null){
                     @foreach (var d in MaestraData.divisions)
                     {
@@ -60,9 +60,9 @@
 
 
         <BSCol Column="3">
-            <BSLabel>Línea</BSLabel>
+            <BSLabel>@labelLinea</BSLabel>
             <BSInput InputType="InputType.Select" @onchange='BuscarEquipo' @bind-Value="idLin">
-                <option value="0">Seleccione...</option>
+                <option value="0">@labelSeleccione...</option>
                 @foreach (var d in MaestraData.lineas)
                 {
                     <option value="@d.IdLinea">@d.Linea</option>
@@ -77,7 +77,7 @@
 
         <BSCol Column="2">
             <BSRow>
-                <BSLabel>Filtrar: </BSLabel>
+                <BSLabel>@labelFiltrar: </BSLabel>
             </BSRow>
 
 
@@ -97,10 +97,10 @@
             @if (Reuniondb.Rdcentro != "Chempro")
             {
                 <BSCol Column="4">
-                    <BSLabel>C. Equipo</BSLabel>
+                    <BSLabel>@labelCodigoEquipo</BSLabel>
                     <BSInput InputType="InputType.Select" @bind-Value="Reuniondb.RdcodEq">
 
-                        <option value="">Seleccione...</option>
+                        <option value="">@labelSeleccione...</option>
                         @foreach (var d in MaestraData.equipos)
                         {
                                 <option value="@d.EcodEquiEam">@d.EcodEquiEam - @d.EnombreEam</option>
@@ -115,7 +115,7 @@
             else
             {
                 <BSCol Column="4">
-                    <BSLabel>C. Equipo</BSLabel>
+                    <BSLabel>@labelCodigoEquipo</BSLabel>
                     <BSInput InputType="InputType.Text" @bind-Value="Reuniondb.RdcodEq" />
                   
                 </BSCol>
@@ -124,7 +124,7 @@
         else if (MaestraData.centro.Count > 0 & tipoequipo == "1")
         {
             <BSCol Column="4">
-                <BSLabel>C. Equipo</BSLabel>
+                <BSLabel>@labelCodigoEquipo</BSLabel>
                 <div class="autocomplete">
                     <input @bind=selectedEquipoId @oninput=HandleInput class="form-control filter" />
                     @if (equiposfiltro is not null)
@@ -163,21 +163,20 @@
     <BSLabel>Ksf</BSLabel>
 
     <BSInput InputType="InputType.Select" @bind-Value="Reuniondb.Idksf">
-        <option value="">Seleccione...</option>
+        <option value="">@labelSeleccione...</option>
         @foreach (var d in KsfData.ksfs.Where(x => x.Idksf != 6))
         {
-            <option value="@d.Idksf">@d.KsfNombre</option>
+            var texto = idPais == 5? d.KsfEnglish : d.KsfNombre;
+            <option value="@d.Idksf">@texto</option>
         }
     </BSInput>
 </BSCol>
-
-
 
     </BSRow>
     <p></p>
     <BSRow>
         <BSCol Column="9">
-            <BSLabel>Discrepancia</BSLabel>
+            <BSLabel>@labelDiscrepancia</BSLabel>
             <BSInput InputType="InputType.Text" @bind-Value="Reuniondb.Rddisc" />
          
         </BSCol>
@@ -186,29 +185,33 @@
     <p></p>
 
 <BSCol Column="3">
-    <BSLabel>Responsable</BSLabel>
+    <BSLabel>@labelResponsable</BSLabel>
     <BSInput InputType="InputType.Select" @bind-Value="Reuniondb.IdResReu" @onchange="OnResponsableChanged">
-        <option value="">Seleccione...</option>
+        <option value="">@labelSeleccione...</option>
         @foreach (var d in RespoReuData.resporeus.Where(x => !ResponsablesExcluidos.ContainsKey(x.IdResReu)))
         {
-            <option value="@d.IdResReu">@d.Rrnombre</option>
+            <option value="@d.IdResReu">@TraducirResponsable(d.Rrnombre)</option>
         }
     </BSInput>
 </BSCol>
+
+
+
 @if (IsObservacionesVisible)
 {
     <BSCol Column="3">
-        <BSLabel>Detalles de Calidad</BSLabel>
+        <BSLabel>@labelDetallesDeCalidad</BSLabel>
         <BSInput InputType="InputType.Select" @bind-Value="Reuniondb.IdCausaCal" @onchange="OnCausaCalidadChanged">
-            <option value="">Seleccione...</option>
+            <option value="">@labelSeleccione...</option>
             @foreach (var e in CausaCalidadData.causaCals)
             {
-                <option value="@e.IdCausaCal">@e.Ccnombre</option>
+                var texto = idPais == 5? e.Ccenglish : e.Ccnombre;
+                <option value="@e.IdCausaCal">@texto</option>
             }
         </BSInput>
     </BSCol>
     <BSCol Column="3">
-        <BSLabel>Origen del Producto</BSLabel>
+        <BSLabel>@labelOrigenDelProducto</BSLabel>
         <BSInput InputType="InputType.Text" @bind-Value="Reuniondb.OrigenCal" />
     </BSCol>
 }
@@ -217,8 +220,8 @@
     <p></p>
 
     <BSCol Column="12">
-        <BSButton Color="BSColor.Success" Size="Size.ExtraSmall" IsDisabled="isDesactivado" IsSubmit>  Guardar <span class="oi oi-check"></span></BSButton>
-        <BSButton Color="BSColor.Primary" Size="Size.ExtraSmall" IsReset>  Borrar </BSButton>
+        <BSButton Color="BSColor.Success" Size="Size.ExtraSmall" IsDisabled="isDesactivado" IsSubmit>  @labelGuardar <span class="oi oi-check"></span></BSButton>
+        <BSButton Color="BSColor.Primary" Size="Size.ExtraSmall" IsReset>  @labelBorrar </BSButton>
     </BSCol>
 
 
@@ -230,6 +233,7 @@
     private bool IsObservacionesVisible { get; set; } = false;
     
     [CascadingParameter]
+    private Task<AuthenticationState>? authenticationState { get; set; }
     private List<Claim> claims { get; set; }
 
    // private string Ubicacion { get; set; } = null;
@@ -260,6 +264,23 @@
     string? filter;
     bool codsuccess = false;
 
+    private int idPais { get; set; }
+    private string labelDiscrepancias = "Discrepancias";
+    private string labelCentro = "Centro";
+    private string labelSeleccione = "Seleccione";
+    private string labelDivision = "División";
+    private string labelLinea = "Línea";
+    private string labelFiltrar = "Filtrar";
+    private string labelCodigoEquipo = "C. Equipo";
+    private string labelDiscrepancia = "Discrepancia";
+    private string labelResponsable = "Responsable";
+    private string labelDetallesDeCalidad  = "Detalle de Calidad";
+    private string labelOrigenDelProducto = "Origen del Producto";
+    private string labelGuardar = "Guardar";
+    private string labelBorrar = "Borrar";
+
+    private string nombre  { get; set;}
+
         // Diccionario que asocia los IDs con sus nombres
     private readonly Dictionary<int, string> ResponsablesExcluidos = new Dictionary<int, string>
     {
@@ -279,6 +300,34 @@
         Reuniondb.IdCausaCal = 1;
         Reuniondb.OrigenCal = "";
 
+        if (authenticationState is not null){
+            AuthenticationState? authState = await authenticationState;
+            ClaimsPrincipal? user = authState?.User;
+            if (user?.Identity is not null && user.Identity.IsAuthenticated)
+            {
+                idPais = int.Parse(user.FindFirst(c => c.Type == "IdPais")?.Value ?? "0") ;
+                if (idPais == 5)
+                {
+                    labelDiscrepancias = "Discrepancies";
+                    labelCentro = "Center";
+                    labelSeleccione = "Select";
+                    labelDivision = "Division";
+                    labelLinea = "Line";
+                    labelFiltrar = "Filter";
+                    labelCodigoEquipo = "Equipment Code";
+                    labelDiscrepancia = "Discrepancy";
+                    labelResponsable = "Responsible";
+                    labelDetallesDeCalidad = "Quality Details";
+                    labelOrigenDelProducto = "Product Origin";
+                    labelGuardar = "Save";
+                    labelBorrar = "Clean";
+                }
+            }
+        }
+
+
+
+
         if (claims != null && claims.Count > 1 && (claims[1]?.Value == "Admin" || claims[1]?.Value == "SuperAdmin"))
         {
             await MaestraData.GetCentrosxEmpresa("All" + claims[10].Value);
@@ -296,6 +345,31 @@
         RespoReuData.resporeus = RespoReuData.resporeus
             .Where(a => a.Rrdesc == claims.FirstOrDefault(c => c.Type.Contains("Empresa"))?.Value || string.IsNullOrEmpty(a.Rrdesc))
             .ToList();
+    }
+
+    private string TraducirResponsable(string nombre)
+    {
+    if (idPais == 5)
+    {
+        switch (nombre)
+        {
+            case "Mtto. Mecánico":
+                return "Mechanical Maint.";
+            case "Mtto. Eléctrico/Electrónico":
+                return "Electrical/Electronic Maint.";
+            case "Seguridad":
+                return "Safety";
+            case "Calidad":
+                return "Quality";
+            case "Operaciones":
+                return "Operations";
+            case "Por Definir":
+                return "To Be Defined";
+            default:
+                return nombre;
+        }
+    }
+    return nombre;
     }
 
     private async Task CreateData()
