@@ -372,6 +372,35 @@
     return nombre;
     }
 
+    private string TraducirMensaje(string mensaje)
+    {
+        if (idPais == 5)
+        {
+            switch (mensaje)
+            {
+                case "Registro Exitoso":
+                    return "Successful Record";
+                case "Error al insertar, intente de nuevo.":
+                    return "Error inserting, please try again.";
+                case "Error inesperado.":
+                    return "Unexpected error.";
+                case "Seleccione el área.":
+                    return "Select the area.";
+                case "Seleccione la división.":
+                    return "Select the division.";
+                case "Llene la discrepancia.":
+                    return "Fill in the discrepancy.";
+                case "Seleccione el estado.":
+                    return "Select the status.";
+                case "No se encontraron datos requeridos para guardar.":
+                    return "Required data not found for saving.";
+                default:
+                    return mensaje;
+            }
+        }
+        return mensaje;
+    }
+
     private async Task CreateData()
     {
         var authState = await AuthStateProvider.GetAuthenticationStateAsync();
@@ -441,7 +470,7 @@ private void OnUbicacionChanged(ChangeEventArgs e)
         }
         catch (Exception ex)
         {
-            mensaje = "Error: " + ex.Message;
+            mensaje = TraducirMensaje("Error: ") + ex.Message;
         }
     }
 
@@ -456,7 +485,7 @@ private void OnUbicacionChanged(ChangeEventArgs e)
         }
         catch (Exception ex)
         {
-            mensaje = "Error: " + ex.Message;
+            mensaje = TraducirMensaje("Error: ") + ex.Message;
         }
     }
 
@@ -472,7 +501,7 @@ private void OnUbicacionChanged(ChangeEventArgs e)
         }
         catch (Exception ex)
         {
-            mensaje = "Error: " + ex.Message;
+            mensaje = TraducirMensaje("Error: ") + ex.Message;
         }
     }
 
@@ -486,7 +515,7 @@ private void OnUbicacionChanged(ChangeEventArgs e)
         }
         catch (Exception ex)
         {
-            mensaje = "Error: " + ex.Message;
+            mensaje = TraducirMensaje("Error: ") + ex.Message;
         }
     }
 
@@ -494,13 +523,23 @@ private void OnUbicacionChanged(ChangeEventArgs e)
 {
     try
     {
-        Reuniondb.IdMaster = MaestraData.maestra.First(x => x.IdLinea == idLin).IdMaster;
-        Reuniondb.Rdarea = MaestraData.lineas.First(x => x.IdLinea == idLin).Linea;
+        var maestraItem = MaestraData.maestra.FirstOrDefault(x => x.IdLinea == idLin);
+        var lineaItem = MaestraData.lineas.FirstOrDefault(x => x.IdLinea == idLin);
+        var centroItem = MaestraData.centro.FirstOrDefault(c => c.IdCentro == idCent);
+
+        if (maestraItem == null || lineaItem == null || centroItem == null)
+        {
+            NotificationService.Notify(Notificar.Notificacion("error", TraducirMensaje("Error inesperado."), "No se encontraron datos requeridos para guardar."));
+            return;
+        }
+
+        Reuniondb.IdMaster = maestraItem.IdMaster;
+        Reuniondb.Rdarea = lineaItem.Linea;
         Reuniondb.Rdstatus = "Pendiente";
         Reuniondb.IdTipReu = reunionTurno;
         Reuniondb.IdPais = int.Parse(claims.First(c => c.Type == "IdPais")?.Value);
         Reuniondb.IdEmpresa = int.Parse(claims.First(c => c.Type == "IdEmpresa")?.Value);
-        Reuniondb.Ksf = KsfData.ksfs.First(k => k.Idksf == Reuniondb.Idksf).KsfNombre;
+        Reuniondb.Ksf = KsfData.ksfs.FirstOrDefault(k => k.Idksf == Reuniondb.Idksf)?.KsfNombre ?? "";
 
         if (tipoequipo == "1")
             Reuniondb.RdcodEq = selectedEquipoId;
@@ -510,58 +549,68 @@ private void OnUbicacionChanged(ChangeEventArgs e)
             Reuniondb.RdfecCrea = DateTime.Now;
             Reuniondb.RdfecReu = fechahoy = DateTime.Now;
             Reuniondb.RdfecTra = fechatrabajo;
-            Reuniondb.Rdcentro = MaestraData.centro.First(c => c.IdCentro == idCent).Centro;
+            Reuniondb.Rdcentro = centroItem.Centro;
             Reuniondb.Rddiv = MaestraData.divisions.FirstOrDefault(e => e.IdDivision == idDiv)?.Ndivision;
 
             if (ValidateFields(Reuniondb))
             {
-                CambStata = new CambStatDTO { Cbfecha = DateTime.Now, Cbstat = "Pendiente", Cbuser = claims[2].Value + " " + claims[3].Value };
-                CambFech = new CambFecDTO { Cffec = DateTime.Now, CffecNew = DateTime.Now, Cfuser = claims[2].Value + " " + claims[3].Value };
+                CambStata = new CambStatDTO
+                {
+                    Cbfecha = DateTime.Now,
+                    Cbstat = "Pendiente",
+                    Cbuser = claims[2].Value + " " + claims[3].Value
+                };
+
+                CambFech = new CambFecDTO
+                {
+                    Cffec = DateTime.Now,
+                    CffecNew = DateTime.Now,
+                    Cfuser = claims[2].Value + " " + claims[3].Value
+                };
 
                 var result = await AvisadorData.InsertarRegistros(new RegistroCambiosDTO(CambFech, CambStata, Reuniondb));
                 if (result)
                 {
                     ResetFields();
-                    NotificationService.Notify(Notificar.Notificacion("exito", "Registro Exitoso", ""));
+                    NotificationService.Notify(Notificar.Notificacion("exito", TraducirMensaje("Registro Exitoso"), ""));
                 }
                 else
                 {
-                    NotificationService.Notify(Notificar.Notificacion("error", "Error al insertar, intente de nuevo.", ""));
+                    NotificationService.Notify(Notificar.Notificacion("error", TraducirMensaje("Error al insertar, intente de nuevo."), ""));
                 }
             }
         }
     }
     catch (Exception ex)
     {
-        NotificationService.Notify(Notificar.Notificacion("error", "Error inesperado.", ex.Message));
+        NotificationService.Notify(Notificar.Notificacion("error", TraducirMensaje("Error inesperado."), ex.Message));
     }
+
     IsObservacionesVisible = false;
     isDesactivado = false;
 }
-
-
 
 
     private bool ValidateFields(ReunionDTO reunion)
     {
         if (string.IsNullOrEmpty(reunion.Rdarea))
         {
-            NotifyError("Seleccione el área.");
+            NotifyError(TraducirMensaje("Seleccione el área."));
             return false;
         }
         if (string.IsNullOrEmpty(reunion.Rddiv))
         {
-            NotifyError("Seleccione la división.");
+            NotifyError(TraducirMensaje("Seleccione la división."));
             return false;
         }
         if (string.IsNullOrEmpty(reunion.Rddisc))
         {
-            NotifyError("Llene la discrepancia.");
+            NotifyError(TraducirMensaje("Llene la discrepancia."));
             return false;
         }
         if (string.IsNullOrEmpty(reunion.Rdstatus))
         {
-            NotifyError("Seleccione el estado.");
+            NotifyError(TraducirMensaje("Seleccione el estado."));
             return false;
         }
         return true;
@@ -605,4 +654,5 @@ private void OnUbicacionChanged(ChangeEventArgs e)
         selectedEquipoName = equiposfiltro!.First(c => c.EcodEquiEam.Equals(selectedEquipoId)).EnombreEam;
         equiposfiltro = null;
     }
+
 }
