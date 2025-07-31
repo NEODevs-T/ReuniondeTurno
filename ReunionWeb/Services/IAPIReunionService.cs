@@ -42,6 +42,5 @@ namespace ReunionWeb.Services
         Task<string> AddEquipo(EquipoDTO equipo);
         Task<List<ReunionDTO>> GetTrabajosCalendario(string pais, string centro, string division);
         Task<List<EquipoEamDTO>> GetEquiposCentro(string idCentro);
-
     }
 }

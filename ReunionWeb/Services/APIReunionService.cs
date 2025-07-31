@@ -7,6 +7,7 @@ using static System.Net.WebRequestMethods;
 using ReunionWeb.DTOs.Maestra;
 
 namespace ReunionWeb.Services;
+
 public class APIReunionService : IAPIReunionService
 {
         // **-------> CONEXION A LA API <--------**
@@ -46,6 +47,7 @@ public class APIReunionService : IAPIReunionService
         public List<CalendarioTrabajoDTO> calentrabajo { get; set; } = new List<CalendarioTrabajoDTO>();
 
         public RegistroCambiosDTO listaRegistro { get; set; } //= new RegistroCambiosDTO(); 
+        public List<AsistenReuPorcetanjeDTO> asistenreuspor { get; set; } = new List<AsistenReuPorcetanjeDTO>();
 
 
         // **-------> PROPIEDADES DE JAVIER <------**
@@ -75,6 +77,8 @@ public class APIReunionService : IAPIReunionService
                 return await cliente.GetFromJsonAsync<List<EquipoEamDTO>>(url) ?? new List<EquipoEamDTO>();
 
         }
+
+        
         //TODO: AREGLAR METODO
         public async Task<List<DivisionesVDTO>> GetBdDiv(string cent)
         {
@@ -199,6 +203,7 @@ public class APIReunionService : IAPIReunionService
                 cliente = _clientFactory.CreateClient();
                 return await cliente.GetFromJsonAsync<List<EquipoEamDTO>>(url) ?? new List<EquipoEamDTO>();
         }
+        
 
 
 
