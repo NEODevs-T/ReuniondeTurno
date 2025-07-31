@@ -529,7 +529,7 @@ private void OnUbicacionChanged(ChangeEventArgs e)
 
         if (maestraItem == null || lineaItem == null || centroItem == null)
         {
-            NotificationService.Notify(Notificar.Notificacion("error", TraducirMensaje("Error inesperado."), "No se encontraron datos requeridos para guardar."));
+            NotificationService.Notify(Notificar.Notificacion("error", TraducirMensaje("Error inesperado."), TraducirMensaje("No se encontraron datos requeridos para guardar.")));
             return;
         }
 
