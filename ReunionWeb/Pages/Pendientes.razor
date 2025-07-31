@@ -18,7 +18,7 @@
 @inject IJSRuntime IJS
 @inject NotificationService NotificationService
 
-<h4>Asuntos</h4>
+<h4>@labelAsuntos</h4>
 
 
 @if (MaestraData.centro.Count() == 0)
@@ -32,9 +32,9 @@ else
 {
     <BSRow>
         <BSCol ColumnLarge="3" ColumnSmall="6">
-            <BSLabel>Centro</BSLabel>
+            <BSLabel>@labelCentro</BSLabel>
             <BSInput InputType="InputType.Select" @bind-Value="IdCentro" @onchange="BuscarDivision" >>
-                <option value="0"> Seleccione </option>
+                <option value="0"> @labelSeleccione </option>
                 @foreach (var d in MaestraData.centro)
                 {
                     <option value="@d.IdCentro">@d.Centro</option>
@@ -43,9 +43,9 @@ else
         </BSCol>
 
         <BSCol ColumnLarge="3" ColumnSmall="6">
-            <BSLabel>División</BSLabel>
+            <BSLabel>@labelDivision</BSLabel>
             <BSInput InputType="InputType.Select" @bind-Value="IdDiv">
-                <option value="0">Seleccione</option>
+                <option value="0">@labelSeleccione</option>
                 @foreach (var d in MaestraData.divisions)
                 {
                     <option value="@d.IdDivision">@d.Ndivision</option>
@@ -55,9 +55,9 @@ else
         @if (PizarraData.reudiatablas.Count() > 0 && dataIsLoaded == 2)
         {
             <BSCol ColumnLarge="3" ColumnSmall="6">
-                <BSLabel>Línea</BSLabel>
+                <BSLabel>@labelLinea</BSLabel>
                 <BSInput InputType="InputType.Select" @bind-Value="NombreLinea">
-                    <option value="Todo">Todo</option>
+                    <option value="Todo">@labelTodo</option>
                     @foreach (var d in MaestraData.lineas)
                     {
                                 <option value="@d.Linea">@d.Linea</option>
@@ -67,11 +67,11 @@ else
 
         }
         <BSCol ColumnLarge="3" ColumnSmall="6">
-            <BSLabel>Estado</BSLabel>
+            <BSLabel>@labelEstado</BSLabel>
             <BSInput InputType="InputType.Select" @bind-Value="Status">>
-            <option value="Todo">Todos</option>
-            <option value="Pendiente">Pendiente</option>
-            <option value="Cerrado">Cerrado</option>
+            <option value="Todo">@labelTodos</option>
+            <option value="Pendiente">@labelPendiente</option>
+            <option value="Cerrado">@labelCerrado</option>
             </BSInput>
         </BSCol>
 
@@ -90,16 +90,16 @@ else
     <BSRow>
 
         <BSCol ColumnLarge="1" ColumnSmall="">
-            <BSLabel>Código</BSLabel>
+            <BSLabel>@labelCódigo</BSLabel>
             <BSInput InputType="InputType.Select" IsDisabled @bind-Value="Codigo">
-                <option value="Todo">En Curso</option>
+                <option value="Todo">@labelEnCurso</option>
             </BSInput>
         </BSCol>
 
 
         <BSCol ColumnLarge="3" ColumnSmall="8">
             <BSRow>
-                <BSLabel>  Ordenar </BSLabel>
+                <BSLabel>  @labelOrdenar </BSLabel>
             </BSRow>
             @* <BSInputRadio CheckedValue="@("2")" IsDisabled=@valueodt @bind-Value="tipoconsulta" IsToggle="true" Size="Size.ExtraSmall" Color="BSColor.Success" IsOutlined="true" style="width:50%;">
                 F.Trabajo
@@ -115,7 +115,7 @@ else
 
         <BSCol ColumnLarge="3" ColumnSmall="6">
             <BSRow>
-                <BSLabel>Buscar</BSLabel>
+                <BSLabel>@labelBuscar</BSLabel>
             </BSRow>
             <BSButton IsOutlined Color="BSColor.Success" Size="Size.ExtraSmall" @onclick="Get" style="width:70%;">  Consultar <span class="oi oi-check"></span></BSButton>
          </BSCol>
