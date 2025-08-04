@@ -18,7 +18,15 @@
 @inject IJSRuntime IJS
 @inject NotificationService NotificationService
 
-<h4>@labelAsuntos</h4>
+@if (idPais == 5)
+{
+    <h4>Issue</h4>
+}
+else
+{
+    <h4>Asuntos</h4>
+}
+
 
 
 @if (MaestraData.centro.Count() == 0)
@@ -90,7 +98,7 @@ else
     <BSRow>
 
         <BSCol ColumnLarge="1" ColumnSmall="">
-            <BSLabel>@labelCódigo</BSLabel>
+            <BSLabel>@labelCodigo</BSLabel>
             <BSInput InputType="InputType.Select" IsDisabled @bind-Value="Codigo">
                 <option value="Todo">@labelEnCurso</option>
             </BSInput>
@@ -107,7 +115,7 @@ else
             </BSInputRadio> *@
 
             <BSInputRadio CheckedValue="@("0")" @bind-Value="tipoconsulta" IsToggle="true" Size="Size.ExtraSmall" Color="BSColor.Success" IsOutlined="true" style="width:50%;">
-                F. Reunión
+                @labelFReunion
                 <span class="oi oi-people"></span>
             </BSInputRadio>
         </BSCol>
@@ -117,7 +125,7 @@ else
             <BSRow>
                 <BSLabel>@labelBuscar</BSLabel>
             </BSRow>
-            <BSButton IsOutlined Color="BSColor.Success" Size="Size.ExtraSmall" @onclick="Get" style="width:70%;">  Consultar <span class="oi oi-check"></span></BSButton>
+            <BSButton IsOutlined Color="BSColor.Success" Size="Size.ExtraSmall" @onclick="Get" style="width:70%;">  @labelConsultar <span class="oi oi-check"></span></BSButton>
          </BSCol>
 
 
@@ -141,12 +149,12 @@ else
         @if (PizarraData.reudiatablas.Count() > 0 && dataIsLoaded == 2)
         {
             <BSCol Column="3">
-    <BSLabel>Responsable</BSLabel>
+    <BSLabel>@labelResponsable</BSLabel>
     <BSInput InputType="InputType.Select" @bind-Value="IdResReu">
-        <option value=0>Todo</option>
+        <option value=0>@labelTodo</option>
         @foreach (var d in RespoReuData.resporeus.Where(x => !ResponsablesExcluidos.ContainsKey(x.IdResReu)))
         {
-            <option value="@d.IdResReu">@d.Rrnombre</option>
+            <option value="@d.IdResReu">@TraducirResponsable(d.Rrnombre)</option>
         }
     </BSInput>
 </BSCol>
@@ -156,17 +164,18 @@ else
     <BSLabel>Ksf</BSLabel>
 
     <BSInput InputType="InputType.Select" @bind-Value="IdKsf">
-        <option value="0">Todo</option>
+        <option value="0">@labelTodo</option>
         @foreach (var d in KsfData.ksfs.Where(x => x.Idksf != 6))
         {
-            <option value="@d.Idksf">@d.KsfNombre</option>
+            var texto = idPais == 5? d.KsfEnglish : d.KsfNombre;
+            <option value="@d.Idksf">@texto</option>
         }
     </BSInput>
 </BSCol>
 
 <BSCol Column="3">
     <BSRow>
-        <BSLabel>Imprimir</BSLabel>
+        <BSLabel>@labelImprimir</BSLabel>
     </BSRow>
     <BSButton IsOutlined Color="BSColor.Success" Size="Size.ExtraSmall" @onclick="PrintDocument"> 
         <span class="oi oi-print"></span>
@@ -187,18 +196,18 @@ else
             <BSTHead Class="cabecera">
                 <BSTR>
                     @*<BSTD>Id</BSTD>*@
-                    <BSTD>Area</BSTD>
+                    <BSTD>@labelArea</BSTD>
                     <BSTD>Ksf</BSTD>
-                    <BSTD>C. Equipo</BSTD>
-                    <BSTD>Nombre del Equipo</BSTD>
-                    <BSTD Class="col-5">Discrepancia</BSTD>
+                    <BSTD>@labelCodigoEquipo</BSTD>
+                    <BSTD>@labelNombreDelEquipo</BSTD>
+                    <BSTD Class="col-5">@labelDiscrepancia</BSTD>
                     @* <BSTD>Código</BSTD> *@
-                    <BSTD Class="col-4">Plan de Acción</BSTD>
-                    <BSTD>Responsable</BSTD>
-                    <BSTD>Det. Calidad</BSTD>
-                    <BSTD>Origen del Producto</BSTD>
-                    <BSTD>Estado</BSTD>
-                    <BSTD>Fecha de Reunión</BSTD>
+                    <BSTD Class="col-4">@labelPlanDeAccion</BSTD>
+                    <BSTD>@labelResponsable</BSTD>
+                    <BSTD>@labelDetallesCalidad</BSTD>
+                    <BSTD>@labelOrigenDelProducto</BSTD>
+                    <BSTD>@labelEstado</BSTD>
+                    <BSTD>@labelFechaDeReunion</BSTD>
                     <BSTD>  </BSTD>
                 </BSTR>
             </BSTHead>
@@ -220,7 +229,14 @@ else
                     {
                         <BSTR Class="@GetClassVencido(d.RdfecReu, d.Rdstatus)">
                             <BSTD>@d.Rdarea</BSTD>
-                            <BSTD>@KsfData.ksfs.Where(x => x.Idksf == d.Idksf).FirstOrDefault()?.KsfNombre</BSTD>
+                            <BSTD>
+                                @{
+                                    var texto = idPais == 5 
+                                        ? KsfData.ksfs.Where(x => x.Idksf == d.Idksf).FirstOrDefault()?.KsfEnglish 
+                                        : KsfData.ksfs.Where(x => x.Idksf == d.Idksf).FirstOrDefault()?.KsfNombre;
+                                }
+                                @texto
+                            </BSTD>
                             <BSTD>@d.RdcodEq</BSTD>
                             <BSTD>@(string.IsNullOrWhiteSpace(d.EnombreEam) ? "EQUIPO NO ENCONTRADO" : d.EnombreEam)</BSTD>
                             <BSTD>@d.Rddisc.ToUpperInvariant()</BSTD>
@@ -239,14 +255,17 @@ else
                             <BSTD>@CausaCalidadData.causaCals.Where(x => x.IdCausaCal == d.IdCausaCal).FirstOrDefault()?.Ccnombre</BSTD>
                             <BSTD>@d.OrigenCal.ToUpperInvariant()</BSTD>
 
-                            @if (@d.Rdstatus == "Cerrado")
-                            {
-                                <BSTD Class="Cerrado">@d.Rdstatus</BSTD>
+
+                            @{
+                                var estadoTraducido = d.Rdstatus == "Cerrado"
+                                    ? (idPais == 5 ? "Closed" : "Cerrado")
+                                    : (idPais == 5 ? "Pending" : "Pendiente");
+
+                                var claseEstado = d.Rdstatus == "Cerrado" ? "Cerrado" : "pendiente";
                             }
-                            else
-                            {
-                                <BSTD Class="pendiente">@d.Rdstatus</BSTD>
-                            }
+
+                            <BSTD Class="@claseEstado">@estadoTraducido</BSTD>
+
 
                             <BSTD>@d.RdfecReu.ToString("dd/MM/yyyy")</BSTD>
                             <BSTD>
@@ -278,17 +297,17 @@ else
 
     @*Mostrar la trazabilidad*@
     <BSModal IsCentered="true" DataId="History">
-        <Header>Trazabilidad</Header>
+        <Header>@labelTrazabilidad</Header>
         <Content>
-            <h5>Cambios de Estados:</h5>
+            <h5>@labelCambiosDeEstados:</h5>
             @if (cambiostatuss.Count() > 0 && cargandocambio == true)
             {
                 <BSTable IsResponsive="true" IsStriped="true" IsBordered="true">
                     <BSTHead Class="cabecera">
                         <BSTR>
-                            <BSTD>Fecha del Cambio</BSTD>
-                            <BSTD>Status Nuevo</BSTD>
-                            <BSTD>Usuario</BSTD>
+                            <BSTD>@labelFechaDelCambio</BSTD>
+                            <BSTD>@labelStatusNuevo</BSTD>
+                            <BSTD>@labelUsuario</BSTD>
                         </BSTR>
                     </BSTHead>
                     <BSTBody>
@@ -501,6 +520,9 @@ else if (dataIsLoaded == 2 && PizarraData.reudiatablas.Count() == 0)
     [Parameter]
     public string? est { get; set; }
 
+    [CascadingParameter]
+    private Task<AuthenticationState>? authenticationState { get; set; }
+    private int idPais { get; set; }
     private string mensaje = "";
 
     int dataIsLoaded = 0;
@@ -529,8 +551,40 @@ else if (dataIsLoaded == 2 && PizarraData.reudiatablas.Count() == 0)
     List<MaestraVDTO> _divisiones = new List<MaestraVDTO>();
     private NotifiRadzen Notificar = new NotifiRadzen();//Logic para crear las noyificaciones radzen
     private bool isEditar { get; set; } = true;
-    private List<Claim> claims { get; set; }    
-
+    private List<Claim> claims { get; set; }
+    
+    private string labelArea = "Área";
+    private string labelAsuntos = "Asuntos";
+    private string labelBuscar = "Buscar";
+    private string labelCambiosDeEstados = "Cambios de Estados";
+    private string labelCentro = "Centro";
+    private string labelCerrado = "Cerrado";
+    private string labelCodigo = "Código";
+    private string labelCodigoEquipo = "Código Equipo";
+    private string labelConsultar = "Consultar";
+    private string labelDetallesCalidad = "Det. Calidad";
+    private string labelDivision = "División";
+    private string labelDiscrepancia = "Discrepancia";
+    private string labelEnCurso = "En Curso";
+    private string labelEstado = "Estado";
+    private string labelFechaDelCambio = "Fecha del Cambio";
+    private string labelFechaDeReunion = "Fecha de Reunión";
+    private string labelFReunion = "F. Reunión";
+    private string labelImprimir = "Imprimir";
+    private string labelLinea = "Línea";
+    private string labelNombreDelEquipo = "Nombre del Equipo";
+    private string labelOrdenar = "Ordenar";
+    private string labelOrigenDelProducto = "Origen del Producto";
+    private string labelPlanDeAccion = "Plan de Acción";
+    private string labelPendiente = "Pendiente";
+    private string labelResponsable = "Responsable";
+    private string labelSeleccione = "Seleccione";
+    private string labelStatusNuevo = "Status Nuevo";
+    private string labelTodo = "Todo";
+    private string labelTodos = "Todos";
+    private string labelTrazabilidad = "";
+    private string labelUsuario = "Usuario";
+    
     
     // Diccionario que asocia los IDs con sus nombres
     private readonly Dictionary<int, string> ResponsablesExcluidos = new Dictionary<int, string>
@@ -541,14 +595,6 @@ else if (dataIsLoaded == 2 && PizarraData.reudiatablas.Count() == 0)
         { 16, "Efluentes" }
     };
 
-    private async Task CreateData()
-
-    {
-        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
-        var user = authState.User;
-        claims = Enumerable.ToList(user.Claims);
-
-    }
 
 
     protected override async Task OnInitializedAsync()
@@ -557,6 +603,48 @@ else if (dataIsLoaded == 2 && PizarraData.reudiatablas.Count() == 0)
         fecha1 = DateTime.Now;
         fecha2 = DateTime.Now;
         await CreateData();
+
+            if (authenticationState is not null){
+            AuthenticationState? authState = await authenticationState;
+            ClaimsPrincipal? user = authState?.User;
+            if (user?.Identity is not null && user.Identity.IsAuthenticated)
+            {
+                idPais = int.Parse(user.FindFirst(c => c.Type == "IdPais")?.Value ?? "0") ;
+                if (idPais == 5)
+                {
+                    labelArea = "Area";
+                    labelAsuntos = "Subjects";
+                    labelBuscar = "Search";
+                    labelCambiosDeEstados = "Changes of Status";
+                    labelCentro = "Center";
+                    labelCerrado = "Closed";
+                    labelCodigo = "Code";
+                    labelCodigoEquipo = "Equipment Code";
+                    labelConsultar = "Consult";
+                    labelDetallesCalidad = "Quality Details";
+                    labelDiscrepancia = "Discrepancy";
+                    labelDivision = "Division";
+                    labelEnCurso = "In Progress";
+                    labelEstado = "Status";
+                    labelFechaDelCambio = "Change Date";
+                    labelFechaDeReunion = "Meeting Date";
+                    labelFReunion = "M. Format";
+                    labelImprimir = "Print";
+                    labelLinea = "Line";
+                    labelNombreDelEquipo = "Equipment Name";
+                    labelOrdenar = "Order";
+                    labelOrigenDelProducto = "Product Origin";
+                    labelPlanDeAccion = "Action Plan";
+                    labelPendiente = "Pending";
+                    labelResponsable = "Responsible";
+                    labelSeleccione = "Select";
+                    labelTodos = "All";
+                    labelTodo = "All";
+                    labelTrazabilidad = "Traceability";
+                    labelUsuario = "User";
+                }
+            }
+        }
 
         //Cargar Listas
         @* await DivReset(IdCentro = int.Parse(claims.FirstOrDefault(c => c.Type.Equals("IdCentro"))?.Value ?? "0")); *@
@@ -629,6 +717,32 @@ else if (dataIsLoaded == 2 && PizarraData.reudiatablas.Count() == 0)
         {
             valuvisualeodt =valueodt = true;
         }
+    }
+
+    
+    private string TraducirResponsable(string nombre)
+    {
+        if (idPais == 5)
+        {
+            nombre = nombre.ToLower();
+
+            if (nombre.Contains("mecánico")) return "Mechanical Maint.";
+            if (nombre.Contains("eléctrico") || nombre.Contains("electrónico")) return "Electrical/Electronic Maint.";
+            if (nombre.Contains("seguridad")) return "Safety";
+            if (nombre.Contains("calidad")) return "Quality";
+            if (nombre.Contains("operaciones")) return "Operations";
+            if (nombre.Contains("definir")) return "To Be Defined";
+        }
+        return nombre;
+    }
+
+    private async Task CreateData()
+
+    {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        claims = Enumerable.ToList(user.Claims);
+
     }
 
 
@@ -812,23 +926,33 @@ protected async Task Get()
         }
 
     }
-       public void ObtenerReunionesPorRol()
+
+    
+    public void ObtenerReunionesPorRol()
     {
+        foreach (var e in PizarraData.reudiatablas)
+        {
+            var nombreOriginal = RespoReuData.resporeus
+                .Where(x => x.IdResReu == e.IdResReu)
+                .FirstOrDefault()?.Rrnombre;
+
+            e.Responsable = TraducirResponsable(nombreOriginal ?? string.Empty);
+        }
+
         if (!string.IsNullOrEmpty(UsrRol))
         {
-            foreach (var e in PizarraData.reudiatablas)
-                {
-                    e.Responsable = RespoReuData.resporeus.Where(x => x.IdResReu == e.IdResReu).FirstOrDefault().Rrnombre;
-                }
-            listareu = PizarraData.reudiatablas.Where(r => r.Responsable.StartsWith(UsrRol)).ToList();
+            var rolTraducido = TraducirResponsable(UsrRol);
 
+            listareu = PizarraData.reudiatablas
+                .Where(r => r.Responsable.Contains(rolTraducido, StringComparison.OrdinalIgnoreCase))
+                .ToList();
         }
         else
         {
             listareu = PizarraData.reudiatablas;
-
         }
     }
+
 
 
 
