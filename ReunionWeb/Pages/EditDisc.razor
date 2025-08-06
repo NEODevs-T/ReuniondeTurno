@@ -1,4 +1,6 @@
-﻿@page "/EditDisc/{id:int}/{tipo:int}/{linea}/{f1}/{f2}/{est}"
+﻿@page "/es/EditDisc/{id:int}/{tipo:int}/{linea}/{f1}/{f2}/{est}"
+@page "/en/EditDisc/{id:int}/{tipo:int}/{linea}/{f1}/{f2}/{est}"
+
 @inject NotificationService NotificationService
 @inject IAsistenciaReuData AsistenciaReuData
 @inject IAvisadorData AvisadorData
@@ -12,7 +14,7 @@
 @inject AuthenticationStateProvider AuthStateProvider
 @inject ILocalStorageService LocalStorage
 
-<h3>Editar Discrepancia</h3>
+<h3>@labelEditarDiscrepancia</h3>
 
 <h4></h4>
 <AuthorizeView Roles="Admin,AdminChempro, SuperUser">
@@ -30,7 +32,7 @@
                 <BSRow>
 
                     <BSCol Column="2">
-                        <BSLabel>Centro</BSLabel>
+                        <BSLabel>@labelCentro</BSLabel>
                         <BSInput InputType="InputType.Text" IsDisabled @bind-Value="DiscForm.Rdcentro" />
 
                          <BSFeedback For="@(() => DiscForm.Rdcentro)" ValidMessage="Correcto." />
@@ -38,14 +40,14 @@
 
 
                      <BSCol Column="2">
-                         <BSLabel>División</BSLabel>
+                         <BSLabel>@labelDivision</BSLabel>
                          <BSInput InputType="InputType.Text" IsDisabled @bind-Value="DiscForm.Rddiv">
                          </BSInput>
                          <BSFeedback For="@(() => DiscForm.Rddiv)" ValidMessage="Correcto." />
                      </BSCol>
 
                      <BSCol Column="2">
-                         <BSLabel>Área</BSLabel>
+                         <BSLabel>@labelArea</BSLabel>
                          <BSInput InputType="InputType.Text" IsDisabled @bind-Value="DiscForm.Rdarea">
                          </BSInput>
                          <BSFeedback For="@(() => DiscForm.Rdarea)" ValidMessage="Correcto." />
@@ -66,7 +68,7 @@
                     </BSCol>
 
                     <BSCol Column="3">
-                        <BSLabel>C. Equipo</BSLabel>
+                        <BSLabel>@labelCodigoEquipo</BSLabel>
                         <BSInput InputType="InputType.Text" @bind-Value="DiscForm.RdcodEq" ValidateOnInput="true" />
                         <BSFeedback For="@(() => DiscForm.RdcodEq)" ValidMessage="Correcto." />
                     </BSCol>
@@ -76,7 +78,7 @@
                 <p></p>
                 <BSRow>
                     <BSCol Column="6">
-                        <BSLabel>Discrepancia</BSLabel>
+                        <BSLabel>@labelDiscrepancia</BSLabel>
                         <BSInput InputType="InputType.TextArea" @bind-Value="DiscForm.Rddisc" />
                         <BSFeedback For="@(() => DiscForm.Rddisc)" ValidMessage="Correcto." />
                     </BSCol>
@@ -87,14 +89,14 @@
                     @if (tipo == 0 || tipo == 2)
                     {
                         <BSCol Column="6">
-                            <BSLabel>Plan de Acción</BSLabel>
+                            <BSLabel>@labelPlanDeAccion</BSLabel>
                             <BSInput InputType="InputType.Text" @bind-Value="DiscForm.RdplanAcc" />
                         </BSCol>
                     }
                     else
                     {
                         <BSCol Column="6">
-                            <BSLabel>Plan de Acción</BSLabel>
+                            <BSLabel>@labelPlanDeAccion</BSLabel>
                             <BSInput InputType="InputType.Text" @bind-Value="DiscForm.RdplanAcc" />
                         </BSCol>
                     }
@@ -166,9 +168,9 @@
 
 
 <BSCol ColumnSmall="2">
-    <BSLabel>Responsable</BSLabel>
+    <BSLabel>@labelResponsable</BSLabel>
     <BSInput InputType="InputType.Select" @bind-Value="DiscForm.IdResReu" @onchange="OnDiscResponsableChanged">
-        <option value="">Seleccione...</option>
+        <option value="">@labelSeleccione...</option>
         @foreach (var d in RespoReuData.resporeus.Where(x => ResponsablesPermitidos.Contains(x.IdResReu)))
         {
             <option value="@d.IdResReu">@d.Rrnombre</option>
@@ -180,9 +182,9 @@
 @if (IsDiscObservacionesVisible)
 {
     <BSCol ColumnSmall="2">
-        <BSLabel>Observaciones de Calidad</BSLabel>
+        <BSLabel>@labelObservacionesDeCalidad</BSLabel>
         <BSInput InputType="InputType.Select" @bind-Value="DiscForm.IdCausaCal" @onchange="OnCausaCalidadChanged">
-            <option value="">Seleccione...</option>
+            <option value="">@labelSeleccione...</option>
             @foreach (var e in CausaCalidadData.causaCals)
             {
                 <option value="@e.IdCausaCal">@e.Ccnombre</option>
@@ -191,7 +193,7 @@
     </BSCol>
 
     <BSCol ColumnSmall="2">
-        <BSLabel>Origen del Producto</BSLabel>
+        <BSLabel>@labelOrigenDelProducto</BSLabel>
         <BSInput InputType="InputType.Text" @bind-Value="DiscForm.OrigenCal" />
     </BSCol>
 }
@@ -201,7 +203,7 @@
                     @if (tipo == 0 || tipo == 2)
                     {
                         <BSCol Column="2">
-                            <BSLabel>Fecha Reunión</BSLabel>
+                            <BSLabel>@labelFechaDeReunion</BSLabel>
                             <BSInput InputType="InputType.Date" IsDisabled @bind-Value="DiscForm.RdfecReu" ValidateOnInput="true" />
                         </BSCol>
                     }
@@ -212,9 +214,9 @@
                     @if (tipo == 0 || tipo == 2)
                     {
                         <BSCol ColumnSmall="2">
-                            <BSLabel>Código</BSLabel>
+                            <BSLabel>@labelCodigo</BSLabel>
                             <BSInput InputType="InputType.Select" IsDisabled @bind-Value="DiscForm.RdcodDis">
-                            <option value="6">En Curso</option>
+                            <option value="6">@labelEnCurso</option>
 
 
                          </BSInput>
@@ -223,9 +225,9 @@
                     else
                     {
                         <BSCol ColumnSmall="2">
-                            <BSLabel>Código</BSLabel>
+                            <BSLabel>@labelCodigo</BSLabel>
                             <BSInput InputType="InputType.Select" IsDisabled @bind-Value="DiscForm.RdcodDis">
-                                <option value="6">En Curso</option>
+                                <option value="6">@labelEnCurso</option>
 
 
                             </BSInput>
@@ -239,21 +241,21 @@
 
                             @if (tipo == 0 || tipo == 2)
                             {
-                                <option value="">Seleccione...</option>
-                                <option value="Pendiente">Pendiente</option>
+                                <option value="">@labelSeleccione...</option>
+                                <option value="Pendiente">@labelPendiente</option>
                              //   <option value="Cerrado">Cerrado</option>
 
                             }
                             else
                             {
-                                <option value="Pendiente">Pendiente</option>
+                                <option value="Pendiente">@labelPendiente</option>
                             }
                             @if (DiscForm.Rdodt is not null)
                             {
                             }
                             else
                             {
-                                <option value="Cerrado">Cerrado</option>
+                                <option value="Cerrado">@labelCerrado</option>
                             }
 
                             <BSFeedback For="@(() => DiscForm.Rdstatus)" ValidMessage="Correcto." />
@@ -280,8 +282,8 @@
 
                 </BSRow>
                 <BSCol Column="12">
-                    <BSButton Color="BSColor.Success" Size="Size.ExtraSmall" IsSubmit>  Guardar <span class="oi oi-check"></span></BSButton>
-                 <BSButton Color="BSColor.Danger" Size="Size.ExtraSmall" OnClick=Back>  Atras <span class="oi oi-arrow-left"></span></BSButton>
+                    <BSButton Color="BSColor.Success" Size="Size.ExtraSmall" IsSubmit>  @labelGuardar <span class="oi oi-check"></span></BSButton>
+                 <BSButton Color="BSColor.Danger" Size="Size.ExtraSmall" OnClick=Back>  @labelAtras <span class="oi oi-arrow-left"></span></BSButton>
 
              </BSCol>
          </BSForm>
@@ -303,19 +305,19 @@
                 <BSRow>
 
                     <BSCol Column="3">
-                        <BSLabel>Centro</BSLabel>
+                        <BSLabel>@labelCentro</BSLabel>
                         <BSInput InputType="InputType.Text" IsDisabled @bind-Value="DiscForm.Rdcentro" />
                      </BSCol>
 
 
                      <BSCol Column="2">
-                         <BSLabel>División</BSLabel>
+                         <BSLabel>@labelDivision</BSLabel>
                          <BSInput InputType="InputType.Text" IsDisabled @bind-Value="DiscForm.Rddiv">
                          </BSInput>
                      </BSCol>
 
                      <BSCol Column="2">
-                         <BSLabel>Área</BSLabel>
+                         <BSLabel>@labelArea</BSLabel>
                          <BSInput InputType="InputType.Text" IsDisabled @bind-Value="DiscForm.Rdarea">
                          </BSInput>
                      </BSCol>
@@ -324,7 +326,7 @@
 
                      <BSInput InputType="InputType.Select" hidden @bind-Value="DiscForm.Idksf">
 
-                         <option value="">Seleccione...</option>
+                         <option value="">@labelSeleccione...</option>
                          @foreach (var d in KsfData.ksfs)
                         {
                             <option value="@d.Idksf">@d.KsfNombre</option>
@@ -334,7 +336,7 @@
 
 
                     <BSCol Column="2">
-                        <BSLabel>C. Equipo</BSLabel>
+                        <BSLabel>@labelCodigoEquipo</BSLabel>
                         <BSInput InputType="InputType.Text" IsDisabled @bind-Value="DiscForm.RdcodEq" />
                      </BSCol>
 
@@ -343,14 +345,14 @@
                  <p></p>
                  <BSRow>
                      <BSCol Column="6">
-                         <BSLabel>Discrepancia</BSLabel>
+                         <BSLabel>@labelDiscrepancia</BSLabel>
                          <BSInput InputType="InputType.Text" @bind-Value="DiscForm.Rddisc" />
                      </BSCol>
                  </BSRow>
                  <BSRow>
 
                      <BSCol Column="6">
-                         <BSLabel>Plan de Acción</BSLabel>
+                         <BSLabel>@labelPlanDeAccion</BSLabel>
                          <BSInput InputType="InputType.Text" @bind-Value="DiscForm.RdplanAcc" />
                      </BSCol>
                  </BSRow>
@@ -384,7 +386,7 @@
     <BSCol ColumnSmall="2">
     <BSLabel>Responsable</BSLabel>
     <BSInput InputType="InputType.Select" @bind-Value="DiscForm.IdResReu" @onchange="OnDiscResponsableChanged">
-        <option value="">Seleccione...</option>
+        <option value="">@labelSeleccione...</option>
         @foreach (var d in RespoReuData.resporeus.Where(x => ResponsablesPermitidos.Contains(x.IdResReu)))
         {
             <option value="@d.IdResReu">@d.Rrnombre</option>
@@ -396,9 +398,9 @@
 @if (IsDiscObservacionesVisible)
 {
     <BSCol ColumnSmall="2">
-        <BSLabel>Observaciones de Calidad</BSLabel>
+        <BSLabel>@labelObservacionesDeCalidad</BSLabel>
         <BSInput InputType="InputType.Select" @bind-Value="DiscForm.IdCausaCal" @onchange="OnCausaCalidadChanged">
-            <option value="">Seleccione...</option>
+            <option value="">@labelSeleccione...</option>
             @foreach (var e in CausaCalidadData.causaCals)
             {
                 <option value="@e.IdCausaCal">@e.Ccnombre</option>
@@ -407,7 +409,7 @@
     </BSCol>
 
     <BSCol ColumnSmall="2">
-        <BSLabel>Origen del Producto</BSLabel>
+        <BSLabel>@labelOrigenDelProducto</BSLabel>
         <BSInput InputType="InputType.Text" @bind-Value="DiscForm.OrigenCal" />
     </BSCol>
 }
@@ -415,9 +417,9 @@
 
 
                     <BSCol ColumnSmall="2">
-                        <BSLabel>Código</BSLabel>
+                        <BSLabel>@labelCodigo</BSLabel>
                         <BSInput InputType="InputType.Select" @bind-Value="DiscForm.RdcodDis">
-                            <option value="6">En Curso</option>
+                            <option value="6">@labelEnCurso</option>
                         </BSInput>
                     </BSCol>
 
@@ -431,16 +433,16 @@
 
                                     @if (tipo == 0 || tipo == 2)
                             {
-                                <option value="Pendiente">Pendiente</option>
-                                <option value="Cerrado">Cerrado</option>
+                                <option value="Pendiente">@labelPendiente</option>
+                                <option value="Cerrado">@labelCerrado</option>
 
                             }
                             else
                             {
-                                <option value="Pendiente">Pendiente</option>
+                                <option value="Pendiente">@labelPendiente</option>
                             }
 
-                            <option value="Pendiente">Pendiente</option>
+                            <option value="Pendiente">@labelPendiente</option>
                             <BSFeedback For="@(() => DiscForm.Rdstatus)" ValidMessage="Correcto." />
                         </BSInput>
                     </BSCol>
@@ -453,8 +455,8 @@
                                 <BSCol ColumnSmall="2">
                                     <BSLabel>Status</BSLabel>
                                     <BSInput InputType="InputType.Select" @bind-Value="DiscForm.Rdstatus">
-                                        <option value="Pendiente">Pendiente</option>
-                                        <option value="Cerrado">Cerrado</option>
+                                        <option value="Pendiente">@labelPendiente</option>
+                                        <option value="Cerrado">@labelCerrado</option>
 
                                         <BSFeedback For="@(() => DiscForm.Rdstatus)" ValidMessage="Correcto." />
                                     </BSInput>
@@ -468,11 +470,11 @@
 
                                         @if (tipo == 0 || tipo == 2)
                             {
-                                <option value="Listo">Listo</option>
+                                <option value="Listo">@labelListo</option>
                             }
                             else
                             {
-                                <option value="Pendiente">Pendiente</option>
+                                <option value="Pendiente">@labelPendiente</option>
                             }
 
                             <option value="Pendiente">Pendiente</option>
@@ -507,8 +509,8 @@
                 <p></p>
                 <p></p>
                 <BSCol Column="12">
-                    <BSButton Color="BSColor.Success" Size="Size.ExtraSmall" IsSubmit>  Guardar <span class="oi oi-check"></span></BSButton>
-                 <BSButton Color="BSColor.Danger" Size="Size.ExtraSmall" OnClick=Back>  Atras <span class="oi oi-arrow-left"></span></BSButton>
+                    <BSButton Color="BSColor.Success" Size="Size.ExtraSmall" IsSubmit>  @labelGuardar <span class="oi oi-check"></span></BSButton>
+                 <BSButton Color="BSColor.Danger" Size="Size.ExtraSmall" OnClick=Back>  @labelAtras <span class="oi oi-arrow-left"></span></BSButton>
              </BSCol>
          </BSForm>
         }
@@ -530,9 +532,9 @@
             <BSTHead Class="cabecera">
                 <BSTR>
                     <BSTD>#</BSTD>
-                    <BSTD>Fecha del Cambio</BSTD>
-                    <BSTD>Nueva Fecha de Trabajo</BSTD>
-                    <BSTD>Usuario</BSTD>
+                    <BSTD>@labelFechaDelCambio</BSTD>
+                    <BSTD>@labelNuevaFechaDeTrabajo</BSTD>
+                    <BSTD>@labelUsuario</BSTD>
                 </BSTR>
             </BSTHead>
             <BSTBody>
@@ -562,7 +564,10 @@
     [Parameter] public string? linea { get; set; }
     [Parameter] public string? f2 { get; set; }
     [Parameter] public string? est { get; set; }
-    
+
+    [CascadingParameter]
+    private Task<AuthenticationState>? authenticationState { get; set; }
+    private int idPais { get; set; }
     string _message = "";
     bool cambio = true;
     bool loader = true;
@@ -580,6 +585,29 @@
     private List<Claim> claims { get; set; }
     
      private readonly List<int> ResponsablesPermitidos = new() { 2, 4, 8, 9, 10, 11 };
+
+    private string labelArea = "Área";
+    private string labelAtras = "Atras";
+    private string labelCentro = "Centro";
+    private string labelCerrado = "Cerrado";
+    private string labelCodigo = "Código";
+    private string labelCodigoEquipo = "C. Equipo";
+    private string labelDivision = "División";
+    private string labelDiscrepancia = "Discrepancia";
+    private string labelEditarDiscrepancia = "Editar Discrepancia";
+    private string labelEnCurso = "En Curso";
+    private string labelFechaDelCambio = "Fecha del Cambio";
+    private string labelFechaDeReunion = "Fecha de Reunion";
+    private string labelGuardar = "Guardar";
+    private string labelNuevaFechaDeTrabajo = "Fecha de Trabajo";
+    private string labelListo = "Listo";
+    private string labelOrigenDelProducto = "Origen del Producto";
+    private string labelObservacionesDeCalidad = "Observaciones de Calidad";
+    private string labelPlanDeAccion = "Plan de Acción";
+    private string labelPendiente = "Pendiente";
+    private string labelResponsable = "Responsable";
+    private string labelSeleccione = "Seleccione";
+    private string labelUsuario = "Usuario";
     
     private async Task CreateData()
     {
@@ -603,6 +631,8 @@
         await RespoReuData.GetResReu();
         await CausaCalidadData.GetCausasCalidad();
         loader = false;
+
+        
     }
     
     private void OnDiscResponsableChanged(ChangeEventArgs e)
