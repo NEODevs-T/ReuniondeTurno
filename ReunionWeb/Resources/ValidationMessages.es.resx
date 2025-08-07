@@ -1,21 +1,28 @@
 <?xml version='1.0' encoding='utf-8'?>
 <root>
-<xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" />
-<resheader name="resmimetype">
-<value text="text/microsoft-resx" />
-</resheader>
+<resheader name="resmimetype"
+><value>text/microsoft-resx</value></resheader>
 <resheader name="version">
-<value text="2.0" />
+<value>2.0</value>
+</resheader><resheader name="reader">
+<value>System.Resources.ResXResourceReader, System.Windows.Forms, ...</value>
+</resheader><resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, ...</value>
 </resheader>
-<resheader name="reader">
-<value text="System.Resources.ResXResourceReader, System.Windows.Forms, ..." />
-</resheader>
-<resheader name="writer">
-<value text="System.Resources.ResXResourceWriter, System.Windows.Forms, ..." />
-</resheader>
-<data name="RequiredUserName" xml:space="preserve">
-<value>Por favor ingrese el usuario.</value>
-</data><data name="RequiredPassword" xml:space="preserve">
-<value>Por favor ingrese la contraseña.</value>
-</data>
+<data name="RequiredUserName" xml:space="preserve"><value>Por favor ingrese el usuario.</value></data>
+<data name="RequiredPassword" xml:space="preserve"><value>Por favor ingrese la contraseña.</value></data>
+<data name="Consolidacion" xml:space="preserve"><value>Consolidación</value></data>
+<data name="ConsolidacionDeDiscrepancia" xml:space="preserve"><value>Consolidación de Discrepancia</value></data>
+<data name="Linea" xml:space="preserve"><value>Línea</value></data>
+<data name="C_Equipo" xml:space="preserve"><value>Código de Equipo</value></data>
+<data name="Discrepancia" xml:space="preserve"><value>Discrepancia</value></data>
+<data name="PlanDeAccion" xml:space="preserve"><value>Plan de Acción</value></data>
+<data name="F_Reunion" xml:space="preserve"><value>Fecha de Reunión</value></data>
+<data name="Acciones" xml:space="preserve"><value>Acciones</value></data>
+<data name="Centro" xml:space="preserve"><value>Centro</value></data>
+<data name="Division" xml:space="preserve"><value>División</value></data>
+<data name="Buscar" xml:space="preserve"><value>Buscar</value></data>
+<data name="SeleccioneUnaDivision" xml:space="preserve"><value>Seleccione una división</value></data>
+<data name="SeleccioneUnCentro" xml:space="preserve"><value>Seleccione un centro</value></data>
+<data name="hay_registros_vencidos" xml:space="preserve">
+<value>Hay registros vencidos</value></data>
 </root>

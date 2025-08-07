@@ -12,6 +12,9 @@
 @inject AuthenticationStateProvider AuthStateProvider
 @inject ILocalStorageService LocalStorage
 @inject NotificationService NotificationService
+@using ReunionWeb.Resources
+
+
 
 @attribute [Authorize(Roles = "Admin, AdminChempro, SuperUser, SemiAdmin,SuperAdmin")]
 
@@ -20,16 +23,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@labelConsolidacion</title>
+    <title>@ValidationMessages.Consolidacion</title>
 </head>
 <body>
-    <h3>@labelConsolidacionDeDiscrepancia</h3>
+    <h3>@ValidationMessages.ConsolidacionDeDiscrepancia</h3>
 @* ccc *@
     <div class="box-reuform">
         <div class="box-reuCent">
-            <label for="">@labelCentro 
+            <label for="">@ValidationMessages.Centro 
             <BSInput InputType="InputType.Select" class="Form-imput" @onchange="BuscarDivision" @bind-Value="idCent" >
-                <option value="0">@labelSelecioneUnCentro</option>
+                <option value="0">@ValidationMessages.SeleccioneUnCentro</option>
                 @if(MaestraData.centro != null){
                     @foreach (var d in MaestraData.centro)
                     {
@@ -41,9 +44,9 @@
             </label>
         </div>
         <div class="box-reuDiv">
-            <label for="">@labelDivision
+            <label for="">@ValidationMessages.Division
             <BSInput InputType="InputType.Select" class="Form-imput" @bind-Value="idDiv" >
-                <option value="0">@labelSelecioneUnaDivision</option>
+                <option value="0">@ValidationMessages.SeleccioneUnaDivision</option>
                 @if(MaestraData.centro != null){
                     @foreach (var d in MaestraData.divisions)
                     {
@@ -56,55 +59,62 @@
         </div>
         
             <div class="botton-Disc">
-                <button  @onclick="buscar" type="submit" id="btn-disc" class="btn btn-primary mb-3">@labelBuscar</button>
+                <button  @onclick="buscar" type="submit" id="btn-disc" class="btn btn-primary mb-3">@ValidationMessages.Buscar</button>
             </div>
         </div>
-        @if(band == true){
-
-            @if(PizarraData.reudiatablas.Count() > 0)
-            {
-            <RadzenDataGrid @ref="reunion" AllowFiltering="true" FilterPopupRenderMode="PopupRenderMode.OnDemand" AllowPaging="true" PageSize="10" AllowSorting="true" 
-                        Data="@PizarraData.reudiatablas" TItem="ReunionDTO" >
+            @if (band == true)
+    {
+        @if (PizarraData.reudiatablas.Count() > 0)
+        {
+            <RadzenDataGrid @ref="reunion" AllowFiltering="true" FilterPopupRenderMode="PopupRenderMode.OnDemand"
+                            AllowPaging="true" PageSize="10" AllowSorting="true"
+                            Data="@PizarraData.reudiatablas" TItem="ReunionDTO">
                 <Columns>
-                    <RadzenDataGridColumn Width="5%" TItem="ReunionDTO" Title=@labels["Linea"] Filterable="false" Sortable="false" TextAlign="TextAlign.Center">
+                    <RadzenDataGridColumn Width="5%" TItem="ReunionDTO" Title="@ValidationMessages.Linea" Filterable="false" Sortable="false" TextAlign="TextAlign.Center">
                         <Template Context="data">
                             <RadzenText class="mb-0 tipografia">@data.Rdarea</RadzenText>
                         </Template>
                     </RadzenDataGridColumn>
-                    <RadzenDataGridColumn Width="5%" TItem="ReunionDTO" Title=@labels["C. Equipo"] Filterable="false" Sortable="false" TextAlign="TextAlign.Center">
+
+                    <RadzenDataGridColumn Width="5%" TItem="ReunionDTO" Title="@ValidationMessages.C_Equipo" Filterable="false" Sortable="false" TextAlign="TextAlign.Center">
                         <Template Context="data">
                             <RadzenText class="mb-0 tipografia">@data.RdcodEq</RadzenText>
                         </Template>
                     </RadzenDataGridColumn>
-                    <RadzenDataGridColumn Width="5%" TItem="ReunionDTO" Title=@labels["Discrepancia"] Filterable="false" Sortable="false" TextAlign="TextAlign.Center">
+
+                    <RadzenDataGridColumn Width="5%" TItem="ReunionDTO" Title="@ValidationMessages.Discrepancia" Filterable="false" Sortable="false" TextAlign="TextAlign.Center">
                         <Template Context="data">
                             <RadzenText class="mb-0 tipografia">@data.RdcodDis</RadzenText>
                         </Template>
                     </RadzenDataGridColumn>
-                    <RadzenDataGridColumn Width="5%" TItem="ReunionDTO" Title=@labels["Plan de Accion"] Filterable="false" Sortable="false" TextAlign="TextAlign.Center">
+
+                    <RadzenDataGridColumn Width="5%" TItem="ReunionDTO" Title="@ValidationMessages.PlanDeAccion" Filterable="false" Sortable="false" TextAlign="TextAlign.Center">
                         <Template Context="data">
                             <RadzenText class="mb-0 tipografia">@data.RdplanAcc</RadzenText>
                         </Template>
                     </RadzenDataGridColumn>
-                    <RadzenDataGridColumn Width="5%" TItem="ReunionDTO" Title=@labels["F. Reunion"] Filterable="false" Sortable="false" TextAlign="TextAlign.Center">
+
+                    <RadzenDataGridColumn Width="5%" TItem="ReunionDTO" Title="@ValidationMessages.F_Reunion" Filterable="false" Sortable="false" TextAlign="TextAlign.Center">
                         <Template Context="data">
                             <RadzenText class="mb-0 tipografia">@data.RdfecReu</RadzenText>
                         </Template>
                     </RadzenDataGridColumn>
-                    <RadzenDataGridColumn Width="5%" TItem="ReunionDTO" Title=@labels["Acciones"] Filterable="false" Sortable="false" TextAlign="TextAlign.Center">
+
+                    <RadzenDataGridColumn Width="5%" TItem="ReunionDTO" Title="@ValidationMessages.Acciones" Filterable="false" Sortable="false" TextAlign="TextAlign.Center">
                         <Template Context="data">
                             <RadzenButton Icon="add" Size="ButtonSize.Small" Click="@(() => Add(data))" />
                             <RadzenButton Icon="delete" Size="ButtonSize.Small" Click="@(() => Rechazada(data))" />
                         </Template>
                     </RadzenDataGridColumn>
                 </Columns>
-                </RadzenDataGrid>
-            } else
-            {
-                <p><Noframes> @labels["hay registros vencidos"]</Noframes></p>
-            }
-
+            </RadzenDataGrid>
         }
+        else
+        {
+            <p><Noframes>@ValidationMessages.hay_registros_vencidos</Noframes></p>
+        }
+    }
+
 </body>
 <style>
     .box-reuform{
@@ -175,13 +185,7 @@ ition: relative; /* o absolute, dependiendo de tus necesidades */
     private Task<AuthenticationState>? authenticationState { get; set; }
     private int idPais { get; set; }
 
-    private string labelConsolidacion = "Consolidacion";
-    private string labelConsolidacionDeDiscrepancia = "Consolidacion de Discrepancia";
-    private string labelCentro = "Centro";
-    private string labelDivision = "Division";
-    private string labelBuscar = "Buscar";
-    private string labelSelecioneUnaDivision = "Seleccione una Division";
-    private string labelSelecioneUnCentro = "Seleccione un Centro";
+    //private string labelConsolidacion = "Consolidacion";
 
    private async Task CreateData()
 
@@ -192,17 +196,6 @@ ition: relative; /* o absolute, dependiendo de tus necesidades */
 
     }
 
-    
-    Dictionary<string, string> labels = new()
-    {
-        { "Linea", "Line" },
-        { "C. Equipo", "Team Code" },
-        { "Discrepancia", "Discrepancy" },
-        { "Plan de Accion", "Action Plan" },
-        { "F. Reunion", "Meeting Date" },
-        { "Acciones", "Actions" },
-        { "hay registros vencidos", "There are expired records"}
-    };
 
 
 
@@ -219,14 +212,19 @@ ition: relative; /* o absolute, dependiendo de tus necesidades */
         if (int.TryParse(idPaisClaim, out paisTemp) && paisTemp == 5)
         {
             idPais = paisTemp;
-            labelConsolidacion = "Summary";
-            labelConsolidacionDeDiscrepancia = "Discrepancy Consolidation";
-            labelCentro = "Center";
-            labelDivision = "Division";
-            labelBuscar = "Search";
-            labelSelecioneUnaDivision = "Select a division";
-            labelSelecioneUnCentro = "Select a center";
+            var culture = new System.Globalization.CultureInfo("en");
+            System.Globalization.CultureInfo.DefaultThreadCurrentCulture = culture;
+            System.Globalization.CultureInfo.DefaultThreadCurrentUICulture = culture;
+            await LocalStorage.SetItemAsync("userCulture", "en");
         }
+        else
+        {
+            var culture = new System.Globalization.CultureInfo("es");
+            System.Globalization.CultureInfo.DefaultThreadCurrentCulture = culture;
+            System.Globalization.CultureInfo.DefaultThreadCurrentUICulture = culture;
+            await LocalStorage.SetItemAsync("userCulture", "es");
+        }
+
 
         PizarraData.reudiatablas = new List<ReunionDTO>();
         if (claims != null && claims.Count > 1 && (claims[1]?.Value == "Admin" || claims[1]?.Value == "SuperAdmin"))
