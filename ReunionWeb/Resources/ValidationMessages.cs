@@ -8,6 +8,8 @@ namespace ReunionWeb.Resources
         private static readonly ResourceManager _resourceManager =
             new ResourceManager("ReunionWeb.Resources.ValidationMessages", typeof(ValidationMessages).Assembly);
 
+        public static ResourceManager ResourceManager => _resourceManager;
+
         public static string RequiredUserName => _resourceManager.GetString("RequiredUserName", CultureInfo.CurrentUICulture);
         public static string RequiredPassword => _resourceManager.GetString("RequiredPassword", CultureInfo.CurrentUICulture);
         public static string Consolidacion => _resourceManager.GetString("Consolidacion", CultureInfo.CurrentUICulture);
@@ -24,5 +26,51 @@ namespace ReunionWeb.Resources
         public static string SeleccioneUnCentro => _resourceManager.GetString("SeleccioneUnCentro", CultureInfo.CurrentUICulture);
         public static string hay_registros_vencidos => _resourceManager.GetString("hay_registros_vencidos", CultureInfo.CurrentUICulture);
         public static string ConsolidacionDeDiscrepancia => _resourceManager.GetString("ConsolidacionDeDiscrepancia", CultureInfo.CurrentUICulture);
+        public static string OrgDelProducto => _resourceManager.GetString("OrgDelProducto", CultureInfo.CurrentUICulture);
+        public static string DetallesDeCalidad => _resourceManager.GetString("DetallesDeCalidad", CultureInfo.CurrentUICulture);
+        public static string Responsable => _resourceManager.GetString("Responsable", CultureInfo.CurrentUICulture);
+        public static string PlanDeAcción => _resourceManager.GetString("PlanDeAcción", CultureInfo.CurrentUICulture);
+        public static string NombreDelEquipo => _resourceManager.GetString("NombreDelEquipo", CultureInfo.CurrentUICulture);
+        public static string CodigoDeEquipo => _resourceManager.GetString("CodigoDeEquipo", CultureInfo.CurrentUICulture);
+        public static string Area => _resourceManager.GetString("Area", CultureInfo.CurrentUICulture);
+        public static string Imprimir => _resourceManager.GetString("Imprimir", CultureInfo.CurrentUICulture);
+        public static string Aceptar => _resourceManager.GetString("Aceptar", CultureInfo.CurrentUICulture);
+        public static string EnCurso => _resourceManager.GetString("EnCurso", CultureInfo.CurrentUICulture);
+        public static string Codigo => _resourceManager.GetString("Codigo", CultureInfo.CurrentUICulture);
+        public static string Seleccione => _resourceManager.GetString("Seleccione", CultureInfo.CurrentUICulture);
+        public static string FormatoDeReunion => _resourceManager.GetString("FormatoDeReunion", CultureInfo.CurrentUICulture);
+        public static string Estado => _resourceManager.GetString("Estado", CultureInfo.CurrentUICulture);
+        public static string Consultar => _resourceManager.GetString("Consultar", CultureInfo.CurrentUICulture);
+        public static string FiltroFechaDeReunion => _resourceManager.GetString("FiltroFechaDeReunion", CultureInfo.CurrentUICulture);
+        public static string Cerrado => _resourceManager.GetString("Cerrado", CultureInfo.CurrentUICulture);
+        public static string Pendiente => _resourceManager.GetString("Pendiente", CultureInfo.CurrentUICulture);
+        public static string Todo => _resourceManager.GetString("Todo", CultureInfo.CurrentUICulture);
+        public static string Desde => _resourceManager.GetString("Desde", CultureInfo.CurrentUICulture);
+        public static string Hasta => _resourceManager.GetString("Hasta", CultureInfo.CurrentUICulture);
+        public static string Historicos => _resourceManager.GetString("Historicos", CultureInfo.CurrentUICulture);
+        public static string Accion => _resourceManager.GetString("Accion", CultureInfo.CurrentUICulture);
+        public static string FechaDeReunion => _resourceManager.GetString("FechaDeReunion", CultureInfo.CurrentUICulture);
+
+        
+
+            public static string MapResponsableKey(string nombre)
+            {
+                return nombre switch
+                {
+                    "Mtto. Mecánico" => "Mtto_Mecanico",
+                    "Mtto. Eléctrico/Electrónico" => "Mtto_ElectricoElectronico",
+                    "Seguridad" => "Seguridad",
+                    "Calidad" => "Calidad",
+                    "Operaciones" => "Operaciones",
+                    "Por Definir" => "Por_Definir",
+                    _ => nombre
+                };
+            }
+        }
+
     }
-}
+
+
+
+
+

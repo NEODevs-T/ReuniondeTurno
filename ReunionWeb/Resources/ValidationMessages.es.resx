@@ -23,6 +23,33 @@
 <data name="Buscar" xml:space="preserve"><value>Buscar</value></data>
 <data name="SeleccioneUnaDivision" xml:space="preserve"><value>Seleccione una división</value></data>
 <data name="SeleccioneUnCentro" xml:space="preserve"><value>Seleccione un centro</value></data>
-<data name="hay_registros_vencidos" xml:space="preserve">
-<value>Hay registros vencidos</value></data>
+<data name="hay_registros_vencidos" xml:space="preserve"><value>Hay registros vencidos</value></data>
+<data name="OrgDelProducto" xml:space="preserve"><value>Org. del Producto</value></data>
+<data name="DetallesDeCalidad" xml:space="preserve"><value>Detalles de Calidad</value></data>
+<data name="Responsable" xml:space="preserve"><value>Responsable</value></data>
+<data name="PlanDeAcción" xml:space="preserve"><value>Plan de Acción</value></data>
+<data name="NombreDelEquipo" xml:space="preserve"><value>Nombre del Equipo</value></data>
+<data name="CodigoDeEquipo" xml:space="preserve"><value>Código de Equipo</value></data>
+<data name="Area" xml:space="preserve"><value>Área</value></data>
+<data name="Imprimir" xml:space="preserve"><value>Imprimir</value></data>
+<data name="Aceptar" xml:space="preserve"><value>Aceptar</value></data>
+<data name="EnCurso" xml:space="preserve"><value>En Curso</value></data>
+<data name="Codigo" xml:space="preserve"><value>Código</value></data>
+<data name="Seleccione" xml:space="preserve"><value>Seleccione</value></data>
+<data name="FormatoDeReunion" xml:space="preserve"><value>Formato de Reunion</value></data>
+<data name="Estado" xml:space="preserve"><value>Estado</value></data>
+<data name="Consultar" xml:space="preserve"><value>Consultar</value></data>
+<data name="FiltroFechaDeReunion" xml:space="preserve"><value>Filtro Fecha de Reunión</value></data>
+<data name="Cerrado" xml:space="preserve"><value>Cerrado</value></data>
+<data name="Pendiente" xml:space="preserve"><value>Pendiente</value></data>
+<data name="Todo" xml:space="preserve"><value>Todo</value></data>
+<data name="Desde" xml:space="preserve"><value>Desde</value></data>
+<data name="Accion" xml:space="preserve"><value>Accion</value></data>
+<data name="FechaDeReunion" xml:space="preserve"><value>Fecha de Reunion</value></data>
+<data name="Mtto_Mecanico" xml:space="preserve"><value>Mtto. Mecánico</value></data>
+<data name="Mtto_ElectricoElectronico" xml:space="preserve"><value>Mtto. Eléctrico/Electrónico</value></data>
+<data name="Seguridad" xml:space="preserve"><value>Seguridad</value></data>
+<data name="Calidad" xml:space="preserve"><value>Calidad</value></data>
+<data name="Operaciones" xml:space="preserve"><value>Operaciones</value></data>
+<data name="Por_Definir" xml:space="preserve"><value>Por Definir</value></data>
 </root>

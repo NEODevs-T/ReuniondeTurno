@@ -14,8 +14,10 @@
 @inject IJSRuntime IJS
 @inject NavigationManager NavigationManager
 @inject NotificationService NotificationService
+@inject ILocalStorageService LocalStorage
+@using ReunionWeb.Resources
 
-<h3>Formato de Reunión</h3>
+<h3>@ValidationMessages.FormatoDeReunion</h3>
 
 
 <BSContainer>
@@ -31,9 +33,9 @@
         @error
         <BSRow>
             <BSCol Column="3" ColumnSmall="2">
-                <BSLabel>Centro</BSLabel>
+                <BSLabel>@ValidationMessages.Centro</BSLabel>
                 <BSInput InputType="InputType.Select" @onchange="BuscarDivision" @bind-Value="IdCentro">
-                    <option value="0">Seleccione</option>
+                    <option value="0">@ValidationMessages.Seleccione</option>
                     @foreach (var d in MaestraData.centro)
                     {
                         <option value="@d.IdCentro">@d.Centro</option>
@@ -42,9 +44,9 @@
             </BSCol>
 
             <BSCol Column="3">
-                <BSLabel>División</BSLabel>
+                <BSLabel>@ValidationMessages.Division</BSLabel>
                 <BSInput InputType="InputType.Select" @bind-Value="IdDiv">
-                    <option value="0">Seleccione</option>
+                    <option value="0">@ValidationMessages.Seleccione</option>
                     @foreach (var d in MaestraData.divisions)
                     {
                             <option value="@d.IdDivision">@d.Ndivision</option>
@@ -53,15 +55,15 @@
             </BSCol>
 
             <BSCol Column="3" ColumnSmall="2">
-                <BSLabel>Código</BSLabel>
+                <BSLabel>@ValidationMessages.Codigo</BSLabel>
                 <BSInput InputType="InputType.Select" IsDisabled @bind-Value="Codigo">
-                    <option value="Todo">En Curso</option>
-                    <option value="6">En Curso</option>
+                    <option value="Todo">@ValidationMessages.EnCurso</option>
+                    <option value="6">@ValidationMessages.EnCurso</option>
                 </BSInput>
             </BSCol>
             <BSCol Column="2">
                 <BSRow>
-                    <BSLabel>Aceptar</BSLabel>
+                    <BSLabel>@ValidationMessages.Aceptar</BSLabel>
                 </BSRow>
                 <BSButton IsOutlined Color="BSColor.Success" Size="Size.ExtraSmall" @onclick="Get"> Reunión <span
                         class="oi oi-check"></span></BSButton>
@@ -70,7 +72,7 @@
             {
                 <BSCol ColumnSmall="2">
                     <BSRow>
-                        <BSLabel>Imprimir</BSLabel>
+                        <BSLabel>@ValidationMessages.Imprimir</BSLabel>
                     </BSRow>
                     <BSButton IsOutlined Color="BSColor.Success" Size="Size.ExtraSmall" @onclick="PrintDocument"> <span
                             class="oi oi-print"></span></BSButton>
@@ -94,17 +96,17 @@
 
                     @*<BSTD>Id</BSTD>*@
 
-                    <BSTD>Área</BSTD>
+                    <BSTD>@ValidationMessages.Area</BSTD>
                     <BSTD>Ksf</BSTD>
-                    <BSTD>Código de Equipo</BSTD>
-                    <BSTD>Nombre del Equipo</BSTD>
-                    <BSTD ColSpan="4">Discrepancia</BSTD>
+                    <BSTD>@ValidationMessages.CodigoDeEquipo</BSTD>
+                    <BSTD>@ValidationMessages.NombreDelEquipo</BSTD>
+                    <BSTD ColSpan="4">@ValidationMessages.Discrepancia</BSTD>
                     @* <BSTD>Código</BSTD> *@
-                    <BSTD>Plan de Acción</BSTD>
+                    <BSTD>@ValidationMessages.PlanDeAcción</BSTD>
                     @* <BSTD>Tiempo</BSTD> *@
-                    <BSTD ColSpan="1">Responsable</BSTD>
-                    <BSTD>Detalles de Calidad</BSTD>
-                    <BSTD>Org. del Producto</BSTD>
+                    <BSTD ColSpan="1">@ValidationMessages.Responsable</BSTD>
+                    <BSTD>@ValidationMessages.DetallesDeCalidad</BSTD>
+                    <BSTD>@ValidationMessages.OrgDelProducto</BSTD>
                     <BSTD>Status</BSTD>
                     @* <BSTD>ODT</BSTD> *@
                     <BSTD>Fecha de Reunión</BSTD>@*Fecha de listo el trabajo*@
@@ -131,7 +133,14 @@
                                 @*<BSTD>@d.IdReuDia</BSTD>*@
                                 @* <BSTD>@d.Rddiv</BSTD>*@
                                 <BSTD>@d.Rdarea</BSTD>
-                                <BSTD>@KsfData.ksfs.Where(x => x.Idksf == d.Idksf).FirstOrDefault()?.KsfNombre</BSTD>
+                                <BSTD>
+                                @{
+                                    var texto = idPais == 5 
+                                        ? KsfData.ksfs.Where(x => x.Idksf == d.Idksf).FirstOrDefault()?.KsfEnglish 
+                                        : KsfData.ksfs.Where(x => x.Idksf == d.Idksf).FirstOrDefault()?.KsfNombre;
+                                }
+                                @texto
+                                </BSTD>
                                 <BSTD>@d.RdcodEq</BSTD>
                                 <BSTD>@(string.IsNullOrWhiteSpace(d.EnombreEam) ? "EQUIPO NO ENCONTRADO" : d.EnombreEam)</BSTD>
                                 <BSTD ColSpan="4">@d.Rddisc.ToUpper()</BSTD>
@@ -236,6 +245,9 @@ else if (dataIsLoaded == 2 && PizarraData.reudiatablas.Count() == 0)
 
     private string mensaje {get; set; } = "";
 
+    [CascadingParameter]
+    private Task<AuthenticationState>? authenticationState { get; set; }
+    private int idPais { get; set; }
 
 
 
@@ -253,6 +265,24 @@ else if (dataIsLoaded == 2 && PizarraData.reudiatablas.Count() == 0)
     protected override async Task OnInitializedAsync()
     {
         await CreateData();
+        var idPaisClaim = claims.FirstOrDefault(c => c.Type == "IdPais")?.Value;
+        int paisTemp;
+
+        if (int.TryParse(idPaisClaim, out paisTemp) && paisTemp == 5)
+        {
+            idPais = paisTemp;
+            var culture = new System.Globalization.CultureInfo("en");
+            System.Globalization.CultureInfo.DefaultThreadCurrentCulture = culture;
+            System.Globalization.CultureInfo.DefaultThreadCurrentUICulture = culture;
+            await LocalStorage.SetItemAsync("userCulture", "en");
+        }
+        else
+        {
+            var culture = new System.Globalization.CultureInfo("es");
+            System.Globalization.CultureInfo.DefaultThreadCurrentCulture = culture;
+            System.Globalization.CultureInfo.DefaultThreadCurrentUICulture = culture;
+            await LocalStorage.SetItemAsync("userCulture", "es");
+        }
         Rol = claims.FirstOrDefault(c => c.Type.Contains("role"))?.Value;
 
 
