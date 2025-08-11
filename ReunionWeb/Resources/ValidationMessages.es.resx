@@ -56,4 +56,13 @@
 <data name="Filtrar" xml:space="preserve"><value>Filtrar</value></data>
 <data name="Guardar" xml:space="preserve"><value>Guardar</value></data>
 <data name="Borrar" xml:space="preserve"><value>Borrar</value></data>
+<data name="Asuntos" xml:space="preserve"><value>Asuntos</value></data>
+<data name="Todos" xml:space="preserve"><value>Todos</value></data>
+<data name="Ordenar" xml:space="preserve"><value>Ordenar</value></data>
+<data name="FReunion" xml:space="preserve"><value>F. Reunión</value></data>
+<data name="Trazabilidad" xml:space="preserve"><value>Trazabilidad</value></data>
+<data name="CambiosDeEstados" xml:space="preserve"><value>Cambios de Estados</value></data>
+<data name="FechaDelCambio" xml:space="preserve"><value>Fecha del Cambio</value></data>
+<data name="StatusNuevo" xml:space="preserve"><value>Status Nuevo</value></data>
+<data name="Usuario" xml:space="preserve"><value>Usuario</value></data>
 </root>

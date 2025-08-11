@@ -18,14 +18,10 @@
 @inject IJSRuntime IJS
 @inject NotificationService NotificationService
 
-@if (idPais == 5)
-{
-    <h4>Issue</h4>
-}
-else
-{
-    <h4>Asuntos</h4>
-}
+@using ReunionWeb.Resources
+@using System.Globalization
+
+    <h4>@ValidationMessages.Asuntos</h4>
 
 
 
@@ -40,9 +36,9 @@ else
 {
     <BSRow>
         <BSCol ColumnLarge="3" ColumnSmall="6">
-            <BSLabel>@labelCentro</BSLabel>
+            <BSLabel>@ValidationMessages.Centro</BSLabel>
             <BSInput InputType="InputType.Select" @bind-Value="IdCentro" @onchange="BuscarDivision" >>
-                <option value="0"> @labelSeleccione </option>
+                <option value="0"> @ValidationMessages.Seleccione </option>
                 @foreach (var d in MaestraData.centro)
                 {
                     <option value="@d.IdCentro">@d.Centro</option>
@@ -51,9 +47,9 @@ else
         </BSCol>
 
         <BSCol ColumnLarge="3" ColumnSmall="6">
-            <BSLabel>@labelDivision</BSLabel>
+            <BSLabel>@ValidationMessages.Division</BSLabel>
             <BSInput InputType="InputType.Select" @bind-Value="IdDiv">
-                <option value="0">@labelSeleccione</option>
+                <option value="0">@ValidationMessages.Seleccione</option>
                 @foreach (var d in MaestraData.divisions)
                 {
                     <option value="@d.IdDivision">@d.Ndivision</option>
@@ -63,9 +59,9 @@ else
         @if (PizarraData.reudiatablas.Count() > 0 && dataIsLoaded == 2)
         {
             <BSCol ColumnLarge="3" ColumnSmall="6">
-                <BSLabel>@labelLinea</BSLabel>
+                <BSLabel>@ValidationMessages.Linea</BSLabel>
                 <BSInput InputType="InputType.Select" @bind-Value="NombreLinea">
-                    <option value="Todo">@labelTodo</option>
+                    <option value="Todo">@ValidationMessages.Todo</option>
                     @foreach (var d in MaestraData.lineas)
                     {
                                 <option value="@d.Linea">@d.Linea</option>
@@ -75,11 +71,11 @@ else
 
         }
         <BSCol ColumnLarge="3" ColumnSmall="6">
-            <BSLabel>@labelEstado</BSLabel>
+            <BSLabel>@ValidationMessages.Estado</BSLabel>
             <BSInput InputType="InputType.Select" @bind-Value="Status">>
-            <option value="Todo">@labelTodos</option>
-            <option value="Pendiente">@labelPendiente</option>
-            <option value="Cerrado">@labelCerrado</option>
+            <option value="Todo">@ValidationMessages.Todos</option>
+            <option value="Pendiente">@ValidationMessages.Pendiente</option>
+            <option value="Cerrado">@ValidationMessages.Cerrado</option>
             </BSInput>
         </BSCol>
 
@@ -98,16 +94,16 @@ else
     <BSRow>
 
         <BSCol ColumnLarge="1" ColumnSmall="">
-            <BSLabel>@labelCodigo</BSLabel>
+            <BSLabel>@ValidationMessages.Codigo</BSLabel>
             <BSInput InputType="InputType.Select" IsDisabled @bind-Value="Codigo">
-                <option value="Todo">@labelEnCurso</option>
+                <option value="Todo">@ValidationMessages.EnCurso</option>
             </BSInput>
         </BSCol>
 
 
         <BSCol ColumnLarge="3" ColumnSmall="8">
             <BSRow>
-                <BSLabel>  @labelOrdenar </BSLabel>
+                <BSLabel>  @ValidationMessages.Ordenar </BSLabel>
             </BSRow>
             @* <BSInputRadio CheckedValue="@("2")" IsDisabled=@valueodt @bind-Value="tipoconsulta" IsToggle="true" Size="Size.ExtraSmall" Color="BSColor.Success" IsOutlined="true" style="width:50%;">
                 F.Trabajo
@@ -115,7 +111,7 @@ else
             </BSInputRadio> *@
 
             <BSInputRadio CheckedValue="@("0")" @bind-Value="tipoconsulta" IsToggle="true" Size="Size.ExtraSmall" Color="BSColor.Success" IsOutlined="true" style="width:50%;">
-                @labelFReunion
+                @ValidationMessages.FReunion
                 <span class="oi oi-people"></span>
             </BSInputRadio>
         </BSCol>
@@ -123,9 +119,9 @@ else
 
         <BSCol ColumnLarge="3" ColumnSmall="6">
             <BSRow>
-                <BSLabel>@labelBuscar</BSLabel>
+                <BSLabel>@ValidationMessages.Buscar</BSLabel>
             </BSRow>
-            <BSButton IsOutlined Color="BSColor.Success" Size="Size.ExtraSmall" @onclick="Get" style="width:70%;">  @labelConsultar <span class="oi oi-check"></span></BSButton>
+            <BSButton IsOutlined Color="BSColor.Success" Size="Size.ExtraSmall" @onclick="Get" style="width:70%;">  @ValidationMessages.Consultar <span class="oi oi-check"></span></BSButton>
          </BSCol>
 
 
@@ -149,9 +145,9 @@ else
         @if (PizarraData.reudiatablas.Count() > 0 && dataIsLoaded == 2)
         {
             <BSCol Column="3">
-    <BSLabel>@labelResponsable</BSLabel>
+    <BSLabel>@ValidationMessages.Responsable</BSLabel>
     <BSInput InputType="InputType.Select" @bind-Value="IdResReu">
-        <option value=0>@labelTodo</option>
+        <option value=0>@ValidationMessages.Todo</option>
         @foreach (var d in RespoReuData.resporeus.Where(x => !ResponsablesExcluidos.ContainsKey(x.IdResReu)))
         {
             <option value="@d.IdResReu">@TraducirResponsable(d.Rrnombre)</option>
@@ -164,7 +160,7 @@ else
     <BSLabel>Ksf</BSLabel>
 
     <BSInput InputType="InputType.Select" @bind-Value="IdKsf">
-        <option value="0">@labelTodo</option>
+        <option value="0">@ValidationMessages.Todo</option>
         @foreach (var d in KsfData.ksfs.Where(x => x.Idksf != 6))
         {
             var texto = idPais == 5? d.KsfEnglish : d.KsfNombre;
@@ -175,7 +171,7 @@ else
 
 <BSCol Column="3">
     <BSRow>
-        <BSLabel>@labelImprimir</BSLabel>
+        <BSLabel>@ValidationMessages.Imprimir</BSLabel>
     </BSRow>
     <BSButton IsOutlined Color="BSColor.Success" Size="Size.ExtraSmall" @onclick="PrintDocument"> 
         <span class="oi oi-print"></span>
@@ -196,18 +192,18 @@ else
             <BSTHead Class="cabecera">
                 <BSTR>
                     @*<BSTD>Id</BSTD>*@
-                    <BSTD>@labelArea</BSTD>
+                    <BSTD>@ValidationMessages.Area</BSTD>
                     <BSTD>Ksf</BSTD>
-                    <BSTD>@labelCodigoEquipo</BSTD>
-                    <BSTD>@labelNombreDelEquipo</BSTD>
-                    <BSTD Class="col-5">@labelDiscrepancia</BSTD>
+                    <BSTD>@ValidationMessages.CodigoDeEquipo</BSTD>
+                    <BSTD>@ValidationMessages.NombreDelEquipo</BSTD>
+                    <BSTD Class="col-5">@ValidationMessages.Discrepancia</BSTD>
                     @* <BSTD>Código</BSTD> *@
-                    <BSTD Class="col-4">@labelPlanDeAccion</BSTD>
-                    <BSTD>@labelResponsable</BSTD>
-                    <BSTD>@labelDetallesCalidad</BSTD>
-                    <BSTD>@labelOrigenDelProducto</BSTD>
-                    <BSTD>@labelEstado</BSTD>
-                    <BSTD>@labelFechaDeReunion</BSTD>
+                    <BSTD Class="col-4">@ValidationMessages.PlanDeAccion</BSTD>
+                    <BSTD>@ValidationMessages.Responsable</BSTD>
+                    <BSTD>@ValidationMessages.DetallesDeCalidad</BSTD>
+                    <BSTD>@ValidationMessages.OrgDelProducto</BSTD>
+                    <BSTD>@ValidationMessages.Estado</BSTD>
+                    <BSTD>@ValidationMessages.FechaDeReunion</BSTD>
                     <BSTD>  </BSTD>
                 </BSTR>
             </BSTHead>
@@ -297,17 +293,17 @@ else
 
     @*Mostrar la trazabilidad*@
     <BSModal IsCentered="true" DataId="History">
-        <Header>@labelTrazabilidad</Header>
+        <Header>@ValidationMessages.Trazabilidad</Header>
         <Content>
-            <h5>@labelCambiosDeEstados:</h5>
+            <h5>@ValidationMessages.CambiosDeEstados:</h5>
             @if (cambiostatuss.Count() > 0 && cargandocambio == true)
             {
                 <BSTable IsResponsive="true" IsStriped="true" IsBordered="true">
                     <BSTHead Class="cabecera">
                         <BSTR>
-                            <BSTD>@labelFechaDelCambio</BSTD>
-                            <BSTD>@labelStatusNuevo</BSTD>
-                            <BSTD>@labelUsuario</BSTD>
+                            <BSTD>@ValidationMessages.FechaDelCambio</BSTD>
+                            <BSTD>@ValidationMessages.StatusNuevo</BSTD>
+                            <BSTD>@ValidationMessages.Usuario</BSTD>
                         </BSTR>
                     </BSTHead>
                     <BSTBody>
@@ -553,38 +549,6 @@ else if (dataIsLoaded == 2 && PizarraData.reudiatablas.Count() == 0)
     private bool isEditar { get; set; } = true;
     private List<Claim> claims { get; set; }
     
-    private string labelArea = "Área";
-    private string labelAsuntos = "Asuntos";
-    private string labelBuscar = "Buscar";
-    private string labelCambiosDeEstados = "Cambios de Estados";
-    private string labelCentro = "Centro";
-    private string labelCerrado = "Cerrado";
-    private string labelCodigo = "Código";
-    private string labelCodigoEquipo = "Código Equipo";
-    private string labelConsultar = "Consultar";
-    private string labelDetallesCalidad = "Det. Calidad";
-    private string labelDivision = "División";
-    private string labelDiscrepancia = "Discrepancia";
-    private string labelEnCurso = "En Curso";
-    private string labelEstado = "Estado";
-    private string labelFechaDelCambio = "Fecha del Cambio";
-    private string labelFechaDeReunion = "Fecha de Reunión";
-    private string labelFReunion = "F. Reunión";
-    private string labelImprimir = "Imprimir";
-    private string labelLinea = "Línea";
-    private string labelNombreDelEquipo = "Nombre del Equipo";
-    private string labelOrdenar = "Ordenar";
-    private string labelOrigenDelProducto = "Origen del Producto";
-    private string labelPlanDeAccion = "Plan de Acción";
-    private string labelPendiente = "Pendiente";
-    private string labelResponsable = "Responsable";
-    private string labelSeleccione = "Seleccione";
-    private string labelStatusNuevo = "Status Nuevo";
-    private string labelTodo = "Todo";
-    private string labelTodos = "Todos";
-    private string labelTrazabilidad = "";
-    private string labelUsuario = "Usuario";
-    
     
     // Diccionario que asocia los IDs con sus nombres
     private readonly Dictionary<int, string> ResponsablesExcluidos = new Dictionary<int, string>
@@ -604,46 +568,23 @@ else if (dataIsLoaded == 2 && PizarraData.reudiatablas.Count() == 0)
         fecha2 = DateTime.Now;
         await CreateData();
 
-            if (authenticationState is not null){
-            AuthenticationState? authState = await authenticationState;
-            ClaimsPrincipal? user = authState?.User;
-            if (user?.Identity is not null && user.Identity.IsAuthenticated)
-            {
-                idPais = int.Parse(user.FindFirst(c => c.Type == "IdPais")?.Value ?? "0") ;
-                if (idPais == 5)
-                {
-                    labelArea = "Area";
-                    labelAsuntos = "Subjects";
-                    labelBuscar = "Search";
-                    labelCambiosDeEstados = "Changes of Status";
-                    labelCentro = "Center";
-                    labelCerrado = "Closed";
-                    labelCodigo = "Code";
-                    labelCodigoEquipo = "Equipment Code";
-                    labelConsultar = "Consult";
-                    labelDetallesCalidad = "Quality Details";
-                    labelDiscrepancia = "Discrepancy";
-                    labelDivision = "Division";
-                    labelEnCurso = "In Progress";
-                    labelEstado = "Status";
-                    labelFechaDelCambio = "Change Date";
-                    labelFechaDeReunion = "Meeting Date";
-                    labelFReunion = "M. Format";
-                    labelImprimir = "Print";
-                    labelLinea = "Line";
-                    labelNombreDelEquipo = "Equipment Name";
-                    labelOrdenar = "Order";
-                    labelOrigenDelProducto = "Product Origin";
-                    labelPlanDeAccion = "Action Plan";
-                    labelPendiente = "Pending";
-                    labelResponsable = "Responsible";
-                    labelSeleccione = "Select";
-                    labelTodos = "All";
-                    labelTodo = "All";
-                    labelTrazabilidad = "Traceability";
-                    labelUsuario = "User";
-                }
-            }
+        var idPaisClaim = claims.FirstOrDefault(c => c.Type == "IdPais")?.Value;
+        int paisTemp;
+
+        if (int.TryParse(idPaisClaim, out paisTemp) && paisTemp == 5)
+        {
+            idPais = paisTemp;
+            var culture = new System.Globalization.CultureInfo("en");
+            System.Globalization.CultureInfo.DefaultThreadCurrentCulture = culture;
+            System.Globalization.CultureInfo.DefaultThreadCurrentUICulture = culture;
+            await LocalStorage.SetItemAsync("userCulture", "en");
+        }
+        else
+        {
+            var culture = new System.Globalization.CultureInfo("es");
+            System.Globalization.CultureInfo.DefaultThreadCurrentCulture = culture;
+            System.Globalization.CultureInfo.DefaultThreadCurrentUICulture = culture;
+            await LocalStorage.SetItemAsync("userCulture", "es");
         }
 
         //Cargar Listas

@@ -54,6 +54,16 @@ namespace ReunionWeb.Resources
         public static string Filtrar => _resourceManager.GetString("Filtrar", CultureInfo.CurrentUICulture);
         public static string Guardar => _resourceManager.GetString("Guardar", CultureInfo.CurrentUICulture);
         public static string Borrar => _resourceManager.GetString("Borrar", CultureInfo.CurrentUICulture);
+        public static string Asuntos => _resourceManager.GetString("Asuntos", CultureInfo.CurrentUICulture);
+        public static string Todos => _resourceManager.GetString("Todos", CultureInfo.CurrentUICulture);
+        public static string Ordenar => _resourceManager.GetString("Ordenar", CultureInfo.CurrentUICulture);
+        public static string FReunion => _resourceManager.GetString("FReunion", CultureInfo.CurrentUICulture);
+        public static string DetallesCalidad => _resourceManager.GetString("DetallesCalidad", CultureInfo.CurrentUICulture);
+        public static string Trazabilidad => _resourceManager.GetString("Trazabilidad", CultureInfo.CurrentUICulture);
+        public static string CambiosDeEstados => _resourceManager.GetString("CambiosDeEstados", CultureInfo.CurrentUICulture);
+        public static string FechaDelCambio => _resourceManager.GetString("FechaDelCambio", CultureInfo.CurrentUICulture);
+        public static string StatusNuevo => _resourceManager.GetString("StatusNuevo", CultureInfo.CurrentUICulture);
+        public static string Usuario => _resourceManager.GetString("Usuario", CultureInfo.CurrentUICulture);
 
         public static string MapResponsableKey(string nombre)
         {

@@ -59,4 +59,13 @@
 <data name="Filtrar" xml:space="preserve"><value>To Filter</value></data>
 <data name="Guardar" xml:space="preserve"><value>Save</value></data>
 <data name="Borrar" xml:space="preserve"><value>Erase</value></data>
+<data name="Asuntos" xml:space="preserve"><value>Subjects</value></data>
+<data name="Todos" xml:space="preserve"><value>All</value></data>
+<data name="Ordenar" xml:space="preserve"><value>Order</value></data>
+<data name="FReunion" xml:space="preserve"><value>M. Format</value></data>
+<data name="Trazabilidad" xml:space="preserve"><value>Traceability</value></data>
+<data name="CambiosDeEstados" xml:space="preserve"><value>Changes of Status</value></data>
+<data name="FechaDelCambio" xml:space="preserve"><value>Change Date</value></data>
+<data name="StatusNuevo" xml:space="preserve"><value>New Status</value></data>
+<data name="Usuario" xml:space="preserve"><value>User</value></data>
 </root>
