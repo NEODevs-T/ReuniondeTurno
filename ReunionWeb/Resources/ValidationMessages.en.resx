@@ -55,5 +55,8 @@
 <data name="Calidad" xml:space="preserve"><value>Quality</value></data>
 <data name="Operaciones" xml:space="preserve"><value>Operations</value></data>
 <data name="Por_Definir" xml:space="preserve"><value>To Be Defined</value></data>
-
+<data name="Discrepancias" xml:space="preserve"><value>Discrepancies</value></data>
+<data name="Filtrar" xml:space="preserve"><value>To Filter</value></data>
+<data name="Guardar" xml:space="preserve"><value>Save</value></data>
+<data name="Borrar" xml:space="preserve"><value>Erase</value></data>
 </root>

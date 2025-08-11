@@ -50,25 +50,28 @@ namespace ReunionWeb.Resources
         public static string Historicos => _resourceManager.GetString("Historicos", CultureInfo.CurrentUICulture);
         public static string Accion => _resourceManager.GetString("Accion", CultureInfo.CurrentUICulture);
         public static string FechaDeReunion => _resourceManager.GetString("FechaDeReunion", CultureInfo.CurrentUICulture);
+        public static string Discrepancias => _resourceManager.GetString("Discrepancias", CultureInfo.CurrentUICulture);
+        public static string Filtrar => _resourceManager.GetString("Filtrar", CultureInfo.CurrentUICulture);
+        public static string Guardar => _resourceManager.GetString("Guardar", CultureInfo.CurrentUICulture);
+        public static string Borrar => _resourceManager.GetString("Borrar", CultureInfo.CurrentUICulture);
 
-        
-
-            public static string MapResponsableKey(string nombre)
+        public static string MapResponsableKey(string nombre)
+        {
+            return nombre switch
             {
-                return nombre switch
-                {
-                    "Mtto. Mecánico" => "Mtto_Mecanico",
-                    "Mtto. Eléctrico/Electrónico" => "Mtto_ElectricoElectronico",
-                    "Seguridad" => "Seguridad",
-                    "Calidad" => "Calidad",
-                    "Operaciones" => "Operaciones",
-                    "Por Definir" => "Por_Definir",
-                    _ => nombre
-                };
-            }
+                "Mtto. Mecánico" => "Mtto_Mecanico",
+                "Mtto. Eléctrico/Electrónico" => "Mtto_ElectricoElectronico",
+                "Seguridad" => "Seguridad",
+                "Calidad" => "Calidad",
+                "Operaciones" => "Operaciones",
+                "Por Definir" => "Por_Definir",
+                _ => nombre
+            };
         }
 
-    }
+    }   
+
+}
 
 
 
