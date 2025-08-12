@@ -812,12 +812,8 @@ protected async Task Get()
 
     void Editar(int id)
     {
-        if(idPais == 5){
-            NavigationManager.NavigateTo($"en/EditDisc/{id}/{tipoconsulta}/{NombreLinea}/{fecha1.ToString("dd-MM-yyyy")}/{fecha2.ToString("dd-MM-yyyy")}/{Status}");
+        NavigationManager.NavigateTo($"EditDisc/{id}/{tipoconsulta}/{NombreLinea}/{fecha1.ToString("dd-MM-yyyy")}/{fecha2.ToString("dd-MM-yyyy")}/{Status}");
 
-        }else{
-            NavigationManager.NavigateTo($"es/EditDisc/{id}/{tipoconsulta}/{NombreLinea}/{fecha1.ToString("dd-MM-yyyy")}/{fecha2.ToString("dd-MM-yyyy")}/{Status}");
-        }
     }
 
     protected override async Task OnParametersSetAsync()
