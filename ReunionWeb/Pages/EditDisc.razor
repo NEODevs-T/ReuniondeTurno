@@ -7,6 +7,7 @@
 @inject ICargoReuData CargoReuData
 @inject ICausaCalidadData CausaCalidadData
 @inject IKsfData KsfData
+@inject HttpClient Http
 @inject IPizarraData PizarraData
 @inject IRespoReuData RespoReuData
 @inject IMaestraData MaestraData
@@ -698,7 +699,11 @@
         string backdiv = DiscForm.Rddiv;
         int currentIdCausaCal = DiscForm.IdCausaCal;
         CentroDivisionDTO centrodiv = await PizarraData.GetCentroDivi(backcentro, backdiv, 1);
-        NavigationManager.NavigateTo($"{(tipo == 0 || tipo == 2 ? "pendientes" : "reunion")}/{centrodiv.IdCentro}/{centrodiv.IdDivision}/{linea}/{f1}/{f2}/{tipo}/{est}", true);
+        if(idPais == 5){
+            NavigationManager.NavigateTo($"en/{(tipo == 0 || tipo == 2 ? "pendientes" : "reunion")}/{centrodiv.IdCentro}/{centrodiv.IdDivision}/{linea}/{f1}/{f2}/{tipo}/{est}", true);
+        }else{
+            NavigationManager.NavigateTo($"es/{(tipo == 0 || tipo == 2 ? "pendientes" : "reunion")}/{centrodiv.IdCentro}/{centrodiv.IdDivision}/{linea}/{f1}/{f2}/{tipo}/{est}", true);
+        }
         DiscForm.IdCausaCal = currentIdCausaCal;
     }
     
