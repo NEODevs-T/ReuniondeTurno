@@ -68,4 +68,9 @@
 <data name="FechaDelCambio" xml:space="preserve"><value>Change Date</value></data>
 <data name="StatusNuevo" xml:space="preserve"><value>New Status</value></data>
 <data name="Usuario" xml:space="preserve"><value>User</value></data>
+<data name="EditarDiscrepancia" xml:space="preserve"><value>Edit Discrepancy</value></data>
+<data name="ObservacionesDeCalidad" xml:space="preserve"><value>Quality Observation</value></data>
+<data name="Atras" xml:space="preserve"><value>Back</value></data>
+<data name="Listo" xml:space="preserve"><value>Done</value></data>
+<data name="NuevaFechaDeTrabajo" xml:space="preserve"><value>New Date Work</value></data>
 </root>

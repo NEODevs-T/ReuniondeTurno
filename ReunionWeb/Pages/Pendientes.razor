@@ -812,8 +812,14 @@ protected async Task Get()
 
     void Editar(int id)
     {
-        NavigationManager.NavigateTo($"EditDisc/{id}/{tipoconsulta}/{NombreLinea}/{fecha1.ToString("dd-MM-yyyy")}/{fecha2.ToString("dd-MM-yyyy")}/{Status}");
-
+        var lineaEncoded = Uri.EscapeDataString(NombreLinea ?? "");
+        var f1 = fecha1.ToString("dd-MM-yyyy");
+        var f2 = fecha2.ToString("dd-MM-yyy");
+        var estEncoded = Uri.EscapeDataString(NombreLinea ?? "");
+        var ruta = idPais == 5 ? "en" : "es";
+        var url = $"{ruta}/EditDisc/{id}/{tipoconsulta}/{lineaEncoded}/{f1}/{f2}/{estEncoded}";
+        NavigationManager.NavigateTo(url);
+        //NavigationManager.NavigateTo($"EditDisc/{id}/{tipoconsulta}/{NombreLinea}/{fecha1.ToString("dd-MM-yyyy")}/{fecha2.ToString("dd-MM-yyyy")}/{Status}");
     }
 
     protected override async Task OnParametersSetAsync()
