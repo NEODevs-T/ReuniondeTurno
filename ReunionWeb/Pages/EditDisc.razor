@@ -175,7 +175,7 @@
     <BSLabel>@ValidationMessages.Responsable</BSLabel>
     <BSInput InputType="InputType.Select" @bind-Value="DiscForm.IdResReu" @onchange="OnDiscResponsableChanged">
         <option value="">@ValidationMessages.Seleccione...</option>
-        @foreach (var d in RespoReuData.resporeus)
+        @foreach (var d in RespoReuData.resporeus.Where(x => ResponsablesPermitidos.Contains(x.IdResReu)))
         {
             <option value="@d.IdResReu">@ValidationMessages.ResourceManager.GetString(ValidationMessages
                 .MapResponsableKey(d.Rrnombre),CultureInfo.CurrentUICulture)
@@ -395,7 +395,9 @@
         <option value="">@ValidationMessages.Seleccione...</option>
         @foreach (var d in RespoReuData.resporeus.Where(x => ResponsablesPermitidos.Contains(x.IdResReu)))
         {
-            <option value="@d.IdResReu">@d.Rrnombre</option>
+            <option value="@d.IdResReu">@ValidationMessages.ResourceManager.GetString(ValidationMessages
+                .MapResponsableKey(d.Rrnombre),CultureInfo.CurrentUICulture)
+            </option>
         }
     </BSInput>
     <BSFeedback For="@(() => DiscForm.IdResReu)" ValidMessage="@ValidationMessages.Correcto" />
@@ -688,7 +690,11 @@
         string backdiv = DiscForm.Rddiv;
         int currentIdCausaCal = DiscForm.IdCausaCal;
         CentroDivisionDTO centrodiv = await PizarraData.GetCentroDivi(backcentro, backdiv, 1);
-        NavigationManager.NavigateTo($"{(tipo == 0 || tipo == 2 ? "pendientes" : "reunion")}/{centrodiv.IdCentro}/{centrodiv.IdDivision}/{linea}/{f1}/{f2}/{tipo}/{est}", true);
+        string lang = idPais == 5 ? "en" : "es"; 
+        string ruta = lang == "es"
+            ? $"es/pendientes/{centrodiv.IdCentro}/{centrodiv.IdDivision}/{linea}/{f1}/{f2}/{tipo}/{est}"
+            : $"en/remaining/{centrodiv.IdCentro}/{centrodiv.IdDivision}/{linea}/{f1}/{f2}/{tipo}/{est}";
+        NavigationManager.NavigateTo(ruta, true);
         DiscForm.IdCausaCal = currentIdCausaCal;
     }
     

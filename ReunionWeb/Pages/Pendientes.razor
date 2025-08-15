@@ -150,7 +150,8 @@ else
         <option value=0>@ValidationMessages.Todo</option>
         @foreach (var d in RespoReuData.resporeus.Where(x => !ResponsablesExcluidos.ContainsKey(x.IdResReu)))
         {
-            <option value="@d.IdResReu">@TraducirResponsable(d.Rrnombre)</option>
+            <option value="@d.IdResReu">@ValidationMessages.ResourceManager.GetString(ValidationMessages
+                .MapResponsableKey(d.Rrnombre),CultureInfo.CurrentUICulture)</option>
         }
     </BSInput>
 </BSCol>
@@ -238,17 +239,29 @@ else
                             <BSTD>@d.Rddisc.ToUpperInvariant()</BSTD>
                             <BSTD Class="textotabla">@d.RdplanAcc</BSTD>
 
-                            @if (@RespoReuData.resporeus.Where(x => x.IdResReu == d.IdResReu).FirstOrDefault()?.Rrnombre == "Por Definir")
-                            {
-                                <BSTD Class="Definir">@RespoReuData.resporeus.Where(x => x.IdResReu == d.IdResReu).FirstOrDefault()?.Rrnombre</BSTD>
+                            @{
+                            var nombreResponsable = RespoReuData.resporeus.FirstOrDefault(x => x.IdResReu == d.IdResReu)?.Rrnombre;
+                            var textoTraducido = ValidationMessages.ResourceManager.GetString(
+                            ValidationMessages.MapResponsableKey(nombreResponsable),
+                            CultureInfo.CurrentUICulture
+                            );
+                            }
 
+                            @if (nombreResponsable == "Por Definir")
+                            {
+                                <BSTD Class="Definir">@textoTraducido</BSTD>
                             }
                             else
                             {
-                                <BSTD>@RespoReuData.resporeus.Where(x => x.IdResReu == d.IdResReu).FirstOrDefault()?.Rrnombre</BSTD>
+                                <BSTD>@textoTraducido</BSTD>
                             }
-
-                            <BSTD>@CausaCalidadData.causaCals.Where(x => x.IdCausaCal == d.IdCausaCal).FirstOrDefault()?.Ccnombre</BSTD>
+                            <BSTD>
+                                @{
+                                    var causa = CausaCalidadData.causaCals.FirstOrDefault(x => x.IdCausaCal == d.IdCausaCal);
+                                    var texto = idPais == 5 ? causa?.Ccenglish : causa?.Ccnombre;
+                                }
+                                @texto
+                            </BSTD>
                             <BSTD>@d.OrigenCal.ToUpperInvariant()</BSTD>
 
 
@@ -362,7 +375,7 @@ else
             } *@
         </Content>
         <Footer Context="modal">
-            <BSButton MarginStart="Margins.Auto" Color="BSColor.Success" @onclick="modal.HideAsync">Aceptar</BSButton>
+            <BSButton MarginStart="Margins.Auto" Color="BSColor.Success" @onclick="modal.HideAsync">@ValidationMessages.Aceptar</BSButton>
 
         </Footer>
     </BSModal>
@@ -516,9 +529,8 @@ else if (dataIsLoaded == 2 && PizarraData.reudiatablas.Count() == 0)
     [Parameter]
     public string? est { get; set; }
 
-    [CascadingParameter]
-    private Task<AuthenticationState>? authenticationState { get; set; }
     private int idPais { get; set; }
+    
     private string mensaje = "";
 
     int dataIsLoaded = 0;
@@ -567,25 +579,6 @@ else if (dataIsLoaded == 2 && PizarraData.reudiatablas.Count() == 0)
         fecha1 = DateTime.Now;
         fecha2 = DateTime.Now;
         await CreateData();
-
-        var idPaisClaim = claims.FirstOrDefault(c => c.Type == "IdPais")?.Value;
-        int paisTemp;
-
-        if (int.TryParse(idPaisClaim, out paisTemp) && paisTemp == 5)
-        {
-            idPais = paisTemp;
-            var culture = new System.Globalization.CultureInfo("en");
-            System.Globalization.CultureInfo.DefaultThreadCurrentCulture = culture;
-            System.Globalization.CultureInfo.DefaultThreadCurrentUICulture = culture;
-            await LocalStorage.SetItemAsync("userCulture", "en");
-        }
-        else
-        {
-            var culture = new System.Globalization.CultureInfo("es");
-            System.Globalization.CultureInfo.DefaultThreadCurrentCulture = culture;
-            System.Globalization.CultureInfo.DefaultThreadCurrentUICulture = culture;
-            await LocalStorage.SetItemAsync("userCulture", "es");
-        }
 
         //Cargar Listas
         @* await DivReset(IdCentro = int.Parse(claims.FirstOrDefault(c => c.Type.Equals("IdCentro"))?.Value ?? "0")); *@
@@ -660,29 +653,22 @@ else if (dataIsLoaded == 2 && PizarraData.reudiatablas.Count() == 0)
         }
     }
 
-    
-    private string TraducirResponsable(string nombre)
-    {
-        if (idPais == 5)
-        {
-            nombre = nombre.ToLower();
-
-            if (nombre.Contains("mecánico")) return "Mechanical Maint.";
-            if (nombre.Contains("eléctrico") || nombre.Contains("electrónico")) return "Electrical/Electronic Maint.";
-            if (nombre.Contains("seguridad")) return "Safety";
-            if (nombre.Contains("calidad")) return "Quality";
-            if (nombre.Contains("operaciones")) return "Operations";
-            if (nombre.Contains("definir")) return "To Be Defined";
-        }
-        return nombre;
-    }
-
     private async Task CreateData()
 
     {
         var authState = await AuthStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;
         claims = Enumerable.ToList(user.Claims);
+
+        var idPaisClaim = claims.FirstOrDefault(c => c.Type == "IdPais")?.Value;
+        if (int.TryParse(idPaisClaim, out int paisTemp))
+        {
+            idPais = paisTemp;
+            var culture = new System.Globalization.CultureInfo(paisTemp == 5 ? "en" : "es");
+            System.Globalization.CultureInfo.DefaultThreadCurrentCulture = culture;
+            System.Globalization.CultureInfo.DefaultThreadCurrentUICulture = culture;
+            await LocalStorage.SetItemAsync("userCulture", culture.Name);
+        }
 
     }
 
@@ -883,12 +869,12 @@ protected async Task Get()
                 .Where(x => x.IdResReu == e.IdResReu)
                 .FirstOrDefault()?.Rrnombre;
 
-            e.Responsable = TraducirResponsable(nombreOriginal ?? string.Empty);
+            e.Responsable = ValidationMessages.MapResponsableKey(nombreOriginal ?? string.Empty);
         }
 
         if (!string.IsNullOrEmpty(UsrRol))
         {
-            var rolTraducido = TraducirResponsable(UsrRol);
+            var rolTraducido = ValidationMessages.MapResponsableKey(UsrRol);
 
             listareu = PizarraData.reudiatablas
                 .Where(r => r.Responsable.Contains(rolTraducido, StringComparison.OrdinalIgnoreCase))
