@@ -35,10 +35,10 @@
                 <BSRow>
 
                     <BSCol Column="2">
-                        <BSLabel>Centro</BSLabel>
+                        <BSLabel>@ValidationMessages.Centro</BSLabel>
                         <BSInput InputType="InputType.Text" IsDisabled @bind-Value="DiscForm.Rdcentro" />
 
-                         <BSFeedback For="@(() => DiscForm.Rdcentro)" ValidMessage="Correcto." />
+                         <BSFeedback For="@(() => DiscForm.Rdcentro)" ValidMessage="@ValidationMessages.Correcto" />
                      </BSCol>
 
 
@@ -46,14 +46,14 @@
                          <BSLabel>@ValidationMessages.Division</BSLabel>
                          <BSInput InputType="InputType.Text" IsDisabled @bind-Value="DiscForm.Rddiv">
                          </BSInput>
-                         <BSFeedback For="@(() => DiscForm.Rddiv)" ValidMessage="Correcto." />
+                         <BSFeedback For="@(() => DiscForm.Rddiv)" ValidMessage="@ValidationMessages.Correcto" />
                      </BSCol>
 
                      <BSCol Column="2">
                          <BSLabel>@ValidationMessages.Area</BSLabel>
                          <BSInput InputType="InputType.Text" IsDisabled @bind-Value="DiscForm.Rdarea">
                          </BSInput>
-                         <BSFeedback For="@(() => DiscForm.Rdarea)" ValidMessage="Correcto." />
+                         <BSFeedback For="@(() => DiscForm.Rdarea)" ValidMessage="@ValidationMessages.Correcto" />
                      </BSCol>
 
 
@@ -61,20 +61,20 @@
                          <BSLabel>Ksf</BSLabel>
                          <BSInput InputType="InputType.Select" @bind-Value="DiscForm.Idksf">
 
-                             @foreach (var d in KsfData.ksfs.Where(x => x.Idksf != 6))
-                            {
-                                var texto = idPais == 5? d.KsfEnglish : d.KsfNombre;
-                                <option value="@d.Idksf">@texto</option>
-                            }
+                        @foreach (var d in KsfData.ksfs.Where(x => x.Idksf != 6))
+                        {
+                            var texto = idPais == 5? d.KsfEnglish : d.KsfNombre;
+                            <option value="@d.Idksf">@texto</option>
+                        }
 
                         </BSInput>
-                        <BSFeedback For="@(() => DiscForm.Idksf)" ValidMessage="Correcto." />
+                        <BSFeedback For="@(() => DiscForm.Idksf)" ValidMessage="@ValidationMessages.Correcto" />
                     </BSCol>
 
                     <BSCol Column="3">
                         <BSLabel>@ValidationMessages.CodigoDeEquipo</BSLabel>
                         <BSInput InputType="InputType.Text" @bind-Value="DiscForm.RdcodEq" ValidateOnInput="true" />
-                        <BSFeedback For="@(() => DiscForm.RdcodEq)" ValidMessage="Correcto." />
+                        <BSFeedback For="@(() => DiscForm.RdcodEq)" ValidMessage="@ValidationMessages.Correcto" />
                     </BSCol>
 
 
@@ -84,7 +84,7 @@
                     <BSCol Column="6">
                         <BSLabel>@ValidationMessages.Discrepancia</BSLabel>
                         <BSInput InputType="InputType.TextArea" @bind-Value="DiscForm.Rddisc" />
-                        <BSFeedback For="@(() => DiscForm.Rddisc)" ValidMessage="Correcto." />
+                        <BSFeedback For="@(() => DiscForm.Rddisc)" ValidMessage="@ValidationMessages.Correcto" />
                     </BSCol>
                 </BSRow>
                 <p></p>
@@ -175,12 +175,14 @@
     <BSLabel>@ValidationMessages.Responsable</BSLabel>
     <BSInput InputType="InputType.Select" @bind-Value="DiscForm.IdResReu" @onchange="OnDiscResponsableChanged">
         <option value="">@ValidationMessages.Seleccione...</option>
-        @foreach (var d in RespoReuData.resporeus.Where(x => ResponsablesPermitidos.Contains(x.IdResReu)))
+        @foreach (var d in RespoReuData.resporeus)
         {
-            <option value="@d.IdResReu">@d.Rrnombre</option>
+            <option value="@d.IdResReu">@ValidationMessages.ResourceManager.GetString(ValidationMessages
+                .MapResponsableKey(d.Rrnombre),CultureInfo.CurrentUICulture)
+            </option>
         }
     </BSInput>
-    <BSFeedback For="@(() => DiscForm.IdResReu)" ValidMessage="Correcto." />
+    <BSFeedback For="@(() => DiscForm.IdResReu)" ValidMessage="@ValidationMessages.Correcto" />
 </BSCol>
 
 @if (IsDiscObservacionesVisible)
@@ -220,7 +222,7 @@
                         <BSCol ColumnSmall="2">
                             <BSLabel>@ValidationMessages.Codigo</BSLabel>
                             <BSInput InputType="InputType.Select" IsDisabled @bind-Value="DiscForm.RdcodDis">
-                            <option value="6">En Curso</option>
+                            <option value="6">@ValidationMessages.EnCurso</option>
 
 
                          </BSInput>
@@ -262,7 +264,7 @@
                                 <option value="Cerrado">@ValidationMessages.Cerrado</option>
                             }
 
-                            <BSFeedback For="@(() => DiscForm.Rdstatus)" ValidMessage="Correcto." />
+                            <BSFeedback For="@(() => DiscForm.Rdstatus)" ValidMessage="@ValidationMessages.Correcto" />
                         </BSInput>
                     </BSCol>
 
@@ -396,7 +398,7 @@
             <option value="@d.IdResReu">@d.Rrnombre</option>
         }
     </BSInput>
-    <BSFeedback For="@(() => DiscForm.IdResReu)" ValidMessage="Correcto." />
+    <BSFeedback For="@(() => DiscForm.IdResReu)" ValidMessage="@ValidationMessages.Correcto" />
 </BSCol>
 
 @if (IsDiscObservacionesVisible)
@@ -447,7 +449,7 @@
                             }
 
                             <option value="Pendiente">@ValidationMessages.Pendiente</option>
-                            <BSFeedback For="@(() => DiscForm.Rdstatus)" ValidMessage="Correcto." />
+                            <BSFeedback For="@(() => DiscForm.Rdstatus)" ValidMessage="@ValidationMessages.Correcto" />
                         </BSInput>
                     </BSCol>
                         }
@@ -462,7 +464,7 @@
                                         <option value="Pendiente">@ValidationMessages.Pendiente</option>
                                         <option value="Cerrado">@ValidationMessages.Cerrado</option>
 
-                                        <BSFeedback For="@(() => DiscForm.Rdstatus)" ValidMessage="Correcto." />
+                                        <BSFeedback For="@(() => DiscForm.Rdstatus)" ValidMessage="@ValidationMessages.Correcto" />
                                     </BSInput>
                                 </BSCol>
                             }
@@ -474,7 +476,7 @@
 
                                         @if (tipo == 0 || tipo == 2)
                             {
-                                <option value="Listo">@ValidationMessages.Listo</option>
+                                <option value="Listo">Listo</option>
                             }
                             else
                             {
@@ -482,7 +484,7 @@
                             }
 
                             <option value="Pendiente">@ValidationMessages.Pendiente</option>
-                            <BSFeedback For="@(() => DiscForm.Rdstatus)" ValidMessage="Correcto." />
+                            <BSFeedback For="@(() => DiscForm.Rdstatus)" ValidMessage="@ValidationMessages.Correcto" />
                         </BSInput>
                     </BSCol>
                             }
@@ -561,137 +563,90 @@
     private bool IsDiscObservacionesVisible { get; set; } = false;
     private bool ObservacionesGuardadas { get; set; } = false;
     private int? PreviousCausaCal { get; set; } = null;
-
+    
     [Parameter] public int? Id { get; set; }
     [Parameter] public int? tipo { get; set; }
     [Parameter] public string? f1 { get; set; }
     [Parameter] public string? linea { get; set; }
     [Parameter] public string? f2 { get; set; }
     [Parameter] public string? est { get; set; }
+    
+    private int idPais { get; set; }
 
     string _message = "";
     bool cambio = true;
     bool loader = true;
-
-    ReunionDTO DiscForm = new();
-    CambStatDTO CambStat = new();
-    CambFecDTO CambFec = new();
-    List<CambFecDTO> CambiosFecha = new();
-
-    private NotifiRadzen Notificar = new();
+    
+    ReunionDTO DiscForm = new ReunionDTO();
+    CambStatDTO CambStat = new CambStatDTO();
+    CambFecDTO CambFec = new CambFecDTO();
+    List<CambFecDTO> CambiosFecha = new List<CambFecDTO>();
+    
+    private NotifiRadzen Notificar = new NotifiRadzen();
     private DateTime fechahoy, fechatrabajo = DateTime.Today;
     private string fechahoy2, Emp = "";
     private string planificador, camStat, PlanOld;
     private DateTime? camFec;
-    private List<Claim> claims { get; set; } = new();
-
-    private readonly List<int> ResponsablesPermitidos = new() { 2, 4, 8, 9, 10, 11 };
-
-    [CascadingParameter]
-    private Task<AuthenticationState>? authenticationState { get; set; }
-    private int idPais { get; set; }
-    private string mensaje = "";
-
-    private bool _cargandoInicial = true;
-
-
+    private List<Claim> claims { get; set; }
+    
+     private readonly List<int> ResponsablesPermitidos = new() { 2, 4, 8, 9, 10, 11 };
+    
     private async Task CreateData()
     {
         var authState = await AuthStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;
         claims = user.Claims.ToList();
-    }
 
+        var idPaisClaim = claims.FirstOrDefault(c => c.Type == "IdPais")?.Value;
+        if (int.TryParse(idPaisClaim, out int paisTemp))
+        {
+            idPais = paisTemp;
+            var culture = new System.Globalization.CultureInfo(paisTemp == 5 ? "en" : "es");
+            System.Globalization.CultureInfo.DefaultThreadCurrentCulture = culture;
+            System.Globalization.CultureInfo.DefaultThreadCurrentUICulture = culture;
+            await LocalStorage.SetItemAsync("userCulture", culture.Name);
+        }
+    }
+    
     protected override async Task OnParametersSetAsync()
     {
+        await CreateData();
         loader = true;
-
-        try
-        {
-            await CreateData();
-
-            if (!Id.HasValue)
-            {
-                NotificationService.Notify(Notificar.Notificacion("error", "Error de parámetros", "No se recibió el ID correctamente."));
-                loader = false;
-                return;
-            }
-
-            // Cargar datos principales
-            DiscForm = await PizarraData.GetDiscrepantacia(Id.Value);
-            IsDiscObservacionesVisible = DiscForm.IdResReu == 9;
-            camStat = DiscForm.Rdstatus;
-            camFec = DiscForm.RdfecTra;
-            PlanOld = DiscForm.RdplanAcc;
-
-            // Cargar datos secundarios en paralelo
-            var tareas = new List<Task>
-            {
-                AvisadorData.GetCambioFecha(Id.Value),
-                KsfData.Getksf(),
-                RespoReuData.GetResReu(),
-                CausaCalidadData.GetCausasCalidad()
-            };
-            await Task.WhenAll(tareas);
-
-            CambiosFecha = AvisadorData.cambiofecha;
-
-            // Validar claims antes de acceder
-            Emp = claims.ElementAtOrDefault(5)?.Value ?? "";
-            planificador = claims.ElementAtOrDefault(1)?.Value ?? "";
-
-            var idPaisClaim = claims.FirstOrDefault(c => c.Type == "IdPais")?.Value;
-            if (int.TryParse(idPaisClaim, out int paisTemp))
-            {
-                idPais = paisTemp;
-
-                var culture = new System.Globalization.CultureInfo(idPais == 5 ? "en" : "es");
-                System.Globalization.CultureInfo.DefaultThreadCurrentCulture = culture;
-                System.Globalization.CultureInfo.DefaultThreadCurrentUICulture = culture;
-
-                // Proteger llamada JS con try-catch
-                try
-                {
-                    await LocalStorage.SetItemAsync("userCulture", idPais == 5 ? "en" : "es");
-                }
-                catch (JSDisconnectedException)
-                {
-                    Console.WriteLine("Circuito desconectado. No se pudo guardar en LocalStorage.");
-                }
-            }
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error en OnParametersSetAsync: {ex.Message}");
-            NotificationService.Notify(Notificar.Notificacion("error", "Error de carga", "Ocurrió un error al cargar los datos."));
-        }
-        finally
-        {
-            loader = false;
-            _cargandoInicial = false;
-        }
+        Emp = claims[5].Value;
+        planificador = claims[1].Value;
+        await AvisadorData.GetCambioFecha((int)Id);
+        CambiosFecha = AvisadorData.cambiofecha;
+        camStat = DiscForm.Rdstatus;
+        camFec = DiscForm.RdfecTra;
+        PlanOld = DiscForm.RdplanAcc;
+        await KsfData.Getksf();
+        await RespoReuData.GetResReu();
+        await CausaCalidadData.GetCausasCalidad();
+        loader = false;
     }
-
-
+    
     private void OnDiscResponsableChanged(ChangeEventArgs e)
     {
-        if (_cargandoInicial)
-            return;
-
         var selectedResponsableId = e.Value?.ToString();
         if (!string.IsNullOrEmpty(selectedResponsableId))
         {
-            DiscForm.IdResReu = int.Parse(selectedResponsableId);
-            IsDiscObservacionesVisible = DiscForm.IdResReu == 9;
+            if (DiscForm.IdResReu == 9 && PreviousCausaCal.HasValue)
+                ObservacionesGuardadas = true;
+            else
+                ObservacionesGuardadas = false;
 
-            if (IsDiscObservacionesVisible)
+            DiscForm.IdResReu = int.Parse(selectedResponsableId);
+
+            if (DiscForm.IdResReu == 9)
             {
+                IsDiscObservacionesVisible = true;
                 if (DiscForm.IdCausaCal == null || DiscForm.IdCausaCal == 0)
                     DiscForm.IdCausaCal = 1;
                 DiscForm.OrigenCal = "";
             }
             else
             {
+                IsDiscObservacionesVisible = false;
                 DiscForm.IdCausaCal = 1;
                 PreviousCausaCal = DiscForm.IdCausaCal;
                 if (!string.IsNullOrEmpty(DiscForm.OrigenCal))
@@ -705,66 +660,84 @@
             if (string.IsNullOrEmpty(DiscForm.OrigenCal))
                 DiscForm.OrigenCal = "N/A";
         }
+        StateHasChanged();
     }
-
-
+    
     private void OnCausaCalidadChanged(ChangeEventArgs e)
     {
         DiscForm.IdCausaCal = !string.IsNullOrEmpty(e.Value?.ToString()) ? int.Parse(e.Value.ToString()) : 1;
+        StateHasChanged();
     }
-
+    
     private void OnUbicacionChanged(ChangeEventArgs e)
     {
         DiscForm.OrigenCal = !string.IsNullOrEmpty(e.Value?.ToString()) ? e.Value.ToString() : "";
+        StateHasChanged();
     }
-
+    
+    protected override async void OnInitialized()
+    {
+        DiscForm = await PizarraData.GetDiscrepantacia((int)Id);
+        IsDiscObservacionesVisible = DiscForm.IdResReu == 9;
+        base.OnInitialized();
+    }
+    
     async Task Back()
     {
-        CentroDivisionDTO centrodiv = await PizarraData.GetCentroDivi(DiscForm.Rdcentro, DiscForm.Rddiv, 1);
+        string backcentro = DiscForm.Rdcentro;
+        string backdiv = DiscForm.Rddiv;
+        int currentIdCausaCal = DiscForm.IdCausaCal;
+        CentroDivisionDTO centrodiv = await PizarraData.GetCentroDivi(backcentro, backdiv, 1);
         NavigationManager.NavigateTo($"{(tipo == 0 || tipo == 2 ? "pendientes" : "reunion")}/{centrodiv.IdCentro}/{centrodiv.IdDivision}/{linea}/{f1}/{f2}/{tipo}/{est}", true);
+        DiscForm.IdCausaCal = currentIdCausaCal;
+    }
+    
+    async Task Editar()
+{
+    try
+    {
+        if (tipo == 1 || tipo == 0 || tipo == 2)
+        {
+            if (CambiosFecha.Count() >= 3 && camFec != DiscForm.RdfecTra)
+                return;
+
+            if (string.IsNullOrEmpty(DiscForm.RdplanAcc) && DiscForm.Rdstatus == "Cerrado")
+            {
+                NotificationService.Notify(Notificar.Notificacion("advertencia", "Atención", "No se puede cerrar sin Plan de Acción."));
+                return;
+            }
+
+            if (PlanOld != DiscForm.RdplanAcc && string.IsNullOrEmpty(DiscForm.RdplanAcc))
+            {
+                NotificationService.Notify(Notificar.Notificacion("advertencia", "Atención", "No se puede guardar con Plan de Acción vacío."));
+                DiscForm.RdplanAcc = PlanOld;
+                return;
+            }
+            if (camStat != DiscForm.Rdstatus)
+            {
+                CambStat.IdReuDia = DiscForm.IdReuDia;
+                CambStat.Cbfecha = DateTime.Now;
+                CambStat.Cbstat = DiscForm.Rdstatus;
+                CambStat.Cbuser = claims[2].Value + " " + claims[3].Value;
+            }
+
+            if (camFec != DiscForm.RdfecTra)
+            {
+                CambFec.IdReuDia = DiscForm.IdReuDia;
+                CambFec.Cffec = DateTime.Now;
+                CambFec.CffecNew = DiscForm.RdfecTra;
+                CambFec.Cfuser = claims[2].Value + " " + claims[3].Value;
+            }
+
+            await AvisadorData.InsertCambioStatus(CambStat);
+            await AvisadorData.InsertCambioFec(CambFec);
+            cambio = await PizarraData.UpdateDiscrepancia2(DiscForm, (int)Id, (int)tipo, f1, f2, est, linea);
+        }
+    }
+    catch (Exception)
+    {
+        NotificationService.Notify(Notificar.Notificacion("error", "Ocurrió un error inesperado.", "Por favor, recargue la página."));
     }
 
-    async Task Editar()
-    {
-        try
-        {
-            if (tipo == 1 || tipo == 0 || tipo == 2)
-            {
-                if (CambiosFecha.Count >= 3 && camFec != DiscForm.RdfecTra)
-                    return;
-                if (string.IsNullOrEmpty(DiscForm.RdplanAcc) && DiscForm.Rdstatus == "Cerrado")
-                {
-                    NotificationService.Notify(Notificar.Notificacion("advertencia", "Atención", "No se puede cerrar sin Plan de Acción."));
-                    return;
-                }
-                if (PlanOld != DiscForm.RdplanAcc && string.IsNullOrEmpty(DiscForm.RdplanAcc))
-                {
-                    NotificationService.Notify(Notificar.Notificacion("advertencia", "Atención", "No se puede guardar con Plan de Acción vacío."));
-                    DiscForm.RdplanAcc = PlanOld;
-                    return;
-                }
-                if (camStat != DiscForm.Rdstatus)
-                {
-                    CambStat.IdReuDia = DiscForm.IdReuDia;
-                    CambStat.Cbfecha = DateTime.Now;
-                    CambStat.Cbstat = DiscForm.Rdstatus;
-                    CambStat.Cbuser = claims[2].Value + " " + claims[3].Value;
-                }
-                if (camFec != DiscForm.RdfecTra)
-                {
-                    CambFec.IdReuDia = DiscForm.IdReuDia;
-                    CambFec.Cffec = DateTime.Now;
-                    CambFec.CffecNew = DiscForm.RdfecTra;
-                    CambFec.Cfuser = claims[2].Value + " " + claims[3].Value;
-                }
-                await AvisadorData.InsertCambioStatus(CambStat);
-                await AvisadorData.InsertCambioFec(CambFec);
-                cambio = await PizarraData.UpdateDiscrepancia2(DiscForm, Id.Value, tipo.Value, f1, f2, est, linea);
-            }
-        }
-        catch
-        {
-            NotificationService.Notify(Notificar.Notificacion("error", "Ocurrió un error inesperado.", "Por favor, recargue la página."));
-        }
     }
 }
