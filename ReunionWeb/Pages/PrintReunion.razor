@@ -102,7 +102,14 @@
                             {
                                 @*  <BSTD>@d.Rddiv</BSTD>*@
                                 <BSTD>@d.Rdarea</BSTD>
-                                <BSTD>@KsfData.ksfs.Where(x => x.Idksf == d.Idksf).FirstOrDefault()?.KsfNombre</BSTD>
+                                <BSTD>
+                                @{
+                                    var texto = idPais == 5 
+                                    ? KsfData.ksfs.Where(x => x.Idksf == d.Idksf).FirstOrDefault()?.KsfEnglish 
+                                    : KsfData.ksfs.Where(x => x.Idksf == d.Idksf).FirstOrDefault()?.KsfNombre;
+                                }
+                                @texto
+                                </BSTD>
                             }
 
 
@@ -127,7 +134,13 @@
                                 <BSTD ColSpan="1">@RespoReuData.resporeus.Where( x => x.IdResReu == d.IdResReu).FirstOrDefault()?.Rrnombre</BSTD>
                             }
 
-                            <BSTD>@CausaCalidadData.causaCals.Where(x => x.IdCausaCal == d.IdCausaCal).FirstOrDefault()?.Ccnombre</BSTD>
+                            <BSTD>
+                            @{
+                                var causa = CausaCalidadData.causaCals.FirstOrDefault(x => x.IdCausaCal == d.IdCausaCal);
+                                var texto = idPais == 5 ? causa?.Ccenglish : causa?.Ccnombre;
+                            }
+                            @texto
+                            </BSTD>
                             <BSTD>@d.OrigenCal.ToUpperInvariant()</BSTD>
 
                             @if (@d.Rdstatus == "Revisar")

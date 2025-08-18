@@ -289,7 +289,7 @@
 
                 </BSRow>
                 <BSCol Column="12">
-                    <BSButton Color="BSColor.Success" Size="Size.ExtraSmall" IsSubmit>  @ValidationMessages.Guardar <span class="oi oi-check"></span></BSButton>
+                <BSButton Color="BSColor.Success" Size="Size.ExtraSmall" Click="@Editar">@ValidationMessages.Guardar <span class="oi oi-check"></span></BSButton>
                  <BSButton Color="BSColor.Danger" Size="Size.ExtraSmall" OnClick=Back>  @ValidationMessages.Atras <span class="oi oi-arrow-left"></span></BSButton>
 
              </BSCol>
@@ -518,9 +518,9 @@
                 </BSRow>
                 <p></p>
                 <p></p>
-                <BSCol Column="12">
-                    <BSButton Color="BSColor.Success" Size="Size.ExtraSmall" IsSubmit>  @ValidationMessages.Guardar <span class="oi oi-check"></span></BSButton>
-                 <BSButton Color="BSColor.Danger" Size="Size.ExtraSmall" OnClick=Back>  @ValidationMessages.Atras <span class="oi oi-arrow-left"></span></BSButton>
+                <BSCol Column="12">              
+                <BSButton Color="BSColor.Success" Size="Size.ExtraSmall" Click="@Editar">@ValidationMessages.Guardar <span class="oi oi-check"></span></BSButton>
+                <BSButton Color="BSColor.Danger" Size="Size.ExtraSmall" OnClick=Back>  @ValidationMessages.Atras <span class="oi oi-arrow-left"></span></BSButton>
              </BSCol>
          </BSForm>
         }
@@ -740,12 +740,18 @@
             await AvisadorData.InsertCambioStatus(CambStat);
             await AvisadorData.InsertCambioFec(CambFec);
             cambio = await PizarraData.UpdateDiscrepancia2(DiscForm, (int)Id, (int)tipo, f1, f2, est, linea);
+            
+            if (cambio)
+            {
+                NotificationService.Notify(Notificar.Notificacion("info", "Guardado exitoso", "Redirigiendo..."));
+                await Back(); 
+            }
+
         }
     }
     catch (Exception)
     {
         NotificationService.Notify(Notificar.Notificacion("error", "Ocurrió un error inesperado.", "Por favor, recargue la página."));
     }
-
     }
-}
+}  

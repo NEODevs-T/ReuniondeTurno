@@ -71,6 +71,7 @@ namespace ReunionWeb.Resources
         public static string NuevaFechaDeTrabajo => _resourceManager.GetString("NuevaFechaDeTrabajo", CultureInfo.CurrentUICulture);
         public static string Correcto => _resourceManager.GetString("Correcto", CultureInfo.CurrentUICulture);
         public static string NEquipo => _resourceManager.GetString("NEquipo", CultureInfo.CurrentUICulture);
+        public static string Reunion => _resourceManager.GetString("Reunion", CultureInfo.CurrentUICulture);
 
 
         public static string MapResponsableKey(string nombre)
