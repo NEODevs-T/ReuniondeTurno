@@ -74,4 +74,5 @@
 <data name="Listo" xml:space="preserve"><value>Done</value></data>
 <data name="NuevaFechaDeTrabajo" xml:space="preserve"><value>New Date Work</value></data>
 <data name="Correcto" xml:space="preserve"><value>Correct.</value></data>
+<data name="NEquipo" xml:space="preserve"><value>Equi. Number</value></data>
 </root>

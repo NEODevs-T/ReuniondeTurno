@@ -154,9 +154,14 @@
                                             <BSTD>@textoTraducido</BSTD>
                                         }
 
-                                        <BSTD>@CausaCalidadData.causaCals.Where(x => x.IdCausaCal == d.IdCausaCal).FirstOrDefault()?.Ccnombre</BSTD>
+                                        <BSTD>
+                                        @{
+                                            var causa = CausaCalidadData.causaCals.FirstOrDefault(x => x.IdCausaCal == d.IdCausaCal);
+                                            var texto = idPais == 5 ? causa?.Ccenglish : causa?.Ccnombre;
+                                        }
+                                        @texto
+                                        </BSTD>
                                         <BSTD>@d.OrigenCal.ToUpperInvariant()</BSTD>
-
                                         @{
                                             var estadoTraducido = d.Rdstatus == "Cerrado"
                                                 ? (idPais == 5 ? "Closed" : "Cerrado")

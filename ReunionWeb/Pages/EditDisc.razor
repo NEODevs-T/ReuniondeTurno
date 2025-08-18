@@ -193,7 +193,8 @@
             <option value="">@ValidationMessages.Seleccione...</option>
             @foreach (var e in CausaCalidadData.causaCals)
             {
-                <option value="@e.IdCausaCal">@e.Ccnombre</option>
+                var texto = idPais == 5? e.Ccenglish : e.Ccnombre;
+                <option value="@e.IdCausaCal">@texto</option>
             }
         </BSInput>
     </BSCol>
@@ -411,7 +412,8 @@
             <option value="">@ValidationMessages.Seleccione...</option>
             @foreach (var e in CausaCalidadData.causaCals)
             {
-                <option value="@e.IdCausaCal">@e.Ccnombre</option>
+                var texto = idPais == 5? e.Ccenglish : e.Ccnombre;
+                <option value="@e.IdCausaCal">@texto</option>
             }
         </BSInput>
     </BSCol>

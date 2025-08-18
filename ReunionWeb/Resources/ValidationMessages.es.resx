@@ -71,4 +71,5 @@
 <data name="Listo" xml:space="preserve"><value>Listo</value></data>
 <data name="NuevaFechaDeTrabajo" xml:space="preserve"><value>Nueva Fecha de Trabajo</value></data>
 <data name="Correcto" xml:space="preserve"><value>Correcto.</value></data>
+<data name="NEquipo" xml:space="preserve"><value>N. Equipo</value></data>
 </root>

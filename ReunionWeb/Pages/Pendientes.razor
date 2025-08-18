@@ -235,7 +235,14 @@ else
                                 @texto
                             </BSTD>
                             <BSTD>@d.RdcodEq</BSTD>
-                            <BSTD>@(string.IsNullOrWhiteSpace(d.EnombreEam) ? "EQUIPO NO ENCONTRADO" : d.EnombreEam)</BSTD>
+                            <BSTD>
+                                @{
+                                    var texto = string.IsNullOrWhiteSpace(d.EnombreEam)
+                                        ? (idPais == 5 ? "EQUIPMENT NOT FOUND" : "EQUIPO NO ENCONTRADO")
+                                        : d.EnombreEam;
+                                }
+                                @texto
+                            </BSTD>
                             <BSTD>@d.Rddisc.ToUpperInvariant()</BSTD>
                             <BSTD Class="textotabla">@d.RdplanAcc</BSTD>
 
@@ -324,8 +331,8 @@ else
                         {
                             <BSTR>
                                 <BSTD>@d.Cbfecha</BSTD>
-                                    <BSTD>@d.Cbstat</BSTD>
-                                    <BSTD>@d.Cbuser</BSTD>
+                                <BSTD>@ValidationMessages.ResourceManager.GetString(d.Cbstat)</BSTD>
+                                <BSTD>@d.Cbuser</BSTD>
                                 </BSTR>
                         }
                     </BSTBody>
