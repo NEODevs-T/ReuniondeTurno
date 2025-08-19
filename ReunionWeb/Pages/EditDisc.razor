@@ -289,7 +289,7 @@
 
                 </BSRow>
                 <BSCol Column="12">
-                <BSButton Color="BSColor.Success" Size="Size.ExtraSmall" Click="@Editar">@ValidationMessages.Guardar <span class="oi oi-check"></span></BSButton>
+                <BSButton Color="BSColor.Success" Size="Size.ExtraSmall" Click="Editar">@ValidationMessages.Guardar <span class="oi oi-check"></span></BSButton>
                  <BSButton Color="BSColor.Danger" Size="Size.ExtraSmall" OnClick=Back>  @ValidationMessages.Atras <span class="oi oi-arrow-left"></span></BSButton>
 
              </BSCol>
@@ -519,7 +519,7 @@
                 <p></p>
                 <p></p>
                 <BSCol Column="12">              
-                <BSButton Color="BSColor.Success" Size="Size.ExtraSmall" Click="@Editar">@ValidationMessages.Guardar <span class="oi oi-check"></span></BSButton>
+                <BSButton Color="BSColor.Success" Size="Size.ExtraSmall" Click="Editar">@ValidationMessages.Guardar <span class="oi oi-check"></span></BSButton>
                 <BSButton Color="BSColor.Danger" Size="Size.ExtraSmall" OnClick=Back>  @ValidationMessages.Atras <span class="oi oi-arrow-left"></span></BSButton>
              </BSCol>
          </BSForm>
@@ -611,6 +611,28 @@
             await LocalStorage.SetItemAsync("userCulture", culture.Name);
         }
     }
+
+    private async Task RedireccionarSegunPais()
+    {
+        string backcentro = DiscForm.Rdcentro;
+        string backdiv = DiscForm.Rddiv;
+
+        CentroDivisionDTO centrodiv = await PizarraData.GetCentroDivi(backcentro, backdiv, 1);
+        if (centrodiv == null)
+        {
+            NotificationService.Notify(Notificar.Notificacion("error", "Error de redirección", "No se pudo obtener centro/división."));
+            return;
+        }
+
+        string lang = idPais == 5 ? "en" : "es";
+        string ruta = lang == "es"
+            ? $"es/pendientes/{centrodiv.IdCentro}/{centrodiv.IdDivision}/{linea}/{f1}/{f2}/{tipo}/{est}"
+            : $"en/remaining/{centrodiv.IdCentro}/{centrodiv.IdDivision}/{linea}/{f1}/{f2}/{tipo}/{est}";
+
+        await Task.Delay(100); // Asegura que se procese todo antes de redirigir
+        NavigationManager.NavigateTo(ruta, true);
+    }
+
     
     protected override async Task OnParametersSetAsync()
     {
@@ -700,14 +722,13 @@
         DiscForm.IdCausaCal = currentIdCausaCal;
     }
     
-    async Task Editar()
+async Task Editar()
 {
     try
     {
         if (tipo == 1 || tipo == 0 || tipo == 2)
         {
-            if (CambiosFecha.Count() >= 3 && camFec != DiscForm.RdfecTra)
-                return;
+            if (CambiosFecha.Count() >= 3 && camFec != DiscForm.RdfecTra) return;
 
             if (string.IsNullOrEmpty(DiscForm.RdplanAcc) && DiscForm.Rdstatus == "Cerrado")
             {
@@ -721,6 +742,7 @@
                 DiscForm.RdplanAcc = PlanOld;
                 return;
             }
+
             if (camStat != DiscForm.Rdstatus)
             {
                 CambStat.IdReuDia = DiscForm.IdReuDia;
@@ -740,18 +762,18 @@
             await AvisadorData.InsertCambioStatus(CambStat);
             await AvisadorData.InsertCambioFec(CambFec);
             cambio = await PizarraData.UpdateDiscrepancia2(DiscForm, (int)Id, (int)tipo, f1, f2, est, linea);
-            
+
             if (cambio)
             {
                 NotificationService.Notify(Notificar.Notificacion("info", "Guardado exitoso", "Redirigiendo..."));
-                await Back(); 
+                await RedireccionarSegunPais(); // ← Nuevo método
             }
-
         }
     }
     catch (Exception)
     {
         NotificationService.Notify(Notificar.Notificacion("error", "Ocurrió un error inesperado.", "Por favor, recargue la página."));
     }
-    }
-}  
+}
+
+}
