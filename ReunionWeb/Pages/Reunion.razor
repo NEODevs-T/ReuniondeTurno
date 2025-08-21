@@ -111,7 +111,7 @@
                     <BSTD>@ValidationMessages.OrgDelProducto</BSTD>
                     <BSTD>Status</BSTD>
                     @* <BSTD>ODT</BSTD> *@
-                    <BSTD>Fecha de Reunión</BSTD>@*Fecha de listo el trabajo*@
+                    <BSTD>@ValidationMessages.FechaDeReunion</BSTD>@*Fecha de listo el trabajo*@
                     @if (Rol == "Admin" | Rol == "AdminChempro" | Rol == "SuperUser" | Rol == "SemiAdmin")
                     {
                         <BSTD></BSTD>
@@ -164,21 +164,22 @@
                                 }
                                 @* <BSTD>@d.Rdtiempo</BSTD> *@
                                 @{
-                                var nombreResponsable = RespoReuData.resporeus.FirstOrDefault(x => x.IdResReu == d.IdResReu)?.Rrnombre;
-                                var textoTraducido = ValidationMessages.ResourceManager.GetString(
-                                ValidationMessages.MapResponsableKey(nombreResponsable),
-                                CultureInfo.CurrentUICulture
-                                );
-                                }
+                                    var nombreResponsable = RespoReuData.resporeus.FirstOrDefault(x => x.IdResReu == d.IdResReu)?.Rrnombre;
+                                    string textoTraducido;
 
-                                @if (nombreResponsable == "Por Definir")
-                                {
-                                    <BSTD Class="Definir">@textoTraducido</BSTD>
+                                    if (!string.IsNullOrWhiteSpace(nombreResponsable))
+                                    {
+                                        var clave = ValidationMessages.MapResponsableKey(nombreResponsable);
+                                        textoTraducido = !string.IsNullOrWhiteSpace(clave)
+                                            ? ValidationMessages.ResourceManager.GetString(clave, CultureInfo.CurrentUICulture)
+                                            : nombreResponsable;
+                                    }
+                                    else
+                                    {
+                                        textoTraducido = idPais == 5 ? "To Be Defined" : "Por Definir";
+                                    }
                                 }
-                                else
-                                {
                                     <BSTD>@textoTraducido</BSTD>
-                                }
                                 <BSTD>
                                     @{
                                         var causa = CausaCalidadData.causaCals.FirstOrDefault(x => x.IdCausaCal == d.IdCausaCal);
@@ -407,15 +408,22 @@ protected override async Task OnParametersSetAsync()
         DateTime fechaHoyFin = DateTime.Today.AddDays(1).AddTicks(-1);
 
         // Obtener los datos
-        await PizarraData.GetPendientes(
+        
+        try
+        {
+            await PizarraData.GetPendientes(
             accion,
             division,
             fechaHoyInicio,
             fechaHoyFin,
             tipo,
-            "Reunion"
-        );
-
+            "Reunion");
+        }
+        catch (Exception ex)
+        {
+            mensaje = $"Error al cargar datos: {ex.Message}";
+            NotificationService.Notify(Notificar.Notificacion("error", "Error", mensaje));
+        }
         // Filtrar los datos para mostrar solo las reuniones del día actual
         if (PizarraData.reudiatablas != null)
         {

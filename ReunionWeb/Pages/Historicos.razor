@@ -444,7 +444,10 @@ else if (dataIsLoaded == 2 && tabla.Count() == 0)
                 d.Responsable = ValidationMessages.ResourceManager.GetString(ValidationMessages.MapResponsableKey(nombreOriginal),CultureInfo.CurrentUICulture);
                 int idBusqueda = CausaCalidadData.causaCals.Where(x => x.IdCausaCal == d.IdCausaCal).FirstOrDefault().IdCausaCal;
                 MaestraData.GetPRueba01(idBusqueda);
-                d.CausaCalNombre = CausaCalidadData.causaCals.Where(x => x.IdCausaCal == d.IdCausaCal).FirstOrDefault().Ccnombre;
+                var causa = CausaCalidadData.causaCals.FirstOrDefault(x => x.IdCausaCal == d.IdCausaCal);
+                d.CausaCalNombre = causa != null
+                    ? (idPais == 5 ? causa.Ccenglish : causa.Ccnombre)
+                    : (idPais == 5 ? "Cause not found" : "Causa no encontrada");
             }
                {
         if (SelectedCausaCalidad == 0)
