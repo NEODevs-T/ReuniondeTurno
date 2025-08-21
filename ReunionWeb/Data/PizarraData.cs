@@ -137,54 +137,45 @@ public class PizarraData : IPizarraData
 
     }
 
-    public async Task<bool> UpdateDiscrepancia2(ReunionDTO d, int id, int tipo, string f1, string f2, string estado, string linea)
+public async Task<bool> UpdateDiscrepancia2(ReunionDTO d, int id, int tipo, string f1, string f2, string estado, string linea, int idPais)
+{
+    bool band = false;
+    url = $"{BaseUrl}/UpdateDiscrepancia2/{id}";
+    cliente.Timeout = TimeSpan.FromMinutes(5);
+    cliente = _clientFactory.CreateClient();
+    mensaje = await cliente.PutAsJsonAsync(url, d);
+
+    try
     {
-        bool band = false;
-        url = $"{BaseUrl}/UpdateDiscrepancia2/{id}";
-        cliente.Timeout = TimeSpan.FromMinutes(5);
-        cliente = _clientFactory.CreateClient();
-        mensaje = await cliente.PutAsJsonAsync(url, d);
-
-        try
+        string div = "", centro = "";
+        if (mensaje.IsSuccessStatusCode)
         {
-            string div = "", centro = "";
-            if (mensaje.IsSuccessStatusCode)
-            {
-                band = await mensaje.Content.ReadFromJsonAsync<bool>();
-                CentroDivisionDTO centrodiv = new CentroDivisionDTO();
-                centrodiv = await GetCentroDivi(d.Rdcentro, d.Rddiv, 1);
-                centro = centrodiv.IdCentro.ToString();
-                div = centrodiv.IdDivision.ToString();
-            }
-
-            if (band == true)
-            {
-                if (tipo == 0)
-                {
-                    _navigationManager.NavigateTo($"pendientes/{centro}/{div}/{linea}/{f1}/{f2}/{tipo}/{estado}", forceLoad: true);
-                }
-                else if (tipo == 1)
-                {
-                    _navigationManager.NavigateTo($"reunion/{centro}/{div}/Re/{f1}/{f2}/{tipo}/Reunion", forceLoad: true);
-                }
-                else if (tipo == 2)
-                {
-                    _navigationManager.NavigateTo($"pendientes/{centro}/{div}/{linea}/{f1}/{f2}/{tipo}/{estado}", forceLoad: true);
-                }
-
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-
+            band = await mensaje.Content.ReadFromJsonAsync<bool>();
+            CentroDivisionDTO centrodiv = await GetCentroDivi(d.Rdcentro, d.Rddiv, 1);
+            centro = centrodiv.IdCentro.ToString();
+            div = centrodiv.IdDivision.ToString();
         }
-        catch (Exception ex)
+
+        if (band == true)
+        {
+            string lang = idPais == 5 ? "en" : "es";
+            string basePath = (tipo == 0 || tipo == 2) ? (lang == "en" ? "remaining" : "pendientes") : (lang == "en" ? "meeting" : "reunion");
+            string ruta = $"{lang}/{basePath}/{centro}/{div}/{linea}/{f1}/{f2}/{tipo}/{estado}";
+            _navigationManager.NavigateTo(ruta, true);
+
+            return true;
+        }
+        else
         {
             return false;
         }
     }
+    catch (Exception)
+    {
+        return false;
+    }
+}
+
     
         public async Task<bool> UpdateDiscrepancia3(ReunionDTO d, int id)
     {
