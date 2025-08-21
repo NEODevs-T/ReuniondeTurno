@@ -72,7 +72,12 @@ namespace ReunionWeb.Resources
         public static string Correcto => _resourceManager.GetString("Correcto", CultureInfo.CurrentUICulture);
         public static string NEquipo => _resourceManager.GetString("NEquipo", CultureInfo.CurrentUICulture);
         public static string Reunion => _resourceManager.GetString("Reunion", CultureInfo.CurrentUICulture);
-
+        public static string NoHayRegistros => _resourceManager.GetString("NoHayRegistros", CultureInfo.CurrentUICulture);
+        public static string NoHayEquipos => _resourceManager.GetString("NoHayEquipos", CultureInfo.CurrentUICulture);
+        public static string NoHayDatos => _resourceManager.GetString("NoHayDatos", CultureInfo.CurrentUICulture);
+        public static string NoHayRegistros2 => _resourceManager.GetString("NoHayRegistros2", CultureInfo.CurrentUICulture);
+        public static string NoHayDatos2 => _resourceManager.GetString("NoHayDatos2", CultureInfo.CurrentUICulture);
+        public static string NoHayDescrip => _resourceManager.GetString("NoHayDescrip", CultureInfo.CurrentUICulture);
 
         public static string MapResponsableKey(string nombre)
         {

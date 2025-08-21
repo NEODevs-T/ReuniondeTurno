@@ -344,7 +344,7 @@ else
             }
             else if (cambiostatuss.Count() == 0 && cargandocambio == true)
             {
-                <p>No hay registros aún...</p>
+                <p>@ValidationMessages.NoHayRegistros2</p>
             }
             @* <p></p>
             <p></p>
@@ -396,7 +396,7 @@ else if (dataIsLoaded == 1 && PizarraData.reudiatablas.Count() == 0)
 else if (dataIsLoaded == 2 && PizarraData.reudiatablas.Count() == 0)
 {
 <div style="text-align: center; padding: 20px; font-size: 18px; color: rgb(102, 101, 101);">
-    <p>No hay datos para mostrar.</p>
+    <p>@ValidationMessages.NoHayDatos2</p>
 </div>
 }
 

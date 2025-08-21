@@ -76,4 +76,13 @@
 <data name="Correcto" xml:space="preserve"><value>Correct.</value></data>
 <data name="NEquipo" xml:space="preserve"><value>Equi. Number</value></data>
 <data name="Reunion" xml:space="preserve"><value>Meeting</value></data>
+<data name="NoHayRegistros" xml:space="preserve"><value>No records found.</value></data>
+<data name="NoHayEquipos" xml:space="preserve"><value>No equipment available.</value></data>
+<data name="NoHayDatos" xml:space="preserve"><value>No data available for this date.</value></data>
+<data name="NoHayRegistros2" xml:space="preserve"><value>No records yet...</value></data>
+<data name="NoHayDatos2" xml:space="preserve"><value>No data to display.</value></data>
+<data name="NoHayDescrip" xml:space="preserve"><value>No description available.</value></data>
 </root>
+
+
+
