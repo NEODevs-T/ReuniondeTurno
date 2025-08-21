@@ -177,17 +177,6 @@ else if (dataIsLoaded == 1 && RespoReuData.resporeus.Count() == 0)
     private int bloque { get; set; } = 0;//Indica el Bloque de reunion a llenar asistencia
     private List<AsistenReuDTO> listaAsistencia { get; set; }
     
-    private string labelAsistencia = CultureInfo.CurrentCulture.TwoLetterISOLanguageName == "en" ? "Attendance" : "Asistencia";
-    private string labelAsistentes = "Asistentes";
-    private string labelBloque = "Bloque";
-    private string labelGuardar = "Guardar";
-    private string labelPersonal = "Personal";
-    private string labelPresencia = "Presencia";
-    private string labelSuplencia = "Suplencia";
-    
-
-
-
     private List<Claim> claims { get; set; }
 
 
@@ -196,6 +185,16 @@ else if (dataIsLoaded == 1 && RespoReuData.resporeus.Count() == 0)
         var authState = await AuthStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;
         claims = user.Claims.ToList();
+
+        var idPaisClaim = claims.FirstOrDefault(c => c.Type == "IdPais")?.Value;
+        if (int.TryParse(idPaisClaim, out int paisTemp))
+        {
+            idPais = paisTemp;
+            var culture = new System.Globalization.CultureInfo(paisTemp == 5 ? "en" : "es");
+            System.Globalization.CultureInfo.DefaultThreadCurrentCulture = culture;
+            System.Globalization.CultureInfo.DefaultThreadCurrentUICulture = culture;
+            await LocalStorage.SetItemAsync("userCulture", culture.Name);
+        }
     }
 
 
@@ -223,46 +222,6 @@ else if (dataIsLoaded == 1 && RespoReuData.resporeus.Count() == 0)
 
         Div = claims.FirstOrDefault(c => c.Type.Contains("Centro"))?.Value;
 
-        var idPaisClaim = claims.FirstOrDefault(c => c.Type == "IdPais")?.Value;
-        int paisTemp;
-
-        if (int.TryParse(idPaisClaim, out paisTemp) && paisTemp == 5)
-        {
-            idPais = paisTemp;
-
-            labelAsistencia = "Attendance";
-            labelAsistentes = "Attendees";
-            labelBloque = "Block";
-            labelGuardar = "Save";
-            labelPersonal = "Staff";
-            labelPresencia = "Presence";
-            labelSuplencia = "Substitution";
-        }
-
-    }
-
-    
-    private Dictionary<string, string> traducciones = new()
-    {
-        { "Si hay un suplente debe marcar la asistencia.", "If there is a substitute, attendance must be marked." },
-        { "Solo se puede registrar en horario de reunión", "Registration is only allowed during meeting hours." },
-        { "Todos los cargos están inasistentes.", "All positions are marked as absent." },
-        { "Error al Insertar los datos, Intente de Nuevo", "Error inserting data, please try again." },
-        { "Registro Exitoso.", "Successful Record." },
-        { "Atención", "Attention" },
-        { "advertencia", "warning" },
-        { "error", "error" },
-        { "exito", "success" }
-    };
-
-    private string TraducirMensaje(string mensaje)
-    {
-        if (idPais == 5 && traducciones.ContainsKey(mensaje))
-        {
-            return traducciones[mensaje];
-        }
-
-        return mensaje;
     }
 
     protected async Task Get()
@@ -343,7 +302,7 @@ else if (dataIsLoaded == 1 && RespoReuData.resporeus.Count() == 0)
             }
             else if (conteo == listaAsistencia.Count)
             {
-                NotificationService.Notify(Notificar.Notificacion("advertencia", TraducirMensaje("Atención"), TraducirMensaje("Todos los cargos están inasistentes.")));
+                NotificationService.Notify(Notificar.Notificacion("advertencia", ValidationMessages.Atencion, ValidationMessages.TCargos));
             }
             else
             {
@@ -351,11 +310,11 @@ else if (dataIsLoaded == 1 && RespoReuData.resporeus.Count() == 0)
 
                 if (mensaje == "Registro Exitoso")
                 {
-                    NotificationService.Notify(Notificar.Notificacion("exito", TraducirMensaje("Registro Exitoso."), ""));
+                    NotificationService.Notify(Notificar.Notificacion("exito", ValidationMessages.RExitoso, ""));
                 }
                 else
                 {
-                    NotificationService.Notify(Notificar.Notificacion("error", "Error", TraducirMensaje("Error al Insertar los datos, Intente de Nuevo")));
+                    NotificationService.Notify(Notificar.Notificacion("error", "Error", ValidationMessages.EDato));
                 }
 
                 dataIsLoaded = 0;
@@ -371,7 +330,7 @@ else if (dataIsLoaded == 1 && RespoReuData.resporeus.Count() == 0)
         }
         catch (Exception ex)
         {
-            NotificationService.Notify(Notificar.Notificacion("error", "Error", TraducirMensaje("Error al Insertar los datos, Intente de Nuevo")));
+            NotificationService.Notify(Notificar.Notificacion("error", "Error", ValidationMessages.EDato));
         }
     }
 

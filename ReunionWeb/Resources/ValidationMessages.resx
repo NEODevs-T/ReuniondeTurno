@@ -88,6 +88,13 @@
 <data name="TCargos" xml:space="preserve"><value>Todos los cargos están inasistentes.</value></data>
 <data name="RHorario" xml:space="preserve"><value>Solo se puede registrar en horario de reunión.</value></data>
 <data name="SSuplente" xml:space="preserve"><value>Si hay un suplente debe marcar la asistencia.</value></data>
+<data name="Asistencia" xml:space="preserve"><value>Asistencia</value></data>
+<data name="Asistentes" xml:space="preserve"><value>Asistentes</value></data>
+<data name="Bloque" xml:space="preserve"><value>Bloque</value></data>
+<data name="Personal" xml:space="preserve"><value>Personal</value></data>
+<data name="Presencia" xml:space="preserve"><value>Presencia</value></data>
+<data name="Suplencia" xml:space="preserve"><value>Suplencia</value></data>
+<data name="NoCargadoP" xml:space="preserve"><value>No se ha cargado personal a este centro.</value></data>
 </root>
 
 

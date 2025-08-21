@@ -91,7 +91,15 @@
 <data name="TCargos" xml:space="preserve"><value>All positions are marked as absent.</value></data>
 <data name="RHorario" xml:space="preserve"><value>Registration is only allowed during meeting hours.</value></data>
 <data name="SSuplente" xml:space="preserve"><value>If there is a substitute, attendance must be marked.</value></data>
+<data name="Asistencia" xml:space="preserve"><value>Attendance</value></data>
+<data name="Asistentes" xml:space="preserve"><value>Attendees</value></data>
+<data name="Bloque" xml:space="preserve"><value>Block</value></data>
+<data name="Personal" xml:space="preserve"><value>Personnel</value></data>
+<data name="Presencia" xml:space="preserve"><value>Presence</value></data>
+<data name="Suplencia" xml:space="preserve"><value>Substitution</value></data>
+<data name="NoCargadoP" xml:space="preserve"><value>No personnel has been assigned to this center.</value></data>
 </root>
+
 
 
 
