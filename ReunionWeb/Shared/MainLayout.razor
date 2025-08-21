@@ -187,6 +187,13 @@
     //private bool _buttonDisabled = true;
     //private BSAlert? _alertRef;
 
+    protected override async Task OnInitializedAsync()
+    {
+        var cultureName = await LocalStorage.GetItemAsync<string>("userCulture") ?? "es";
+        var culture = new CultureInfo(cultureName);
+        CultureInfo.DefaultThreadCurrentCulture = culture;
+        CultureInfo.DefaultThreadCurrentUICulture = culture;
+    }
 
     protected async Task HandleLogin(EditContext e)
     {
