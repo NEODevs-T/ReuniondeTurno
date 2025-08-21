@@ -79,4 +79,18 @@
 <data name="NoHayRegistros2" xml:space="preserve"><value>No hay registros aún...</value></data>
 <data name="NoHayDatos2" xml:space="preserve"><value>No hay datos para mostrar.</value></data>
 <data name="NoHayDescrip" xml:space="preserve"><value>No hay desctripción.</value></data>
+<data name="Exito" xml:space="preserve"><value>exito</value></data>
+<data name="Error" xml:space="preserve"><value>error</value></data>
+<data name="Advertencia" xml:space="preserve"><value>advertencia</value></data>
+<data name="Atencion" xml:space="preserve"><value>Atención</value></data>
+<data name="RExitoso" xml:space="preserve"><value>Registro Exitoso.</value></data>
+<data name="EDato" xml:space="preserve"><value>Error al Insertar los datos, Intente de Nuevo.</value></data>
+<data name="TCargos" xml:space="preserve"><value>Todos los cargos están inasistentes.</value></data>
+<data name="RHorario" xml:space="preserve"><value>Solo se puede registrar en horario de reunión.</value></data>
+<data name="SSuplente" xml:space="preserve"><value>Si hay un suplente debe marcar la asistencia.</value></data>
 </root>
+
+
+
+
+

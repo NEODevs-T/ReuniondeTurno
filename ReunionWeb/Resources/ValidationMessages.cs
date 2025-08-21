@@ -78,6 +78,23 @@ namespace ReunionWeb.Resources
         public static string NoHayRegistros2 => _resourceManager.GetString("NoHayRegistros2", CultureInfo.CurrentUICulture);
         public static string NoHayDatos2 => _resourceManager.GetString("NoHayDatos2", CultureInfo.CurrentUICulture);
         public static string NoHayDescrip => _resourceManager.GetString("NoHayDescrip", CultureInfo.CurrentUICulture);
+        public static string Exito => _resourceManager.GetString("Exito", CultureInfo.CurrentUICulture);
+        public static string Error => _resourceManager.GetString("Error", CultureInfo.CurrentUICulture);
+        public static string Advertencia => _resourceManager.GetString("Advertencia", CultureInfo.CurrentUICulture);
+        public static string Atencion => _resourceManager.GetString("Atencion", CultureInfo.CurrentUICulture);
+        public static string RExitoso => _resourceManager.GetString("RExitoso", CultureInfo.CurrentUICulture);
+        public static string EDato => _resourceManager.GetString("EDato", CultureInfo.CurrentUICulture);
+        public static string TCargos => _resourceManager.GetString("TCargos", CultureInfo.CurrentUICulture);
+        public static string RHorario => _resourceManager.GetString("RHorario", CultureInfo.CurrentUICulture);
+        public static string SSuplente => _resourceManager.GetString("SSuplente", CultureInfo.CurrentUICulture);
+        public static string Asistencia => _resourceManager.GetString("Asistencia", CultureInfo.CurrentUICulture);
+        public static string Asistentes => _resourceManager.GetString("Asistentes", CultureInfo.CurrentUICulture);
+        public static string Bloque => _resourceManager.GetString("Bloque", CultureInfo.CurrentUICulture);
+        public static string Personal => _resourceManager.GetString("Personal", CultureInfo.CurrentUICulture);
+        public static string Presencia => _resourceManager.GetString("Presencia", CultureInfo.CurrentUICulture);
+        public static string Suplencia => _resourceManager.GetString("Suplencia", CultureInfo.CurrentUICulture);
+        public static string NoCargadoP => _resourceManager.GetString("NoCargadoP", CultureInfo.CurrentUICulture);
+
 
         public static string MapResponsableKey(string nombre)
         {
