@@ -262,80 +262,80 @@ else if (dataIsLoaded == 1 && RespoReuData.resporeus.Count() == 0)
     protected async Task Save()
     {
         int time = int.Parse(DateTime.Now.ToString("hh"));
-        bool validar = true;
-        int conteo = 0;
+        bool validar = true; // Verifica si marcaron suplente pero no asistente
+        int conteo = 0; // Contador para verificar si todos quedaron en null
 
         try
         {
-            if (bloque > 0)
-            {
-                for (int i = listaAsistencia.Count - 1; i >= 0; i--)
+            @* if ((claims[4].Value == "Venezuela" && time > 8 && time < 10) || 
+                (claims[4].Value == "Colombia" && time > 8 && time < 11) || 
+                (claims[4].Value == "Guatemala" && time > 9 && time < 13) || 
+                (claims[4].Value == "Panamá" && time > 8 && time < 12))
+            { *@
+                if (bloque > 0)
                 {
-                    if (listaAsistencia[i].Cargo.Crbloque != bloque)
+                    for (int i = listaAsistencia.Count - 1; i >= 0; i--)
                     {
-                        listaAsistencia.RemoveAt(i);
+                        if (listaAsistencia[i].Cargo.Crbloque != bloque)
+                        {
+                            listaAsistencia.RemoveAt(i);
+                        }
                     }
                 }
-            }
 
-            foreach (var item in listaAsistencia)
-            {
-                if (item.ArSuplente == null)
+                foreach (var item in listaAsistencia)
                 {
-                    item.ArSuplente = 0;
+                    // Si ArSuplente es NULL, se asigna 0 (por defecto no es suplente)
+                    if (item.ArSuplente == null)  
+                    {
+                        item.ArSuplente = 0;
+                    }
+
+                    if (item.ArAsistente == 0 & item.ArSuplente == 1)
+                    {
+                        validar = false;
+                    }
+                    if (item.ArAsistente == 0)
+                    {
+                        conteo++;
+                    }
                 }
 
-                if (item.ArAsistente == 0 && item.ArSuplente == 1)
+                if (!validar)
                 {
-                    validar = false;
+                    NotificationService.Notify(Notificar.Notificacion("advertencia", ValidationMessages.Atencion, ValidationMessages.SSuplente));
                 }
-
-                if (item.ArAsistente == 0)
+                else if (conteo == listaAsistencia.Count)
                 {
-                    conteo++;
-                }
-            }
-
-            if (!validar)
-            {
-                NotificationService.Notify(Notificar.Notificacion("advertencia", ValidationMessages.Atencion, ValidationMessages.SSuplente));
-            }
-            else if (conteo == listaAsistencia.Count)
-            {
-                NotificationService.Notify(Notificar.Notificacion("advertencia", ValidationMessages.Atencion, ValidationMessages.TCargos));
-            }
-            else
-            {
-                mensaje = await AsistenciaReuData.Postasistencia(listaAsistencia);
-
-                if (mensaje == "Registro Exitoso")
-                {
-                    NotificationService.Notify(Notificar.Notificacion("exito", ValidationMessages.RExitoso, ""));
+                    NotificationService.Notify(Notificar.Notificacion("advertencia", ValidationMessages.Atencion, ValidationMessages.TCargos));
                 }
                 else
                 {
-                    NotificationService.Notify(Notificar.Notificacion("error", "Error", ValidationMessages.EDato));
-                }
+                    mensaje = await AsistenciaReuData.Postasistencia(listaAsistencia);
 
-                dataIsLoaded = 0;
-            }
+                    if (mensaje == "Registro Exitoso")
+                    {
+                        NotificationService.Notify(Notificar.Notificacion("exito", ValidationMessages.RExitoso, ""));
+                    }
+                    else 
+                    {
+                        NotificationService.Notify(Notificar.Notificacion("error", "Error", ValidationMessages.EDato));
+                    }
+
+                    dataIsLoaded = 0;
+                }
+            @* }
             else
             {
                 NotificationService.Notify(Notificar.Notificacion("advertencia", ValidationMessages.Atencion, ValidationMessages.RHorario));
                 dataIsLoaded = 0;
-            }
+            } *@
         }
         catch (Exception ex)
         {
-            NotificationService.Notify(Notificar.Notificacion("error", "Error", ValidationMessages.EDato));
+                NotificationService.Notify(Notificar.Notificacion("error", "Error", ValidationMessages.EDato));
         }
     }
-
-
-
-
-
-
 
     protected async Task Reset()
     {
