@@ -319,14 +319,11 @@ else if (dataIsLoaded == 1 && RespoReuData.resporeus.Count() == 0)
 
                 dataIsLoaded = 0;
             }
-
-            /*
             else
             {
-                NotificationService.Notify(Notificar.Notificacion("advertencia", "Atención", TraducirMensaje("Solo se puede registrar en horario de reunión")));
+                NotificationService.Notify(Notificar.Notificacion("advertencia", ValidationMessages.Atencion, ValidationMessages.RHorario));
                 dataIsLoaded = 0;
             }
-            */
         }
         catch (Exception ex)
         {

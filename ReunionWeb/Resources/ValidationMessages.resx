@@ -95,6 +95,14 @@
 <data name="Presencia" xml:space="preserve"><value>Presencia</value></data>
 <data name="Suplencia" xml:space="preserve"><value>Suplencia</value></data>
 <data name="NoCargadoP" xml:space="preserve"><value>No se ha cargado personal a este centro.</value></data>
+<data name="ErrorInser" xml:space="preserve"><value>Error al insertar, intente de nuevo.</value></data>
+<data name="SArea" xml:space="preserve"><value>Seleccione el área.</value></data>
+<data name="SDivision" xml:space="preserve"><value>Seleccione la división.</value></data>
+<data name="SCentro" xml:space="preserve"><value>Seleccione el centro.</value></data>
+<data name="LlDisp" xml:space="preserve"><value>Llene la discrepancia.</value></data>
+<data name="SEstado" xml:space="preserve"><value>Seleccione el estado.</value></data>
+<data name="NSDatos" xml:space="preserve"><value>No se encontraron datos requeridos para guardar.</value></data>
+<data name="ErrorInesp" xml:space="preserve"><value>Error inesperado.</value></data>
 </root>
 
 

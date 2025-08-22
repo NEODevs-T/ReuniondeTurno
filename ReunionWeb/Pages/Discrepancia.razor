@@ -313,33 +313,6 @@
             .ToList();
     }
 
-    private string TraducirMensaje(string mensaje)
-    {
-        if (idPais == 5)
-        {
-            switch (mensaje)
-            {
-                case "Registro Exitoso":
-                    return "Successful Record";
-                case "Error al insertar, intente de nuevo.":
-                    return "Error inserting, please try again.";
-                case "Seleccione el área.":
-                    return "Select the area.";
-                case "Seleccione la división.":
-                    return "Select the division.";
-                case "Llene la discrepancia.":
-                    return "Fill in the discrepancy.";
-                case "Seleccione el estado.":
-                    return "Select the status.";
-                case "No se encontraron datos requeridos para guardar.":
-                    return "Required data not found for saving.";
-                default:
-                    return mensaje;
-            }
-        }
-        return mensaje;
-    }
-
     private async Task CreateData()
     {
         var authState = await AuthStateProvider.GetAuthenticationStateAsync();
@@ -419,7 +392,7 @@ private void OnUbicacionChanged(ChangeEventArgs e)
         }
         catch (Exception ex)
         {
-            mensaje = TraducirMensaje("Error: ") + ex.Message;
+            NotificationService.Notify(Notificar.Notificacion("error", "Error", ValidationMessages.SCentro));
         }
     }
 
@@ -434,7 +407,7 @@ private void OnUbicacionChanged(ChangeEventArgs e)
         }
         catch (Exception ex)
         {
-            mensaje = TraducirMensaje("Error: ") + ex.Message;
+            NotificationService.Notify(Notificar.Notificacion("error", "Error", ValidationMessages.SDivision));
         }
     }
 
@@ -450,7 +423,7 @@ private void OnUbicacionChanged(ChangeEventArgs e)
         }
         catch (Exception ex)
         {
-            mensaje = TraducirMensaje("Error: ") + ex.Message;
+            NotificationService.Notify(Notificar.Notificacion("error", "Error", ValidationMessages.SArea));
         }
     }
 
@@ -464,7 +437,7 @@ private void OnUbicacionChanged(ChangeEventArgs e)
         }
         catch (Exception ex)
         {
-            mensaje = TraducirMensaje("Error: ") + ex.Message;
+            NotificationService.Notify(Notificar.Notificacion("error", "Error", ValidationMessages.ErrorInser));
         }
     }
 
@@ -478,7 +451,7 @@ private void OnUbicacionChanged(ChangeEventArgs e)
 
         if (maestraItem == null || lineaItem == null || centroItem == null)
         {
-            NotificationService.Notify(Notificar.Notificacion("error", TraducirMensaje("Error inesperado."), TraducirMensaje("No se encontraron datos requeridos para guardar.")));
+            NotificationService.Notify(Notificar.Notificacion("error", ValidationMessages.ErrorInesp, ValidationMessages.NSDatos));
             return;
         }
 
@@ -521,18 +494,18 @@ private void OnUbicacionChanged(ChangeEventArgs e)
                 if (result)
                 {
                     ResetFields();
-                    NotificationService.Notify(Notificar.Notificacion("exito", TraducirMensaje("Registro Exitoso"), ""));
+                    NotificationService.Notify(Notificar.Notificacion("exito", ValidationMessages.RExitoso, ""));
                 }
                 else
                 {
-                    NotificationService.Notify(Notificar.Notificacion("error", TraducirMensaje("Error al insertar, intente de nuevo."), ""));
+                    NotificationService.Notify(Notificar.Notificacion("error", ValidationMessages.ErrorInser, ""));
                 }
             }
         }
     }
     catch (Exception ex)
     {
-        NotificationService.Notify(Notificar.Notificacion("error", TraducirMensaje("Error inesperado."), ex.Message));
+        NotificationService.Notify(Notificar.Notificacion("error",  ValidationMessages.ErrorInesp, ex.Message));
     }
 
     IsObservacionesVisible = false;
@@ -544,22 +517,22 @@ private void OnUbicacionChanged(ChangeEventArgs e)
     {
         if (string.IsNullOrEmpty(reunion.Rdarea))
         {
-            NotifyError(TraducirMensaje("Seleccione el área."));
+            NotifyError(ValidationMessages.SArea);
             return false;
         }
         if (string.IsNullOrEmpty(reunion.Rddiv))
         {
-            NotifyError(TraducirMensaje("Seleccione la división."));
+            NotifyError(ValidationMessages.SDivision);
             return false;
         }
         if (string.IsNullOrEmpty(reunion.Rddisc))
         {
-            NotifyError(TraducirMensaje("Llene la discrepancia."));
+            NotifyError(ValidationMessages.LlDisp);
             return false;
         }
         if (string.IsNullOrEmpty(reunion.Rdstatus))
         {
-            NotifyError(TraducirMensaje("Seleccione el estado."));
+            NotifyError(ValidationMessages.SEstado);
             return false;
         }
         return true;

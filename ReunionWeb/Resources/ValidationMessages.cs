@@ -94,8 +94,14 @@ namespace ReunionWeb.Resources
         public static string Presencia => _resourceManager.GetString("Presencia", CultureInfo.CurrentUICulture);
         public static string Suplencia => _resourceManager.GetString("Suplencia", CultureInfo.CurrentUICulture);
         public static string NoCargadoP => _resourceManager.GetString("NoCargadoP", CultureInfo.CurrentUICulture);
-
-
+        public static string ErrorInser => _resourceManager.GetString("ErrorInser", CultureInfo.CurrentUICulture);
+        public static string SArea => _resourceManager.GetString("SArea", CultureInfo.CurrentUICulture);
+        public static string SDivision => _resourceManager.GetString("SDivision", CultureInfo.CurrentUICulture);
+        public static string LlDisp => _resourceManager.GetString("LlDisp", CultureInfo.CurrentUICulture);
+        public static string SEstado => _resourceManager.GetString("SEstado", CultureInfo.CurrentUICulture);
+        public static string NSDatos => _resourceManager.GetString("NSDatos", CultureInfo.CurrentUICulture);
+        public static string SCentro => _resourceManager.GetString("SCentro", CultureInfo.CurrentUICulture);
+        public static string ErrorInesp => _resourceManager.GetString("ErrorInesp", CultureInfo.CurrentUICulture);
         public static string MapResponsableKey(string nombre)
         {
             return nombre switch

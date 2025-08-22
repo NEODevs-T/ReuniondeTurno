@@ -98,6 +98,14 @@
 <data name="Presencia" xml:space="preserve"><value>Presence</value></data>
 <data name="Suplencia" xml:space="preserve"><value>Substitution</value></data>
 <data name="NoCargadoP" xml:space="preserve"><value>No personnel has been assigned to this center.</value></data>
+<data name="ErrorInser" xml:space="preserve"><value>Error inserting, please try again.</value></data>
+<data name="SArea" xml:space="preserve"><value>Select the area.</value></data>
+<data name="SDivision" xml:space="preserve"><value>Select the division.</value></data>
+<data name="SCentro" xml:space="preserve"><value>Select the center.</value></data>
+<data name="LlDisp" xml:space="preserve"><value>Fill in the discrepancy.</value></data>
+<data name="SEstado" xml:space="preserve"><value>Select the status.</value></data>
+<data name="NSDatos" xml:space="preserve"><value>Required data not found for saving.</value></data>
+<data name="ErrorInesp" xml:space="preserve"><value>Unexpected Error.</value></data>
 </root>
 
 
