@@ -80,7 +80,7 @@
 <data name="NoHayDatos2" xml:space="preserve"><value>No hay datos para mostrar.</value></data>
 <data name="NoHayDescrip" xml:space="preserve"><value>No hay desctripción.</value></data>
 <data name="Exito" xml:space="preserve"><value>exito</value></data>
-<data name="Error" xml:space="preserve"><value>error</value></data>
+<data name="Error" xml:space="preserve"><value>Error al cargar datos</value></data>
 <data name="Advertencia" xml:space="preserve"><value>advertencia</value></data>
 <data name="Atencion" xml:space="preserve"><value>Atención</value></data>
 <data name="RExitoso" xml:space="preserve"><value>Registro Exitoso.</value></data>

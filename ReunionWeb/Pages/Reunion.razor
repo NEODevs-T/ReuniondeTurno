@@ -334,7 +334,7 @@ else if (dataIsLoaded == 2 && PizarraData.reudiatablas.Count() == 0)
                     MaestraData.divisions = await MaestraData.ObtenerDivisionDelCentro(IdCentro);
                 }
             }catch(Exception ex){
-                mensaje = "Error: " + ex.Message;
+                            NotificationService.Notify(Notificar.Notificacion("error", "Error", ValidationMessages.SCentro));
             }
     }
 
@@ -376,7 +376,7 @@ protected async Task Get()
     }
     else
     {
-        NotificationService.Notify(Notificar.Notificacion("advertencia", "Atención", "Seleccione los valores en las listas"));
+        NotificationService.Notify(Notificar.Notificacion("advertencia", ValidationMessages.Atencion, ValidationMessages.SVLista));
     }
 }
 
@@ -421,8 +421,7 @@ protected override async Task OnParametersSetAsync()
         }
         catch (Exception ex)
         {
-            mensaje = $"Error al cargar datos: {ex.Message}";
-            NotificationService.Notify(Notificar.Notificacion("error", "Error", mensaje));
+            NotificationService.Notify(Notificar.Notificacion("error", "Error", ValidationMessages.Error));
         }
         // Filtrar los datos para mostrar solo las reuniones del día actual
         if (PizarraData.reudiatablas != null)

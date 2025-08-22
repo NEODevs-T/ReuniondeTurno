@@ -83,7 +83,7 @@
 <data name="NoHayDatos2" xml:space="preserve"><value>No data to display.</value></data>
 <data name="NoHayDescrip" xml:space="preserve"><value>No description available.</value></data>
 <data name="Exito" xml:space="preserve"><value>success</value></data>
-<data name="Error" xml:space="preserve"><value>error</value></data>
+<data name="Error" xml:space="preserve"><value>Error loading data</value></data>
 <data name="Advertencia" xml:space="preserve"><value>warning</value></data>
 <data name="Atencion" xml:space="preserve"><value>Attention</value></data>
 <data name="RExitoso" xml:space="preserve"><value>Successful Record.</value></data>
