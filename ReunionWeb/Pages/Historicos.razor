@@ -416,20 +416,20 @@ else if (dataIsLoaded == 2 && tabla.Count() == 0)
                     MaestraData.divisions = await MaestraData.ObtenerDivisionDelCentro(IdCentro);
                 }
             }catch(Exception ex){
-                mensaje = "Error: " + ex.Message;
+                NotificationService.Notify(Notificar.Notificacion("error", "Error", ValidationMessages.SCentro));
             }
     }
     protected async Task Get()
     {
         if (IdCentro == 0)
         {
-           NotificationService.Notify(Notificar.Notificacion("advertencia", "Atención","Seleccione un valor en la columna de Centro."));
+            NotificationService.Notify(Notificar.Notificacion("advertencia", ValidationMessages.Atencion,ValidationMessages.SVCentro));
             return;
         }
 
         if (IdDiv == 0)
         {
-            NotificationService.Notify(Notificar.Notificacion("advertencia", "Atención","Seleccione un valor en la columna de Division."));
+            NotificationService.Notify(Notificar.Notificacion("advertencia", ValidationMessages.Atencion,ValidationMessages.SVDivision));
             return;
         }
 

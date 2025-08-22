@@ -105,7 +105,11 @@ namespace ReunionWeb.Resources
         public static string NFDatos => _resourceManager.GetString("NFDatos", CultureInfo.CurrentUICulture);
         public static string SVLista => _resourceManager.GetString("SVLista", CultureInfo.CurrentUICulture);
         public static string ODT => _resourceManager.GetString("ODT", CultureInfo.CurrentUICulture);
-        public static string Reload => ResourceManager.GetString("Reload", CultureInfo.CurrentUICulture);
+        public static string Reload => _resourceManager.GetString("Reload", CultureInfo.CurrentUICulture);
+        public static string SVCentro => _resourceManager.GetString("SVCentro", CultureInfo.CurrentUICulture);
+        public static string SVDivision => _resourceManager.GetString("SVDivision", CultureInfo.CurrentUICulture);
+        public static string NPA1 => _resourceManager.GetString("NPA1", CultureInfo.CurrentUICulture);
+        public static string NPA2 => _resourceManager.GetString("NPA2", CultureInfo.CurrentUICulture);
         public static string MapResponsableKey(string nombre)
         {
             return nombre switch

@@ -715,12 +715,12 @@
                     return;
                 if (string.IsNullOrEmpty(DiscForm.RdplanAcc) && DiscForm.Rdstatus == "Cerrado")
                 {
-                    NotificationService.Notify(Notificar.Notificacion("advertencia", "Atención", "No se puede cerrar sin Plan de Acción."));
+                    NotificationService.Notify(Notificar.Notificacion("advertencia", ValidationMessages.Atencion, ValidationMessages.NPA1));
                     return;
                 }
                 if (PlanOld != DiscForm.RdplanAcc && string.IsNullOrEmpty(DiscForm.RdplanAcc))
                 {
-                    NotificationService.Notify(Notificar.Notificacion("advertencia", "Atención", "No se puede guardar con Plan de Acción vacío."));
+                    NotificationService.Notify(Notificar.Notificacion("advertencia", ValidationMessages.Atencion, ValidationMessages.NPA2));
                     DiscForm.RdplanAcc = PlanOld;
                     return;
                 }
@@ -759,7 +759,7 @@
         }
         catch (Exception)
         {
-            NotificationService.Notify(Notificar.Notificacion("error", "Ocurrió un error inesperado.", "Por favor, recargue la página."));
+            NotificationService.Notify(Notificar.Notificacion("error", ValidationMessages.ErrorInesp, ValidationMessages.Reload));
         }
     }
 }

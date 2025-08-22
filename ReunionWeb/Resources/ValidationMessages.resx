@@ -107,6 +107,10 @@
 <data name="SVLista" xml:space="preserve"><value>Seleccione los valores en las listas.</value></data>
 <data name="ODT" xml:space="preserve"><value>Ingrese ODT.</value></data>
 <data name="Reload" xml:space="preserve"><value>Por favor recargue la página.</value></data>
+<data name="SVCentro" xml:space="preserve"><value>Seleccione un valor en la columna de Centro.</value></data>
+<data name="SVDivision" xml:space="preserve"><value>Seleccione un valor en la columna de Division.</value></data>
+<data name="NPA1" xml:space="preserve"><value>No se puede cerrar sin Plan de Acción.</value></data>
+<data name="NPA2" xml:space="preserve"><value>No se puede guardar con Plan de Acción vacío.</value></data>
 </root>
 
 

@@ -110,6 +110,10 @@
 <data name="SVLista" xml:space="preserve"><value>Select the values in the lists.</value></data>
 <data name="ODT" xml:space="preserve"><value>Insert ODT.</value></data>
 <data name="Reload" xml:space="preserve"><value>Please Reload page.</value></data>
+<data name="SVCentro" xml:space="preserve"><value>Select a value in the column Center.</value></data>
+<data name="SVDivision" xml:space="preserve"><value>Select a value in the column Division.</value></data>
+<data name="NPA1" xml:space="preserve"><value>Cannot be closed without an Action Plan.</value></data>
+<data name="NPA2" xml:space="preserve"><value>Cannot be saved with an empty Action Plan.</value></data>
 </root>
 
 
