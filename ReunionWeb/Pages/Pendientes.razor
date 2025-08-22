@@ -689,7 +689,7 @@ else if (dataIsLoaded == 2 && PizarraData.reudiatablas.Count() == 0)
                     MaestraData.divisions = await MaestraData.ObtenerDivisionDelCentro(IdCentro);
                 }
             }catch(Exception ex){
-                mensaje = "Error: " + ex.Message;
+                NotificationService.Notify(Notificar.Notificacion("error", "Error", ValidationMessages.SDivision));
             }
     }
 
@@ -710,7 +710,7 @@ protected async Task Get()
             }
             else
             {
-                NotificationService.Notify(Notificar.Notificacion("error", "Error", "No se encontraron datos para procesar."));
+                NotificationService.Notify(Notificar.Notificacion("error", "Error", ValidationMessages.NFDatos));
             }
 
             dataIsLoaded = 2;
@@ -718,7 +718,7 @@ protected async Task Get()
     }
     else
     {
-        NotificationService.Notify(Notificar.Notificacion("advertencia", "Atención", "Seleccione los valores en las listas"));
+        NotificationService.Notify(Notificar.Notificacion("advertencia", ValidationMessages.Atencion, ValidationMessages.SVLista));
     }
 }
 
@@ -746,13 +746,12 @@ protected async Task Get()
             }
             else
             {
-
-                NotificationService.Notify(Notificar.Notificacion("advertencia", "Atención", "Seleccione los valores en las listas"));
+                NotificationService.Notify(Notificar.Notificacion("advertencia", ValidationMessages.Atencion, ValidationMessages.SVLista));
             }
         }
         else
         {
-            NotificationService.Notify(Notificar.Notificacion("advertencia", "Ingrese ODT", ""));
+            NotificationService.Notify(Notificar.Notificacion("advertencia", ValidationMessages.ODT, ""));
         }
 
 
@@ -861,7 +860,7 @@ protected async Task Get()
         }
         catch (Exception ex)
         {
-            NotificationService.Notify(Notificar.Notificacion("error", "Ocurrió un error", "Por favor recargue la página."));
+            NotificationService.Notify(Notificar.Notificacion("error", ValidationMessages.ErrorInesp, ValidationMessages.Reload));
 
         }
 

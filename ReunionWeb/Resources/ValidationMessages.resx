@@ -103,8 +103,11 @@
 <data name="SEstado" xml:space="preserve"><value>Seleccione el estado.</value></data>
 <data name="NSDatos" xml:space="preserve"><value>No se encontraron datos requeridos para guardar.</value></data>
 <data name="ErrorInesp" xml:space="preserve"><value>Error inesperado.</value></data>
+<data name="NFDatos" xml:space="preserve"><value>No se encontraron datos para procesar.</value></data>
+<data name="SVLista" xml:space="preserve"><value>Seleccione los valores en las listas.</value></data>
+<data name="ODT" xml:space="preserve"><value>Ingrese ODT.</value></data>
+<data name="Reload" xml:space="preserve"><value>Por favor recargue la página.</value></data>
 </root>
-
 
 
 

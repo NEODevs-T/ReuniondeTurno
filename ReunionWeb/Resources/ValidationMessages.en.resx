@@ -59,7 +59,7 @@
 <data name="Filtrar" xml:space="preserve"><value>To Filter</value></data>
 <data name="Guardar" xml:space="preserve"><value>Save</value></data>
 <data name="Borrar" xml:space="preserve"><value>Erase</value></data>
-<data name="Asuntos" xml:space="preserve"><value>Subjects</value></data>
+<data name="Asuntos" xml:space="preserve"><value>Issues</value></data>
 <data name="Todos" xml:space="preserve"><value>All</value></data>
 <data name="Ordenar" xml:space="preserve"><value>Order</value></data>
 <data name="FReunion" xml:space="preserve"><value>M. Format</value></data>
@@ -106,6 +106,10 @@
 <data name="SEstado" xml:space="preserve"><value>Select the status.</value></data>
 <data name="NSDatos" xml:space="preserve"><value>Required data not found for saving.</value></data>
 <data name="ErrorInesp" xml:space="preserve"><value>Unexpected Error.</value></data>
+<data name="NFDatos" xml:space="preserve"><value>No data found to process.</value></data>
+<data name="SVLista" xml:space="preserve"><value>Select the values in the lists.</value></data>
+<data name="ODT" xml:space="preserve"><value>Insert ODT.</value></data>
+<data name="Reload" xml:space="preserve"><value>Please Reload page.</value></data>
 </root>
 
 
