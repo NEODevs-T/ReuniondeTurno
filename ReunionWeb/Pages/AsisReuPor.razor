@@ -6,6 +6,8 @@
 @inject ICargoReuData CargoReuData
 @inject NotificationService NotificationService
 @inject DialogService DialogService
+@inject AuthenticationStateProvider AuthStateProvider
+
 
 @attribute [Authorize(Roles = "Admin, AdminChempro, SuperUser, SemiAdmin, SuperAdmin")]
 
@@ -31,10 +33,14 @@
             <RadzenDropDown @bind-Value="area" Data="@areas" TextProperty="Nombre" ValueProperty="Id" Style="width: 100%;" Placeholder="Seleccione un centro" Disabled="@((string.IsNullOrEmpty(empresa)) || !areas.Any())" />
         </RadzenColumn>
         <RadzenColumn Width="300px">
-        <RadzenLabel Text="Excluir los días no laborables" />
-        <RadzenCheckBox @bind-Value="diasExcepcionalesLaborables"
-                    TValue="bool"
-                    Change="@(args => AbrirDialogoDiasNoLaborables(args))" />
+            <RadzenLabel Text="Excluir los días no laborables" />
+            <RadzenButton
+            Text="@((diasExcepcionalesLaborables ? "✔" : "✖") + " Días no laborables")"
+            ButtonStyle="ButtonStyle.Light"
+            Style="width: 80%; background-color: #28a745; color: white;"
+            Size="ButtonSize.Small"
+            Icon="event_busy"
+            Click="@(() => AbrirDialogoDiasNoLaborables(!diasExcepcionalesLaborables))" />
         </RadzenColumn>
         <RadzenColumn Width="150px" Style="display: flex; align-items: flex-start; padding-top: 30px;">
             <RadzenButton Text="Consultar"
@@ -58,6 +64,11 @@
                    Placeholder="Buscar cargo..."
                    Style="margin:15px 0 10px 0; width:250px;"
                    Change="@(args => FiltrarCargo())" />
+    <RadzenButton Text="Buscar Cargo"
+                    Icon="search"
+                    ButtonStyle="ButtonStyle.Secondary"
+                    Style="margin-bottom: 10px;"
+                    Click="FiltrarCargo" />
 }
 @if (registros != null && registros.Any())
 {
@@ -131,22 +142,36 @@
     private double porcentajeGlobal = 0;
     private List<Empresa> empresas = new();
     private List<Area> areas = new();
-    private List<CargoReuDTO> cargosReunion = new();
+    private List<CarReuDTO> cargosReunion = new();
     private int dataIsLoaded = 0;
-    protected override async Task OnInitializedAsync()
+    private List<Claim> claims;
+
+
+        protected override async Task OnInitializedAsync()
     {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        claims = user.Claims.ToList();
+
+        string? idEmpresaUsuario = claims.FirstOrDefault(c => c.Type.Contains("Empresa"))?.Value;
+
         cargosReunion = await CargoReuData.GetCargosReunion();
+
         empresas = cargosReunion
-            .Select(c => c.Crempresa)
+            .Where(c => c.Empresa.Contains(idEmpresaUsuario))
+            .Select(c => c.Empresa)
             .Distinct()
             .Select(e => new Empresa { Id = e, Nombre = e })
             .ToList();
+
         areas = new List<Area>();
     }
-    private void OnEmpresaChanged(object value)
+
+        private void OnEmpresaChanged(object value)
     {
         empresa = value?.ToString() ?? "";
         area = "";
+
         if (string.IsNullOrEmpty(empresa))
         {
             areas = new List<Area>();
@@ -154,14 +179,15 @@
         else
         {
             areas = cargosReunion
-                .Where(c => c.Crempresa == empresa)
-                .Select(c => c.Crarea)
+                .Where(c => c.Empresa == empresa)
+                .Select(c => c.Centro)
                 .Distinct()
                 .Select(a => new Area { Id = a, Nombre = a })
                 .ToList();
         }
         StateHasChanged();
     }
+    
 async Task AbrirDialogoDiasNoLaborables(bool value)
 {
     diasExcepcionalesLaborables = value;
