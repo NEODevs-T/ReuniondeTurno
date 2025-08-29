@@ -12,7 +12,6 @@ using ReunionWeb.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddHttpClient();
 builder.Services.AddServerSideBlazor();
@@ -30,35 +29,31 @@ builder.Services.AddScoped<ICargoReuData, CargoReuData>();
 builder.Services.AddScoped<IKsfData, KsfData>();
 builder.Services.AddScoped<IPizarraData, PizarraData>();
 builder.Services.AddScoped<IRespoReuData, RespoReuData>();
-builder.Services.AddScoped<DialogService>();//para calendario de radzen
-builder.Services.AddScoped<NotificationService>(); ;//para notificaciones de radzen
+builder.Services.AddScoped<DialogService>();
+builder.Services.AddScoped<NotificationService>();
 builder.Services.AddScoped<ICausaCalidadData, CausaCalidadData>();
-
 builder.Services.AddControllersWithViews();
 builder.Services.AddBlazorStrap();
-
-
-
-
 builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>();
 builder.Services.AddAuthorizationCore();
 builder.Services.AddBlazoredLocalStorage();
 var app = builder.Build();
 
-
-
-// Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error");
 }
 
 
+app.UsePathBase("/reuniondeturnoDESARROLLO");
 app.UseStaticFiles();
-
 app.UseRouting();
 
 app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");
-
+app.MapGet("/", context =>
+{
+    context.Response.Redirect("/reuniondeturnoDESARROLLO/es/inicio");
+    return Task.CompletedTask;
+});
 app.Run();

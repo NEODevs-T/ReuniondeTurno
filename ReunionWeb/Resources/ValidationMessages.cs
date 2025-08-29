@@ -133,6 +133,7 @@ namespace ReunionWeb.Resources
         public static string NoHayFiltros => _resourceManager.GetString("NoHayFiltros", CultureInfo.CurrentUICulture);
         public static string IniciarSesion => _resourceManager.GetString("IniciarSesion", CultureInfo.CurrentUICulture);
         public static string CerrarSesion => _resourceManager.GetString("CerrarSesion", CultureInfo.CurrentUICulture);
+        public static string Hola => _resourceManager.GetString("Hola", CultureInfo.CurrentUICulture);
 
         public static string MapResponsableKey(string nombre)
         {

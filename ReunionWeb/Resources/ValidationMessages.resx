@@ -137,4 +137,5 @@
 <data name="NoHayFiltros" xml:space="preserve"><value>No hay registros para los filtros seleccionados.</value></data>
 <data name="IniciarSesion" xml:space="preserve"><value>Iniciar Sesión</value></data>
 <data name="CerrarSesion" xml:space="preserve"><value>Cerrar Sesión</value></data>
+<data name="Hola" xml:space="preserve"><value>Hola</value></data>
 </root>
