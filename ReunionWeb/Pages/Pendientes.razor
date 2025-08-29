@@ -1,5 +1,8 @@
-﻿@page "/pendientes"
-@page "/pendientes/{accion}/{division}/{linea}/{f1}/{f2}/{tipo}/{est}"
+﻿@page "/es/pendientes"
+@page "/es/pendientes/{accion}/{division}/{linea}/{f1}/{f2}/{tipo}/{est}"
+@page "/en/remaining"
+@page "/en/remaining/{accion}/{division}/{linea}/{f1}/{f2}/{tipo}/{est}"
+
 @inject IAsistenciaReuData AsistenciaReuData
 @inject IAvisadorData AvisadorData
 @inject ICargoReuData CargoReuData
@@ -15,7 +18,11 @@
 @inject IJSRuntime IJS
 @inject NotificationService NotificationService
 
-<h4>Asuntos</h4>
+@using ReunionWeb.Resources
+@using System.Globalization
+
+    <h4>@ValidationMessages.Asuntos</h4>
+
 
 
 @if (MaestraData.centro.Count() == 0)
@@ -29,9 +36,9 @@ else
 {
     <BSRow>
         <BSCol ColumnLarge="3" ColumnSmall="6">
-            <BSLabel>Centro</BSLabel>
+            <BSLabel>@ValidationMessages.Centro</BSLabel>
             <BSInput InputType="InputType.Select" @bind-Value="IdCentro" @onchange="BuscarDivision" >>
-                <option value="0"> Seleccione </option>
+                <option value="0"> @ValidationMessages.Seleccione </option>
                 @foreach (var d in MaestraData.centro)
                 {
                     <option value="@d.IdCentro">@d.Centro</option>
@@ -40,9 +47,9 @@ else
         </BSCol>
 
         <BSCol ColumnLarge="3" ColumnSmall="6">
-            <BSLabel>División</BSLabel>
+            <BSLabel>@ValidationMessages.Division</BSLabel>
             <BSInput InputType="InputType.Select" @bind-Value="IdDiv">
-                <option value="0">Seleccione</option>
+                <option value="0">@ValidationMessages.Seleccione</option>
                 @foreach (var d in MaestraData.divisions)
                 {
                     <option value="@d.IdDivision">@d.Ndivision</option>
@@ -52,9 +59,9 @@ else
         @if (PizarraData.reudiatablas.Count() > 0 && dataIsLoaded == 2)
         {
             <BSCol ColumnLarge="3" ColumnSmall="6">
-                <BSLabel>Línea</BSLabel>
+                <BSLabel>@ValidationMessages.Linea</BSLabel>
                 <BSInput InputType="InputType.Select" @bind-Value="NombreLinea">
-                    <option value="Todo">Todo</option>
+                    <option value="Todo">@ValidationMessages.Todo</option>
                     @foreach (var d in MaestraData.lineas)
                     {
                                 <option value="@d.Linea">@d.Linea</option>
@@ -64,11 +71,11 @@ else
 
         }
         <BSCol ColumnLarge="3" ColumnSmall="6">
-            <BSLabel>Estado</BSLabel>
+            <BSLabel>@ValidationMessages.Estado</BSLabel>
             <BSInput InputType="InputType.Select" @bind-Value="Status">>
-            <option value="Todo">Todos</option>
-            <option value="Pendiente">Pendiente</option>
-            <option value="Cerrado">Cerrado</option>
+            <option value="Todo">@ValidationMessages.Todos</option>
+            <option value="Pendiente">@ValidationMessages.Pendiente</option>
+            <option value="Cerrado">@ValidationMessages.Cerrado</option>
             </BSInput>
         </BSCol>
 
@@ -87,16 +94,16 @@ else
     <BSRow>
 
         <BSCol ColumnLarge="1" ColumnSmall="">
-            <BSLabel>Código</BSLabel>
+            <BSLabel>@ValidationMessages.Codigo</BSLabel>
             <BSInput InputType="InputType.Select" IsDisabled @bind-Value="Codigo">
-                <option value="Todo">En Curso</option>
+                <option value="Todo">@ValidationMessages.EnCurso</option>
             </BSInput>
         </BSCol>
 
 
         <BSCol ColumnLarge="3" ColumnSmall="8">
             <BSRow>
-                <BSLabel>  Ordenar </BSLabel>
+                <BSLabel>  @ValidationMessages.Ordenar </BSLabel>
             </BSRow>
             @* <BSInputRadio CheckedValue="@("2")" IsDisabled=@valueodt @bind-Value="tipoconsulta" IsToggle="true" Size="Size.ExtraSmall" Color="BSColor.Success" IsOutlined="true" style="width:50%;">
                 F.Trabajo
@@ -104,7 +111,7 @@ else
             </BSInputRadio> *@
 
             <BSInputRadio CheckedValue="@("0")" @bind-Value="tipoconsulta" IsToggle="true" Size="Size.ExtraSmall" Color="BSColor.Success" IsOutlined="true" style="width:50%;">
-                F. Reunión
+                @ValidationMessages.FReunion
                 <span class="oi oi-people"></span>
             </BSInputRadio>
         </BSCol>
@@ -112,9 +119,9 @@ else
 
         <BSCol ColumnLarge="3" ColumnSmall="6">
             <BSRow>
-                <BSLabel>Buscar</BSLabel>
+                <BSLabel>@ValidationMessages.Buscar</BSLabel>
             </BSRow>
-            <BSButton IsOutlined Color="BSColor.Success" Size="Size.ExtraSmall" @onclick="Get" style="width:70%;">  Consultar <span class="oi oi-check"></span></BSButton>
+            <BSButton IsOutlined Color="BSColor.Success" Size="Size.ExtraSmall" @onclick="Get" style="width:70%;">  @ValidationMessages.Consultar <span class="oi oi-check"></span></BSButton>
          </BSCol>
 
 
@@ -138,12 +145,13 @@ else
         @if (PizarraData.reudiatablas.Count() > 0 && dataIsLoaded == 2)
         {
             <BSCol Column="3">
-    <BSLabel>Responsable</BSLabel>
+    <BSLabel>@ValidationMessages.Responsable</BSLabel>
     <BSInput InputType="InputType.Select" @bind-Value="IdResReu">
-        <option value=0>Todo</option>
+        <option value=0>@ValidationMessages.Todo</option>
         @foreach (var d in RespoReuData.resporeus.Where(x => !ResponsablesExcluidos.ContainsKey(x.IdResReu)))
         {
-            <option value="@d.IdResReu">@d.Rrnombre</option>
+            <option value="@d.IdResReu">@ValidationMessages.ResourceManager.GetString(ValidationMessages
+                .MapResponsableKey(d.Rrnombre),CultureInfo.CurrentUICulture)</option>
         }
     </BSInput>
 </BSCol>
@@ -153,17 +161,18 @@ else
     <BSLabel>Ksf</BSLabel>
 
     <BSInput InputType="InputType.Select" @bind-Value="IdKsf">
-        <option value="0">Todo</option>
+        <option value="0">@ValidationMessages.Todo</option>
         @foreach (var d in KsfData.ksfs.Where(x => x.Idksf != 6))
         {
-            <option value="@d.Idksf">@d.KsfNombre</option>
+            var texto = idPais == 5? d.KsfEnglish : d.KsfNombre;
+            <option value="@d.Idksf">@texto</option>
         }
     </BSInput>
 </BSCol>
 
 <BSCol Column="3">
     <BSRow>
-        <BSLabel>Imprimir</BSLabel>
+        <BSLabel>@ValidationMessages.Imprimir</BSLabel>
     </BSRow>
     <BSButton IsOutlined Color="BSColor.Success" Size="Size.ExtraSmall" @onclick="PrintDocument"> 
         <span class="oi oi-print"></span>
@@ -184,18 +193,18 @@ else
             <BSTHead Class="cabecera">
                 <BSTR>
                     @*<BSTD>Id</BSTD>*@
-                    <BSTD>Area</BSTD>
+                    <BSTD>@ValidationMessages.Area</BSTD>
                     <BSTD>Ksf</BSTD>
-                    <BSTD>C. Equipo</BSTD>
-                    <BSTD>Nombre del Equipo</BSTD>
-                    <BSTD Class="col-5">Discrepancia</BSTD>
+                    <BSTD>@ValidationMessages.CodigoDeEquipo</BSTD>
+                    <BSTD>@ValidationMessages.NombreDelEquipo</BSTD>
+                    <BSTD Class="col-5">@ValidationMessages.Discrepancia</BSTD>
                     @* <BSTD>Código</BSTD> *@
-                    <BSTD Class="col-4">Plan de Acción</BSTD>
-                    <BSTD>Responsable</BSTD>
-                    <BSTD>Det. Calidad</BSTD>
-                    <BSTD>Origen del Producto</BSTD>
-                    <BSTD>Estado</BSTD>
-                    <BSTD>Fecha de Reunión</BSTD>
+                    <BSTD Class="col-4">@ValidationMessages.PlanDeAccion</BSTD>
+                    <BSTD>@ValidationMessages.Responsable</BSTD>
+                    <BSTD>@ValidationMessages.DetallesDeCalidad</BSTD>
+                    <BSTD>@ValidationMessages.OrgDelProducto</BSTD>
+                    <BSTD>@ValidationMessages.Estado</BSTD>
+                    <BSTD>@ValidationMessages.FechaDeReunion</BSTD>
                     <BSTD>  </BSTD>
                 </BSTR>
             </BSTHead>
@@ -217,33 +226,62 @@ else
                     {
                         <BSTR Class="@GetClassVencido(d.RdfecReu, d.Rdstatus)">
                             <BSTD>@d.Rdarea</BSTD>
-                            <BSTD>@KsfData.ksfs.Where(x => x.Idksf == d.Idksf).FirstOrDefault()?.KsfNombre</BSTD>
+                            <BSTD>
+                                @{
+                                    var texto = idPais == 5 
+                                        ? KsfData.ksfs.Where(x => x.Idksf == d.Idksf).FirstOrDefault()?.KsfEnglish 
+                                        : KsfData.ksfs.Where(x => x.Idksf == d.Idksf).FirstOrDefault()?.KsfNombre;
+                                }
+                                @texto
+                            </BSTD>
                             <BSTD>@d.RdcodEq</BSTD>
-                            <BSTD>@(string.IsNullOrWhiteSpace(d.EnombreEam) ? "EQUIPO NO ENCONTRADO" : d.EnombreEam)</BSTD>
+                            <BSTD>
+                                @{
+                                    var texto = string.IsNullOrWhiteSpace(d.EnombreEam)
+                                        ? (idPais == 5 ? "EQUIPMENT NOT FOUND" : "EQUIPO NO ENCONTRADO")
+                                        : d.EnombreEam;
+                                }
+                                @texto
+                            </BSTD>
                             <BSTD>@d.Rddisc.ToUpperInvariant()</BSTD>
                             <BSTD Class="textotabla">@d.RdplanAcc</BSTD>
 
-                            @if (@RespoReuData.resporeus.Where(x => x.IdResReu == d.IdResReu).FirstOrDefault()?.Rrnombre == "Por Definir")
-                            {
-                                <BSTD Class="Definir">@RespoReuData.resporeus.Where(x => x.IdResReu == d.IdResReu).FirstOrDefault()?.Rrnombre</BSTD>
+                            @{
+                            var nombreResponsable = RespoReuData.resporeus.FirstOrDefault(x => x.IdResReu == d.IdResReu)?.Rrnombre;
+                            var textoTraducido = ValidationMessages.ResourceManager.GetString(
+                            ValidationMessages.MapResponsableKey(nombreResponsable),
+                            CultureInfo.CurrentUICulture
+                            );
+                            }
 
+                            @if (nombreResponsable == "Por Definir")
+                            {
+                                <BSTD Class="Definir">@textoTraducido</BSTD>
                             }
                             else
                             {
-                                <BSTD>@RespoReuData.resporeus.Where(x => x.IdResReu == d.IdResReu).FirstOrDefault()?.Rrnombre</BSTD>
+                                <BSTD>@textoTraducido</BSTD>
                             }
-
-                            <BSTD>@CausaCalidadData.causaCals.Where(x => x.IdCausaCal == d.IdCausaCal).FirstOrDefault()?.Ccnombre</BSTD>
+                            <BSTD>
+                                @{
+                                    var causa = CausaCalidadData.causaCals.FirstOrDefault(x => x.IdCausaCal == d.IdCausaCal);
+                                    var texto = idPais == 5 ? causa?.Ccenglish : causa?.Ccnombre;
+                                }
+                                @texto
+                            </BSTD>
                             <BSTD>@d.OrigenCal.ToUpperInvariant()</BSTD>
 
-                            @if (@d.Rdstatus == "Cerrado")
-                            {
-                                <BSTD Class="Cerrado">@d.Rdstatus</BSTD>
+
+                            @{
+                                var estadoTraducido = d.Rdstatus == "Cerrado"
+                                    ? (idPais == 5 ? "Closed" : "Cerrado")
+                                    : (idPais == 5 ? "Pending" : "Pendiente");
+
+                                var claseEstado = d.Rdstatus == "Cerrado" ? "Cerrado" : "pendiente";
                             }
-                            else
-                            {
-                                <BSTD Class="pendiente">@d.Rdstatus</BSTD>
-                            }
+
+                            <BSTD Class="@claseEstado">@estadoTraducido</BSTD>
+
 
                             <BSTD>@d.RdfecReu.ToString("dd/MM/yyyy")</BSTD>
                             <BSTD>
@@ -275,17 +313,17 @@ else
 
     @*Mostrar la trazabilidad*@
     <BSModal IsCentered="true" DataId="History">
-        <Header>Trazabilidad</Header>
+        <Header>@ValidationMessages.Trazabilidad</Header>
         <Content>
-            <h5>Cambios de Estados:</h5>
+            <h5>@ValidationMessages.CambiosDeEstados:</h5>
             @if (cambiostatuss.Count() > 0 && cargandocambio == true)
             {
                 <BSTable IsResponsive="true" IsStriped="true" IsBordered="true">
                     <BSTHead Class="cabecera">
                         <BSTR>
-                            <BSTD>Fecha del Cambio</BSTD>
-                            <BSTD>Status Nuevo</BSTD>
-                            <BSTD>Usuario</BSTD>
+                            <BSTD>@ValidationMessages.FechaDelCambio</BSTD>
+                            <BSTD>@ValidationMessages.StatusNuevo</BSTD>
+                            <BSTD>@ValidationMessages.Usuario</BSTD>
                         </BSTR>
                     </BSTHead>
                     <BSTBody>
@@ -293,8 +331,8 @@ else
                         {
                             <BSTR>
                                 <BSTD>@d.Cbfecha</BSTD>
-                                    <BSTD>@d.Cbstat</BSTD>
-                                    <BSTD>@d.Cbuser</BSTD>
+                                <BSTD>@ValidationMessages.ResourceManager.GetString(d.Cbstat)</BSTD>
+                                <BSTD>@d.Cbuser</BSTD>
                                 </BSTR>
                         }
                     </BSTBody>
@@ -306,7 +344,7 @@ else
             }
             else if (cambiostatuss.Count() == 0 && cargandocambio == true)
             {
-                <p>No hay registros aún...</p>
+                <p>@ValidationMessages.NoHayRegistros2</p>
             }
             @* <p></p>
             <p></p>
@@ -344,7 +382,7 @@ else
             } *@
         </Content>
         <Footer Context="modal">
-            <BSButton MarginStart="Margins.Auto" Color="BSColor.Success" @onclick="modal.HideAsync">Aceptar</BSButton>
+            <BSButton MarginStart="Margins.Auto" Color="BSColor.Success" @onclick="modal.HideAsync">@ValidationMessages.Aceptar</BSButton>
 
         </Footer>
     </BSModal>
@@ -358,7 +396,7 @@ else if (dataIsLoaded == 1 && PizarraData.reudiatablas.Count() == 0)
 else if (dataIsLoaded == 2 && PizarraData.reudiatablas.Count() == 0)
 {
 <div style="text-align: center; padding: 20px; font-size: 18px; color: rgb(102, 101, 101);">
-    <p>No hay datos para mostrar.</p>
+    <p>@ValidationMessages.NoHayDatos2</p>
 </div>
 }
 
@@ -498,6 +536,8 @@ else if (dataIsLoaded == 2 && PizarraData.reudiatablas.Count() == 0)
     [Parameter]
     public string? est { get; set; }
 
+    private int idPais { get; set; }
+    
     private string mensaje = "";
 
     int dataIsLoaded = 0;
@@ -526,8 +566,8 @@ else if (dataIsLoaded == 2 && PizarraData.reudiatablas.Count() == 0)
     List<MaestraVDTO> _divisiones = new List<MaestraVDTO>();
     private NotifiRadzen Notificar = new NotifiRadzen();//Logic para crear las noyificaciones radzen
     private bool isEditar { get; set; } = true;
-    private List<Claim> claims { get; set; }    
-
+    private List<Claim> claims { get; set; }
+    
     
     // Diccionario que asocia los IDs con sus nombres
     private readonly Dictionary<int, string> ResponsablesExcluidos = new Dictionary<int, string>
@@ -538,14 +578,6 @@ else if (dataIsLoaded == 2 && PizarraData.reudiatablas.Count() == 0)
         { 16, "Efluentes" }
     };
 
-    private async Task CreateData()
-
-    {
-        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
-        var user = authState.User;
-        claims = Enumerable.ToList(user.Claims);
-
-    }
 
 
     protected override async Task OnInitializedAsync()
@@ -628,6 +660,25 @@ else if (dataIsLoaded == 2 && PizarraData.reudiatablas.Count() == 0)
         }
     }
 
+    private async Task CreateData()
+
+    {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        claims = Enumerable.ToList(user.Claims);
+
+        var idPaisClaim = claims.FirstOrDefault(c => c.Type == "IdPais")?.Value;
+        if (int.TryParse(idPaisClaim, out int paisTemp))
+        {
+            idPais = paisTemp;
+            var culture = new System.Globalization.CultureInfo(paisTemp == 5 ? "en" : "es");
+            System.Globalization.CultureInfo.DefaultThreadCurrentCulture = culture;
+            System.Globalization.CultureInfo.DefaultThreadCurrentUICulture = culture;
+            await LocalStorage.SetItemAsync("userCulture", culture.Name);
+        }
+
+    }
+
 
     protected async Task BuscarDivision(ChangeEventArgs e)
     {
@@ -638,7 +689,7 @@ else if (dataIsLoaded == 2 && PizarraData.reudiatablas.Count() == 0)
                     MaestraData.divisions = await MaestraData.ObtenerDivisionDelCentro(IdCentro);
                 }
             }catch(Exception ex){
-                mensaje = "Error: " + ex.Message;
+                NotificationService.Notify(Notificar.Notificacion("error", "Error", ValidationMessages.SDivision));
             }
     }
 
@@ -659,7 +710,7 @@ protected async Task Get()
             }
             else
             {
-                NotificationService.Notify(Notificar.Notificacion("error", "Error", "No se encontraron datos para procesar."));
+                NotificationService.Notify(Notificar.Notificacion("error", "Error", ValidationMessages.NFDatos));
             }
 
             dataIsLoaded = 2;
@@ -667,7 +718,7 @@ protected async Task Get()
     }
     else
     {
-        NotificationService.Notify(Notificar.Notificacion("advertencia", "Atención", "Seleccione los valores en las listas"));
+        NotificationService.Notify(Notificar.Notificacion("advertencia", ValidationMessages.Atencion, ValidationMessages.SVLista));
     }
 }
 
@@ -695,13 +746,12 @@ protected async Task Get()
             }
             else
             {
-
-                NotificationService.Notify(Notificar.Notificacion("advertencia", "Atención", "Seleccione los valores en las listas"));
+                NotificationService.Notify(Notificar.Notificacion("advertencia", ValidationMessages.Atencion, ValidationMessages.SVLista));
             }
         }
         else
         {
-            NotificationService.Notify(Notificar.Notificacion("advertencia", "Ingrese ODT", ""));
+            NotificationService.Notify(Notificar.Notificacion("advertencia", ValidationMessages.ODT, ""));
         }
 
 
@@ -754,8 +804,14 @@ protected async Task Get()
 
     void Editar(int id)
     {
-        NavigationManager.NavigateTo($"EditDisc/{id}/{tipoconsulta}/{NombreLinea}/{fecha1.ToString("dd-MM-yyyy")}/{fecha2.ToString("dd-MM-yyyy")}/{Status}");
-
+        var lineaEncoded = Uri.EscapeDataString(NombreLinea ?? "");
+        var f1 = fecha1.ToString("dd-MM-yyyy");
+        var f2 = fecha2.ToString("dd-MM-yyy");
+        var estEncoded = Uri.EscapeDataString(NombreLinea ?? "");
+        var ruta = idPais == 5 ? "en" : "es";
+        var url = $"{ruta}/EditDisc/{id}/{tipoconsulta}/{lineaEncoded}/{f1}/{f2}/{estEncoded}";
+        NavigationManager.NavigateTo(url);
+        //NavigationManager.NavigateTo($"EditDisc/{id}/{tipoconsulta}/{NombreLinea}/{fecha1.ToString("dd-MM-yyyy")}/{fecha2.ToString("dd-MM-yyyy")}/{Status}");
     }
 
     protected override async Task OnParametersSetAsync()
@@ -804,36 +860,51 @@ protected async Task Get()
         }
         catch (Exception ex)
         {
-            NotificationService.Notify(Notificar.Notificacion("error", "Ocurrió un error", "Por favor recargue la página."));
+            NotificationService.Notify(Notificar.Notificacion("error", ValidationMessages.ErrorInesp, ValidationMessages.Reload));
 
         }
 
     }
-       public void ObtenerReunionesPorRol()
+
+    
+    public void ObtenerReunionesPorRol()
     {
+        foreach (var e in PizarraData.reudiatablas)
+        {
+            var nombreOriginal = RespoReuData.resporeus
+                .Where(x => x.IdResReu == e.IdResReu)
+                .FirstOrDefault()?.Rrnombre;
+
+            e.Responsable = ValidationMessages.MapResponsableKey(nombreOriginal ?? string.Empty);
+        }
+
         if (!string.IsNullOrEmpty(UsrRol))
         {
-            foreach (var e in PizarraData.reudiatablas)
-                {
-                    e.Responsable = RespoReuData.resporeus.Where(x => x.IdResReu == e.IdResReu).FirstOrDefault().Rrnombre;
-                }
-            listareu = PizarraData.reudiatablas.Where(r => r.Responsable.StartsWith(UsrRol)).ToList();
+            var rolTraducido = ValidationMessages.MapResponsableKey(UsrRol);
 
+            listareu = PizarraData.reudiatablas
+                .Where(r => r.Responsable.Contains(rolTraducido, StringComparison.OrdinalIgnoreCase))
+                .ToList();
         }
         else
         {
             listareu = PizarraData.reudiatablas;
-
         }
     }
 
 
 
-public async Task PrintDocument()
+
+
+    public async Task PrintDocument()
     {
-        //NavigationManager.NavigateTo($"TablaReunion/{IdCentro.ToString()}/{IdDiv.ToString()}/{DateTime.Now.AddDays(-1).ToString("dd-MM-yyyy")}/{DateTime.Now.ToString("dd-MM-yyyy")}/1", forceLoad: true);
-        await IJS.InvokeAsync<object>("open", new object[] { $"TablaPendientes/{IdCentro.ToString()}/{IdDiv.ToString()}/{NombreLinea}/{fecha1.ToString("dd-MM-yyyy")}/{fecha2.ToString("dd-MM-yyyy")}/{tipoconsulta}/{Status}/{IdResReu}", "_blank" });
+        string idiomaRuta = idPais == 5 ? "en" : "es";
+        string nombrePagina = idPais == 5 ? "TablePending" : "TablaPendientes";
+        string url = $"{idiomaRuta}/{nombrePagina}/{IdCentro}/{IdDiv}/{NombreLinea}/{fecha1:dd-MM-yyyy}/{fecha2:dd-MM-yyyy}/{tipoconsulta}/{Status}/{IdResReu}";
+        await IJS.InvokeAsync<object>("open", new object[] { url, "_blank" });
     }
+
+
     string GetClassVencido(DateTime ft, string estado)
     {
         return ft.Date < DateTime.Now.Date && estado.StartsWith("Pendiente") ? "Vencido" : "";

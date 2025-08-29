@@ -1,4 +1,5 @@
-﻿@page "/asistencia"
+﻿@page "/es/asistencia"
+@page "/en/attendance"
 
 @inject IAsistenciaReuData AsistenciaReuData
 @inject IAvisadorData AvisadorData
@@ -12,7 +13,13 @@
 @inject NotificationService NotificationService
 @attribute [Authorize(Roles = "Admin, AdminChempro, SuperUser, SemiAdmin, SuperAdmin")]
 
-<h3>Asistencia</h3>
+@using System.Security.Claims
+@using System.Linq
+@using System.Globalization
+@using ReunionWeb.Resources
+
+
+<h3>@ValidationMessages.Asistencia</h3>
 <p></p>
 
 
@@ -37,7 +44,7 @@
         </BSCol>
 
         <BSCol ColumnSmall="3">
-            <BSButton IsOutlined Color="BSColor.Success" Size="Size.ExtraSmall"  @onclick="Get" >   Asistentes  <span class="oi oi-check"></span></BSButton>
+            <BSButton IsOutlined Color="BSColor.Success" Size="Size.ExtraSmall"  @onclick="Get" >   @ValidationMessages.Asistentes  <span class="oi oi-check"></span></BSButton>
         </BSCol>
 
         </BSRow>
@@ -54,7 +61,7 @@
     @if (listaAsistencia.Where(c => c.Cargo.Crbloque == 1).Count() > 0)
     {
         <BSCol Column="4">
-            <BSLabel>Bloque: @bloque</BSLabel>
+            <BSLabel>@ValidationMessages.Bloque: @bloque</BSLabel>
             <BSInput InputType="InputType.Range" step="1" min="1" max="3" @bind-Value="bloque" />
         </BSCol>
     }
@@ -63,9 +70,9 @@
         <BSTable IsResponsive="true" IsStriped="true" IsBordered="true">
             <BSTHead Class="cabecera">
                 <BSTR>
-                    <BSTD>Personal</BSTD>
-                    <BSTD>Presencia</BSTD>
-                    <BSTD>Suplencia</BSTD>
+                    <BSTD>@ValidationMessages.Personal</BSTD>
+                    <BSTD>@ValidationMessages.Presencia</BSTD>
+                    <BSTD>@ValidationMessages.Suplencia</BSTD>
                 </BSTR>
             </BSTHead>
             <BSTBody>
@@ -128,7 +135,7 @@
             </BSTBody>
 
         </BSTable>
-        <BSButton IsOutlined Color="BSColor.Success" Size="Size.ExtraSmall" @onclick="Save">   Guardar  <span class="oi oi-check"></span></BSButton>
+        <BSButton IsOutlined Color="BSColor.Success" Size="Size.ExtraSmall" @onclick="Save">   @ValidationMessages.Guardar  <span class="oi oi-check"></span></BSButton>
     </BSCol>
 
 
@@ -136,7 +143,7 @@
 else if (CargoReuData.cargoreuss.Count() == 0 && dataIsLoaded == 2)
 {
 <div style="text-align: center; padding: 20px; font-size: 18px; color: rgb(102, 101, 101);">
-    <p>No se ha cargado personal a este centro.</p>
+    <p>@ValidationMessages.NoCargadoP</p>
 </div>
 }
 else if (dataIsLoaded == 1 && RespoReuData.resporeus.Count() == 0)
@@ -159,45 +166,61 @@ else if (dataIsLoaded == 1 && RespoReuData.resporeus.Count() == 0)
 
     private NotifiRadzen Notificar = new NotifiRadzen();
 
+    [CascadingParameter]
+    private Task<AuthenticationState>? authenticationState { get; set; }
+    private int idPais { get; set; }
+
     private string mensaje = "", result = "";//resultado del save;
     int dataIsLoaded = 0;
     // private string RadioValue { get; set; }
     private string Div { get; set; }
     private int bloque { get; set; } = 0;//Indica el Bloque de reunion a llenar asistencia
     private List<AsistenReuDTO> listaAsistencia { get; set; }
-
-
-
+    
     private List<Claim> claims { get; set; }
 
-    private async Task CreateData()
 
+    private async Task CreateData()
     {
         var authState = await AuthStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;
-        claims = Enumerable.ToList(user.Claims);
+        claims = user.Claims.ToList();
 
-
+        var idPaisClaim = claims.FirstOrDefault(c => c.Type == "IdPais")?.Value;
+        if (int.TryParse(idPaisClaim, out int paisTemp))
+        {
+            idPais = paisTemp;
+            var culture = new System.Globalization.CultureInfo(paisTemp == 5 ? "en" : "es");
+            System.Globalization.CultureInfo.DefaultThreadCurrentCulture = culture;
+            System.Globalization.CultureInfo.DefaultThreadCurrentUICulture = culture;
+            await LocalStorage.SetItemAsync("userCulture", culture.Name);
+        }
     }
+
 
 
     protected override async Task OnInitializedAsync()
     {
-
         await CreateData();
-        UsrRol = claims.FirstOrDefault(c => c.Type.Contains("role"))?.Value;
-        if (UsrRol == "Admin" | UsrRol == "SuperAdmin")
-        {
 
-            await MaestraData.GetCentrosxEmpresa("All" + claims.FirstOrDefault(c => c.Type.Contains("IdEmpresa"))?.Value);
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        claims = user.Claims.ToList();
+
+        UsrRol = claims.FirstOrDefault(c => c.Type.Contains("role"))?.Value;
+
+        if (UsrRol == "Admin" || UsrRol == "SuperAdmin")
+        {
+            var idEmpresa = claims.FirstOrDefault(c => c.Type.Contains("IdEmpresa"))?.Value;
+            await MaestraData.GetCentrosxEmpresa("All" + idEmpresa);
         }
         else
         {
-
-            await MaestraData.GetCentrosxEmpresa(claims.FirstOrDefault(c => c.Type.Equals("IdCentro"))?.Value);
+            var idCentro = claims.FirstOrDefault(c => c.Type.Equals("IdCentro"))?.Value;
+            await MaestraData.GetCentrosxEmpresa(idCentro);
         }
-        Div = claims.FirstOrDefault(c => c.Type.Contains("Centro"))?.Value;
 
+        Div = claims.FirstOrDefault(c => c.Type.Contains("Centro"))?.Value;
 
     }
 
@@ -236,88 +259,83 @@ else if (dataIsLoaded == 1 && RespoReuData.resporeus.Count() == 0)
         }
     }
 
-protected async Task Save()
-{
-    int time = int.Parse(DateTime.Now.ToString("hh"));
-    bool validar = true; // Verifica si marcaron suplente pero no asistente
-    int conteo = 0; // Contador para verificar si todos quedaron en null
-
-    try
+    protected async Task Save()
     {
-        @* if ((claims[4].Value == "Venezuela" && time > 8 && time < 10) || 
-            (claims[4].Value == "Colombia" && time > 8 && time < 11) || 
-            (claims[4].Value == "Guatemala" && time > 9 && time < 13) || 
-            (claims[4].Value == "Panamá" && time > 8 && time < 12))
-        { *@
-            if (bloque > 0)
-            {
-                for (int i = listaAsistencia.Count - 1; i >= 0; i--)
+        int time = int.Parse(DateTime.Now.ToString("hh"));
+        bool validar = true; // Verifica si marcaron suplente pero no asistente
+        int conteo = 0; // Contador para verificar si todos quedaron en null
+
+        try
+        {
+            @* if ((claims[4].Value == "Venezuela" && time > 8 && time < 10) || 
+                (claims[4].Value == "Colombia" && time > 8 && time < 11) || 
+                (claims[4].Value == "Guatemala" && time > 9 && time < 13) || 
+                (claims[4].Value == "Panamá" && time > 8 && time < 12))
+            { *@
+                if (bloque > 0)
                 {
-                    if (listaAsistencia[i].Cargo.Crbloque != bloque)
+                    for (int i = listaAsistencia.Count - 1; i >= 0; i--)
                     {
-                        listaAsistencia.RemoveAt(i);
+                        if (listaAsistencia[i].Cargo.Crbloque != bloque)
+                        {
+                            listaAsistencia.RemoveAt(i);
+                        }
                     }
                 }
-            }
 
-            foreach (var item in listaAsistencia)
-            {
-                // Si ArSuplente es NULL, se asigna 0 (por defecto no es suplente)
-                if (item.ArSuplente == null)  
+                foreach (var item in listaAsistencia)
                 {
-                    item.ArSuplente = 0;
+                    // Si ArSuplente es NULL, se asigna 0 (por defecto no es suplente)
+                    if (item.ArSuplente == null)  
+                    {
+                        item.ArSuplente = 0;
+                    }
+
+                    if (item.ArAsistente == 0 & item.ArSuplente == 1)
+                    {
+                        validar = false;
+                    }
+                    if (item.ArAsistente == 0)
+                    {
+                        conteo++;
+                    }
                 }
 
-                if (item.ArAsistente == 0 & item.ArSuplente == 1)
+                if (!validar)
                 {
-                    validar = false;
+                    NotificationService.Notify(Notificar.Notificacion("advertencia", ValidationMessages.Atencion, ValidationMessages.SSuplente));
                 }
-                if (item.ArAsistente == 0)
+                else if (conteo == listaAsistencia.Count)
                 {
-                    conteo++;
+                    NotificationService.Notify(Notificar.Notificacion("advertencia", ValidationMessages.Atencion, ValidationMessages.TCargos));
                 }
-            }
+                else
+                {
+                    mensaje = await AsistenciaReuData.Postasistencia(listaAsistencia);
 
-            if (!validar)
-            {
-                NotificationService.Notify(Notificar.Notificacion("advertencia", "Atención", "Si hay un suplente debe marcar la asistencia."));
-            }
-            else if (conteo == listaAsistencia.Count)
-            {
-                NotificationService.Notify(Notificar.Notificacion("advertencia", "Atención", "Todos los cargos están inasistentes."));
-            }
+                    if (mensaje == "Registro Exitoso")
+                    {
+                        NotificationService.Notify(Notificar.Notificacion("exito", ValidationMessages.RExitoso, ""));
+                    }
+                    else 
+                    {
+                        NotificationService.Notify(Notificar.Notificacion("error", "Error", ValidationMessages.EDato));
+                    }
+
+                    dataIsLoaded = 0;
+                }
+            @* }
             else
             {
-                mensaje = await AsistenciaReuData.Postasistencia(listaAsistencia);
-
-                if (mensaje == "Registro Exitoso")
-                {
-                    NotificationService.Notify(Notificar.Notificacion("exito", mensaje, ""));
-                }
-                else 
-                {
-                    NotificationService.Notify(Notificar.Notificacion("exito", "Registro Exitoso", ""));
-                }
-
+                NotificationService.Notify(Notificar.Notificacion("advertencia", ValidationMessages.Atencion, ValidationMessages.RHorario));
                 dataIsLoaded = 0;
-            }
-        @* }
-        else
+            } *@
+        }
+        catch (Exception ex)
         {
-            NotificationService.Notify(Notificar.Notificacion("advertencia", "Atención", "Solo se puede registrar en horario de reunión"));
-            dataIsLoaded = 0;
-        } *@
+                NotificationService.Notify(Notificar.Notificacion("error", "Error", ValidationMessages.EDato));
+        }
     }
-    catch (Exception ex)
-    {
-        NotificationService.Notify(Notificar.Notificacion("error", "Error al Insertar los datos, Intente de Nuevo", ex.Message));
-    }
-}
-
-
-
-
-
 
     protected async Task Reset()
     {

@@ -1,4 +1,6 @@
-﻿@page "/discrepancia"
+﻿@page "/es/discrepancia"
+@page "/en/discrepancy"
+
 
 @inject ICausaCalidadData CausaCalidadData  
 @inject IAsistenciaReuData AsistenciaReuData
@@ -13,10 +15,13 @@
 @inject ILocalStorageService LocalStorage
 @inject NotificationService NotificationService
 
+@using ReunionWeb.Resources
+@using System.Globalization
+
 @attribute [Authorize(Roles = "Admin, AdminChempro, SuperUser, SemiAdmin,SuperAdmin")]
 
 
-<h3>Discrepancias</h3>
+<h3>@ValidationMessages.Discrepancias</h3>
 
 <p></p>
 
@@ -30,9 +35,9 @@
 
     
         <BSCol Column="3">
-            <BSLabel>Centro</BSLabel>
+            <BSLabel>@ValidationMessages.Centro</BSLabel>
             <BSInput InputType="InputType.Select" @onchange="BuscarDivision" @bind-Value="idCent">
-                <option value="0">Seleccione...</option>
+                <option value="0">@ValidationMessages.Seleccione...</option>
                 @foreach (var d in MaestraData.centro)
                 {
                     <option value="@d.IdCentro">@d.Centro</option>
@@ -43,9 +48,9 @@
 
 
         <BSCol Column="3">
-            <BSLabel>División</BSLabel>
+            <BSLabel>@ValidationMessages.Division</BSLabel>
             <BSInput InputType="InputType.Select" @onchange='BuscarLinea' @bind-Value="idDiv">
-                <option value="0">Seleccione...</option>
+                <option value="0">@ValidationMessages.Seleccione...</option>
                 @if(MaestraData.centro != null){
                     @foreach (var d in MaestraData.divisions)
                     {
@@ -59,15 +64,15 @@
 
 
         <BSCol Column="3">
-            <BSLabel>Línea</BSLabel>
+            <BSLabel>@ValidationMessages.Linea</BSLabel>
             <BSInput InputType="InputType.Select" @onchange='BuscarEquipo' @bind-Value="idLin">
-                <option value="0">Seleccione...</option>
+                <option value="0">@ValidationMessages.Seleccione...</option>
                 @foreach (var d in MaestraData.lineas)
                 {
                     <option value="@d.IdLinea">@d.Linea</option>
                 }
             </BSInput>
-          
+        
         </BSCol>
 
     </BSRow>
@@ -76,7 +81,7 @@
 
         <BSCol Column="2">
             <BSRow>
-                <BSLabel>Filtrar: </BSLabel>
+                <BSLabel>@ValidationMessages.Filtrar: </BSLabel>
             </BSRow>
 
 
@@ -96,10 +101,10 @@
             @if (Reuniondb.Rdcentro != "Chempro")
             {
                 <BSCol Column="4">
-                    <BSLabel>C. Equipo</BSLabel>
+                    <BSLabel>@ValidationMessages.CodigoDeEquipo</BSLabel>
                     <BSInput InputType="InputType.Select" @bind-Value="Reuniondb.RdcodEq">
 
-                        <option value="">Seleccione...</option>
+                        <option value="">@ValidationMessages.Seleccione...</option>
                         @foreach (var d in MaestraData.equipos)
                         {
                                 <option value="@d.EcodEquiEam">@d.EcodEquiEam - @d.EnombreEam</option>
@@ -107,23 +112,23 @@
 
 
                     </BSInput>
-               
+
                 </BSCol>
 
             }
             else
             {
                 <BSCol Column="4">
-                    <BSLabel>C. Equipo</BSLabel>
+                    <BSLabel>@ValidationMessages.CodigoDeEquipo</BSLabel>
                     <BSInput InputType="InputType.Text" @bind-Value="Reuniondb.RdcodEq" />
-                  
+                
                 </BSCol>
             }
         }
         else if (MaestraData.centro.Count > 0 & tipoequipo == "1")
         {
             <BSCol Column="4">
-                <BSLabel>C. Equipo</BSLabel>
+                <BSLabel>@ValidationMessages.CodigoDeEquipo</BSLabel>
                 <div class="autocomplete">
                     <input @bind=selectedEquipoId @oninput=HandleInput class="form-control filter" />
                     @if (equiposfiltro is not null)
@@ -162,52 +167,58 @@
     <BSLabel>Ksf</BSLabel>
 
     <BSInput InputType="InputType.Select" @bind-Value="Reuniondb.Idksf">
-        <option value="">Seleccione...</option>
+        <option value="">@ValidationMessages.Seleccione...</option>
         @foreach (var d in KsfData.ksfs.Where(x => x.Idksf != 6))
         {
-            <option value="@d.Idksf">@d.KsfNombre</option>
+            var texto = idPais == 5? d.KsfEnglish : d.KsfNombre;
+            <option value="@d.Idksf">@texto</option>
         }
     </BSInput>
 </BSCol>
-
-
 
     </BSRow>
     <p></p>
     <BSRow>
         <BSCol Column="9">
-            <BSLabel>Discrepancia</BSLabel>
+            <BSLabel>@ValidationMessages.Discrepancia</BSLabel>
             <BSInput InputType="InputType.Text" @bind-Value="Reuniondb.Rddisc" />
-         
+        
         </BSCol>
     </BSRow>
 
     <p></p>
 
 <BSCol Column="3">
-    <BSLabel>Responsable</BSLabel>
+    <BSLabel>@ValidationMessages.Responsable</BSLabel>
     <BSInput InputType="InputType.Select" @bind-Value="Reuniondb.IdResReu" @onchange="OnResponsableChanged">
-        <option value="">Seleccione...</option>
+        <option value="">@ValidationMessages.Seleccione...</option>
         @foreach (var d in RespoReuData.resporeus.Where(x => !ResponsablesExcluidos.ContainsKey(x.IdResReu)))
         {
-            <option value="@d.IdResReu">@d.Rrnombre</option>
+            <option value="@d.IdResReu">@ValidationMessages.ResourceManager.GetString(ValidationMessages
+                .MapResponsableKey(d.Rrnombre),CultureInfo.CurrentUICulture)
+</option>
+
         }
     </BSInput>
 </BSCol>
+
+
+
 @if (IsObservacionesVisible)
 {
     <BSCol Column="3">
-        <BSLabel>Detalles de Calidad</BSLabel>
+        <BSLabel>@ValidationMessages.DetallesDeCalidad</BSLabel>
         <BSInput InputType="InputType.Select" @bind-Value="Reuniondb.IdCausaCal" @onchange="OnCausaCalidadChanged">
-            <option value="">Seleccione...</option>
+            <option value="">@ValidationMessages.Seleccione...</option>
             @foreach (var e in CausaCalidadData.causaCals)
             {
-                <option value="@e.IdCausaCal">@e.Ccnombre</option>
+                var texto = idPais == 5? e.Ccenglish : e.Ccnombre;
+                <option value="@e.IdCausaCal">@texto</option>
             }
         </BSInput>
     </BSCol>
     <BSCol Column="3">
-        <BSLabel>Origen del Producto</BSLabel>
+        <BSLabel>@ValidationMessages.OrgDelProducto</BSLabel>
         <BSInput InputType="InputType.Text" @bind-Value="Reuniondb.OrigenCal" />
     </BSCol>
 }
@@ -216,8 +227,8 @@
     <p></p>
 
     <BSCol Column="12">
-        <BSButton Color="BSColor.Success" Size="Size.ExtraSmall" IsDisabled="isDesactivado" IsSubmit>  Guardar <span class="oi oi-check"></span></BSButton>
-        <BSButton Color="BSColor.Primary" Size="Size.ExtraSmall" IsReset>  Borrar </BSButton>
+        <BSButton Color="BSColor.Success" Size="Size.ExtraSmall" IsDisabled="isDesactivado" IsSubmit>  @ValidationMessages.Guardar <span class="oi oi-check"></span></BSButton>
+        <BSButton Color="BSColor.Primary" Size="Size.ExtraSmall" IsReset>  @ValidationMessages.Borrar </BSButton>
     </BSCol>
 
 
@@ -229,6 +240,7 @@
     private bool IsObservacionesVisible { get; set; } = false;
     
     [CascadingParameter]
+    private Task<AuthenticationState>? authenticationState { get; set; }
     private List<Claim> claims { get; set; }
 
    // private string Ubicacion { get; set; } = null;
@@ -258,6 +270,10 @@
     string? selectedEquipoName;
     string? filter;
     bool codsuccess = false;
+
+    private int idPais { get; set; }
+
+    private string nombre  { get; set;}
 
         // Diccionario que asocia los IDs con sus nombres
     private readonly Dictionary<int, string> ResponsablesExcluidos = new Dictionary<int, string>
@@ -302,6 +318,16 @@
         var authState = await AuthStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;
         claims = user.Claims.ToList();
+
+        var idPaisClaim = claims.FirstOrDefault(c => c.Type == "IdPais")?.Value;
+        if (int.TryParse(idPaisClaim, out int paisTemp))
+        {
+            idPais = paisTemp;
+            var culture = new System.Globalization.CultureInfo(paisTemp == 5 ? "en" : "es");
+            System.Globalization.CultureInfo.DefaultThreadCurrentCulture = culture;
+            System.Globalization.CultureInfo.DefaultThreadCurrentUICulture = culture;
+            await LocalStorage.SetItemAsync("userCulture", culture.Name);
+        }
     }
 
     private void OnResponsableChanged(ChangeEventArgs e)
@@ -366,7 +392,7 @@ private void OnUbicacionChanged(ChangeEventArgs e)
         }
         catch (Exception ex)
         {
-            mensaje = "Error: " + ex.Message;
+            NotificationService.Notify(Notificar.Notificacion("error", "Error", ValidationMessages.SCentro));
         }
     }
 
@@ -381,7 +407,7 @@ private void OnUbicacionChanged(ChangeEventArgs e)
         }
         catch (Exception ex)
         {
-            mensaje = "Error: " + ex.Message;
+            NotificationService.Notify(Notificar.Notificacion("error", "Error", ValidationMessages.SDivision));
         }
     }
 
@@ -397,7 +423,7 @@ private void OnUbicacionChanged(ChangeEventArgs e)
         }
         catch (Exception ex)
         {
-            mensaje = "Error: " + ex.Message;
+            NotificationService.Notify(Notificar.Notificacion("error", "Error", ValidationMessages.SArea));
         }
     }
 
@@ -411,7 +437,7 @@ private void OnUbicacionChanged(ChangeEventArgs e)
         }
         catch (Exception ex)
         {
-            mensaje = "Error: " + ex.Message;
+            NotificationService.Notify(Notificar.Notificacion("error", "Error", ValidationMessages.ErrorInser));
         }
     }
 
@@ -419,13 +445,23 @@ private void OnUbicacionChanged(ChangeEventArgs e)
 {
     try
     {
-        Reuniondb.IdMaster = MaestraData.maestra.First(x => x.IdLinea == idLin).IdMaster;
-        Reuniondb.Rdarea = MaestraData.lineas.First(x => x.IdLinea == idLin).Linea;
+        var maestraItem = MaestraData.maestra.FirstOrDefault(x => x.IdLinea == idLin);
+        var lineaItem = MaestraData.lineas.FirstOrDefault(x => x.IdLinea == idLin);
+        var centroItem = MaestraData.centro.FirstOrDefault(c => c.IdCentro == idCent);
+
+        if (maestraItem == null || lineaItem == null || centroItem == null)
+        {
+            NotificationService.Notify(Notificar.Notificacion("error", ValidationMessages.ErrorInesp, ValidationMessages.NSDatos));
+            return;
+        }
+
+        Reuniondb.IdMaster = maestraItem.IdMaster;
+        Reuniondb.Rdarea = lineaItem.Linea;
         Reuniondb.Rdstatus = "Pendiente";
         Reuniondb.IdTipReu = reunionTurno;
         Reuniondb.IdPais = int.Parse(claims.First(c => c.Type == "IdPais")?.Value);
         Reuniondb.IdEmpresa = int.Parse(claims.First(c => c.Type == "IdEmpresa")?.Value);
-        Reuniondb.Ksf = KsfData.ksfs.First(k => k.Idksf == Reuniondb.Idksf).KsfNombre;
+        Reuniondb.Ksf = KsfData.ksfs.FirstOrDefault(k => k.Idksf == Reuniondb.Idksf)?.KsfNombre ?? "";
 
         if (tipoequipo == "1")
             Reuniondb.RdcodEq = selectedEquipoId;
@@ -435,58 +471,68 @@ private void OnUbicacionChanged(ChangeEventArgs e)
             Reuniondb.RdfecCrea = DateTime.Now;
             Reuniondb.RdfecReu = fechahoy = DateTime.Now;
             Reuniondb.RdfecTra = fechatrabajo;
-            Reuniondb.Rdcentro = MaestraData.centro.First(c => c.IdCentro == idCent).Centro;
+            Reuniondb.Rdcentro = centroItem.Centro;
             Reuniondb.Rddiv = MaestraData.divisions.FirstOrDefault(e => e.IdDivision == idDiv)?.Ndivision;
 
             if (ValidateFields(Reuniondb))
             {
-                CambStata = new CambStatDTO { Cbfecha = DateTime.Now, Cbstat = "Pendiente", Cbuser = claims[2].Value + " " + claims[3].Value };
-                CambFech = new CambFecDTO { Cffec = DateTime.Now, CffecNew = DateTime.Now, Cfuser = claims[2].Value + " " + claims[3].Value };
+                CambStata = new CambStatDTO
+                {
+                    Cbfecha = DateTime.Now,
+                    Cbstat = "Pendiente",
+                    Cbuser = claims[2].Value + " " + claims[3].Value
+                };
+
+                CambFech = new CambFecDTO
+                {
+                    Cffec = DateTime.Now,
+                    CffecNew = DateTime.Now,
+                    Cfuser = claims[2].Value + " " + claims[3].Value
+                };
 
                 var result = await AvisadorData.InsertarRegistros(new RegistroCambiosDTO(CambFech, CambStata, Reuniondb));
                 if (result)
                 {
                     ResetFields();
-                    NotificationService.Notify(Notificar.Notificacion("exito", "Registro Exitoso", ""));
+                    NotificationService.Notify(Notificar.Notificacion("exito", ValidationMessages.RExitoso, ""));
                 }
                 else
                 {
-                    NotificationService.Notify(Notificar.Notificacion("error", "Error al insertar, intente de nuevo.", ""));
+                    NotificationService.Notify(Notificar.Notificacion("error", ValidationMessages.ErrorInser, ""));
                 }
             }
         }
     }
     catch (Exception ex)
     {
-        NotificationService.Notify(Notificar.Notificacion("error", "Error inesperado.", ex.Message));
+        NotificationService.Notify(Notificar.Notificacion("error",  ValidationMessages.ErrorInesp, ex.Message));
     }
+
     IsObservacionesVisible = false;
     isDesactivado = false;
 }
-
-
 
 
     private bool ValidateFields(ReunionDTO reunion)
     {
         if (string.IsNullOrEmpty(reunion.Rdarea))
         {
-            NotifyError("Seleccione el área.");
+            NotifyError(ValidationMessages.SArea);
             return false;
         }
         if (string.IsNullOrEmpty(reunion.Rddiv))
         {
-            NotifyError("Seleccione la división.");
+            NotifyError(ValidationMessages.SDivision);
             return false;
         }
         if (string.IsNullOrEmpty(reunion.Rddisc))
         {
-            NotifyError("Llene la discrepancia.");
+            NotifyError(ValidationMessages.LlDisp);
             return false;
         }
         if (string.IsNullOrEmpty(reunion.Rdstatus))
         {
-            NotifyError("Seleccione el estado.");
+            NotifyError(ValidationMessages.SEstado);
             return false;
         }
         return true;
@@ -530,4 +576,5 @@ private void OnUbicacionChanged(ChangeEventArgs e)
         selectedEquipoName = equiposfiltro!.First(c => c.EcodEquiEam.Equals(selectedEquipoId)).EnombreEam;
         equiposfiltro = null;
     }
+
 }

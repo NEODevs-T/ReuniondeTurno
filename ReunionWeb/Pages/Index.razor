@@ -1,7 +1,97 @@
 ﻿
 @inject AuthenticationStateProvider AuthStateProvider
+@inject NavigationManager Navigation
 @page "/"
+@page "/es/inicio"
+@page "/en/home"
 
+@if (idPais == TrinidadYTobago)
+{
+<PageTitle>Index</PageTitle>
+
+<div class="p-4 text-white text-center position-relative" style="background: linear-gradient(90deg, #003300, #006600);">
+    <h1 class="fw-bold">SHIFT MEETING NEO</h1>
+    <div class="position-absolute w-100" style="height: 5px; bottom: 0; background: linear-gradient(to right, transparent, white, transparent);"></div>
+</div>
+
+<div class="boxhome p-4 shadow-lg rounded mt-3 position-relative" 
+    style="background-color: #f1f1f1; border-left: 5px solid #004d00;">
+    <div class="d-flex align-items-center">
+        <div class="flex-grow-1">
+            <h3 class="fw-bold text-dark">Meeting to ensure stability of the production process</h3>
+            <p class="text-secondary">📌 Follow-up on action plans and effective coordination.</p>
+        </div>
+        <img src="./images/LogoGris.png" width="120px" class="ms-3"/>
+</div>
+
+<style>
+    /* Estilos generales para mejorar la presentación */
+    .boxhome {
+        transition: all 0.3s ease-in-out;
+    }
+
+    .boxhome:hover {
+        background-color: #e0e0e0;
+    }
+</style>
+
+<div class="boxhome">	
+<BSCarousel HasControls="true" HasIndicators="true" >
+    <BSCarouselItem Interval="0" >
+
+        <img src="./images/vision.png" width="100%" height="90%"/>
+
+    </BSCarouselItem>
+    <BSCarouselItem Interval="0">
+        <img src="./images/valores.png" width="100%" height="90%"/>
+
+    </BSCarouselItem>   
+        @if (Pais == "Colombia")
+        {
+            <BSCarouselItem Interval="0">
+                <img src="./images/PRINCIPIOS GUIA.png" width="100%" height="90%"/>
+
+    </BSCarouselItem>
+        }
+</BSCarousel>
+
+</div>
+
+<p></p>
+<p></p>
+
+<div class="boxhome p-3 shadow-lg rounded" style="background-color: #f8f9fa; border-left: 5px solid #005f5f;">
+    <h4 class="fw-bold" style="color: #004d00;">General Rules</h4>
+
+    <div class="mt-3">
+        <p><strong>2.1</strong> <i class="bi bi-dot"></i> Start Time: <strong>09:00 am</strong>.</p>
+        <p><strong>2.2</strong> <i class="bi bi-dot"></i> Maximum Duration: <strong>20 minutes</strong>.</p>
+        <p><strong>2.3</strong> <i class="bi bi-dot"></i> The door will be closed once the meeting begins</p>
+        <p><strong>2.4</strong> <i class="bi bi-dot"></i> Entry is not allowed after the scheduled Start time.</p>
+        <p><strong>2.5</strong> <i class="bi bi-dot"></i> Attendance must be taken at the beginning of the meeting.</p>
+        <p><strong>2.6</strong> <i class="bi bi-dot"></i> Staff must be prepared with action plans.</p>
+        <p><strong>2.7</strong> <i class="bi bi-dot"></i> The Maintenance Planner will report overdue or ongoing activities <strong>Every Friday</strong>.</p>
+        <p><strong>2.8</strong> <i class="bi bi-dot"></i> <span class="text-danger fw-bold">Use of mobile phones is prohibited</span> during the meeting.</p>
+        <p><strong>2.9</strong> <i class="bi bi-dot"></i> Each Division Superintendent must hold their own meeting.</p>
+    </div>
+</div>
+
+
+<p></p>
+<p></p>
+<div class="boxhome p-4 shadow-lg rounded" style="background-color: #ffffff; border-left: 5px solid #005f5f;">
+    <h4 class="fw-bold text-uppercase" style="color: #004d00; border-bottom: 2px solid #004d00; display: inline-block; padding-bottom: 5px;">
+        Programming/Reprogramming Codes for Action Plans
+    </h4>
+
+    <div class="mt-3">
+        <p><span style="color:rgb(33, 36, 36); font-weight: bold;">1.-</span> In Progress <span class="text-muted">(The Shift Meeting uses only the "In Progress" code)</span></p>
+    </div>
+</div>
+</div>
+}
+else
+{
 <PageTitle>Index</PageTitle>
 
 <div class="p-4 text-white text-center position-relative" style="background: linear-gradient(90deg, #003300, #006600);">
@@ -91,7 +181,7 @@
     </h4>
 
     <div class="mt-3">
-        <p><span style="color:rgb(33, 36, 36); font-weight: bold;">1.-</span> En curso <span class="text-muted">(La Reunion de Turno Utiliza solamente el codigo en Curso)</span></p>
+        <p><span style="color:rgb(33, 36, 36); font-weight: bold;">1.-</span> En curso <span class="text-muted">(La Reunión de Turno Utiliza solamente el código en Curso)</span></p>
     </div>
 </div>
 
@@ -131,20 +221,44 @@
 	Auditorias: Para los planes de accion derivados de las Auditorias y cualquier responsable	
 	ESD: Para los planes de accion derivados de los equipos de solucion de discrepancias y cualquier responsable</p>	*@
 </div>			
-
+}
 @code{
     private List<Claim> claims { get; set; }
-        private string Pais { get; set; } = ""; //pais
+    private string Pais { get; set; } = ""; //pais
     private string UsrRol { get; set; } = ""; //rol para filtrar
+    private int idPais { get; set; }
+    private const int TrinidadYTobago = 5;
+
+    [CascadingParameter]
+    private Task<AuthenticationState>? authenticationState { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        await base.OnInitializedAsync();
-        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
-        var user = authState.User;
-        claims = Enumerable.ToList(user.Claims);
-        Pais = claims.FirstOrDefault(c => c.Type.Contains("Pais"))?.Value;
+        if (authenticationState is not null)
+        {
+            var authState = await authenticationState;
+            var user = authState.User;
 
+            if (user.Identity is not null && user.Identity.IsAuthenticated)
+            {
+                idPais = GetIdPais(user);
 
+                // Redirigir si está en la raíz "/"
+                var currentUri = Navigation.Uri;
+                if (Navigation.ToBaseRelativePath(currentUri) == "")
+                {
+                    if (idPais == TrinidadYTobago)
+                        Navigation.NavigateTo("/en/home", forceLoad: true);
+                    else
+                        Navigation.NavigateTo("/es/inicio", forceLoad: true);
+                }
+            }
+        }
+    }
+
+    private int GetIdPais(ClaimsPrincipal user)
+    {
+        int.TryParse(user.FindFirst(c => c.Type == "IdPais")?.Value, out int _idPais);
+        return _idPais;
     }
     }

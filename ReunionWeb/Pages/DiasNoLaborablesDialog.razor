@@ -1,19 +1,24 @@
 @using Radzen
 @inject DialogService DialogService
+@inject AuthenticationStateProvider AuthStateProvider
+@inject ILocalStorageService LocalStorage
+
+@using System.Globalization
+@using ReunionWeb.Resources
 
 <div>
-    <RadzenLabel Text="Seleccione los días no laborables que desea excluir:" />
+    <RadzenLabel Text="@ValidationMessages.SeleccioneDML" />
     <RadzenDatePicker TValue="DateTime?" @bind-Value="fechaTemp"
                       DateFormat="dd-MM-yyyy"
                       Max="@FechaMaxima"
                       Style="width: 100%;" />
 
-    <RadzenButton Text="Agregar fecha"
+    <RadzenButton Text="@ValidationMessages.AgregarFecha"
                   Icon="add"
                   Style="margin-top: 10px; margin-bottom: 10px;"
                   Click="AgregarFecha" />
 
-    <RadzenLabel Text="Fechas seleccionadas:" style="margin-top: 8px;" />
+    <RadzenLabel Text="@ValidationMessages.FechasSeleccionadas" style="margin-top: 8px;" />
     <ul>
         @foreach (var fecha in fechasTemp.OrderBy(f => f))
         {
@@ -29,20 +34,41 @@
     </ul>
 
     <div style="margin-top: 10px;">
-        <RadzenButton Text="Guardar"
+        <RadzenButton Text="@ValidationMessages.Guardar"
                       Click="Guardar"
                       Style="margin-right: 10px;" />
-        <RadzenButton Text="Cancelar"
+        <RadzenButton Text="@ValidationMessages.Cancelar"
                       ButtonStyle="ButtonStyle.Secondary"
                       Click="() => DialogService.Close()" />
     </div>
 </div>
 
 @code {
+            [CascadingParameter]
+    private Task<AuthenticationState>? authenticationState { get; set; }
+    private int idPais { get; set; }
     [Parameter] public List<DateTime> FechasIniciales { get; set; } = new();
     [Parameter] public DateTime FechaMaxima { get; set; }
     private List<DateTime> fechasTemp = new();
     private DateTime? fechaTemp;
+    private List<Claim> claims { get; set; }
+
+        private async Task CreateData()
+    {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        claims = user.Claims.ToList();
+
+        var idPaisClaim = claims.FirstOrDefault(c => c.Type == "IdPais")?.Value;
+        if (int.TryParse(idPaisClaim, out int paisTemp))
+        {
+            idPais = paisTemp;
+            var culture = new System.Globalization.CultureInfo(paisTemp == 5 ? "en" : "es");
+            System.Globalization.CultureInfo.DefaultThreadCurrentCulture = culture;
+            System.Globalization.CultureInfo.DefaultThreadCurrentUICulture = culture;
+            await LocalStorage.SetItemAsync("userCulture", culture.Name);
+        }
+    }
 
     protected override void OnInitialized()
     {

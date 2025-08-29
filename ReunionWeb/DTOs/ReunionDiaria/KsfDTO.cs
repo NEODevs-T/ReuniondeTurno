@@ -11,4 +11,6 @@ public partial class KsfDTO
     public string KsfNombre { get; set; } = null!;
 
     public bool KsfEsta { get; set; }
+
+    public string KsfEnglish { get; set; } = null!;
 }

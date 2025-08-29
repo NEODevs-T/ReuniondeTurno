@@ -1,6 +1,8 @@
 ﻿@layout EmptyLayout
-@page "/TablaReunion"
-@page "/TablaReunion/{accion}/{division}/{f1}/{f2}/{tipo}"
+@page "/es/TablaReunion"
+@page "/es/TablaReunion/{accion}/{division}/{f1}/{f2}/{tipo}"
+@page "/en/TableMeeting"
+@page "/en/TableMeeting/{accion}/{division}/{f1}/{f2}/{tipo}"
 
 @inject AuthenticationStateProvider AuthStateProvider
 @inject ILocalStorageService LocalStorage
@@ -13,6 +15,8 @@
 @inject IMaestraData MaestraData
 @inject ICausaCalidadData CausaCalidadData
 
+@using ReunionWeb.Resources
+@using System.Globalization
 
 
 
@@ -30,28 +34,28 @@
                     @*Centro para validar el comedor*@
                     @if (CentroComedor == 11)
                     {
-                        <BSTD>N. Equipo</BSTD>
+                        <BSTD>@ValidationMessages.NEquipo</BSTD>
                     }
                     else
                     {
 
                         @*  <BSTD>División</BSTD>*@
-                        <BSTD>Área</BSTD>
+                        <BSTD>@ValidationMessages.Area</BSTD>
                         <BSTD>Ksf</BSTD>
 
                     }
 
-                    <BSTD>Código de Equipo</BSTD>
-                    <BSTD ColSpan="4">Discrepancia</BSTD>
+                    <BSTD>@ValidationMessages.CodigoDeEquipo</BSTD>
+                    <BSTD ColSpan="4">@ValidationMessages.Discrepancia</BSTD>
                     @* <BSTD>Código</BSTD> *@
-                    <BSTD>Plan de Acción</BSTD>
+                    <BSTD>@ValidationMessages.PlanDeAccion</BSTD>
                     @* <BSTD>Tiempo</BSTD> *@
-                    <BSTD ColSpan="1">Responsable</BSTD>
-                    <BSTD>Det. de Calidad</BSTD>
-                    <BSTD>Org. del Producto</BSTD>
+                    <BSTD ColSpan="1">@ValidationMessages.Responsable</BSTD>
+                    <BSTD>@ValidationMessages.DetallesDeCalidad</BSTD>
+                    <BSTD>@ValidationMessages.OrgDelProducto</BSTD>
                     <BSTD>Status</BSTD>
                     @* <BSTD>ODT</BSTD> *@
-                    <BSTD>Fecha de Reunión</BSTD>@*Fecha de listo el trabajo*@
+                    <BSTD>@ValidationMessages.FechaDeReunion</BSTD>@*Fecha de listo el trabajo*@
 
 
                 </BSTR>
@@ -89,7 +93,7 @@
                                 }
                                 else
                                 {
-                                    <BSTD>No hay desctripción.</BSTD>
+                                    <BSTD>@ValidationMessages.NoHayDescrip</BSTD>
 
                                 }
 
@@ -98,7 +102,14 @@
                             {
                                 @*  <BSTD>@d.Rddiv</BSTD>*@
                                 <BSTD>@d.Rdarea</BSTD>
-                                <BSTD>@KsfData.ksfs.Where(x => x.Idksf == d.Idksf).FirstOrDefault()?.KsfNombre</BSTD>
+                                <BSTD>
+                                @{
+                                    var texto = idPais == 5 
+                                    ? KsfData.ksfs.Where(x => x.Idksf == d.Idksf).FirstOrDefault()?.KsfEnglish 
+                                    : KsfData.ksfs.Where(x => x.Idksf == d.Idksf).FirstOrDefault()?.KsfNombre;
+                                }
+                                @texto
+                                </BSTD>
                             }
 
 
@@ -123,7 +134,13 @@
                                 <BSTD ColSpan="1">@RespoReuData.resporeus.Where( x => x.IdResReu == d.IdResReu).FirstOrDefault()?.Rrnombre</BSTD>
                             }
 
-                            <BSTD>@CausaCalidadData.causaCals.Where(x => x.IdCausaCal == d.IdCausaCal).FirstOrDefault()?.Ccnombre</BSTD>
+                            <BSTD>
+                            @{
+                                var causa = CausaCalidadData.causaCals.FirstOrDefault(x => x.IdCausaCal == d.IdCausaCal);
+                                var texto = idPais == 5 ? causa?.Ccenglish : causa?.Ccnombre;
+                            }
+                            @texto
+                            </BSTD>
                             <BSTD>@d.OrigenCal.ToUpperInvariant()</BSTD>
 
                             @if (@d.Rdstatus == "Revisar")
@@ -185,6 +202,9 @@
     private List<CalendarioTrabajoDTO> calentrabajo { get; set; }
     private List<CambFecDTO> cambiofecha { get; set; }
     private List<ReunionDTO> reudiatablas { get; set; }
+    private List<Claim> claims { get; set; }
+
+    private int idPais { get; set; }
 
 
 
@@ -192,8 +212,28 @@
     int dataIsLoaded = 0;
     int CentroComedor = 0;
 
+        private async Task CreateData()
+
+    {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        claims = Enumerable.ToList(user.Claims);
+
+        var idPaisClaim = claims.FirstOrDefault(c => c.Type == "IdPais")?.Value;
+        if (int.TryParse(idPaisClaim, out int paisTemp))
+        {
+            idPais = paisTemp;
+            var culture = new System.Globalization.CultureInfo(paisTemp == 5 ? "en" : "es");
+            System.Globalization.CultureInfo.DefaultThreadCurrentCulture = culture;
+            System.Globalization.CultureInfo.DefaultThreadCurrentUICulture = culture;
+            await LocalStorage.SetItemAsync("userCulture", culture.Name);
+        }
+
+    }
+
     protected override async Task OnParametersSetAsync()
     {
+
         await KsfData.Getksf();
         await RespoReuData.GetResReu();
         await CausaCalidadData.GetCausasCalidad();
