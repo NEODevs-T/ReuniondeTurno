@@ -48,9 +48,13 @@
     }
     async Task Logout()
     {
-
         await LocalStorage.RemoveItemAsync("OdtValue");
         await LocalStorage.RemoveItemAsync("ReunionTurnoToken");
         await AuthStateProvider.GetAuthenticationStateAsync();
+        var cultureName = await LocalStorage.GetItemAsync<string>("userCulture");
+        string redirectUrl = cultureName == "en" 
+            ? $"{NavigationManager.BaseUri}en/home" 
+            : $"{NavigationManager.BaseUri}es/inicio";
+        NavigationManager.NavigateTo(redirectUrl, forceLoad: true);
     }
 }

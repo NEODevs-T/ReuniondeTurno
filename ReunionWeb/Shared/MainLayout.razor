@@ -265,7 +265,11 @@
                     user = new UserLoginDto();
                     carga = false;
                     mensaje = ""; 
-                    NavigationManager.NavigateTo("");
+                    var cultureName = idioma == 2 ? "en" : "es";
+                    string homeUrl = cultureName == "en" 
+                        ? $"{NavigationManager.BaseUri}en/home" 
+                        : $"{NavigationManager.BaseUri}es/inicio";
+                    NavigationManager.NavigateTo(homeUrl);
                 }
             }
         }
