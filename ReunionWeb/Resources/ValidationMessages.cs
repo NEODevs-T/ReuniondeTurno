@@ -102,6 +102,7 @@ namespace ReunionWeb.Resources
         public static string Seleccione => _resourceManager.GetString("Seleccione", CultureInfo.CurrentUICulture);
         public static string SeleccioneUnCentro => _resourceManager.GetString("SeleccioneUnCentro", CultureInfo.CurrentUICulture);
         public static string SeleccioneUnaDivision => _resourceManager.GetString("SeleccioneUnaDivision", CultureInfo.CurrentUICulture);
+        public static string SeleccioneUnaEmpresa => _resourceManager.GetString("SeleccioneUnaEmpresa", CultureInfo.CurrentUICulture);
         public static string StatusNuevo => _resourceManager.GetString("StatusNuevo", CultureInfo.CurrentUICulture);
         public static string Suplencia => _resourceManager.GetString("Suplencia", CultureInfo.CurrentUICulture);
         public static string TCargos => _resourceManager.GetString("TCargos", CultureInfo.CurrentUICulture);
@@ -109,7 +110,29 @@ namespace ReunionWeb.Resources
         public static string Todos => _resourceManager.GetString("Todos", CultureInfo.CurrentUICulture);
         public static string Trazabilidad => _resourceManager.GetString("Trazabilidad", CultureInfo.CurrentUICulture);
         public static string Usuario => _resourceManager.GetString("Usuario", CultureInfo.CurrentUICulture);
-
+        public static string PorcentajeDeAsistencia => _resourceManager.GetString("PorcentajeDeAsistencia", CultureInfo.CurrentUICulture);
+        public static string FechaInicial => _resourceManager.GetString("FechaInicial", CultureInfo.CurrentUICulture);
+        public static string FechaFinal => _resourceManager.GetString("FechaFinal", CultureInfo.CurrentUICulture);
+        public static string Empresa => _resourceManager.GetString("Empresa", CultureInfo.CurrentUICulture);
+        public static string ExcluirLosDiasNoLaborables => _resourceManager.GetString("ExcluirLosDiasNoLaborables", CultureInfo.CurrentUICulture);
+        public static string DiasNoLaborables => _resourceManager.GetString("DiasNoLaborables", CultureInfo.CurrentUICulture);
+        public static string FiltrarPorCargo => _resourceManager.GetString("FiltrarPorCargo", CultureInfo.CurrentUICulture);
+        public static string BuscarCargo => _resourceManager.GetString("BuscarCargo", CultureInfo.CurrentUICulture);
+        public static string BuscarCargo2 => _resourceManager.GetString("BuscarCargo", CultureInfo.CurrentUICulture);
+        public static string PorcentajeGlobal => _resourceManager.GetString("PorcentajeGlobal", CultureInfo.CurrentUICulture);
+        public static string NoExisteEseCargo => _resourceManager.GetString("NoExisteEseCargo", CultureInfo.CurrentUICulture);
+        public static string LimpiarFiltros => _resourceManager.GetString("LimpiarFiltros", CultureInfo.CurrentUICulture);
+        public static string ReunionesProgramadas => _resourceManager.GetString("ReunionesProgramadas", CultureInfo.CurrentUICulture);
+        public static string ReunionesAsistidas => _resourceManager.GetString("ReunionesAsistidas", CultureInfo.CurrentUICulture);
+        public static string PorcentajeAsistencia => _resourceManager.GetString("PorcentajeAsistencia", CultureInfo.CurrentUICulture);
+        public static string Cargo => _resourceManager.GetString("Cargo", CultureInfo.CurrentUICulture);
+        public static string SeleccioneDML => _resourceManager.GetString("SeleccioneDML", CultureInfo.CurrentUICulture);
+        public static string AgregarFecha => _resourceManager.GetString("AgregarFecha", CultureInfo.CurrentUICulture);
+        public static string FechasSeleccionadas => _resourceManager.GetString("FechasSeleccionadas", CultureInfo.CurrentUICulture);
+        public static string Cancelar => _resourceManager.GetString("Cancelar", CultureInfo.CurrentUICulture);
+        public static string NoHayFiltros => _resourceManager.GetString("NoHayFiltros", CultureInfo.CurrentUICulture);
+        public static string IniciarSesion => _resourceManager.GetString("IniciarSesion", CultureInfo.CurrentUICulture);
+        public static string CerrarSesion => _resourceManager.GetString("CerrarSesion", CultureInfo.CurrentUICulture);
 
         public static string MapResponsableKey(string nombre)
         {

@@ -22,6 +22,7 @@
 <data name="Bloque" xml:space="preserve"><value>Block</value></data>
 <data name="Borrar" xml:space="preserve"><value>Erase</value></data>
 <data name="Buscar" xml:space="preserve"><value>Search</value></data>
+<data name="Cargo" xml:space="preserve"><value>Position</value></data>
 <data name="C_Equipo" xml:space="preserve"><value>Team Code</value></data>
 <data name="Calidad" xml:space="preserve"><value>Quality</value></data>
 <data name="CambiosDeEstados" xml:space="preserve"><value>Changes of Status</value></data>
@@ -106,6 +107,7 @@
 <data name="Seleccione" xml:space="preserve"><value>Select</value></data>
 <data name="SeleccioneUnCentro" xml:space="preserve"><value>Select a center</value></data>
 <data name="SeleccioneUnaDivision" xml:space="preserve"><value>Select a division</value></data>
+<data name="SeleccioneUnaEmpresa" xml:space="preserve"><value>Select a company</value></data>
 <data name="StatusNuevo" xml:space="preserve"><value>New Status</value></data>
 <data name="Suplencia" xml:space="preserve"><value>Substitution</value></data>
 <data name="TCargos" xml:space="preserve"><value>All positions are marked as absent.</value></data>
@@ -113,4 +115,26 @@
 <data name="Todos" xml:space="preserve"><value>All</value></data>
 <data name="Trazabilidad" xml:space="preserve"><value>Traceability</value></data>
 <data name="Usuario" xml:space="preserve"><value>User</value></data>
+<data name="PorcentajeDeAsistencia" xml:space="preserve"><value>Attendance Percentage</value></data>
+<data name="FechaInicial" xml:space="preserve"><value>Start Date</value></data>
+<data name="FechaFinal" xml:space="preserve"><value>End Date</value></data>
+<data name="Empresa" xml:space="preserve"><value>Company</value></data>
+<data name="ExcluirLosDiasNoLaborables" xml:space="preserve"><value>Exclude Non-Working Days</value></data>
+<data name="DiasNoLaborables" xml:space="preserve"><value>Non-Working Days</value></data>
+<data name="FiltrarPorCargo" xml:space="preserve"><value>Filter by Position</value></data>
+<data name="BuscarCargo" xml:space="preserve"><value>Search Position</value></data>
+<data name="PorcentajeGlobal" xml:space="preserve"><value>Global Percentage</value></data>
+<data name="NoExisteEseCargo" xml:space="preserve"><value>That position does not exist</value></data>
+<data name="LimpiarFiltros" xml:space="preserve"><value>Clear Filters</value></data>
+<data name="ReunionesProgramadas" xml:space="preserve"><value>Scheduled Meetings</value></data>
+<data name="ReunionesAsistidas" xml:space="preserve"><value>Attended Meetings</value></data>
+<data name="PorcentajeAsistencia" xml:space="preserve"><value>Attendance Percentage</value></data>
+<data name="BuscarCargo2" xml:space="preserve"><value>Search Position ...</value></data>
+<data name="SeleccioneDML" xml:space="preserve"><value>Select the non-working days you want to exclude:</value></data>
+<data name="AgregarFecha" xml:space="preserve"><value>Add date</value></data>
+<data name="FechasSeleccionadas" xml:space="preserve"><value>Selected datess</value></data>
+<data name="Cancelar" xml:space="preserve"><value>Cancel</value></data>
+<data name="NoHayFiltros" xml:space="preserve"><value>There are no records for the selected filters.</value></data>
+<data name="IniciarSesion" xml:space="preserve"><value>Sign In</value></data>
+<data name="CerrarSesion" xml:space="preserve"><value>Sign Out</value></data>
 </root>

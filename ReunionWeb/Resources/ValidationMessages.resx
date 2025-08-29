@@ -22,6 +22,7 @@
 <data name="Bloque" xml:space="preserve"><value>Bloque</value></data>
 <data name="Borrar" xml:space="preserve"><value>Borrar</value></data>
 <data name="Buscar" xml:space="preserve"><value>Buscar</value></data>
+<data name="Cargo" xml:space="preserve"><value>Cargo</value></data>
 <data name="C_Equipo" xml:space="preserve"><value>Código de Equipo</value></data>
 <data name="Calidad" xml:space="preserve"><value>Calidad</value></data>
 <data name="CambiosDeEstados" xml:space="preserve"><value>Cambios de Estados</value></data>
@@ -106,6 +107,7 @@
 <data name="Seleccione" xml:space="preserve"><value>Seleccione</value></data>
 <data name="SeleccioneUnCentro" xml:space="preserve"><value>Seleccione un centro</value></data>
 <data name="SeleccioneUnaDivision" xml:space="preserve"><value>Seleccione una división</value></data>
+<data name="SeleccioneUnaEmpresa" xml:space="preserve"><value>Seleccione una empresa</value></data>
 <data name="StatusNuevo" xml:space="preserve"><value>Status Nuevo</value></data>
 <data name="Suplencia" xml:space="preserve"><value>Suplencia</value></data>
 <data name="TCargos" xml:space="preserve"><value>Todos los cargos están inasistentes.</value></data>
@@ -113,4 +115,26 @@
 <data name="Todos" xml:space="preserve"><value>Todos</value></data>
 <data name="Trazabilidad" xml:space="preserve"><value>Trazabilidad</value></data>
 <data name="Usuario" xml:space="preserve"><value>Usuario</value></data>
+<data name="PorcentajeDeAsistencia" xml:space="preserve"><value>Porcentaje de Asistencia</value></data>
+<data name="FechaInicial" xml:space="preserve"><value>Fecha Inicial</value></data>
+<data name="FechaFinal" xml:space="preserve"><value>Fecha Final</value></data>
+<data name="Empresa" xml:space="preserve"><value>Empresa</value></data>
+<data name="ExcluirLosDiasNoLaborables" xml:space="preserve"><value>Excluir los días no laborables</value></data>
+<data name="DiasNoLaborables" xml:space="preserve"><value>Días no laborables</value></data>
+<data name="FiltrarPorCargo" xml:space="preserve"><value>Filtrar por Cargo</value></data>
+<data name="BuscarCargo" xml:space="preserve"><value>Buscar Cargo</value></data>
+<data name="PorcentajeGlobal" xml:space="preserve"><value>Porcentaje Global</value></data>
+<data name="NoExisteEseCargo" xml:space="preserve"><value>No existe ese Cargo</value></data>
+<data name="LimpiarFiltros" xml:space="preserve"><value>Limpiar Filtros</value></data>
+<data name="ReunionesProgramadas" xml:space="preserve"><value>Reuniones Programadas</value></data>
+<data name="ReunionesAsistidas" xml:space="preserve"><value>Reuniones Asistidas</value></data>
+<data name="PorcentajeAsistencia" xml:space="preserve"><value>Porcentaje Asistencia</value></data>
+<data name="BuscarCargo2" xml:space="preserve"><value>Buscar Cargo ...</value></data>
+<data name="SeleccioneDML" xml:space="preserve"><value>Seleccione los días no laborables que desea excluir:</value></data>
+<data name="AgregarFecha" xml:space="preserve"><value>Agregar fecha</value></data>
+<data name="FechasSeleccionadas" xml:space="preserve"><value>Fechas seleccionadas</value></data>
+<data name="Cancelar" xml:space="preserve"><value>Cancelar</value></data>
+<data name="NoHayFiltros" xml:space="preserve"><value>No hay registros para los filtros seleccionados.</value></data>
+<data name="IniciarSesion" xml:space="preserve"><value>Iniciar Sesión</value></data>
+<data name="CerrarSesion" xml:space="preserve"><value>Cerrar Sesión</value></data>
 </root>

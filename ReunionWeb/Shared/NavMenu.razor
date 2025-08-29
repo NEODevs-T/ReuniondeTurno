@@ -37,6 +37,11 @@
                     </NavLink>
                 </div>
                 <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="@porcentajeAsistenciaHref">
+                        <span class="oi oi-graph" aria-hidden="true"></span> <strong>@labelPorcentajeAsistencia</strong>
+                    </NavLink>
+                </div>
+                <div class="nav-item px-3">
                     <NavLink class="nav-link" href="@reunionHref">
                         <span class="oi oi-people" aria-hidden="true"></span> <strong>@labelPizarra</strong>
                     </NavLink>
@@ -118,6 +123,7 @@
     private string labelDiscrepancias = "Discrepancias";
     private string labelAsuntos = "Asuntos";
     private string labelAsistencia = "Asistencia";
+    private string labelPorcentajeAsistencia= "Porcentaje Asistencia";
     private string labelPizarra = "Pizarra";
     private string labelHistoricos = "Históricos";
     private string discrepanciaHref = "/es/discrepancia";
@@ -125,6 +131,7 @@
     private string asistenciaHref = "/es/asistencia";
     private string reunionHref = "/es/reunion";
     private string historicosHref = "/es/historicos";
+    private string porcentajeAsistenciaHref = "/es/porcentajeasistencia";
     private const int TrinidadYTobago = 5;
 
     protected override async Task OnInitializedAsync()
@@ -141,11 +148,13 @@
                 labelDiscrepancias = "Discrepancy";
                 labelAsuntos = "Issues";
                 labelAsistencia = "Attendance";
+                labelPorcentajeAsistencia = "Attendance Percentage ";
                 labelPizarra = "Whiteboard";
                 labelHistoricos = "Historical";
                 discrepanciaHref = "/en/discrepancy";
                 pendientesHref = "/en/remaining";
                 asistenciaHref = "/en/attendance";
+                porcentajeAsistenciaHref = "/en/attendancepercentage";
                 reunionHref = "/en/meeting";
                 historicosHref = "/en/historical";
 
