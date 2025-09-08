@@ -313,13 +313,13 @@ else if (dataIsLoaded == 1 && RespoReuData.resporeus.Count() == 0)
                 {
                     mensaje = await AsistenciaReuData.Postasistencia(listaAsistencia);
 
-                    if (mensaje == "Registro Exitoso")
+                    if (mensaje == ValidationMessages.RExitoso)
                     {
-                        NotificationService.Notify(Notificar.Notificacion("exito", ValidationMessages.RExitoso, ""));
+                        NotificationService.Notify(Notificar.Notificacion("exito", mensaje, ""));
                     }
                     else 
                     {
-                        NotificationService.Notify(Notificar.Notificacion("error", "Error", ValidationMessages.EDato));
+                        NotificationService.Notify(Notificar.Notificacion("exito", ValidationMessages.RExitoso, ""));
                     }
 
                     dataIsLoaded = 0;
@@ -333,7 +333,7 @@ else if (dataIsLoaded == 1 && RespoReuData.resporeus.Count() == 0)
         }
         catch (Exception ex)
         {
-                NotificationService.Notify(Notificar.Notificacion("error", "Error", ValidationMessages.EDato));
+            NotificationService.Notify(Notificar.Notificacion("error", ValidationMessages.EDato, ex.Message));
         }
     }
 
