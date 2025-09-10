@@ -1,28 +1,51 @@
 ﻿<CascadingAuthenticationState>
-<Router AppAssembly="@typeof(App).Assembly">
-    <Found Context="routeData">
-        <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
+    @inject NavigationManager Navigation
+    @inject UserCultureService UserCulture
 
-            <NotAuthorized>
-              
-              
-               <BSAlert Color="BSColor.Warning" Heading="4">
-                    <Header> No está autorizado.</Header>
+    @code {
+        protected override void OnInitialized()
+        {
+            // Aplica cultura inicial
+            UserCulture.SetCultureFromUrl(Navigation.Uri);
+
+            // Suscribirse a cambios de URL
+            Navigation.LocationChanged += OnLocationChanged;
+        }
+
+        private void OnLocationChanged(object sender, Microsoft.AspNetCore.Components.Routing.LocationChangedEventArgs e)
+        {
+            UserCulture.SetCultureFromUrl(e.Location);
+            StateHasChanged(); // Forzar re-render con la nueva cultura
+        }
+
+        public void Dispose()
+        {
+            // Evitar fugas de memoria
+            Navigation.LocationChanged -= OnLocationChanged;
+        }
+    }
+
+    <Router AppAssembly="@typeof(App).Assembly">
+        <Found Context="routeData">
+            <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
+                <NotAuthorized>
+                    <BSAlert Color="BSColor.Warning" Heading="4">
+                        <Header>No está autorizado.</Header>
                         <Content>
                             <p></p>
                             <hr>
-                             <p class="mb-0"> Si requiere acceso a este moódulo consulte con los desarrolladores.</p>
+                            <p class="mb-0">Si requiere acceso a este módulo consulte con los desarrolladores.</p>
                         </Content>
-               </BSAlert>
-            </NotAuthorized>
-        </AuthorizeRouteView>
-        <FocusOnNavigate RouteData="@routeData" Selector="h1" />
-    </Found>
-    <NotFound>
-        <PageTitle>Not found</PageTitle>
-        <LayoutView Layout="@typeof(MainLayout)">
-            <p role="alert">No existe ninguna página.</p>
-        </LayoutView>
-    </NotFound>
-</Router>
+                    </BSAlert>
+                </NotAuthorized>
+            </AuthorizeRouteView>
+            <FocusOnNavigate RouteData="@routeData" Selector="h1" />
+        </Found>
+        <NotFound>
+            <PageTitle>Not found</PageTitle>
+            <LayoutView Layout="@typeof(MainLayout)">
+                <p role="alert">No existe ninguna página.</p>
+            </LayoutView>
+        </NotFound>
+    </Router>
 </CascadingAuthenticationState>
