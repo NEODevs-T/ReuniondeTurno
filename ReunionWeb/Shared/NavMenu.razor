@@ -1,5 +1,6 @@
 ﻿@inject AuthenticationStateProvider AuthenticationStateProvider
 @inject NavigationManager Nav
+@inject UsuarioContexto UsuarioContexto 
 
 <div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
@@ -142,24 +143,28 @@
 
         if (user.Identity is not null && user.Identity.IsAuthenticated)
         {
-            int.TryParse(user.FindFirst(c => c.Type == "IdPais")?.Value, out int idPais);
-
-            if (idPais == TrinidadYTobago)
+            var idPaisClaim = user.FindFirst(c => c.Type == "IdPais")?.Value;
+            if (int.TryParse(idPaisClaim, out int paisTemp))
             {
-                labelDiscrepancias = "Discrepancy";
-                labelAsuntos = "Issues";
-                labelAsistencia = "Attendance";
-                labelPorcentajeAsistencia = "Attendance Percentage ";
-                labelPizarra = "Whiteboard";
-                labelHistoricos = "Historical";
-                homeHref = "en/home";
-                discrepanciaHref = "en/discrepancy";
-                pendientesHref = "en/remaining";
-                asistenciaHref = "en/attendance";
-                porcentajeAsistenciaHref = "en/attendancepercentage";
-                reunionHref = "en/meeting";
-                historicosHref = "en/historical";
+                UsuarioContexto.IdPais = paisTemp;
 
+                if (UsuarioContexto.IdPais == TrinidadYTobago)
+                {
+                    labelDiscrepancias = "Discrepancy";
+                    labelAsuntos = "Issues";
+                    labelAsistencia = "Attendance";
+                    labelPorcentajeAsistencia = "Attendance Percentage";
+                    labelPizarra = "Whiteboard";
+                    labelHistoricos = "Historical";
+
+                    homeHref = "en/home";
+                    discrepanciaHref = "en/discrepancy";
+                    pendientesHref = "en/remaining";
+                    asistenciaHref = "en/attendance";
+                    porcentajeAsistenciaHref = "en/attendancepercentage";
+                    reunionHref = "en/meeting";
+                    historicosHref = "en/historical";
+                }
             }
         }
     }

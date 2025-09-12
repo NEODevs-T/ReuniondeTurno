@@ -1,6 +1,9 @@
 ﻿@page "/es/asistencia"
 @page "/en/attendance"
 
+@inherits ReunionWeb.Shared.LocalizedComponentBase
+@inject CultureService CultureService
+@inject UsuarioContexto UsuarioContexto
 @inject IAsistenciaReuData AsistenciaReuData
 @inject IAvisadorData AvisadorData
 @inject ICargoReuData CargoReuData
@@ -189,11 +192,9 @@ else if (dataIsLoaded == 1 && RespoReuData.resporeus.Count() == 0)
         var idPaisClaim = claims.FirstOrDefault(c => c.Type == "IdPais")?.Value;
         if (int.TryParse(idPaisClaim, out int paisTemp))
         {
-            idPais = paisTemp;
-            var culture = new System.Globalization.CultureInfo(paisTemp == 5 ? "en" : "es");
-            System.Globalization.CultureInfo.DefaultThreadCurrentCulture = culture;
-            System.Globalization.CultureInfo.DefaultThreadCurrentUICulture = culture;
-            await LocalStorage.SetItemAsync("userCulture", culture.Name);
+            UsuarioContexto.idPais = paisTemp;
+            CultureService.SetCulture(UsuarioContexto.CultureName);
+            await LocalStorage.SetItemAsync("userCulture", UsuarioContexto.CultureName);
         }
     }
 
@@ -222,6 +223,8 @@ else if (dataIsLoaded == 1 && RespoReuData.resporeus.Count() == 0)
 
         Div = claims.FirstOrDefault(c => c.Type.Contains("Centro"))?.Value;
 
+        CultureInfo.CurrentCulture = CultureService.UserCulture;
+        CultureInfo.CurrentUICulture = CultureService.UserCulture;
     }
 
     protected async Task Get()
