@@ -146,9 +146,9 @@
             var idPaisClaim = user.FindFirst(c => c.Type == "IdPais")?.Value;
             if (int.TryParse(idPaisClaim, out int paisTemp))
             {
-                UsuarioContexto.IdPais = paisTemp;
+                UsuarioContexto.idPais = paisTemp;
 
-                if (UsuarioContexto.IdPais == TrinidadYTobago)
+                if (UsuarioContexto.idPais == TrinidadYTobago)
                 {
                     labelDiscrepancias = "Discrepancy";
                     labelAsuntos = "Issues";

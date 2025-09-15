@@ -53,9 +53,9 @@ app.UseRouting();
 
 app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");
-app.MapGet("/", context =>
+/*app.MapGet("/", context =>
 {
     context.Response.Redirect("/reuniondeturnoDESARROLLO/es/inicio");
     return Task.CompletedTask;
-});
+});*/
 app.Run();

@@ -2,7 +2,9 @@
 @inject DialogService DialogService
 @inject AuthenticationStateProvider AuthStateProvider
 @inject ILocalStorageService LocalStorage
-
+@inherits ReunionWeb.Shared.LocalizedComponentBase
+@inject CultureService CultureService
+@inject UsuarioContexto UsuarioContexto
 @using System.Globalization
 @using ReunionWeb.Resources
 
@@ -53,7 +55,7 @@
     private DateTime? fechaTemp;
     private List<Claim> claims { get; set; }
 
-        private async Task CreateData()
+    private async Task CreateData()
     {
         var authState = await AuthStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;
@@ -62,18 +64,24 @@
         var idPaisClaim = claims.FirstOrDefault(c => c.Type == "IdPais")?.Value;
         if (int.TryParse(idPaisClaim, out int paisTemp))
         {
-            idPais = paisTemp;
-            var culture = new System.Globalization.CultureInfo(paisTemp == 5 ? "en" : "es");
-            System.Globalization.CultureInfo.DefaultThreadCurrentCulture = culture;
-            System.Globalization.CultureInfo.DefaultThreadCurrentUICulture = culture;
-            await LocalStorage.SetItemAsync("userCulture", culture.Name);
+            UsuarioContexto.idPais = paisTemp;
+            CultureService.SetCulture(UsuarioContexto.CultureName);
+            await LocalStorage.SetItemAsync("userCulture", UsuarioContexto.CultureName);
         }
     }
 
-    protected override void OnInitialized()
+            protected override async Task OnInitializedAsync()
     {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        claims = user.Claims.ToList();
+
         fechasTemp = new List<DateTime>(FechasIniciales);
+
+        CultureInfo.CurrentCulture = CultureService.UserCulture;
+        CultureInfo.CurrentUICulture = CultureService.UserCulture;
     }
+
 
     void AgregarFecha()
     {

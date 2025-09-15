@@ -6,6 +6,10 @@
 @inject NotificationService NotificationService
 @using System.Globalization
 
+@inject NavigationManager Navigation
+@inject UsuarioContexto UsuarioContexto
+
+
 <PageTitle>ReunionWeb</PageTitle>
 
 <RadzenNotification />
@@ -193,6 +197,16 @@
         var culture = new CultureInfo(cultureName);
         CultureInfo.DefaultThreadCurrentCulture = culture;
         CultureInfo.DefaultThreadCurrentUICulture = culture;
+        var usuario = await UsuarioContexto.ObtenerUsuarioActualAsync();
+
+        if (usuario?.idPais == 5)
+        {
+            Navigation.NavigateTo("/en/home", true);
+        }
+        else
+        {
+            Navigation.NavigateTo("/es/inicio", true);
+        }
     }
 
     protected async Task HandleLogin(EditContext e)
