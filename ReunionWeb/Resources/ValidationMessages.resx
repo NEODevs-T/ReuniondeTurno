@@ -48,12 +48,10 @@
 <data name="Estado" xml:space="preserve"><value>Estado</value></data>
 <data name="Exito" xml:space="preserve"><value>exito</value></data>
 <data name="FReunion" xml:space="preserve"><value>F. Reunión</value></data>
-<data name="F_Reunion" xml:space="preserve"><value>Fecha de Reunión</value></data>
-<data name="FechaDeReunion" xml:space="preserve"><value>Fecha de Reunion</value></data>
+<data name="FechaDeReunion" xml:space="preserve"><value>Fecha de Reunión</value></data>
 <data name="FechaDelCambio" xml:space="preserve"><value>Fecha del Cambio</value></data>
 <data name="Filtrar" xml:space="preserve"><value>Filtrar</value></data>
 <data name="FiltroFechaDeReunion" xml:space="preserve"><value>Filtro Fecha de Reunión</value></data>
-<data name="FormatoDeReunion" xml:space="preserve"><value>Formato de Reunion</value></data>
 <data name="Guardar" xml:space="preserve"><value>Guardar</value></data>
 <data name="Hasta" xml:space="preserve"><value>Hasta</value></data>
 <data name="hay_registros_vencidos" xml:space="preserve"><value>Hay registros vencidos.</value></data>

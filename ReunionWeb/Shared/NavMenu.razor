@@ -143,28 +143,25 @@
 
         if (user.Identity is not null && user.Identity.IsAuthenticated)
         {
-            var idPaisClaim = user.FindFirst(c => c.Type == "IdPais")?.Value;
-            if (int.TryParse(idPaisClaim, out int paisTemp))
-            {
-                UsuarioContexto.IdPais = paisTemp;
+            int.TryParse(user.FindFirst(c => c.Type == "IdPais")?.Value, out int idPais);
 
-                if (UsuarioContexto.IdPais == TrinidadYTobago)
-                {
-                    labelDiscrepancias = "Discrepancy";
-                    labelAsuntos = "Issues";
+            if (idPais == TrinidadYTobago)
+            {
+                    labelDiscrepancias = "Add Issue";
+                    labelAsuntos = "List of Issues";
                     labelAsistencia = "Attendance";
                     labelPorcentajeAsistencia = "Attendance Percentage";
                     labelPizarra = "Whiteboard";
                     labelHistoricos = "Historical";
 
                     homeHref = "en/home";
-                    discrepanciaHref = "en/discrepancy";
+                    discrepanciaHref = "en/issue";
                     pendientesHref = "en/remaining";
                     asistenciaHref = "en/attendance";
                     porcentajeAsistenciaHref = "en/attendancepercentage";
                     reunionHref = "en/meeting";
                     historicosHref = "en/historical";
-                }
+                
             }
         }
     }
