@@ -603,12 +603,15 @@ else if (dataIsLoaded == 2 && PizarraData.reudiatablas.Count() == 0)
             
             case "Admin":
             case "SuperAdmin":
+            case "PrimeUser":
                 UsrAdmin = "SuperAdmin";
+                UsrAdmin = "PrimeUser";
                 await MaestraData.GetCentrosxEmpresa("All" + claims.FirstOrDefault(c => c.Type.Contains("IdEmpresa"))?.Value);
                 break;
 
             case "SemiAdmin":
                 UsrAdmin = "SemiAdmin";
+                UsrAdmin = "PrimeUser";
                 await MaestraData.GetCentrosxEmpresa(claims.FirstOrDefault(c => c.Type.Contains("IdCentro"))?.Value);
                 break;
 

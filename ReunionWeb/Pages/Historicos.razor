@@ -242,7 +242,7 @@
                 </Template>
             </RadzenDataGridColumn>
 
-            <RadzenDataGridColumn TItem="ReunionDTO" Title="@ValidationMessages.FormatoDeReunion" Property="RdfecReu" Width="90px">
+            <RadzenDataGridColumn TItem="ReunionDTO" Title="@ValidationMessages.FechaDeReunion" Property="RdfecReu" Width="90px">
                 <Template>
                     @context.RdfecReu.ToString("dd/MM/yyyy")
                 </Template>
@@ -355,6 +355,7 @@ else if (dataIsLoaded == 2 && tabla.Count() == 0)
         {
             case "Admin":
             case "SuperAdmin":
+            case "PrimeUser":
                 UsrAdmin = "SuperAdmin";
                 await MaestraData.GetCentrosxEmpresa("All" + claims.FirstOrDefault(c => c.Type.Contains("IdEmpresa"))?.Value);
                 break;

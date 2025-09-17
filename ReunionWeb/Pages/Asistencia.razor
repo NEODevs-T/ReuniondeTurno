@@ -3,7 +3,6 @@
 
 @inherits ReunionWeb.Shared.LocalizedComponentBase
 @inject CultureService CultureService
-@inject UsuarioContexto UsuarioContexto
 @inject IAsistenciaReuData AsistenciaReuData
 @inject IAvisadorData AvisadorData
 @inject ICargoReuData CargoReuData
@@ -14,7 +13,7 @@
 @inject AuthenticationStateProvider AuthStateProvider
 @inject ILocalStorageService LocalStorage
 @inject NotificationService NotificationService
-@attribute [Authorize(Roles = "Admin, AdminChempro, SuperUser, SemiAdmin, SuperAdmin")]
+@attribute [Authorize(Roles = "Admin, AdminChempro, PrimeUser, SuperUser, SemiAdmin, SuperAdmin")]
 
 @using System.Security.Claims
 @using System.Linq
@@ -181,21 +180,25 @@ else if (dataIsLoaded == 1 && RespoReuData.resporeus.Count() == 0)
     private List<AsistenReuDTO> listaAsistencia { get; set; }
     
     private List<Claim> claims { get; set; }
-
-
+    
+    
     private async Task CreateData()
     {
         var authState = await AuthStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;
-        claims = user.Claims.ToList();
+        claims = Enumerable.ToList(user.Claims);
 
         var idPaisClaim = claims.FirstOrDefault(c => c.Type == "IdPais")?.Value;
         if (int.TryParse(idPaisClaim, out int paisTemp))
         {
-            UsuarioContexto.idPais = paisTemp;
-            CultureService.SetCulture(UsuarioContexto.CultureName);
-            await LocalStorage.SetItemAsync("userCulture", UsuarioContexto.CultureName);
+            idPais = paisTemp;
+            var culture = new System.Globalization.CultureInfo(paisTemp == 5 ? "en" : "es");
+            System.Globalization.CultureInfo.DefaultThreadCurrentCulture = culture;
+            System.Globalization.CultureInfo.DefaultThreadCurrentUICulture = culture;
+            await LocalStorage.SetItemAsync("userCulture", culture.Name);
         }
+
+
     }
 
 
@@ -210,7 +213,7 @@ else if (dataIsLoaded == 1 && RespoReuData.resporeus.Count() == 0)
 
         UsrRol = claims.FirstOrDefault(c => c.Type.Contains("role"))?.Value;
 
-        if (UsrRol == "Admin" || UsrRol == "SuperAdmin")
+        if (UsrRol == "Admin" || UsrRol == "SuperAdmin" || UsrRol == "PrimeUser")
         {
             var idEmpresa = claims.FirstOrDefault(c => c.Type.Contains("IdEmpresa"))?.Value;
             await MaestraData.GetCentrosxEmpresa("All" + idEmpresa);
@@ -223,8 +226,6 @@ else if (dataIsLoaded == 1 && RespoReuData.resporeus.Count() == 0)
 
         Div = claims.FirstOrDefault(c => c.Type.Contains("Centro"))?.Value;
 
-        CultureInfo.CurrentCulture = CultureService.UserCulture;
-        CultureInfo.CurrentUICulture = CultureService.UserCulture;
     }
 
     protected async Task Get()

@@ -48,12 +48,10 @@ namespace ReunionWeb.Resources
         public static string Estado => _resourceManager.GetString("Estado", CultureInfo.CurrentUICulture);
         public static string Exito => _resourceManager.GetString("Exito", CultureInfo.CurrentUICulture);
         public static string FReunion => _resourceManager.GetString("FReunion", CultureInfo.CurrentUICulture);
-        public static string F_Reunion => _resourceManager.GetString("F_Reunion", CultureInfo.CurrentUICulture);
         public static string FechaDeReunion => _resourceManager.GetString("FechaDeReunion", CultureInfo.CurrentUICulture);
         public static string FechaDelCambio => _resourceManager.GetString("FechaDelCambio", CultureInfo.CurrentUICulture);
         public static string Filtrar => _resourceManager.GetString("Filtrar", CultureInfo.CurrentUICulture);
         public static string FiltroFechaDeReunion => _resourceManager.GetString("FiltroFechaDeReunion", CultureInfo.CurrentUICulture);
-        public static string FormatoDeReunion => _resourceManager.GetString("FormatoDeReunion", CultureInfo.CurrentUICulture);
         public static string Guardar => _resourceManager.GetString("Guardar", CultureInfo.CurrentUICulture);
         public static string Hasta => _resourceManager.GetString("Hasta", CultureInfo.CurrentUICulture);
         public static string hay_registros_vencidos => _resourceManager.GetString("hay_registros_vencidos", CultureInfo.CurrentUICulture);

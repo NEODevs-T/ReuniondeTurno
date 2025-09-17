@@ -1,9 +1,8 @@
 ﻿@page "/es/discrepancia"
-@page "/en/discrepancy"
+@page "/en/issue"
 
 @inherits ReunionWeb.Shared.LocalizedComponentBase
 @inject CultureService CultureService
-@inject UsuarioContexto UsuarioContexto
 @inject ICausaCalidadData CausaCalidadData  
 @inject IAsistenciaReuData AsistenciaReuData
 @inject IAvisadorData AvisadorData
@@ -20,7 +19,7 @@
 @using ReunionWeb.Resources
 @using System.Globalization
 
-@attribute [Authorize(Roles = "Admin, AdminChempro, SuperUser, SemiAdmin,SuperAdmin")]
+@attribute [Authorize(Roles = "Admin, AdminChempro, PrimeUser, SuperUser, SemiAdmin,SuperAdmin")]
 
 
 <h3>@ValidationMessages.Discrepancias</h3>
@@ -172,7 +171,7 @@
         <option value="">@ValidationMessages.Seleccione...</option>
         @foreach (var d in KsfData.ksfs.Where(x => x.Idksf != 6))
         {
-            var texto = UsuarioContexto.idPais == 5? d.KsfEnglish : d.KsfNombre;
+            var texto = idPais == 5? d.KsfEnglish : d.KsfNombre;
             <option value="@d.Idksf">@texto</option>
         }
     </BSInput>
@@ -214,7 +213,7 @@
             <option value="">@ValidationMessages.Seleccione...</option>
             @foreach (var e in CausaCalidadData.causaCals)
             {
-                var texto = UsuarioContexto.idPais == 5? e.Ccenglish : e.Ccnombre;
+                var texto = idPais == 5? e.Ccenglish : e.Ccnombre;
                 <option value="@e.IdCausaCal">@texto</option>
             }
         </BSInput>
@@ -297,7 +296,7 @@
         Reuniondb.IdCausaCal = 1;
         Reuniondb.OrigenCal = "";
 
-        if (claims != null && claims.Count > 1 && (claims[1]?.Value == "Admin" || claims[1]?.Value == "SuperAdmin"))
+        if (claims != null && claims.Count > 1 && (claims[1]?.Value == "Admin" || claims[1]?.Value == "SuperAdmin" || claims[1]?.Value == "PrimeUser"))
         {
             await MaestraData.GetCentrosxEmpresa("All" + claims[10].Value);
         }
@@ -315,24 +314,25 @@
             .Where(a => a.Rrdesc == claims.FirstOrDefault(c => c.Type.Contains("Empresa"))?.Value || string.IsNullOrEmpty(a.Rrdesc))
             .ToList();
 
-        CultureInfo.CurrentCulture = CultureService.UserCulture;
-        CultureInfo.CurrentUICulture = CultureService.UserCulture;
     }
 
     private async Task CreateData()
-{
-    var authState = await AuthStateProvider.GetAuthenticationStateAsync();
-    var user = authState.User;
-    claims = user.Claims.ToList(); // ← Aquí está el cambio importante
 
-    var idPaisClaim = claims.FirstOrDefault(c => c.Type == "IdPais")?.Value;
-    if (int.TryParse(idPaisClaim, out int paisTemp))
     {
-        UsuarioContexto.idPais = paisTemp;
-        CultureService.SetCulture(UsuarioContexto.CultureName);
-        await LocalStorage.SetItemAsync("userCulture", UsuarioContexto.CultureName);
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        claims = Enumerable.ToList(user.Claims);
+
+        var idPaisClaim = claims.FirstOrDefault(c => c.Type == "IdPais")?.Value;
+        if (int.TryParse(idPaisClaim, out int paisTemp))
+        {
+            idPais = paisTemp;
+            var culture = new System.Globalization.CultureInfo(paisTemp == 5 ? "en" : "es");
+            System.Globalization.CultureInfo.DefaultThreadCurrentCulture = culture;
+            System.Globalization.CultureInfo.DefaultThreadCurrentUICulture = culture;
+            await LocalStorage.SetItemAsync("userCulture", culture.Name);
+        }
     }
-}
 
 
     private void OnResponsableChanged(ChangeEventArgs e)
