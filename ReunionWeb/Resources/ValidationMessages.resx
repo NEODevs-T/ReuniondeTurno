@@ -23,7 +23,7 @@
 <data name="Borrar" xml:space="preserve"><value>Borrar</value></data>
 <data name="Buscar" xml:space="preserve"><value>Buscar</value></data>
 <data name="Cargo" xml:space="preserve"><value>Cargo</value></data>
-<data name="C_Equipo" xml:space="preserve"><value>Código de Equipo</value></data>
+<data name="Calendario" xml:space="preserve"><value>Calendario</value></data>
 <data name="Calidad" xml:space="preserve"><value>Calidad</value></data>
 <data name="CambiosDeEstados" xml:space="preserve"><value>Cambios de Estados</value></data>
 <data name="Centro" xml:space="preserve"><value>Centro</value></data>
@@ -48,12 +48,11 @@
 <data name="Estado" xml:space="preserve"><value>Estado</value></data>
 <data name="Exito" xml:space="preserve"><value>exito</value></data>
 <data name="FReunion" xml:space="preserve"><value>F. Reunión</value></data>
-<data name="F_Reunion" xml:space="preserve"><value>Fecha de Reunión</value></data>
-<data name="FechaDeReunion" xml:space="preserve"><value>Fecha de Reunion</value></data>
+<data name="FechaDeReunion" xml:space="preserve"><value>Fecha de Reunión</value></data>
 <data name="FechaDelCambio" xml:space="preserve"><value>Fecha del Cambio</value></data>
 <data name="Filtrar" xml:space="preserve"><value>Filtrar</value></data>
 <data name="FiltroFechaDeReunion" xml:space="preserve"><value>Filtro Fecha de Reunión</value></data>
-<data name="FormatoDeReunion" xml:space="preserve"><value>Formato de Reunion</value></data>
+<data name="FiltroFechaDeTrabajo" xml:space="preserve"><value>Filtro Fecha de Trabajo</value></data>
 <data name="Guardar" xml:space="preserve"><value>Guardar</value></data>
 <data name="Hasta" xml:space="preserve"><value>Hasta</value></data>
 <data name="hay_registros_vencidos" xml:space="preserve"><value>Hay registros vencidos.</value></data>
@@ -74,7 +73,7 @@
 <data name="NoHayDatos2" xml:space="preserve"><value>No hay datos para mostrar.</value></data>
 <data name="NoHayDescrip" xml:space="preserve"><value>No hay desctripción.</value></data>
 <data name="NoHayEquipos" xml:space="preserve"><value>No hay equipos.</value></data>
-<data name="NoHayRegistros" xml:space="preserve"><value>No hay registros.</value></data>
+<data name="NoHayRegistros" xml:space="preserve"><value>No hay registros disponibles.</value></data>
 <data name="NoHayRegistros2" xml:space="preserve"><value>No hay registros aún...</value></data>
 <data name="NombreDelEquipo" xml:space="preserve"><value>Nombre del Equipo</value></data>
 <data name="NuevaFechaDeTrabajo" xml:space="preserve"><value>Nueva Fecha de Trabajo</value></data>
