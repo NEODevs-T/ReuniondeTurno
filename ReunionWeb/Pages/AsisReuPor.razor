@@ -35,7 +35,7 @@
                             Change="@(args => OnEmpresaChanged(args))" />
         </RadzenColumn>
         <RadzenColumn Width="250px">
-            <RadzenLabel Text="@ValidationMessages.Area" />
+            <RadzenLabel Text="@ValidationMessages.Centro" />
             <RadzenDropDown @bind-Value="area" Data="@areas" TextProperty="Nombre" ValueProperty="Id" Style="width: 100%;" Placeholder="@ValidationMessages.SeleccioneUnCentro" Disabled="@((string.IsNullOrEmpty(empresa)) || !areas.Any())" />
         </RadzenColumn>
         <RadzenColumn Width="300px">
