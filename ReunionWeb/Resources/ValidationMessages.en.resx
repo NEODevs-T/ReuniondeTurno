@@ -51,6 +51,7 @@
 <data name="FReunion" xml:space="preserve"><value>M. Date</value></data>
 <data name="FechaDeReunion" xml:space="preserve"><value>Metting Date</value></data>
 <data name="FechaDelCambio" xml:space="preserve"><value>Change Date</value></data>
+<data name="Ficha" xml:space="preserve"><value>Worksheet</value></data>
 <data name="Filtrar" xml:space="preserve"><value>To Filter</value></data>
 <data name="FiltroFechaDeReunion" xml:space="preserve"><value>Meeting Date Filter</value></data>
 <data name="FiltroFechaDeTrabajo" xml:space="preserve"><value>Work Date Filter</value></data>

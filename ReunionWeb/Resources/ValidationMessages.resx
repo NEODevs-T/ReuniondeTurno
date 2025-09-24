@@ -50,6 +50,7 @@
 <data name="FReunion" xml:space="preserve"><value>F. Reunión</value></data>
 <data name="FechaDeReunion" xml:space="preserve"><value>Fecha de Reunión</value></data>
 <data name="FechaDelCambio" xml:space="preserve"><value>Fecha del Cambio</value></data>
+<data name="Ficha" xml:space="preserve"><value>Ficha</value></data>
 <data name="Filtrar" xml:space="preserve"><value>Filtrar</value></data>
 <data name="FiltroFechaDeReunion" xml:space="preserve"><value>Filtro Fecha de Reunión</value></data>
 <data name="FiltroFechaDeTrabajo" xml:space="preserve"><value>Filtro Fecha de Trabajo</value></data>

@@ -51,6 +51,7 @@ namespace ReunionWeb.Resources
         public static string F_Reunion => _resourceManager.GetString("F_Reunion", CultureInfo.CurrentUICulture);
         public static string FechaDeReunion => _resourceManager.GetString("FechaDeReunion", CultureInfo.CurrentUICulture);
         public static string FechaDelCambio => _resourceManager.GetString("FechaDelCambio", CultureInfo.CurrentUICulture);
+        public static string Ficha => _resourceManager.GetString("Ficha", CultureInfo.CurrentUICulture);
         public static string Filtrar => _resourceManager.GetString("Filtrar", CultureInfo.CurrentUICulture);
         public static string FiltroFechaDeReunion => _resourceManager.GetString("FiltroFechaDeReunion", CultureInfo.CurrentUICulture);
         public static string FormatoDeReunion => _resourceManager.GetString("FormatoDeReunion", CultureInfo.CurrentUICulture);
