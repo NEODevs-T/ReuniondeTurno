@@ -16,7 +16,7 @@
 
 
 
-@attribute [Authorize(Roles = "Admin, AdminChempro, SuperUser, SemiAdmin,SuperAdmin")]
+@attribute [Authorize(Roles = "Admin, AdminChempro, SuperUser, SemiAdmin, SuperAdmin, PrimeUser")]
 
 <!DOCTYPE html>
 <html lang="es">
@@ -227,7 +227,7 @@ ition: relative; /* o absolute, dependiendo de tus necesidades */
 
 
         PizarraData.reudiatablas = new List<ReunionDTO>();
-        if (claims != null && claims.Count > 1 && (claims[1]?.Value == "Admin" || claims[1]?.Value == "SuperAdmin"))
+        if (claims != null && claims.Count > 1 && (claims[1]?.Value == "Admin" || claims[1]?.Value == "SuperAdmin" || claims[1]?.Value == "PrimeUser"))
         {
 
             await MaestraData.GetCentrosxEmpresa("All" + claims[10].Value);

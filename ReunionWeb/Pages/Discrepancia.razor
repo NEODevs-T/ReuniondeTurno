@@ -18,7 +18,7 @@
 @using ReunionWeb.Resources
 @using System.Globalization
 
-@attribute [Authorize(Roles = "Admin, AdminChempro, SuperUser, SemiAdmin,SuperAdmin")]
+@attribute [Authorize(Roles = "Admin, AdminChempro, SuperUser, SemiAdmin, SuperAdmin, PrimeUser")]
 
 
 <h3>@ValidationMessages.Discrepancias</h3>
@@ -294,7 +294,7 @@
         Reuniondb.IdCausaCal = 1;
         Reuniondb.OrigenCal = "";
 
-        if (claims != null && claims.Count > 1 && (claims[1]?.Value == "Admin" || claims[1]?.Value == "SuperAdmin"))
+        if (claims != null && claims.Count > 1 && (claims[1]?.Value == "Admin" || claims[1]?.Value == "SuperAdmin" || claims[1]?.Value == "PrimeUser"))
         {
             await MaestraData.GetCentrosxEmpresa("All" + claims[10].Value);
         }
