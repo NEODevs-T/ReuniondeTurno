@@ -20,6 +20,9 @@ builder.Services.AddHttpClient<IAPIReunionService, APIReunionService>(client =>
 {
     client.BaseAddress = new Uri("http://neo.paveca.com.ve/ReunionApi/");
 });
+
+builder.Services.AddScoped<ITranslationService, TranslationService>();
+builder.Services.AddScoped<LocalizationService>();
 builder.Services.AddScoped<CultureService>();
 builder.Services.AddScoped<UsuarioContexto>();
 builder.Services.AddScoped<IDbReunionService, DbReunionService>();
@@ -40,6 +43,16 @@ builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>
 builder.Services.AddAuthorizationCore();
 builder.Services.AddBlazoredLocalStorage();
 var app = builder.Build();
+
+var supportedCultures = new[] { "es", "en" };
+var localizationOptions = new RequestLocalizationOptions()
+    .SetDefaultCulture("es")
+    .AddSupportedCultures(supportedCultures)
+    .AddSupportedUICultures(supportedCultures);
+
+localizationOptions.RequestCultureProviders.Insert(0, new TokenCultureProvider());
+
+app.UseRequestLocalization(localizationOptions);
 
 if (!app.Environment.IsDevelopment())
 {

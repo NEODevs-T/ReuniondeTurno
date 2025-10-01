@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Components.Authorization;
 
-namespace LibroNovedades.Services
+namespace ReunionWeb.Services
 {
     public class LocalizationService
     {
