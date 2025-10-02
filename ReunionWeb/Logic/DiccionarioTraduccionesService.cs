@@ -15,11 +15,11 @@ namespace ReunionWeb.Services
         {
             var claves = new[]
             {
-            "BuscarCargo", "BuscarCargo2", "Cargo", "Centro", "Consultar","DiasNoLaborables", "Empresa",
-            "ExcluirLosDiasNoLaborables", "FechaFinal", "FechaInicial", "FiltrarPorCargo",
-            "LimpiarFiltros", "NoExisteEseCargo", "NoHayFiltros", "PorcentajeAsistencia",
-            "PorcentajeDeAsistencia", "PorcentajeGlobal", "ReunionesAsistidas",
-            "ReunionesProgramadas", "SeleccioneUnCentro", "SeleccioneUnaEmpresa"
+            "Atencion", "Asistencia", "Asistentes", "Bloque", "BuscarCargo", "BuscarCargo2", "Cargo", "Centro", "Consultar","DiasNoLaborables", "Empresa",
+            "ExcluirLosDiasNoLaborables", "FechaFinal", "FechaInicial", "FiltrarPorCargo", "Guardar",
+            "LimpiarFiltros", "NoCargadoP", "NoExisteEseCargo",  "NoHayFiltros", "Personal", "PorcentajeAsistencia",
+            "PorcentajeDeAsistencia", "PorcentajeGlobal", "Presencia", "ReunionesAsistidas",
+            "ReunionesProgramadas", "SeleccioneUnCentro", "SeleccioneUnaEmpresa", "SSuplente", "Suplencia", "TCargos", "RExitoso", "RHorario", "EDato"
         };
 
             foreach (var clave in claves)
