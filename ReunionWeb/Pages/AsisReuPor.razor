@@ -3,138 +3,152 @@
 
 @using Radzen
 @using System.Linq
+@using System.Globalization
+@using ReunionWeb.Resources
+@using ReunionWeb.Services
+
+@inject IDiccionarioTraduccionesService DiccionarioTraduccionesService
 @inject IAsistenciaReuData AsistenciaReuData
 @inject ICargoReuData CargoReuData
 @inject NotificationService NotificationService
 @inject DialogService DialogService
 @inject AuthenticationStateProvider AuthStateProvider
-
 @inject ILocalStorageService LocalStorage
+@inject LocalizationService LocalizationService
+@inject ITranslationService Translator
 
-@using System.Globalization
-@using ReunionWeb.Resources
+
 
 
 @attribute [Authorize(Roles = "Admin, AdminChempro, SuperUser, SemiAdmin, SuperAdmin, PrimeUser")]
 
-<h3>@ValidationMessages.PorcentajeDeAsistencia</h3>
 
-<RadzenTemplateForm Data="@this">
-    <RadzenRow>
-        <RadzenColumn Width="200px">
-            <RadzenLabel Text="@ValidationMessages.FechaInicial" />
-            <RadzenDatePicker @bind-Value="fechaInicio" DateFormat="dd-MM-yyyy" Style="width: 100%;" Max="@DateTime.Today" />
-        </RadzenColumn>
-        <RadzenColumn Width="200px">
-            <RadzenLabel Text="@ValidationMessages.FechaFinal" />
-            <RadzenDatePicker @bind-Value="fechaFin" DateFormat="dd-MM-yyyy" Style="width: 100%;" Max="@DateTime.Today" />
-        </RadzenColumn>
-        <RadzenColumn Width="250px">
-            <RadzenLabel Text="@ValidationMessages.Empresa" />
-            <RadzenDropDown @bind-Value="empresa" Data="@empresas" TextProperty="Nombre" ValueProperty="Id" Style="width: 100%;" Placeholder="@ValidationMessages.SeleccioneUnaEmpresa"
-                            Change="@(args => OnEmpresaChanged(args))" />
-        </RadzenColumn>
-        <RadzenColumn Width="250px">
-            <RadzenLabel Text="@ValidationMessages.Centro" />
-            <RadzenDropDown @bind-Value="area" Data="@areas" TextProperty="Nombre" ValueProperty="Id" Style="width: 100%;" Placeholder="@ValidationMessages.SeleccioneUnCentro" Disabled="@((string.IsNullOrEmpty(empresa)) || !areas.Any())" />
-        </RadzenColumn>
-        <RadzenColumn Width="300px">
-            <RadzenLabel Text="@ValidationMessages.ExcluirLosDiasNoLaborables" />
-            <RadzenButton
-            Text="@($"{(diasExcepcionalesLaborables ? "✔" : "✖")} {ValidationMessages.DiasNoLaborables}")"
-            ButtonStyle="ButtonStyle.Light"
-            Style="width: 80%; background-color: #28a745; color: white;"
-            Size="ButtonSize.Small"
-            Icon="event_busy"
-            Click="@(() => AbrirDialogoDiasNoLaborables(!diasExcepcionalesLaborables))" />
-        </RadzenColumn>
-        <RadzenColumn Width="150px" Style="display: flex; align-items: flex-start; padding-top: 30px;">
-            <RadzenButton Text="@ValidationMessages.Consultar"
-                  Click="@(async () => await Consultar())"
-                  Style="width: 100%; background-color: #28a745; color: white;"
-                  Icon="search"
-                  Disabled="@(fechaInicio > fechaFin || fechaInicio == default || fechaFin == default || string.IsNullOrEmpty(empresa) || string.IsNullOrEmpty(area))" />
-            </RadzenColumn>
-        </RadzenRow>
-    </RadzenTemplateForm>
-@if (dataIsLoaded == 1)
+
+@if (!traduccionesCargadas || dataIsLoaded == 1)
 {
-    <div class="loader"></div>
-}
-@if (dataIsLoaded == 2 && registros != null)
-{
-@if (registros != null && registros.Any())
-{
-    <RadzenLabel Text="@ValidationMessages.FiltrarPorCargo" Style="margin-right:10px;" />
-    <RadzenTextBox @bind-Value="filtroCargo"
-                   Placeholder="@ValidationMessages.BuscarCargo2"
-                   Style="margin:15px 0 10px 0; width:250px;"
-                   Change="@(args => FiltrarCargo())" />
-    <RadzenButton Text="@ValidationMessages.BuscarCargo"
-                    Icon="search"
-                    ButtonStyle="ButtonStyle.Secondary"
-                    Style="margin-bottom: 10px;"
-                    Click="FiltrarCargo" />
-}
-@if (registros != null && registros.Any())
-{
-    <div style="margin-bottom:10px;">
-        <b>Porcentaje Global:</b>
-        <b>@ValidationMessages.PorcentajeGlobal:</b>
-        <span style="color:@GetColor(porcentajeGlobal)">
-            @porcentajeGlobal.ToString("0.00")%
-        </span>
+    <div class="loading-container">
+        <div class="loader"></div>
     </div>
-    @if (registrosFiltrados != null && !registrosFiltrados.Any() && !string.IsNullOrEmpty(filtroCargo))
-    {
-        <div style="color:red; margin-bottom:10px;">@ValidationMessages.NoExisteEseCargo .</div>
-    }
-    <RadzenButton Text="@ValidationMessages.LimpiarFiltros"
-                    Icon="refresh"
-                    ButtonStyle="ButtonStyle.Secondary"
-                    Style="margin-bottom: 10px;"
-                    Click="LimpiarFiltros" />
-    <RadzenDataGrid Data="@registrosFiltrados"
-                    TItem="AsistenReuPorcetanjeDTO"
-                    ShowPagingSummary="true"
-                    PageSize="10"
-                    Responsive="true"
-                    AllowFiltering="false"
-                    AllowSorting="true"
-                    EmptyText="">
-        <Columns>
-            <RadzenDataGridColumn TItem="AsistenReuPorcetanjeDTO" Property="Nombre" Title="@ValidationMessages.Cargo" Frozen="true" />
-            <RadzenDataGridColumn TItem="AsistenReuPorcetanjeDTO" Property="ReunionesProgramadas" Title="@ValidationMessages.ReunionesProgramadas" />
-            <RadzenDataGridColumn TItem="AsistenReuPorcetanjeDTO" Property="ReunionesAsistidas" Title="@ValidationMessages.ReunionesAsistidas">
-                <FooterTemplate>
-                    <b>Total: @registrosFiltrados.Sum(x => x.ReunionesAsistidas)</b>
-                </FooterTemplate>
-            </RadzenDataGridColumn>
-            <RadzenDataGridColumn TItem="AsistenReuPorcetanjeDTO" Property="PorcentajeAsistencia" Title="@ValidationMessages.PorcentajeAsistencia">
-                <Template Context="data">
-                    <span title="@ValidationMessages.PorcentajeAsistencia"
-                            style="color:@GetColor(data.PorcentajeAsistencia); font-weight:bold;">
-                        @data.PorcentajeAsistencia.ToString("0.00")%
-                        @if (data.PorcentajeAsistencia >= 90)
-                        {
-                            <RadzenIcon Icon="check_circle" Style="color:green;vertical-align:middle;" />
-                        }
-                        else if (data.PorcentajeAsistencia < 60)
-                        {
-                            <RadzenIcon Icon="error" Style="color:red;vertical-align:middle;" />
-                        }
-                    </span>
-                </Template>
-            </RadzenDataGridColumn>
-        </Columns>
-    </RadzenDataGrid>
-    }
-    else if (registros != null)
-    {
-        <div style="margin-top:20px;">@ValidationMessages.NoHayFiltros</div>
-    }
-}    
+}
+else
+{
+    <h3>@DiccionarioTraduccionesService.Traducciones["PorcentajeDeAsistencia"]</h3>
 
+    <RadzenTemplateForm Data="@this">
+        <RadzenRow>
+            <RadzenColumn Width="200px">
+                <RadzenLabel Text="@DiccionarioTraduccionesService.Traducciones["FechaInicial"]" />
+                <RadzenDatePicker @bind-Value="fechaInicio" DateFormat="dd-MM-yyyy" Style="width: 100%;" Max="@DateTime.Today" />
+            </RadzenColumn>
+            <RadzenColumn Width="200px">
+                <RadzenLabel Text="@DiccionarioTraduccionesService.Traducciones["FechaFinal"]" />
+                <RadzenDatePicker @bind-Value="fechaFin" DateFormat="dd-MM-yyyy" Style="width: 100%;" Max="@DateTime.Today" />
+            </RadzenColumn>
+            <RadzenColumn Width="250px">
+                <RadzenLabel Text="@DiccionarioTraduccionesService.Traducciones["Empresa"]" />
+                <RadzenDropDown @bind-Value="empresa" Data="@empresas" TextProperty="Nombre" ValueProperty="Id" Style="width: 100%;" Placeholder="@DiccionarioTraduccionesService.Traducciones["SeleccioneUnaEmpresa"]"
+                                Change="@(args => OnEmpresaChanged(args))" />
+            </RadzenColumn>
+            <RadzenColumn Width="250px">
+                <RadzenLabel Text="@DiccionarioTraduccionesService.Traducciones["Centro"]" />
+                <RadzenDropDown @bind-Value="area" Data="@areas" TextProperty="Nombre" ValueProperty="Id" Style="width: 100%;" Placeholder="@DiccionarioTraduccionesService.Traducciones["SeleccioneUnCentro"]" Disabled="@((string.IsNullOrEmpty(empresa)) || !areas.Any())" />
+            </RadzenColumn>
+            <RadzenColumn Width="300px">
+                <RadzenLabel Text="@DiccionarioTraduccionesService.Traducciones["ExcluirLosDiasNoLaborables"]" />
+                <RadzenButton
+                Text="@($"{(diasExcepcionalesLaborables ? "✔" : "✖")} {DiccionarioTraduccionesService.Traducciones["DiasNoLaborables"]}")"
+                ButtonStyle="ButtonStyle.Light"
+                Style="width: 80%; background-color: #28a745; color: white;"
+                Size="ButtonSize.Small"
+                Icon="event_busy"
+                Click="@(() => AbrirDialogoDiasNoLaborables(!diasExcepcionalesLaborables))" />
+            </RadzenColumn>
+            <RadzenColumn Width="150px" Style="display: flex; align-items: flex-start; padding-top: 30px;">
+                <RadzenButton Text="@DiccionarioTraduccionesService.Traducciones["Consultar"]"
+                    Click="@(async () => await Consultar())"
+                    Style="width: 100%; background-color: #28a745; color: white;"
+                    Icon="search"
+                    Disabled="@(fechaInicio > fechaFin || fechaInicio == default || fechaFin == default || string.IsNullOrEmpty(empresa) || string.IsNullOrEmpty(area))" />
+                </RadzenColumn>
+            </RadzenRow>
+        </RadzenTemplateForm>
+    @if (dataIsLoaded == 1)
+    {
+        <div class="loader"></div>
+    }
+    @if (dataIsLoaded == 2 && registros != null)
+    {
+    @if (registros != null && registros.Any())
+    {
+        <RadzenLabel Text="@DiccionarioTraduccionesService.Traducciones["FiltrarPorCargo"]" Style="margin-right:10px;" />
+        <RadzenTextBox @bind-Value="filtroCargo"
+                    Placeholder="@DiccionarioTraduccionesService.Traducciones["BuscarCargo2"]"
+                    Style="margin:15px 0 10px 0; width:250px;"
+                    Change="@(args => FiltrarCargo())" />
+        <RadzenButton Text="@DiccionarioTraduccionesService.Traducciones["BuscarCargo"]"
+                        Icon="search"
+                        ButtonStyle="ButtonStyle.Secondary"
+                        Style="margin-bottom: 10px;"
+                        Click="FiltrarCargo" />
+    }
+    @if (registros != null && registros.Any())
+    {
+        <div style="margin-bottom:10px;">
+            <b>@DiccionarioTraduccionesService.Traducciones["PorcentajeGlobal"]:</b>
+            <span style="color:@GetColor(porcentajeGlobal)">
+                @porcentajeGlobal.ToString("0.00")%
+            </span>
+        </div>
+        @if (registrosFiltrados != null && !registrosFiltrados.Any() && !string.IsNullOrEmpty(filtroCargo))
+        {
+            <div style="color:red; margin-bottom:10px;">@DiccionarioTraduccionesService.Traducciones["NoExisteEseCargo"] .</div>
+        }
+        <RadzenButton Text="@DiccionarioTraduccionesService.Traducciones["LimpiarFiltros"]"
+                        Icon="refresh"
+                        ButtonStyle="ButtonStyle.Secondary"
+                        Style="margin-bottom: 10px;"
+                        Click="LimpiarFiltros" />
+        <RadzenDataGrid Data="@registrosFiltrados"
+                        TItem="AsistenReuPorcetanjeDTO"
+                        ShowPagingSummary="true"
+                        PageSize="10"
+                        Responsive="true"
+                        AllowFiltering="false"
+                        AllowSorting="true"
+                        EmptyText="">
+            <Columns>
+                <RadzenDataGridColumn TItem="AsistenReuPorcetanjeDTO" Property="Nombre" Title="@DiccionarioTraduccionesService.Traducciones["Cargo"]" Frozen="true" />
+                <RadzenDataGridColumn TItem="AsistenReuPorcetanjeDTO" Property="ReunionesProgramadas" Title="@DiccionarioTraduccionesService.Traducciones["ReunionesProgramadas"]" />
+                <RadzenDataGridColumn TItem="AsistenReuPorcetanjeDTO" Property="ReunionesAsistidas" Title="@DiccionarioTraduccionesService.Traducciones["ReunionesAsistidas"]">
+                    <FooterTemplate>
+                        <b>Total: @registrosFiltrados.Sum(x => x.ReunionesAsistidas)</b>
+                    </FooterTemplate>
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="AsistenReuPorcetanjeDTO" Property="PorcentajeAsistencia" Title="@DiccionarioTraduccionesService.Traducciones["PorcentajeAsistencia"]">
+                    <Template Context="data">
+                        <span title="@DiccionarioTraduccionesService.Traducciones["PorcentajeAsistencia"]"
+                                style="color:@GetColor(data.PorcentajeAsistencia); font-weight:bold;">
+                            @data.PorcentajeAsistencia.ToString("0.00")%
+                            @if (data.PorcentajeAsistencia >= 90)
+                            {
+                                <RadzenIcon Icon="check_circle" Style="color:green;vertical-align:middle;" />
+                            }
+                            else if (data.PorcentajeAsistencia < 60)
+                            {
+                                <RadzenIcon Icon="error" Style="color:red;vertical-align:middle;" />
+                            }
+                        </span>
+                    </Template>
+                </RadzenDataGridColumn>
+            </Columns>
+        </RadzenDataGrid>
+        }
+        else if (registros != null)
+        {
+            <div style="margin-top:20px;">@DiccionarioTraduccionesService.Traducciones["NoHayFiltros"]</div>
+        }
+    }    
+}
 @code {
         [CascadingParameter]
     private Task<AuthenticationState>? authenticationState { get; set; }
@@ -154,24 +168,20 @@
     private List<Area> areas = new();
     private List<CarReuDTO> cargosReunion = new();
     private int dataIsLoaded = 0;
+private bool traduccionesCargadas = false;
     private List<Claim> claims;
-
-
+    
         protected override async Task OnInitializedAsync()
     {
         var authState = await AuthStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;
         claims = user.Claims.ToList();
 
-        var idPaisClaim = claims.FirstOrDefault(c => c.Type == "IdPais")?.Value;
-        if (int.TryParse(idPaisClaim, out int paisTemp))
-        {
-            idPais = paisTemp;
-            var culture = new System.Globalization.CultureInfo(paisTemp == 5 ? "en" : "es");
-            System.Globalization.CultureInfo.DefaultThreadCurrentCulture = culture;
-            System.Globalization.CultureInfo.DefaultThreadCurrentUICulture = culture;
-            await LocalStorage.SetItemAsync("userCulture", culture.Name);
-        }
+        await LocalizationService.EstablecerCulturaDesdeTokenAsync();
+        CultureInfo.CurrentCulture = CultureInfo.DefaultThreadCurrentCulture;
+        CultureInfo.CurrentUICulture = CultureInfo.DefaultThreadCurrentUICulture;
+        await DiccionarioTraduccionesService.CargarTraduccionesAsync();
+            traduccionesCargadas = true;
 
         string? idEmpresaUsuario = claims.FirstOrDefault(c => c.Type.Contains("Empresa"))?.Value;
 
@@ -186,6 +196,9 @@
 
         areas = new List<Area>();
     }
+
+        
+
 
         private void OnEmpresaChanged(object value)
     {
@@ -215,7 +228,7 @@ async Task AbrirDialogoDiasNoLaborables(bool value)
     if (value)
     {
         var result = await DialogService.OpenAsync<DiasNoLaborablesDialog>(
-            ValidationMessages.DiasNoLaborables,
+            DiccionarioTraduccionesService.Traducciones["DiasNoLaborables"],
             new Dictionary<string, object>
             {
                 { "FechasIniciales", eventosExternosFechas },

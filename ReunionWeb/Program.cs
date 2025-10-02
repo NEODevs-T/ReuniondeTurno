@@ -8,7 +8,8 @@ using ReunionWeb.Services;
 using ReunionWeb;
 using Radzen;
 using ReunionWeb.Data;
-
+using System.Globalization;
+using Microsoft.AspNetCore.Localization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,10 +22,9 @@ builder.Services.AddHttpClient<IAPIReunionService, APIReunionService>(client =>
     client.BaseAddress = new Uri("http://neo.paveca.com.ve/ReunionApi/");
 });
 
+builder.Services.AddScoped<IDiccionarioTraduccionesService, DiccionarioTraduccionesService>();
 builder.Services.AddScoped<ITranslationService, TranslationService>();
 builder.Services.AddScoped<LocalizationService>();
-builder.Services.AddScoped<CultureService>();
-builder.Services.AddScoped<UsuarioContexto>();
 builder.Services.AddScoped<IDbReunionService, DbReunionService>();
 builder.Services.AddScoped<IAPIReunionService, APIReunionService>();
 builder.Services.AddScoped<IMaestraData, MaestraData>();

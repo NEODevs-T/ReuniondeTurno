@@ -3,11 +3,13 @@
 @inject AuthenticationStateProvider AuthStateProvider
 @inject ILocalStorageService LocalStorage
 @inject NavigationManager NavigationManager
+@inject LocalizationService LocalizationService
 @inject NotificationService NotificationService
-@using System.Globalization
+@inject IJSRuntime JSRuntime
 
 @using ReunionWeb.Resources
 @using System.Globalization
+@using ReunionWeb.Services
 
 <PageTitle>ReunionWeb</PageTitle>
 
