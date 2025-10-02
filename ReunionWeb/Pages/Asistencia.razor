@@ -205,10 +205,6 @@ else if (dataIsLoaded == 1 && RespoReuData.resporeus.Count() == 0)
     {
         await CreateData();
 
-        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
-        var user = authState.User;
-        claims = user.Claims.ToList();
-
         await LocalizationService.EstablecerCulturaDesdeTokenAsync();
         CultureInfo.CurrentCulture = CultureInfo.DefaultThreadCurrentCulture;
         CultureInfo.CurrentUICulture = CultureInfo.DefaultThreadCurrentUICulture;
