@@ -321,12 +321,6 @@ else if (dataIsLoaded == 2 && tabla.Count() == 0)
     private Task<AuthenticationState>? authenticationState { get; set; }
     private int idPais { get; set; }
 
-    
-    public string Traducir(string clave)
-    {
-        return Translator.Traducir(clave);
-    }
-
     private async Task CreateData()
 
     {
