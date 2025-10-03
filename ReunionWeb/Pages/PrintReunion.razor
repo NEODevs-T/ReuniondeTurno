@@ -14,12 +14,22 @@
 @inject IRespoReuData RespoReuData
 @inject IMaestraData MaestraData
 @inject ICausaCalidadData CausaCalidadData
+@inject IDiccionarioTraduccionesService DiccionarioTraduccionesService
+@inject LocalizationService LocalizationService
+@inject ITranslationService Translator
 
 @using ReunionWeb.Resources
 @using System.Globalization
+@using ReunionWeb.Services
 
-
-
+@if (!traduccionesCargadas || dataIsLoaded == 1)
+{
+    <div class="loading-container">
+        <div class="loader"></div>
+    </div>
+}
+else
+{
 <body>
 
     @if (PizarraData.reudiatablas.Count() > 0 && dataIsLoaded == 2)
@@ -34,28 +44,28 @@
                     @*Centro para validar el comedor*@
                     @if (CentroComedor == 11)
                     {
-                        <BSTD>@ValidationMessages.NEquipo</BSTD>
+                        <BSTD>@DiccionarioTraduccionesService.Traducciones["NEquipo"]</BSTD>
                     }
                     else
                     {
 
                         @*  <BSTD>División</BSTD>*@
-                        <BSTD>@ValidationMessages.Area</BSTD>
+                        <BSTD>@DiccionarioTraduccionesService.Traducciones["Area"]</BSTD>
                         <BSTD>Ksf</BSTD>
 
                     }
 
-                    <BSTD>@ValidationMessages.CodigoDeEquipo</BSTD>
-                    <BSTD ColSpan="4">@ValidationMessages.Discrepancia</BSTD>
+                    <BSTD>@DiccionarioTraduccionesService.Traducciones["CodigoDeEquipo"]</BSTD>
+                    <BSTD ColSpan="4">@DiccionarioTraduccionesService.Traducciones["Discrepancia"]</BSTD>
                     @* <BSTD>Código</BSTD> *@
-                    <BSTD>@ValidationMessages.PlanDeAccion</BSTD>
+                    <BSTD>@DiccionarioTraduccionesService.Traducciones["PlanDeAccion"]</BSTD>
                     @* <BSTD>Tiempo</BSTD> *@
-                    <BSTD ColSpan="1">@ValidationMessages.Responsable</BSTD>
-                    <BSTD>@ValidationMessages.DetallesDeCalidad</BSTD>
-                    <BSTD>@ValidationMessages.OrgDelProducto</BSTD>
+                    <BSTD ColSpan="1">@DiccionarioTraduccionesService.Traducciones["Responsable"]</BSTD>
+                    <BSTD>@DiccionarioTraduccionesService.Traducciones["DetallesDeCalidad"]</BSTD>
+                    <BSTD>@DiccionarioTraduccionesService.Traducciones["OrgDelProducto"]</BSTD>
                     <BSTD>Status</BSTD>
                     @* <BSTD>ODT</BSTD> *@
-                    <BSTD>@ValidationMessages.FechaDeReunion</BSTD>@*Fecha de listo el trabajo*@
+                    <BSTD>@DiccionarioTraduccionesService.Traducciones["FechaDeReunion"]</BSTD>@*Fecha de listo el trabajo*@
 
 
                 </BSTR>
@@ -93,7 +103,7 @@
                                 }
                                 else
                                 {
-                                    <BSTD>@ValidationMessages.NoHayDescrip</BSTD>
+                                    <BSTD>@DiccionarioTraduccionesService.Traducciones["NoHayDescrip"]</BSTD>
 
                                 }
 
@@ -149,7 +159,13 @@
                             }
                             else
                             {
-                                <BSTD Class="">@d.Rdstatus</BSTD>
+                                var estadoTraducido = d.Rdstatus == "Cerrado"
+                                    ? (idPais == 5 ? "Closed" : "Cerrado")
+                                    : (idPais == 5 ? "Pending" : "Pendiente");
+
+                                var claseEstado = d.Rdstatus == "Cerrado" ? "Cerrado" : "pendiente";
+
+                            <BSTD Class="@claseEstado">@estadoTraducido</BSTD>
                             }
                             @* <BSTD>@d.Rdodt</BSTD> *@
                             <BSTD>@d.RdfecTra.ToString("dd/MM/yyyy") </BSTD>
@@ -168,7 +184,7 @@
     }
     <button type="button" onclick="window.print()" class="btn btn-success"><span class="oi oi-print"></span></button>
 </body>
-
+}
 
 
 @code {
@@ -203,9 +219,8 @@
     private List<CambFecDTO> cambiofecha { get; set; }
     private List<ReunionDTO> reudiatablas { get; set; }
     private List<Claim> claims { get; set; }
-
     private int idPais { get; set; }
-
+    private bool traduccionesCargadas = false;
 
 
 
@@ -218,15 +233,10 @@
         var authState = await AuthStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;
         claims = Enumerable.ToList(user.Claims);
-
         var idPaisClaim = claims.FirstOrDefault(c => c.Type == "IdPais")?.Value;
         if (int.TryParse(idPaisClaim, out int paisTemp))
         {
             idPais = paisTemp;
-            var culture = new System.Globalization.CultureInfo(paisTemp == 5 ? "en" : "es");
-            System.Globalization.CultureInfo.DefaultThreadCurrentCulture = culture;
-            System.Globalization.CultureInfo.DefaultThreadCurrentUICulture = culture;
-            await LocalStorage.SetItemAsync("userCulture", culture.Name);
         }
 
     }
@@ -237,6 +247,11 @@
         await KsfData.Getksf();
         await RespoReuData.GetResReu();
         await CausaCalidadData.GetCausasCalidad();
+        await LocalizationService.EstablecerCulturaDesdeTokenAsync();
+        CultureInfo.CurrentCulture = CultureInfo.DefaultThreadCurrentCulture;
+        CultureInfo.CurrentUICulture = CultureInfo.DefaultThreadCurrentUICulture;
+        await DiccionarioTraduccionesService.CargarTraduccionesAsync();
+        traduccionesCargadas = true;
 
 
 

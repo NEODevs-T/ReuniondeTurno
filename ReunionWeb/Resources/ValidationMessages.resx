@@ -138,4 +138,5 @@
 <data name="IniciarSesion" xml:space="preserve"><value>Iniciar Sesión</value></data>
 <data name="CerrarSesion" xml:space="preserve"><value>Cerrar Sesión</value></data>
 <data name="Hola" xml:space="preserve"><value>Hola</value></data>
+<data name="FormatoDeReunion" xml:space="preserve"><value>Formato de Reunión</value></data>
 </root>
