@@ -712,7 +712,7 @@ else
         {
             ruta = $"{lang}/{(lang == "en" ? "meeting" : "reunion")}/{centrodiv.IdCentro}/{centrodiv.IdDivision}/{linea}/{f1}/{f2}/{tipo}/{est}";
         }
-        NavigationManager.NavigateTo(ruta, true);
+        NavigationManager.NavigateTo(ruta);
         DiscForm.IdCausaCal = currentIdCausaCal;
     }
 
@@ -765,7 +765,7 @@ else
                     {
                         ruta = $"{lang}/{(lang == "en" ? "meeting" : "reunion")}/{centro}/{div}/{linea}/{f1}/{f2}/{tipo}/{(lang == "en" ? "Meeting" : "Reunion")}";
                     }
-                    NavigationManager.NavigateTo(ruta, true);
+                    NavigationManager.NavigateTo(ruta);
                 }
             }
         }
