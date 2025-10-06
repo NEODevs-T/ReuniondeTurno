@@ -135,15 +135,27 @@ else
                                 <BSTD Class="textotabla ">@d.RdplanAcc</BSTD>
                             }
                             @* <BSTD>@d.Rdtiempo</BSTD> *@
-                            @if (@KsfData.ksfs.Where(x => x.Idksf == d.Idksf).FirstOrDefault()?.KsfNombre == "Por Definir")
+                            @{
+                                var nombreResponsable = RespoReuData.resporeus
+                                    .FirstOrDefault(x => x.IdResReu == d.IdResReu)?.Rrnombre;
+
+                                var claveKSF = KsfData.ksfs
+                                    .FirstOrDefault(x => x.Idksf == d.Idksf)?.KsfNombre;
+
+                                var claveResponsable = ValidationMessages.MapResponsableKey(nombreResponsable ?? string.Empty);
+                                var textoTraducido = DiccionarioTraduccionesService.Traducciones.TryGetValue(claveResponsable, out var traduccion)
+                                    ? traduccion
+                                    : nombreResponsable;
+                            }
+
+                            @if (claveKSF == "Por Definir")
                             {
-                                <BSTD Class="Definir">@RespoReuData.resporeus.Where( x => x.IdResReu == d.IdResReu).FirstOrDefault()?.Rrnombre </BSTD>
+                                <BSTD Class="Definir">@textoTraducido</BSTD>
                             }
                             else
                             {
-                                <BSTD ColSpan="1">@RespoReuData.resporeus.Where( x => x.IdResReu == d.IdResReu).FirstOrDefault()?.Rrnombre</BSTD>
+                                <BSTD ColSpan="1">@textoTraducido</BSTD>
                             }
-
                             <BSTD>
                             @{
                                 var causa = CausaCalidadData.causaCals.FirstOrDefault(x => x.IdCausaCal == d.IdCausaCal);
@@ -243,7 +255,7 @@ else
 
     protected override async Task OnParametersSetAsync()
     {
-
+        await CreateData();
         await KsfData.Getksf();
         await RespoReuData.GetResReu();
         await CausaCalidadData.GetCausasCalidad();
