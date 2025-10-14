@@ -190,7 +190,8 @@
 
                         <RadzenDataGridColumn TItem="ReunionDTO" Title="@DiccionarioTraduccionesService.Traducciones["NombreDelEquipo"]" Frozen="true" Property="RdcodEq" Width="80px">
                 <Template>
-                    @(string.IsNullOrWhiteSpace(context.EnombreEam) ? "EQUIPO NO ENCONTRADO" : context.EnombreEam)
+                    @(string.IsNullOrWhiteSpace(context.EnombreEam) ? (idPais == 5 ? "EQUIPMENT NOT FOUND" : "EQUIPO NO ENCONTRADO") : context.EnombreEam)
+                    
                 </Template>
             </RadzenDataGridColumn>
 
