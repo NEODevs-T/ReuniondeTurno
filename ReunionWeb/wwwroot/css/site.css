@@ -163,7 +163,7 @@ td > .pendiente, .pendiente, tr > .pendiente, span > .pendiente {
 
 /* FIN RADZEN SCHEDULER es EL CALENDARIO*/
 
-/*notificaci�n radzen*/
+/*notificaci�n radzen*/
 .rz-notification-message.rz-growl {
     position: fixed !important;
     width: 35% !important;
@@ -288,3 +288,29 @@ textarea {
     .blazor-error-boundary::after {
         content: "An error has occurred."
     }
+
+.scrollable-container {
+    height: 500px; /* altura fija */
+    width: 1100px;
+    overflow-y: auto; /* scroll vertical si hay más contenido */
+    overflow-x: auto; /* scroll horizontal si hay muchas columnas */
+    display: block;
+}
+
+.scrollable-container .rz-datatable {
+    height: 100%;
+    max-height: 100%;
+    box-sizing: border-box;
+}
+
+.scrollable-container1 {
+    height: 480px;
+    width: 1200px;
+    overflow-x: auto;
+    overflow-y: auto;
+    display: block;
+    position: relative; /* importante para aislar el scroll */
+}
+.scrollable-container1 table {
+    min-width: 1300px; /* más ancho que el contenedor */
+}
