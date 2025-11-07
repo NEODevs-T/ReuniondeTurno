@@ -54,22 +54,18 @@ else
             <option value=0>@DiccionarioTraduccionesService.Traducciones["Todo"]</option>
             @foreach (var d in RespoReuData.resporeus.Where(x => AllowedResponsables.Contains(x.IdResReu)))
             {
-                <option value="@d.IdResReu">@DiccionarioTraduccionesService.Traducciones[ValidationMessages.MapResponsableKey(d.Rrnombre)]</option>
+                var texto = idPais == 5? d.Rrenglish : d.Rrnombre;
+                <option value="@d.IdResReu">@texto</option>
             }
         </BSInput>
     </BSCol>
-
-        @{
-            var clave = ValidationMessages.MapResponsableKey(linea ?? string.Empty);
-            var lineaTraducida = DiccionarioTraduccionesService.Traducciones.TryGetValue(clave, out var traduccion)
-                ? traduccion
-                : linea;
-        }
-
-        <BSCol Column="3">
-            <BSLabel>@DiccionarioTraduccionesService.Traducciones["Linea"]</BSLabel>
-            <BSInput InputType="InputType.Text" Value="@lineaTraducida" IsReadonly="true" />
-        </BSCol>
+    @{
+        var lineaTraducida = idPais == 5 ? "All" : "Todos";
+    }
+    <BSCol Column="3">
+        <BSLabel>@DiccionarioTraduccionesService.Traducciones["Linea"]</BSLabel>
+        <BSInput InputType="InputType.Text" @bind-Value="@lineaTraducida" IsReadonly="true" />
+    </BSCol>
 
 
 </BSRow>
@@ -147,24 +143,13 @@ else
                                         @* <BSTD>@d.RdcodDis</BSTD> *@
                                         <BSTD Class="textotabla">@d.RdplanAcc</BSTD>
                                         @* <BSTD>@d.Rdtiempo</BSTD> *@
-                                        @{
-                                            var nombreResponsable = RespoReuData.resporeus
-                                                .FirstOrDefault(x => x.IdResReu == d.IdResReu)?.Rrnombre;
-
-                                            var clave = ValidationMessages.MapResponsableKey(nombreResponsable ?? string.Empty);
-                                            var textoTraducido = DiccionarioTraduccionesService.Traducciones.TryGetValue(clave, out var traduccion)
-                                                ? traduccion
-                                                : nombreResponsable;
+@{
+                                            var responsable = RespoReuData.resporeus.FirstOrDefault(x => x.IdResReu == d.IdResReu);
+                                            var nombreResponsable = idPais == 5 
+                                                ? responsable?.Rrenglish 
+                                                : responsable?.Rrnombre ?? string.Empty;
                                         }
-
-                                        @if (nombreResponsable == "Por Definir")
-                                        {
-                                            <BSTD Class="Definir">@textoTraducido</BSTD>
-                                        }
-                                        else
-                                        {
-                                            <BSTD>@textoTraducido</BSTD>
-                                        }
+                                        <BSTD class="@(nombreResponsable == "Por Definir" ? "Definir" : "")">@nombreResponsable</BSTD>
                                         <BSTD>
                                         @{
                                             var causa = CausaCalidadData.causaCals.FirstOrDefault(x => x.IdCausaCal == d.IdCausaCal);

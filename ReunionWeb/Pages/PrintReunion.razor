@@ -135,27 +135,13 @@ else
                                 <BSTD Class="textotabla ">@d.RdplanAcc</BSTD>
                             }
                             @* <BSTD>@d.Rdtiempo</BSTD> *@
-                            @{
-                                var nombreResponsable = RespoReuData.resporeus
-                                    .FirstOrDefault(x => x.IdResReu == d.IdResReu)?.Rrnombre;
-
-                                var claveKSF = KsfData.ksfs
-                                    .FirstOrDefault(x => x.Idksf == d.Idksf)?.KsfNombre;
-
-                                var claveResponsable = ValidationMessages.MapResponsableKey(nombreResponsable ?? string.Empty);
-                                var textoTraducido = DiccionarioTraduccionesService.Traducciones.TryGetValue(claveResponsable, out var traduccion)
-                                    ? traduccion
-                                    : nombreResponsable;
-                            }
-
-                            @if (claveKSF == "Por Definir")
-                            {
-                                <BSTD Class="Definir">@textoTraducido</BSTD>
-                            }
-                            else
-                            {
-                                <BSTD ColSpan="1">@textoTraducido</BSTD>
-                            }
+@{
+                                            var responsable = RespoReuData.resporeus.FirstOrDefault(x => x.IdResReu == d.IdResReu);
+                                            var nombreResponsable = idPais == 5 
+                                                ? responsable?.Rrenglish 
+                                                : responsable?.Rrnombre ?? string.Empty;
+                                        }
+                                        <BSTD class="@(nombreResponsable == "Por Definir" ? "Definir" : "")">@nombreResponsable</BSTD>
                             <BSTD>
                             @{
                                 var causa = CausaCalidadData.causaCals.FirstOrDefault(x => x.IdCausaCal == d.IdCausaCal);

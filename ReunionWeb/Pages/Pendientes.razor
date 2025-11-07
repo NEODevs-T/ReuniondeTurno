@@ -152,8 +152,8 @@ else
         <option value=0>@DiccionarioTraduccionesService.Traducciones["Todo"]</option>
         @foreach (var d in RespoReuData.resporeus.Where(x => !ResponsablesExcluidos.ContainsKey(x.IdResReu)))
         {
-            <option value="@d.IdResReu">@DiccionarioTraduccionesService.Traducciones[ValidationMessages.MapResponsableKey(d.Rrnombre)]
-            </option>
+            var texto = idPais == 5? d.Rrenglish : d.Rrnombre;
+            <option value="@d.IdResReu">@texto</option>
         }
     </BSInput>
 </BSCol>
@@ -252,23 +252,12 @@ else
                             <BSTD>@d.Rddisc.ToUpperInvariant()</BSTD>
                             <BSTD Class="textotabla">@d.RdplanAcc</BSTD>
                             @{
-                                var nombreResponsable = RespoReuData.resporeus
-                                    .FirstOrDefault(x => x.IdResReu == d.IdResReu)?.Rrnombre;
-
-                                var clave = ValidationMessages.MapResponsableKey(nombreResponsable);
-                                var textoTraducido = DiccionarioTraduccionesService.Traducciones.TryGetValue(clave, out var traduccion)
-                                    ? traduccion
-                                    : nombreResponsable;
+                                var responsable = RespoReuData.resporeus.FirstOrDefault(x => x.IdResReu == d.IdResReu);
+                                var nombreResponsable = idPais == 5 
+                                    ? responsable?.Rrenglish 
+                                    : responsable?.Rrnombre ?? string.Empty;
                             }
-
-                            @if (nombreResponsable == "Por Definir")
-                            {
-                                <BSTD Class="Definir">@textoTraducido</BSTD>
-                            }
-                            else
-                            {
-                                <BSTD>@textoTraducido</BSTD>
-                            }
+                            <BSTD class="@(nombreResponsable == "Por Definir" ? "Definir" : "")">@nombreResponsable</BSTD>
                             <BSTD>
                                 @{
                                     var causa = CausaCalidadData.causaCals.FirstOrDefault(x => x.IdCausaCal == d.IdCausaCal);
@@ -897,32 +886,19 @@ protected async Task Get()
     
     public void ObtenerReunionesPorRol()
     {
-        foreach (var e in PizarraData.reudiatablas)
-        {
-            var nombreOriginal = RespoReuData.resporeus
-                .Where(x => x.IdResReu == e.IdResReu)
-                .FirstOrDefault()?.Rrnombre;
-
-            var claveResponsable = ValidationMessages.MapResponsableKey(nombreOriginal ?? string.Empty);
-            e.Responsable = DiccionarioTraduccionesService.Traducciones.TryGetValue(claveResponsable, out var traduccionResponsable)
-                ? traduccionResponsable
-                : nombreOriginal;
-        }
-
         if (!string.IsNullOrEmpty(UsrRol))
         {
-            var claveRol = ValidationMessages.MapResponsableKey(UsrRol);
-            var rolTraducido = DiccionarioTraduccionesService.Traducciones.TryGetValue(claveRol, out var traduccionRol)
-                ? traduccionRol
-                : UsrRol;
+            foreach (var e in PizarraData.reudiatablas)
+                {
+                    e.Responsable = RespoReuData.resporeus.Where(x => x.IdResReu == e.IdResReu).FirstOrDefault().Rrnombre;
+                }
+            listareu = PizarraData.reudiatablas.Where(r => r.Responsable.StartsWith(UsrRol)).ToList();
 
-            listareu = PizarraData.reudiatablas
-                .Where(r => r.Responsable.Contains(rolTraducido, StringComparison.OrdinalIgnoreCase))
-                .ToList();
         }
         else
         {
             listareu = PizarraData.reudiatablas;
+
         }
     }
 

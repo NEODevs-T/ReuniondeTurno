@@ -166,22 +166,12 @@
                                 }
                                 @* <BSTD>@d.Rdtiempo</BSTD> *@
                                 @{
-                                    var nombreResponsable = RespoReuData.resporeus.FirstOrDefault(x => x.IdResReu == d.IdResReu)?.Rrnombre;
-                                    string textoTraducido;
-
-                                    if (!string.IsNullOrWhiteSpace(nombreResponsable))
-                                    {
-                                        var clave = ValidationMessages.MapResponsableKey(nombreResponsable ?? string.Empty);
-                                        textoTraducido = DiccionarioTraduccionesService.Traducciones.TryGetValue(clave, out var traduccion)
-                                            ? traduccion
-                                            : nombreResponsable;
-                                    }
-                                    else
-                                    {
-                                        textoTraducido = idPais == 5 ? "To Be Defined" : "Por Definir";
-                                    }
-                                }
-                                    <BSTD>@textoTraducido</BSTD>
+                                    var responsable = RespoReuData.resporeus.FirstOrDefault(x => x.IdResReu == d.IdResReu);
+                                    var nombreResponsable = idPais == 5 
+                                        ? responsable?.Rrenglish 
+                                        : responsable?.Rrnombre ?? string.Empty;
+                                        }
+                                <BSTD class="@(nombreResponsable == "Por Definir" ? "Definir" : "")">@nombreResponsable</BSTD>
                                 <BSTD>
                                     @{
                                         var causa = CausaCalidadData.causaCals.FirstOrDefault(x => x.IdCausaCal == d.IdCausaCal);
