@@ -54,6 +54,7 @@ else
                 <RadzenDropDown @bind-Value="area" Data="@areas" TextProperty="Nombre" ValueProperty="Id" Style="width: 100%;" Placeholder="@DiccionarioTraduccionesService.Traducciones["SeleccioneUnCentro"]" Disabled="@((string.IsNullOrEmpty(empresa)) || !areas.Any())" />
             </RadzenColumn>
             <RadzenColumn Width="300px">
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 8px;">
                 <RadzenLabel Text="@DiccionarioTraduccionesService.Traducciones["ExcluirLosDiasNoLaborables"]" />
                 <RadzenButton
                 Text="@($"{(diasExcepcionalesLaborables ? "✔" : "✖")} {DiccionarioTraduccionesService.Traducciones["DiasNoLaborables"]}")"
@@ -62,6 +63,7 @@ else
                 Size="ButtonSize.Small"
                 Icon="event_busy"
                 Click="@(() => AbrirDialogoDiasNoLaborables(!diasExcepcionalesLaborables))" />
+            </div>
             </RadzenColumn>
             <RadzenColumn Width="150px" Style="display: flex; align-items: flex-start; padding-top: 30px;">
                 <RadzenButton Text="@DiccionarioTraduccionesService.Traducciones["Consultar"]"
@@ -94,10 +96,6 @@ else
     @if (registros != null && registros.Any())
     {
         <div style="margin-bottom:10px;">
-            <b>@DiccionarioTraduccionesService.Traducciones["PorcentajeGlobal"]:</b>
-            <span style="color:@GetColor(porcentajeGlobal)">
-                @porcentajeGlobal.ToString("0.00")%
-            </span>
         </div>
         @if (registrosFiltrados != null && !registrosFiltrados.Any() && !string.IsNullOrEmpty(filtroCargo))
         {
@@ -125,15 +123,50 @@ else
                     </FooterTemplate>
                 </RadzenDataGridColumn>
                 <RadzenDataGridColumn TItem="AsistenReuPorcetanjeDTO" Property="PorcentajeAsistencia" Title="@DiccionarioTraduccionesService.Traducciones["PorcentajeAsistencia"]">
+                    <FooterTemplate>
+                    <b>@DiccionarioTraduccionesService.Traducciones["PorcentajeGlobal"]:</b>
+                    <span 
+                    style="color:@GetColor(porcentajeGlobal)">
+                    @porcentajeGlobal.ToString("0.00")%
+                    </span>
+                    </FooterTemplate>
                     <Template Context="data">
                         <span title="@DiccionarioTraduccionesService.Traducciones["PorcentajeAsistencia"]"
                                 style="color:@GetColor(data.PorcentajeAsistencia); font-weight:bold;">
                             @data.PorcentajeAsistencia.ToString("0.00")%
                             @if (data.PorcentajeAsistencia >= 90)
                             {
-                                <RadzenIcon Icon="check_circle" Style="color:green;vertical-align:middle;" />
+                                <RadzenIcon Icon="check_circle" Style="color:rgb(112, 143, 112);vertical-align:middle;" />
                             }
                             else if (data.PorcentajeAsistencia < 60)
+                            {
+                                <RadzenIcon Icon="error" Style="color:red;vertical-align:middle;" />
+                            }
+                        </span>
+                    </Template>
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="AsistenReuPorcetanjeDTO" Property="ReunionesSuplencias" Title=ReunionesSuplencias>
+                <FooterTemplate>
+                        <b>Total: @registrosFiltrados.Sum(x => x.ReunionesSuplencias)</b>
+                    </FooterTemplate>
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="AsistenReuPorcetanjeDTO" Property="PorcentajeSuplencia" Title=PorcentajeSuplencia>
+                    <FooterTemplate>
+                    <b>@DiccionarioTraduccionesService.Traducciones["PorcentajeGlobal"]:</b>
+                    <span 
+                    style="color:@GetColor(porcentajeSuplencia)">
+                    @porcentajeSuplencia.ToString("0.00")%
+                    </span>
+                    </FooterTemplate>
+                    <Template Context="data">
+                        <span title="@DiccionarioTraduccionesService.Traducciones["PorcentajeAsistencia"]"
+                                style="color:@GetColor(data.PorcentajeSuplencia); font-weight:bold;">
+                            @data.PorcentajeSuplencia.ToString("0.00")%
+                            @if (data.PorcentajeSuplencia >= 90)
+                            {
+                                <RadzenIcon Icon="check_circle" Style="color:rgb(112, 143, 112);vertical-align:middle;" />
+                            }
+                            else if (data.PorcentajeSuplencia < 60)
                             {
                                 <RadzenIcon Icon="error" Style="color:red;vertical-align:middle;" />
                             }
@@ -164,6 +197,7 @@ else
     private List<AsistenReuPorcetanjeDTO> registrosFiltrados = new();
     private List<AsistenReuPorcetanjeDTO> registros;
     private double porcentajeGlobal = 0;
+    private double porcentajeSuplencia = 0;
     private List<Empresa> empresas = new();
     private List<Area> areas = new();
     private List<CarReuDTO> cargosReunion = new();
@@ -277,6 +311,7 @@ async Task AbrirDialogoDiasNoLaborables(bool value)
         );
         registros = response?.DetallePorCargo ?? new List<AsistenReuPorcetanjeDTO>();
         porcentajeGlobal = response?.PorcentajeGlobal ?? 0;
+        porcentajeSuplencia = response?.PorcentajeGlobalSuplencia ?? 0;        
         FiltrarCargo();
     }
     catch (Exception ex)
@@ -285,6 +320,7 @@ async Task AbrirDialogoDiasNoLaborables(bool value)
         registros = new List<AsistenReuPorcetanjeDTO>();
         registrosFiltrados = new List<AsistenReuPorcetanjeDTO>();
         porcentajeGlobal = 0;
+        porcentajeSuplencia = 0;
     }
         dataIsLoaded = 2;
         StateHasChanged();
