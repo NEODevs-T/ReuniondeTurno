@@ -125,7 +125,9 @@ namespace ReunionWeb.Resources
         public static string LimpiarFiltros => _resourceManager.GetString("LimpiarFiltros", CultureInfo.CurrentUICulture);
         public static string ReunionesProgramadas => _resourceManager.GetString("ReunionesProgramadas", CultureInfo.CurrentUICulture);
         public static string ReunionesAsistidas => _resourceManager.GetString("ReunionesAsistidas", CultureInfo.CurrentUICulture);
+        public static string ReunionesConSuplencias => _resourceManager.GetString("ReunionesConSuplencias", CultureInfo.CurrentUICulture);
         public static string PorcentajeAsistencia => _resourceManager.GetString("PorcentajeAsistencia", CultureInfo.CurrentUICulture);
+        public static string PorcentajeSuplencia => _resourceManager.GetString("PorcentajeSuplencia", CultureInfo.CurrentUICulture);
         public static string Cargo => _resourceManager.GetString("Cargo", CultureInfo.CurrentUICulture);
         public static string SeleccioneDML => _resourceManager.GetString("SeleccioneDML", CultureInfo.CurrentUICulture);
         public static string AgregarFecha => _resourceManager.GetString("AgregarFecha", CultureInfo.CurrentUICulture);

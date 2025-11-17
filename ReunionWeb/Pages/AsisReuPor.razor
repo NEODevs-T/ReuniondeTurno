@@ -145,12 +145,12 @@ else
                         </span>
                     </Template>
                 </RadzenDataGridColumn>
-                <RadzenDataGridColumn TItem="AsistenReuPorcetanjeDTO" Property="ReunionesSuplencias" Title=ReunionesSuplencias>
+                <RadzenDataGridColumn TItem="AsistenReuPorcetanjeDTO" Property="ReunionesSuplencias" Title="@DiccionarioTraduccionesService.Traducciones["ReunionesConSuplencias"]">
                 <FooterTemplate>
                         <b>Total: @registrosFiltrados.Sum(x => x.ReunionesSuplencias)</b>
                     </FooterTemplate>
                 </RadzenDataGridColumn>
-                <RadzenDataGridColumn TItem="AsistenReuPorcetanjeDTO" Property="PorcentajeSuplencia" Title=PorcentajeSuplencia>
+                <RadzenDataGridColumn TItem="AsistenReuPorcetanjeDTO" Property="PorcentajeSuplencia" Title="@DiccionarioTraduccionesService.Traducciones["PorcentajeSuplencia"]">
                     <FooterTemplate>
                     <b>@DiccionarioTraduccionesService.Traducciones["PorcentajeGlobal"]:</b>
                     <span 
