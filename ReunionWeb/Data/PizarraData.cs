@@ -12,7 +12,7 @@ public class PizarraData : IPizarraData
     private readonly IHttpClientFactory _clientFactory;
     private readonly NavigationManager _navigationManager;
 
-    private const string BaseUrl = "http://neo.paveca.com.ve/apineomaster/api/Pizarra";
+    private const string BaseUrl = "http://neo.grandbay-corp.com/ApiNeoMasterP/api/Pizarra";
     private const string BaseUrl2 = "http://localhost:5021/api/Pizarra";
 
     public List<ReunionDTO> reunionditablas { get; set; } = new();
@@ -156,7 +156,7 @@ public class PizarraData : IPizarraData
     public async Task<CentroDivisionDTO> GetCentroDivi(string centro, string division, int tipo)
     {
         var client = _clientFactory.CreateClient();
-        string url = $"http://neo.paveca.com.ve/apineomaster/api/Maestra/GetCentroDivi/{centro}/{division}/{tipo}";
+        string url = $"http://neo.grandbay-corp.com/ApiNeoMasterP/api/Maestra/GetCentroDivi/{centro}/{division}/{tipo}";
         return await client.GetFromJsonAsync<CentroDivisionDTO>(url) ?? new();
     }
 }
