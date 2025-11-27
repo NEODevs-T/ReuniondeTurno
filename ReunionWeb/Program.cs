@@ -60,7 +60,7 @@ if (!app.Environment.IsDevelopment())
 }
 
 
-app.UsePathBase("/reuniondeturnoDESARROLLO");
+app.UsePathBase("/reuniondeturno");
 app.UseStaticFiles();
 app.UseRouting();
 
@@ -68,7 +68,7 @@ app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");
 /*app.MapGet("/", context =>
 {
-    context.Response.Redirect("/reuniondeturnoDESARROLLO/es/inicio");
+    context.Response.Redirect("/reuniondeturno/es/inicio");
     return Task.CompletedTask;
 });*/
 app.Run();
