@@ -154,7 +154,7 @@ else
 else if (CargoReuData.cargoreuss.Count() == 0 && dataIsLoaded == 2)
 {
 <div style="text-align: center; padding: 20px; font-size: 18px; color: rgb(102, 101, 101);">
-    <p>@DiccionarioTraduccionesService.Traducciones["NoCargadoP"]S</p>
+    <p>@DiccionarioTraduccionesService.Traducciones["NoCargadoP"]</p>
 </div>
 }
 else if (dataIsLoaded == 1 && RespoReuData.resporeus.Count() == 0)
@@ -213,7 +213,7 @@ else if (dataIsLoaded == 1 && RespoReuData.resporeus.Count() == 0)
 
         UsrRol = claims.FirstOrDefault(c => c.Type.Contains("role"))?.Value;
 
-        if (UsrRol == "Admin" || UsrRol == "SuperAdmin" || UsrRol == "PrimeUser")
+        if (UsrRol == "Admin" || UsrRol == "SuperAdmin" || UsrRol == "SuperUser" || UsrRol == "PrimeUser")
         {
             var idEmpresa = claims.FirstOrDefault(c => c.Type.Contains("IdEmpresa"))?.Value;
             await MaestraData.GetCentrosxEmpresa("All" + idEmpresa);
