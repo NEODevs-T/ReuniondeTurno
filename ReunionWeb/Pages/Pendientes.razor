@@ -142,8 +142,8 @@ else
          </BSCol> *@
 
      </BSRow>
-
-
+<p></p>
+<p></p>
     @*Filltros extra*@
     <BSRow>
         @if (PizarraData.reudiatablas.Count() > 0 && dataIsLoaded == 2)
@@ -806,7 +806,12 @@ protected async Task Get()
         if (dataIsLoaded != 1)
         {
             dataIsLoaded = 1;
-            await PizarraData.GetPendientes(IdCentro.ToString(), IdDiv.ToString(), fecha1, fecha2, tipoconsulta, Status);
+            PizarraData.reudiatablas = await PizarraData.GetPendientes
+            (IdCentro.ToString(), IdDiv.ToString(), fecha1, fecha2, tipoconsulta, Status) ?? new List<ReunionDTO>();
+
+            PizarraData.reudiatablas = PizarraData.reudiatablas
+                .Where(d => d.Idksf != 6)
+                .ToList();
 
             // Verifica que los datos estén correctamente cargados
             if (PizarraData.reudiatablas != null)
@@ -827,6 +832,7 @@ protected async Task Get()
             }
 
             dataIsLoaded = 2;
+            StateHasChanged();
         }
     }
     else
@@ -963,7 +969,11 @@ protected async Task Get()
                     }
                     tipoconsulta = tipo;
                     dataIsLoaded = 1;
-                    await PizarraData.GetPendientes(accion, division, date1, date2, tipo, est);
+                    PizarraData.reudiatablas = await PizarraData.GetPendientes
+                    (accion, division, date1, date2, tipo, est)?? new List<ReunionDTO>();
+                    PizarraData.reudiatablas = PizarraData.reudiatablas
+                        .Where(d => d.Idksf != 6)
+                        .ToList();
                     ObtenerReunionesPorRol();//actualizar tabla
                     ConstruirCatalogoEquiposPorNombre();
                     AplicarFiltroPorCodigoSeleccionado();
@@ -1005,16 +1015,20 @@ protected async Task Get()
         }
     }
 
-
-
-
-
-    public async Task PrintDocument()
+        public async Task PrintDocument()
     {
-        string idiomaRuta = idPais == 5 ? "en" : "es";
+        string idiomaRuta   = idPais == 5 ? "en" : "es";
         string nombrePagina = idPais == 5 ? "TablePending" : "TablaPendientes";
-        string url = $"{idiomaRuta}/{nombrePagina}/{IdCentro}/{IdDiv}/{NombreLinea}/{fecha1:dd-MM-yyyy}/{fecha2:dd-MM-yyyy}/{tipoconsulta}/{Status}/{IdResReu}";
-        await IJS.InvokeAsync<object>("open", new object[] { url, "_blank" });
+
+        // Codificar TODOS los segmentos críticos
+        string segLinea   = Uri.EscapeDataString(NombreLinea ?? "Todo");
+        string segEstado  = Uri.EscapeDataString(Status ?? "Todo");
+        string segTipo    = Uri.EscapeDataString(tipoconsulta ?? "0");
+        string segCodigo  = Uri.EscapeDataString(Codigo ?? "Todo");
+        string segResp    = (IdResReu).ToString();
+
+        string url = $"{idiomaRuta}/{nombrePagina}/{IdCentro}/{IdDiv}/{segLinea}/{fecha1:dd-MM-yyyy}/{fecha2:dd-MM-yyyy}/{segTipo}/{segEstado}/{segResp}";
+        await IJS.InvokeVoidAsync("open", url, "_blank");
     }
 
 

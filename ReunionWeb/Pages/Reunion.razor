@@ -384,14 +384,14 @@ protected async Task Get()
             DateTime fechaFin = DateTime.Today.AddDays(1).AddTicks(-1); // Fin del día de hoy
 
             // Obtener los datos
-            await PizarraData.GetPendientes(
+            PizarraData.reudiatablas = await PizarraData.GetPendientes(
                 IdCentro.ToString(),
                 IdDiv.ToString(),
                 fechaInicio,
                 fechaFin,
                 "1",
                 "Reunion"
-            );
+            ) ?? new List<ReunionDTO>();
 
             // Filtrar los datos para asegurar que solo queden reuniones del día de ayer y hoy
             if (PizarraData.reudiatablas != null)
@@ -441,13 +441,13 @@ protected override async Task OnParametersSetAsync()
         
         try
         {
-            await PizarraData.GetPendientes(
+            PizarraData.reudiatablas = await PizarraData.GetPendientes(
             accion,
             division,
             fechaHoyInicio,
             fechaHoyFin,
             tipo,
-            "Reunion");
+            "Reunion") ?? new List<ReunionDTO>();
         }
         catch (Exception ex)
         {
@@ -465,13 +465,13 @@ protected override async Task OnParametersSetAsync()
     }
 }
 
-    public async Task PrintDocument()
+        public async Task PrintDocument()
     {
         string idiomaRuta = idPais == 5 ? "en" : "es";
         string nombrePagina = idPais == 5 ? "TableMeeting" : "TablaReunion";
         string url = $"{idiomaRuta}/{nombrePagina}/{IdCentro}/{IdDiv}/{DateTime.Now.AddDays(-1):dd-MM-yyyy}/{DateTime.Now:dd-MM-yyyy}/1";
         
-        await IJS.InvokeAsync<object>("open", new object[] { url, "_blank" });
+        await IJS.InvokeVoidAsync("open", url, "_blank");
     }
 
 

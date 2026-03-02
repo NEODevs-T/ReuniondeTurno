@@ -4,6 +4,10 @@ using ReunionWeb.ReunionDiaria.DTOs;
 using ReunionWeb.DTOs.Maestra;
 using ReunionWeb.Interface;
 using System.Net.Http.Json;
+using System.Linq;
+using System.Net.Http;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace ReunionWeb.Data;
 
@@ -11,17 +15,20 @@ public class PizarraData : IPizarraData
 {
     private readonly IHttpClientFactory _clientFactory;
     private readonly NavigationManager _navigationManager;
+    
 
     private const string BaseUrl = "http://neo.grandbay-corp.com/ApiNeoMasterP/api/Pizarra";
     private const string BaseUrl2 = "http://localhost:5021/api/Pizarra";
 
+    private HttpClient _http { get; set; } = new HttpClient();
     public List<ReunionDTO> reunionditablas { get; set; } = new();
     public ReunionDTO reuniondia { get; set; } = new();
     public List<ReunionDTO> reudiatablas { get; set; } = new();
     public List<CalendarioTrabajoDTO> calentrabajo { get; set; } = new();
 
-    public PizarraData(IHttpClientFactory clientFactory, NavigationManager navigationManager)
+    public PizarraData(IHttpClientFactory clientFactory, HttpClient http, NavigationManager navigationManager)
     {
+        _http = http;
         _clientFactory = clientFactory;
         _navigationManager = navigationManager;
     }
@@ -41,14 +48,33 @@ public class PizarraData : IPizarraData
         return reunionditablas = await client.GetFromJsonAsync<List<ReunionDTO>>(url) ?? new();
     }
 
-    public async Task<List<ReunionDTO>> GetPendientes(string idcentro, string iddiv, DateTime f1, DateTime f2, string tipo, string estado)
+    public async Task<List<ReunionDTO>> GetPendientes(
+        string idcentro, string iddiv, DateTime f1, DateTime f2, string tipo, string estado)
     {
-        var client = _clientFactory.CreateClient();
-        int reunionTurno = 2;
-        string f1Formatiado = f1.ToString("yyyy-MM-dd");
-        string f2Formatiado = f2.ToString("yyyy-MM-dd");
-        string url = $"{BaseUrl}/GetPendientes/{idcentro}/{iddiv}/{f1Formatiado}/{f2Formatiado}/{tipo}/{estado}/{reunionTurno}";
-        return reudiatablas = await client.GetFromJsonAsync<List<ReunionDTO>>(url) ?? new();
+        const int reunionDiaria = 2;
+        const int pageSize = 5000; // único parámetro interno que se enviará
+
+        string f1Formateado = f1.ToString("yyyy-MM-dd");
+        string f2Formateado = f2.ToString("yyyy-MM-dd");
+
+        string estadoNormalizado = estado ?? string.Empty;
+        for (int i = 0; i < 2; i++)
+        {
+            string dec = Uri.UnescapeDataString(estadoNormalizado);
+            if (dec == estadoNormalizado) break;
+            estadoNormalizado = dec;
+        }
+        string estadoEncoded = Uri.EscapeDataString(estadoNormalizado);
+
+        // Solo pageSize; NO se envían lastDate ni lastId
+        var url =
+            $"{BaseUrl}/GetPendientes/{idcentro}/{iddiv}/{f1Formateado}/{f2Formateado}/{tipo}/{estadoEncoded}/{reunionDiaria}" +
+            $"?pageSize={pageSize}";
+
+        var result = await _http.GetFromJsonAsync<List<ReunionDTO>>(url)
+                    ?? new List<ReunionDTO>();
+
+        return result;
     }
 
     public async Task<List<ReunionDTO>> GetPendientesTurno(string idcentro, string iddiv)

@@ -335,7 +335,8 @@ else
             DateTime date2 = new DateTime(int.Parse(fec2[2]), int.Parse(fec2[1]), int.Parse(fec2[0]));
 
             dataIsLoaded = 1;
-            await PizarraData.GetPendientes(accion, division, date1, date2, tipo, est);
+            PizarraData.reudiatablas = await PizarraData.GetPendientes(accion, division, date1, date2, tipo, est) 
+            ?? new List<ReunionDTO>();
             dataIsLoaded = 2;
 
         }

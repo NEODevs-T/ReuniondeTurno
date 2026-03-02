@@ -239,7 +239,7 @@ else
 
     }
 
-    protected override async Task OnParametersSetAsync()
+    protected override async Task OnInitializedAsync()
     {
         await CreateData();
         await KsfData.Getksf();
@@ -250,15 +250,55 @@ else
         CultureInfo.CurrentUICulture = CultureInfo.DefaultThreadCurrentUICulture;
         await DiccionarioTraduccionesService.CargarTraduccionesAsync();
         traduccionesCargadas = true;
+    }
+    
 
-
-
+    protected override async Task OnParametersSetAsync()
+    {
         if (accion != null)
         {
             dataIsLoaded = 1;
-            await PizarraData.GetPendientes(accion, division, DateTime.Now.AddDays(-1), DateTime.Now, tipo, "Reunion");
+
+            // 1) Parsear fechas f1/f2 que vienen como dd-MM-yyyy
+            var formatos = new[] { "dd-MM-yyyy", "dd/MM/yyyy", "yyyy-MM-dd" };
+            var cultura = CultureInfo.InvariantCulture;
+
+            if (!DateTime.TryParseExact(f1, formatos, cultura, DateTimeStyles.AssumeLocal, out var f1Date))
+                f1Date = DateTime.Today.AddDays(-1);
+            if (!DateTime.TryParseExact(f2, formatos, cultura, DateTimeStyles.AssumeLocal, out var f2Date))
+                f2Date = DateTime.Today;
+
+            // Normalizar inicio y fin de día
+            var fechaInicio = f1Date.Date; // 00:00:00
+            var fechaFin = f2Date.Date.AddDays(1).AddTicks(-1); // 23:59:59.9999999
+
+            // 2) Obtener datos del backend con el rango correcto
+            PizarraData.reudiatablas = await PizarraData.GetPendientes(
+                accion,
+                division,
+                fechaInicio,
+                fechaFin,
+                tipo,
+                "Reunion"
+            ) ?? new List<ReunionDTO>();
+
+            // 3) Filtrar por la fecha de REUNIÓN (como en la vista)
+            PizarraData.reudiatablas = PizarraData.reudiatablas
+                .Where(r => r != null &&
+                            r.RdfecReu.Date >= f1Date.Date &&
+                            r.RdfecReu.Date <= f2Date.Date)
+                .ToList();
+
+            // 4) Completar propiedades auxiliares como haces en tu código
+            foreach (var e in PizarraData.reudiatablas)
+            {
+                e.Ksf = KsfData.ksfs.FirstOrDefault(x => x.Idksf == e.Idksf)?.KsfNombre;
+                e.Responsable = RespoReuData.resporeus.FirstOrDefault(x => x.IdResReu == e.IdResReu)?.Rrnombre;
+            }
+
             dataIsLoaded = 2;
         }
-
     }
+
+    
 }
