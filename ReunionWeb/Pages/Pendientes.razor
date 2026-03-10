@@ -76,11 +76,14 @@ else
         }
         <BSCol ColumnLarge="3" ColumnSmall="6">
             <BSLabel>@DiccionarioTraduccionesService.Traducciones["Estado"]</BSLabel>
-            <BSInput InputType="InputType.Select" @bind-Value="Status">
-            <option value="Todo">@DiccionarioTraduccionesService.Traducciones["Todos"]</option>
-            <option value="Pendiente">@DiccionarioTraduccionesService.Traducciones["Pendiente"]</option>
-            <option value="Cerrado">@DiccionarioTraduccionesService.Traducciones["Cerrado"]</option>
-            </BSInput>
+
+<BSInput InputType="InputType.Select" @bind-Value="Status" class="form-select" required>
+    <option value="">@DiccionarioTraduccionesService.Traducciones["Seleccione"]</option>
+    <option value="Todo">@DiccionarioTraduccionesService.Traducciones["Todos"]</option>
+    <option value="Pendiente">@DiccionarioTraduccionesService.Traducciones["Pendiente"]</option>
+    <option value="Cerrado">@DiccionarioTraduccionesService.Traducciones["Cerrado"]</option>
+</BSInput>
+
         </BSCol>
 
         @*
@@ -561,7 +564,7 @@ else if (dataIsLoaded == 2 && PizarraData.reudiatablas.Count() == 0)
     private string NombreLinea { get; set; } = "Todo";//id de la linea
     private string? BuscarOdt { get; set; } = null;//valor de Odt
     private string Codigo { get; set; } = "Todo"; //Codigo
-    private string Status { get; set; } = "Total Pendiente"; //Status
+    private string Status { get; set; } = ""; //Status
     private string UsrAdmin { get; set; } = ""; //permisos de admin
     private string UsrRol { get; set; } = ""; //rol para filtrar
     private bool cargandocambio { get; set; } = false; //para cargar los datos del trazabilidad
