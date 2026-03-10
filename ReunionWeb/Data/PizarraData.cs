@@ -52,7 +52,7 @@ public class PizarraData : IPizarraData
         string idcentro, string iddiv, DateTime f1, DateTime f2, string tipo, string estado)
     {
         const int reunionDiaria = 2;
-        const int pageSize = 5000; // único parámetro interno que se enviará
+        const int pageSize = 100000; // único parámetro interno que se enviará
 
         string f1Formateado = f1.ToString("yyyy-MM-dd");
         string f2Formateado = f2.ToString("yyyy-MM-dd");
