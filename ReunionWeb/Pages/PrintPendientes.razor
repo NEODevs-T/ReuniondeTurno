@@ -64,7 +64,7 @@ else
     }
     <BSCol Column="3">
         <BSLabel>@DiccionarioTraduccionesService.Traducciones["Linea"]</BSLabel>
-        <BSInput InputType="InputType.Text" @bind-Value="@lineaTraducida" IsReadonly="true" />
+        <BSInput InputType="InputType.Text" Value="@lineaTraducida" IsReadonly="true" />
     </BSCol>
 
 
@@ -73,7 +73,7 @@ else
 <p></p>
 
 <body>
-    @if (PizarraData.reudiatablas.Count() > 0 && dataIsLoaded == 2)
+    @if (PizarraData.reudiatablas.Any() && dataIsLoaded == 2)
     {
 
 
@@ -107,7 +107,7 @@ else
             @if (UsrRol == "Calidad" | UsrRol == "Seguridad" | UsrRol=="Mtto")*@
                 @if (UsrRol != "")
                 {
-                    listareu = PizarraData.reudiatablas.Where(r => r.Responsable.StartsWith(UsrRol)).ToList();
+                    listareu = PizarraData.reudiatablas.Where(r => !string.IsNullOrEmpty(r.Responsable) && r.Responsable.StartsWith(UsrRol)).ToList();
                 }
                 else
                 {
@@ -117,14 +117,14 @@ else
                 @* @foreach (var d in DbReunionService.reudiatablas)*@
                 @foreach (var d in listareu)
                 {
-                    @if (linea == "Todo" | linea == d.Rdarea)
+                    @if (linea == "Todo" || linea == d.Rdarea)
                     {
-                        @if (Codigo == d.RdcodDis | Codigo == "Todo")
+                        @if (Codigo == d.RdcodDis || Codigo == "Todo")
                         {
-                            @if (Status == d.Rdstatus | Status == "Todo" | Status == "Total Pendiente" & (d.Rdstatus == "Pendiente" |
+                            @if (Status == d.Rdstatus || Status == "Todo" || Status == "Total Pendiente" && (d.Rdstatus == "Pendiente" ||
                            d.Rdstatus == "Pendiente/Responsable"))
                             {
-                                @if (idrespo == 0 | idrespo == d.IdResReu)
+                                @if (idrespo == 0 || idrespo == d.IdResReu)
                                 {
                                     <BSTR>
                                         @*<BSTD>@d.IdReuDia</BSTD>*@
@@ -135,11 +135,13 @@ else
                                                 var texto = idPais == 5 
                                                 ? KsfData.ksfs.Where(x => x.Idksf == d.Idksf).FirstOrDefault()?.KsfEnglish 
                                                 : KsfData.ksfs.Where(x => x.Idksf == d.Idksf).FirstOrDefault()?.KsfNombre;
-                                            }
-                                            @texto
+                                            }                                          
+                                            @(
+                                                texto ?? string.Empty
+                                            )
                                         </BSTD>
                                         <BSTD>@d.RdcodEq</BSTD>
-                                        <BSTD ColSpan="4">@d.Rddisc.ToUpperInvariant()</BSTD>
+                                        <BSTD ColSpan="4">@(d.Rddisc?.ToUpperInvariant() ?? string.Empty)</BSTD>
                                         @* <BSTD>@d.RdcodDis</BSTD> *@
                                         <BSTD Class="textotabla">@d.RdplanAcc</BSTD>
                                         @* <BSTD>@d.Rdtiempo</BSTD> *@
@@ -210,38 +212,38 @@ else
     private int idPais { get; set; }
 
     int dataIsLoaded = 0;
-    int CentroComedor = 0;
+    //int CentroComedor = 0;
 
     private string Codigo { get; set; } = "Todo"; //Codigo
-    private string Status { get; set; } = "Total Pendiente"; //Status
+    private string Status { get; set; } = "Todo"; //Status
     private string UsrAdmin { get; set; } = ""; //permisos de admin
     private string UsrRol { get; set; } = ""; //rol para filtrar
 
-    private List<AsistenReuDTO> listaAsistencia { get; set; }
-    private List<LineaDTO> lineas { get; set; }
-    private List<DivisionDTO> divisions { get; set; }
-    private List<MaestraVDTO> centro { get; set; }
-    private List<KsfDTO> ksfs { get; set; }
-    private List<RespoReuDTO> resporeu { get; set; }
-    private List<ReunionDTO> reunionditabla { get; set; }
-    private List<ReunionDTO> reudiatabla { get; set; }
-    private List<AsistenReuDTO> asistenreus { get; set; }
-    private List<CargoReuDTO> cargoreus { get; set; }
-    private List<StatsAsisDto> StatsAsisDtos { get; set; }
-    private List<EquiposEamVDTO> equipos { get; set; }
-    private List<EquiposEamVDTO> equiposlinea { get; set; }
-    private List<EquipoEamDTO> listaEqupis { get; set; }
-    private RegistroCambiosDTO listaRegistro { get; set; }
-    private List<CalendarioTrabajoDTO> calentrabajo { get; set; }
-    private List<CambFecDTO> cambiofecha { get; set; }
-    private List<ReunionDTO> reudiatablas { get; set; }
+    private List<AsistenReuDTO> listaAsistencia { get; set; } = new ();
+    private List<LineaDTO> lineas { get; set; } = new ();
+    private List<DivisionDTO> divisions { get; set; } = new ();
+    private List<MaestraVDTO> centro { get; set; } = new ();
+    private List<KsfDTO> ksfs { get; set; } = new ();
+    private List<RespoReuDTO> resporeu { get; set; } = new ();
+    private List<ReunionDTO> reunionditabla { get; set; } = new ();
+    private List<ReunionDTO> reudiatabla { get; set; } = new ();
+    private List<AsistenReuDTO> asistenreus { get; set; } = new ();
+    private List<CargoReuDTO> cargoreus { get; set; } = new ();
+    private List<StatsAsisDto> StatsAsisDtos { get; set; } = new ();
+    private List<EquiposEamVDTO> equipos { get; set; } = new ();
+    private List<EquiposEamVDTO> equiposlinea { get; set; } = new ();
+    private List<EquipoEamDTO> listaEqupis { get; set; } = new ();
+    private List<RegistroCambiosDTO> listaRegistro { get; set; } = new ();
+    private List<CalendarioTrabajoDTO> calentrabajo { get; set; } = new ();
+    private List<CambFecDTO> cambiofecha { get; set; } = new ();
+    private List<ReunionDTO> reudiatablas { get; set; } = new ();
 
 
 
 
     List<ReunionDTO> listareu = new List<ReunionDTO>();//filtar los responsables
 
-    private List<Claim> claims { get; set; }
+    private List<Claim> claims { get; set; } = new ();
     private bool traduccionesCargadas = false;
 
     private async Task CreateData()
@@ -262,8 +264,8 @@ else
         await base.OnInitializedAsync();
         await RespoReuData.GetResReu();
         await LocalizationService.EstablecerCulturaDesdeTokenAsync();
-        CultureInfo.CurrentCulture = CultureInfo.DefaultThreadCurrentCulture;
-        CultureInfo.CurrentUICulture = CultureInfo.DefaultThreadCurrentUICulture;
+        CultureInfo.CurrentCulture = CultureInfo.DefaultThreadCurrentCulture ?? CultureInfo.InvariantCulture;
+        CultureInfo.CurrentUICulture = CultureInfo.DefaultThreadCurrentUICulture ?? CultureInfo.InvariantCulture;
         await DiccionarioTraduccionesService.CargarTraduccionesAsync();
         traduccionesCargadas = true;
     }
@@ -276,70 +278,100 @@ else
         await KsfData.Getksf();
         await RespoReuData.GetResReu();
         await CausaCalidadData.GetCausasCalidad();
+        
+        var role = claims.FirstOrDefault(c => c.Type.Contains("role"))?.Value
+            ?? string.Empty;
+        var idEmpresa = claims.FirstOrDefault(c => c.Type.Contains("IdEmpresa"))?.Value
+            ?? string.Empty;
+        var idCentro = claims.FirstOrDefault(c => c.Type.Contains("IdCentro"))?.Value
+            ?? string.Empty;
 
-        switch (claims.FirstOrDefault(c => c.Type.Contains("role"))?.Value)
+        switch (role)
         {
             case "Admin":
             case "SuperAdmin":
                 UsrAdmin = "SuperAdmin";
-                await MaestraData.GetCentrosxEmpresa("All" + claims.FirstOrDefault(c => c.Type.Contains("IdEmpresa"))?.Value);
+                await MaestraData.GetCentrosxEmpresa("All" + idEmpresa);
                 break;
 
             case "SemiAdmin":
                 UsrAdmin = "SemiAdmin";
-                await MaestraData.GetCentrosxEmpresa(claims.FirstOrDefault(c => c.Type.Contains("IdCentro"))?.Value);
+                await MaestraData.GetCentrosxEmpresa(idCentro);
                 break;
 
             case "Planificador":
             case "SuperUser":
-                await MaestraData.GetCentrosxEmpresa(claims.FirstOrDefault(c => c.Type.Contains("IdCentro"))?.Value);
+                await MaestraData.GetCentrosxEmpresa(idCentro);
                 break;
 
             case "MttoAdmin":
                 UsrRol = "Mtto";
-                await MaestraData.GetCentrosxEmpresa("All" + claims.FirstOrDefault(c => c.Type.Contains("IdEmpresa"))?.Value);
+                await MaestraData.GetCentrosxEmpresa("All" + idEmpresa);
                 break;
+
             case "SeguridadAdmin":
-                UsrRol = "Seguridad";//Seguridad para filtar por seguridad
-                await MaestraData.GetCentrosxEmpresa("All" + claims.FirstOrDefault(c => c.Type.Contains("IdEmpresa"))?.Value);
+                UsrRol = "Seguridad";
+                await MaestraData.GetCentrosxEmpresa("All" + idEmpresa);
                 break;
+
             case "CalidadAdmin":
-                UsrRol = "Calidad";//Seguridad para filtar por calidad
-                await MaestraData.GetCentrosxEmpresa("All" + claims.FirstOrDefault(c => c.Type.Contains("IdEmpresa"))?.Value);
+                UsrRol = "Calidad";
+                await MaestraData.GetCentrosxEmpresa("All" + idEmpresa);
                 break;
 
             case "Mantenimiento":
                 UsrRol = "Mtto";
-                await MaestraData.GetCentrosxEmpresa(claims.FirstOrDefault(c => c.Type.Contains("IdCentro"))?.Value);
+                await MaestraData.GetCentrosxEmpresa(idCentro);
                 break;
 
             case "Auditores":
-                await MaestraData.GetCentrosxEmpresa("All" + claims.FirstOrDefault(c => c.Type.Contains("IdEmpresa"))?.Value);
+                await MaestraData.GetCentrosxEmpresa("All" + idEmpresa);
                 break;
 
             default:
-                UsrRol = claims.FirstOrDefault(c => c.Type.Contains("role"))?.Value;
-                await MaestraData.GetCentrosxEmpresa(claims.FirstOrDefault(c => c.Type.Contains("IdCentro"))?.Value);
+                UsrRol = role;
+                await MaestraData.GetCentrosxEmpresa(idCentro);
                 break;
         }
 
 
 
-        if (accion != null)
-        {
-            string[] fec1 = f1.Split('-');
-            string[] fec2 = f2.Split('-');
+    if (!string.IsNullOrWhiteSpace(accion)
+        && !string.IsNullOrWhiteSpace(f1)
+        && !string.IsNullOrWhiteSpace(f2))
+    {
+        string[] fec1 = f1.Split('-');
+        string[] fec2 = f2.Split('-');
 
-            //año, mes dia
-            DateTime date1 = new DateTime(int.Parse(fec1[2]), int.Parse(fec1[1]), int.Parse(fec1[0]));
-            DateTime date2 = new DateTime(int.Parse(fec2[2]), int.Parse(fec2[1]), int.Parse(fec2[0]));
+        // año, mes, día
+        DateTime date1 = new DateTime(
+            int.Parse(fec1[2]),
+            int.Parse(fec1[1]),
+            int.Parse(fec1[0])
+        );
 
-            dataIsLoaded = 1;
-            PizarraData.reudiatablas = await PizarraData.GetPendientes(accion, division, date1, date2, tipo, est) 
-            ?? new List<ReunionDTO>();
-            dataIsLoaded = 2;
+        DateTime date2 = new DateTime(
+            int.Parse(fec2[2]),
+            int.Parse(fec2[1]),
+            int.Parse(fec2[0])
+        );
 
-        }
+        dataIsLoaded = 1;
+
+        var divisionFinal = division ?? string.Empty;
+
+        PizarraData.reudiatablas =
+            await PizarraData.GetPendientes(
+                accion,
+                divisionFinal,
+                date1,
+                date2,
+                tipo!,
+                est!
+            ) ?? new List<ReunionDTO>();
+
+        dataIsLoaded = 2;
+    }
 
     }
 }
