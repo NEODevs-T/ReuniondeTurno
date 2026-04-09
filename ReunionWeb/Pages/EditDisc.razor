@@ -585,7 +585,7 @@ else
     [Parameter] public string? est { get; set; }
     
     string _message = "";
-    bool cambio = true;
+    //bool cambio = true;
     bool loader = true;
     
     ReunionDTO DiscForm = new ReunionDTO();
@@ -594,11 +594,14 @@ else
     List<CambFecDTO> CambiosFecha = new List<CambFecDTO>();
     
     private NotifiRadzen Notificar = new NotifiRadzen();
-    private DateTime fechahoy, fechatrabajo = DateTime.Today;
-    private string fechahoy2, Emp = "";
-    private string planificador, camStat, PlanOld;
+    //private DateTime fechahoy, fechatrabajo = DateTime.Today;
+    //private string fechahoy2, 
+    private string Emp = "";
+    private string planificador = string.Empty;
+    private string camStat = string.Empty;
+    private string PlanOld = string.Empty;
     private DateTime? camFec;
-    private List<Claim> claims { get; set; }
+    private List<Claim> claims { get; set; } = new();
     int dataIsLoaded = 0;
     private bool traduccionesCargadas = false;
     
@@ -616,102 +619,144 @@ else
             idPais = paisTemp;
         }
     }
-    
+
     protected override async Task OnParametersSetAsync()
     {
         await CreateData();
         loader = true;
-        Emp = claims[5].Value;
-        planificador = claims[1].Value;
-        await AvisadorData.GetCambioFecha((int)Id);
+
+        Emp = claims.Count > 5 ? claims[5].Value : string.Empty;
+        planificador = claims.Count > 1 ? claims[1].Value : string.Empty;
+
+        if (Id is null)
+        {
+            loader = false;
+            return;
+        }
+
+        await AvisadorData.GetCambioFecha(Id.Value);
         CambiosFecha = AvisadorData.cambiofecha;
-        camStat = DiscForm.Rdstatus;
+
+        camStat = DiscForm.Rdstatus ?? string.Empty;
         camFec = DiscForm.RdfecTra;
-        PlanOld = DiscForm.RdplanAcc;
+        PlanOld = DiscForm.RdplanAcc ?? string.Empty;
+
         await KsfData.Getksf();
         await RespoReuData.GetResReu();
         await CausaCalidadData.GetCausasCalidad();
+
         loader = false;
     }
     
     private void OnDiscResponsableChanged(ChangeEventArgs e)
     {
-        var selectedResponsableId = e.Value?.ToString();
-        if (!string.IsNullOrEmpty(selectedResponsableId))
+        if (e?.Value is not string valor || !int.TryParse(valor, out var responsableId))
         {
-            if (DiscForm.IdResReu == 9 && PreviousCausaCal.HasValue)
-                ObservacionesGuardadas = true;
-            else
-                ObservacionesGuardadas = false;
+            IsDiscObservacionesVisible = false;
+            DiscForm.IdCausaCal = 1;
 
-            DiscForm.IdResReu = int.Parse(selectedResponsableId);
+            if (string.IsNullOrEmpty(DiscForm.OrigenCal))
+                DiscForm.OrigenCal = "N/A";
 
-            if (DiscForm.IdResReu == 9)
-            {
-                IsDiscObservacionesVisible = true;
-                if (DiscForm.IdCausaCal == null || DiscForm.IdCausaCal == 0)
-                    DiscForm.IdCausaCal = 1;
-                DiscForm.OrigenCal = "";
-            }
-            else
-            {
-                IsDiscObservacionesVisible = false;
+            StateHasChanged();
+            return;
+        }
+
+        // Guardar estado previo si aplica
+        ObservacionesGuardadas =
+            DiscForm.IdResReu == 9 && PreviousCausaCal.HasValue;
+
+        DiscForm.IdResReu = responsableId;
+
+        if (DiscForm.IdResReu == 9)
+        {
+            IsDiscObservacionesVisible = true;
+
+            if (DiscForm.IdCausaCal == 0)
                 DiscForm.IdCausaCal = 1;
-                PreviousCausaCal = DiscForm.IdCausaCal;
-                if (!string.IsNullOrEmpty(DiscForm.OrigenCal))
-                    DiscForm.OrigenCal = "N/A";
-            }
+
+            DiscForm.OrigenCal = string.Empty;
         }
         else
         {
             IsDiscObservacionesVisible = false;
             DiscForm.IdCausaCal = 1;
-            if (string.IsNullOrEmpty(DiscForm.OrigenCal))
+            PreviousCausaCal = DiscForm.IdCausaCal;
+
+            if (!string.IsNullOrEmpty(DiscForm.OrigenCal))
                 DiscForm.OrigenCal = "N/A";
         }
+
         StateHasChanged();
     }
     
     private void OnCausaCalidadChanged(ChangeEventArgs e)
     {
-        DiscForm.IdCausaCal = !string.IsNullOrEmpty(e.Value?.ToString()) ? int.Parse(e.Value.ToString()) : 1;
+        if (e?.Value is string valor && int.TryParse(valor, out var id))
+        {
+            DiscForm.IdCausaCal = id;
+        }
+        else
+        {
+            DiscForm.IdCausaCal = 1;
+        }
+
         StateHasChanged();
     }
-    
+
     private void OnUbicacionChanged(ChangeEventArgs e)
     {
-        DiscForm.OrigenCal = !string.IsNullOrEmpty(e.Value?.ToString()) ? e.Value.ToString() : "";
+        DiscForm.OrigenCal = e?.Value?.ToString() ?? string.Empty;
         StateHasChanged();
     }
     
     protected override async Task OnInitializedAsync()
     {
-        DiscForm = await PizarraData.GetDiscrepantacia((int)Id);
+        if (Id is null)
+        return;
+        
+        DiscForm = await PizarraData.GetDiscrepantacia(Id.Value);
         IsDiscObservacionesVisible = DiscForm.IdResReu == 9;
         base.OnInitialized();
         await LocalizationService.EstablecerCulturaDesdeTokenAsync();
-        CultureInfo.CurrentCulture = CultureInfo.DefaultThreadCurrentCulture;
-        CultureInfo.CurrentUICulture = CultureInfo.DefaultThreadCurrentUICulture;
+        CultureInfo.CurrentCulture =
+            CultureInfo.DefaultThreadCurrentCulture ?? CultureInfo.InvariantCulture;
+        CultureInfo.CurrentUICulture =
+            CultureInfo.DefaultThreadCurrentUICulture ?? CultureInfo.InvariantCulture;
         await DiccionarioTraduccionesService.CargarTraduccionesAsync();
                 traduccionesCargadas = true;
     }
     
     async Task Back()
     {
-        string backcentro = DiscForm.Rdcentro;
-        string backdiv = DiscForm.Rddiv;
+        string backcentro = DiscForm.Rdcentro ?? string.Empty;
+        string backdiv = DiscForm.Rddiv ?? string.Empty;
         int currentIdCausaCal = DiscForm.IdCausaCal;
-        CentroDivisionDTO centrodiv = await PizarraData.GetCentroDivi(backcentro, backdiv, 1);
+
+        if (string.IsNullOrWhiteSpace(backcentro) || string.IsNullOrWhiteSpace(backdiv))
+            return;
+
+        CentroDivisionDTO centrodiv =
+            await PizarraData.GetCentroDivi(backcentro, backdiv, 1);
+
         string lang = idPais == 5 ? "en" : "es";
-        string ruta = "";
+        string ruta = string.Empty;
+
         if (tipo == 0 || tipo == 2)
         {
-            ruta = $"{lang}/{(lang == "en" ? "remaining" : "pendientes")}/{centrodiv.IdCentro}/{centrodiv.IdDivision}/{linea}/{f1}/{f2}/{tipo}/{est}";
+            ruta =
+                $"{lang}/{(lang == "en" ? "remaining" : "pendientes")}/" +
+                $"{centrodiv.IdCentro}/{centrodiv.IdDivision}/" +
+                $"{linea}/{f1}/{f2}/{tipo}/{est}";
         }
         else if (tipo == 1)
         {
-            ruta = $"{lang}/{(lang == "en" ? "meeting" : "reunion")}/{centrodiv.IdCentro}/{centrodiv.IdDivision}/{linea}/{f1}/{f2}/{tipo}/{est}";
+            ruta =
+                $"{lang}/{(lang == "en" ? "meeting" : "reunion")}/" +
+                $"{centrodiv.IdCentro}/{centrodiv.IdDivision}/" +
+                $"{linea}/{f1}/{f2}/{tipo}/{est}";
         }
+
         NavigationManager.NavigateTo(ruta);
         DiscForm.IdCausaCal = currentIdCausaCal;
     }
@@ -752,7 +797,10 @@ else
                 }
                 await AvisadorData.InsertCambioStatus(CambStat);
                 await AvisadorData.InsertCambioFec(CambFec);
-                var (success, centro, div) = await PizarraData.UpdateDiscrepancia2(DiscForm, (int)Id);
+                if (Id is null)
+                    return;
+
+                var (success, centro, div) = await PizarraData.UpdateDiscrepancia2(DiscForm, Id.Value);
                 if (success)
                 {
                     string lang = idPais == 5 ? "en" : "es";
