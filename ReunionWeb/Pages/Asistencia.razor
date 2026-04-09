@@ -69,7 +69,7 @@ else
 
 @if (CargoReuData.cargoreuss.Count() > 0 && dataIsLoaded == 2)
 {
-    @if (listaAsistencia.Where(c => c.Cargo.Crbloque == 1).Count() > 0)
+    @if (listaAsistencia.Any(c => c.Cargo != null && c.Cargo.Crbloque ==1))
     {
         <BSCol Column="4">
             <BSLabel>@DiccionarioTraduccionesService.Traducciones["Bloque"]: @bloque</BSLabel>
@@ -87,16 +87,15 @@ else
                 </BSTR>
             </BSTHead>
             <BSTBody>
-                @if (listaAsistencia.Where(c=>c.Cargo.Crbloque ==1).Count()>0)
+                @if (listaAsistencia.Any(c=>c.Cargo != null && c.Cargo.Crbloque == 1))
                 {
-                   
-                    @foreach (var d in listaAsistencia.Where(c => c.Cargo.Crbloque == bloque))
+                    @foreach (var d in listaAsistencia.Where(c => c.Cargo != null && c.Cargo.Crbloque == bloque))
                     {
 
 
                         <BSTR>
 
-                            <BSTD>@d.Cargo.Crbloque</BSTD>
+                            <BSTD>@(d.Cargo?.Crbloque ?? 0)</BSTD>
                             <BSTD>
                                 <div Class="@BS.Form_Check @BS.Form_Switch">
                                     <BSInputCheckbox CheckedValue="@(1)" Color="BSColor.Success" @bind-Value="d.ArAsistente" />
@@ -123,7 +122,7 @@ else
 
                         <BSTR>
 
-                        <BSTD>@d.Cargo.Crnombre</BSTD>
+                        <BSTD>@(d.Cargo?.Crnombre ?? string.Empty)</BSTD>
                         <BSTD>
                             <div Class="@BS.Form_Check @BS.Form_Switch">
                                 <BSInputCheckbox CheckedValue="@(1)" Color="BSColor.Success" @bind-Value="d.ArAsistente" />
@@ -135,7 +134,6 @@ else
                         <BSTD>
                             <div Class="@BS.Form_Check">
                                 <BSInputCheckbox CheckedValue="@(1)"  @bind-Value="d.ArSuplente" />
-                             
                             </div>
                         </BSTD>
 
@@ -170,7 +168,6 @@ else if (dataIsLoaded == 1 && RespoReuData.resporeus.Count() == 0)
     // private AsistenReu asiform = new AsistenReu();
     // private List<Asistencium> asis = new List<Asistencium>();
     private List<CargoReuDTO> cr = new List<CargoReuDTO>();
-    private AsistenReuDTO reuform;
     private string UsrRol { get; set; } = ""; //rol para filtrar
 
     private int fecha = int.Parse(DateTime.Now.ToString("yyyyMMdd"));
@@ -181,14 +178,14 @@ else if (dataIsLoaded == 1 && RespoReuData.resporeus.Count() == 0)
     private Task<AuthenticationState>? authenticationState { get; set; }
     private int idPais { get; set; }
 
-    private string mensaje = "", result = "";//resultado del save;
+    private string mensaje = ""; 
+    //result = "";//resultado del save;
     int dataIsLoaded = 0;
     // private string RadioValue { get; set; }
-    private string Div { get; set; }
+    private string Div { get; set; } = string.Empty;
     private int bloque { get; set; } = 0;//Indica el Bloque de reunion a llenar asistencia
-    private List<AsistenReuDTO> listaAsistencia { get; set; }
-    
-    private List<Claim> claims { get; set; }
+    private List<AsistenReuDTO> listaAsistencia { get; set; } = new();
+    private List<Claim> claims { get; set; } = new();
     private bool traduccionesCargadas = false;
 
 
@@ -206,61 +203,84 @@ else if (dataIsLoaded == 1 && RespoReuData.resporeus.Count() == 0)
         await CreateData();
 
         await LocalizationService.EstablecerCulturaDesdeTokenAsync();
-        CultureInfo.CurrentCulture = CultureInfo.DefaultThreadCurrentCulture;
-        CultureInfo.CurrentUICulture = CultureInfo.DefaultThreadCurrentUICulture;
+        CultureInfo.CurrentCulture =
+            CultureInfo.DefaultThreadCurrentCulture ?? CultureInfo.InvariantCulture;
+        CultureInfo.CurrentUICulture =
+            CultureInfo.DefaultThreadCurrentUICulture ?? CultureInfo.InvariantCulture;
+
         await DiccionarioTraduccionesService.CargarTraduccionesAsync();
-            traduccionesCargadas = true;
+        traduccionesCargadas = true;
 
-        UsrRol = claims.FirstOrDefault(c => c.Type.Contains("role"))?.Value;
+        var rol = claims.FirstOrDefault(c => c.Type.Contains("role"))?.Value ?? string.Empty;
+        var idEmpresa = claims.FirstOrDefault(c => c.Type.Contains("IdEmpresa"))?.Value ?? string.Empty;
+        var idCentro = claims.FirstOrDefault(c => c.Type.Equals("IdCentro"))?.Value ?? string.Empty;
 
-        if (UsrRol == "Admin" || UsrRol == "SuperAdmin" || UsrRol == "SuperUser" || UsrRol == "PrimeUser")
+        UsrRol = rol;
+
+        if (rol is "Admin" or "SuperAdmin" or "SuperUser" or "PrimeUser")
         {
-            var idEmpresa = claims.FirstOrDefault(c => c.Type.Contains("IdEmpresa"))?.Value;
-            await MaestraData.GetCentrosxEmpresa("All" + idEmpresa);
+            if (!string.IsNullOrEmpty(idEmpresa))
+            {
+                await MaestraData.GetCentrosxEmpresa("All" + idEmpresa);
+            }
         }
         else
         {
-            var idCentro = claims.FirstOrDefault(c => c.Type.Equals("IdCentro"))?.Value;
-            await MaestraData.GetCentrosxEmpresa(idCentro);
+            if (!string.IsNullOrEmpty(idCentro))
+            {
+                await MaestraData.GetCentrosxEmpresa(idCentro);
+            }
         }
 
-        Div = claims.FirstOrDefault(c => c.Type.Contains("Centro"))?.Value;
-
+        Div = claims.FirstOrDefault(c => c.Type.Contains("Centro"))?.Value ?? string.Empty;
     }
 
     protected async Task Get()
     {
-        if (dataIsLoaded != 1)
+        if (dataIsLoaded == 1)
+            return;
+
+        dataIsLoaded = 1;
+
+        var empresa = claims
+            .FirstOrDefault(c => c.Type.Equals("Empresa"))
+            ?.Value
+            ?? string.Empty;
+
+        // Llamada segura al servicio
+        await CargoReuData.GetAsistenciadeTurno(Div, empresa);
+
+        cr = CargoReuData.cargoreuss;
+        listaAsistencia = new List<AsistenReuDTO>();
+
+        foreach (var cargo in cr)
         {
-            dataIsLoaded = 1;
-            await CargoReuData.GetAsistenciadeTurno(Div, claims.FirstOrDefault(c => c.Type.Equals("Empresa"))?.Value);
-            cr = CargoReuData.cargoreuss;
-            listaAsistencia = new List<AsistenReuDTO>();
-
-            for (var i = 0; i < cr.Count; i++)
+            var reuform = new AsistenReuDTO
             {
+                Ararea = Div,
+                Arfecha = DateTime.Now,
+                Cargo = cargo
+            };
 
-                reuform = new AsistenReuDTO();
-                reuform.Ararea = Div;
-                reuform.Arfecha = DateTime.Now;
-                reuform.Cargo = cr[i];
-                listaAsistencia.Add(reuform);
-            }
-
-
-            for (var i = 0; i < cr.Count; i++)
-            {
-
-                listaAsistencia[i].Cargo.IdCargoR = CargoReuData.cargoreuss[i].IdCargoR;
-            }
-
-            if (listaAsistencia.Any(c => c.Cargo.Crbloque == 1))
-            {
-                bloque = 1;
-            }
-            dataIsLoaded = 2;
-
+            listaAsistencia.Add(reuform);
         }
+
+        // Sincronizar IdCargoR de forma segura
+        for (var i = 0; i < listaAsistencia.Count; i++)
+        {
+            if (listaAsistencia[i].Cargo != null)
+            {
+                listaAsistencia[i].Cargo!.IdCargoR = cr[i].IdCargoR;
+            }
+        }
+
+        // Validación segura de bloque
+        if (listaAsistencia.Any(c => c.Cargo != null && c.Cargo.Crbloque == 1))
+        {
+            bloque = 1;
+        }
+
+        dataIsLoaded = 2;
     }
 
     protected async Task Save()
@@ -280,7 +300,9 @@ else if (dataIsLoaded == 1 && RespoReuData.resporeus.Count() == 0)
                 {
                     for (int i = listaAsistencia.Count - 1; i >= 0; i--)
                     {
-                        if (listaAsistencia[i].Cargo.Crbloque != bloque)
+                        var cargo = listaAsistencia[i].Cargo;
+                        
+                        if (cargo == null || cargo.Crbloque != bloque)
                         {
                             listaAsistencia.RemoveAt(i);
                         }
@@ -341,10 +363,10 @@ else if (dataIsLoaded == 1 && RespoReuData.resporeus.Count() == 0)
         }
     }
 
-    protected async Task Reset()
+    /*protected async Task Reset()
     {
         // asisform = new Asistencium();
-    }
+    }*/
 
 
 }
