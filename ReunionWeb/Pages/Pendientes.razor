@@ -234,7 +234,7 @@ else
                             {
                                 @if (IdKsf == 0 || IdKsf == d.Idksf)
                                 {
-                                    <BSTR Class="@GetClassVencido(d.RdfecReu, d.Rdstatus)">
+                                    <BSTR Class="@GetClassVencido(d.RdfecReu, d.Rdstatus ?? string.Empty)">
                                         <BSTD>@d.Rdarea</BSTD>
                                         <BSTD>
                                             @{
@@ -253,7 +253,7 @@ else
                                             }
                                             @texto
                                         </BSTD>
-                                        <BSTD>@d.Rddisc.ToUpperInvariant()</BSTD>
+                                        <BSTD>@(d.Rddisc?.ToUpperInvariant() ?? string.Empty)</BSTD>
                                         <BSTD Class="textotabla">@d.RdplanAcc</BSTD>
                                         @{
                                             var responsable = RespoReuData.resporeus.FirstOrDefault(x => x.IdResReu == d.IdResReu);
@@ -336,9 +336,11 @@ else
                                 <BSTD>@d.Cbfecha</BSTD>
                                 @{
                                     var clave = d.Cbstat;
-                                    var textoTraducido = DiccionarioTraduccionesService.Traducciones.TryGetValue(clave, out var traduccion)
-                                        ? traduccion
-                                        : clave;
+                                    var textoTraducido =
+                                        !string.IsNullOrWhiteSpace(clave) &&
+                                        DiccionarioTraduccionesService.Traducciones.TryGetValue(clave, out var traduccion)
+                                            ? traduccion
+                                            : clave ?? string.Empty;
                                 }
                                 <BSTD>@textoTraducido</BSTD>
                                 <BSTD>@d.Cbuser</BSTD>
@@ -547,7 +549,7 @@ else if (dataIsLoaded == 2 && PizarraData.reudiatablas.Count() == 0)
 
     private int idPais { get; set; }
     
-    private string mensaje = "";
+    //private string mensaje = "";
 
     int dataIsLoaded = 0;
     string ayer = DateTime.Now.AddDays(-1).ToString("yyyyMMdd");
@@ -575,7 +577,7 @@ else if (dataIsLoaded == 2 && PizarraData.reudiatablas.Count() == 0)
     List<MaestraVDTO> _divisiones = new List<MaestraVDTO>();
     private NotifiRadzen Notificar = new NotifiRadzen();//Logic para crear las noyificaciones radzen
     private bool isEditar { get; set; } = true;
-    private List<Claim> claims { get; set; }
+    private List<Claim> claims { get; set; } = new();
     private bool traduccionesCargadas = false;
     private int IdMasterSeleccionado { get; set; } = 0;
     private int LineaSeleccionada { get; set; } = 0;
@@ -621,8 +623,8 @@ else if (dataIsLoaded == 2 && PizarraData.reudiatablas.Count() == 0)
         fecha2 = DateTime.Now;
         await CreateData();
         await LocalizationService.EstablecerCulturaDesdeTokenAsync();
-        CultureInfo.CurrentCulture = CultureInfo.DefaultThreadCurrentCulture;
-        CultureInfo.CurrentUICulture = CultureInfo.DefaultThreadCurrentUICulture;
+        CultureInfo.CurrentCulture = CultureInfo.DefaultThreadCurrentCulture ?? CultureInfo.InvariantCulture;
+        CultureInfo.CurrentUICulture = CultureInfo.DefaultThreadCurrentUICulture ?? CultureInfo.InvariantCulture;
         await DiccionarioTraduccionesService.CargarTraduccionesAsync();
         traduccionesCargadas = true;
 
@@ -634,63 +636,68 @@ else if (dataIsLoaded == 2 && PizarraData.reudiatablas.Count() == 0)
         await CausaCalidadData.GetCausasCalidad();
         RespoReuData.resporeus = RespoReuData.resporeus.Where(a => a.Rrdesc == claims.FirstOrDefault(c => c.Type.Contains("Empresa"))?.Value | string.IsNullOrEmpty(a.Rrdesc)).ToList();
         PizarraData.reudiatablas = new List<ReunionDTO>();
-
+        var rol = claims.FirstOrDefault(c => c.Type.Contains("role"))?.Value ?? string.Empty;
+        var idEmpresa = claims.FirstOrDefault(c => c.Type.Contains("IdEmpresa"))?.Value ?? string.Empty;
+        var idCentro = claims.FirstOrDefault(c => c.Type.Contains("IdCentro"))?.Value ?? string.Empty;
 
         //TODO: Crear logica con funcion qur retorne esto.se usa en hoistoricos e impresiones tambien
-        switch (claims.FirstOrDefault(c => c.Type.Contains("role"))?.Value)
+        
+        switch (rol)
         {
-            
             case "Admin":
-                UsrAdmin = "Admin";
-                await MaestraData.GetCentrosxEmpresa("All" + claims.FirstOrDefault(c => c.Type.Contains("IdEmpresa"))?.Value);
-                break;
-
             case "PrimeUser":
-                UsrAdmin = "PrimeUser";
-                await MaestraData.GetCentrosxEmpresa("All" + claims.FirstOrDefault(c => c.Type.Contains("IdEmpresa"))?.Value);
-                break;
-
             case "SuperAdmin":
-                UsrAdmin = "SuperAdmin";
-                await MaestraData.GetCentrosxEmpresa("All" + claims.FirstOrDefault(c => c.Type.Contains("IdEmpresa"))?.Value);
-                break;  
+                UsrAdmin = rol;
+                if (!string.IsNullOrEmpty(idEmpresa))
+                    await MaestraData.GetCentrosxEmpresa("All" + idEmpresa);
+                break;
 
             case "SemiAdmin":
-                UsrAdmin = "SemiAdmin";
                 UsrAdmin = "PrimeUser";
-                await MaestraData.GetCentrosxEmpresa(claims.FirstOrDefault(c => c.Type.Contains("IdCentro"))?.Value);
+                if (!string.IsNullOrEmpty(idCentro))
+                    await MaestraData.GetCentrosxEmpresa(idCentro);
                 break;
 
             case "Planificador":
             case "SuperUser":
-                await MaestraData.GetCentrosxEmpresa(claims.FirstOrDefault(c => c.Type.Contains("IdCentro"))?.Value);
+                if (!string.IsNullOrEmpty(idCentro))
+                    await MaestraData.GetCentrosxEmpresa(idCentro);
                 break;
+
             case "Auditores":
                 isEditar = false;
-                await MaestraData.GetCentrosxEmpresa("All" + claims.FirstOrDefault(c => c.Type.Contains("IdEmpresa"))?.Value);
+                if (!string.IsNullOrEmpty(idEmpresa))
+                    await MaestraData.GetCentrosxEmpresa("All" + idEmpresa);
                 break;
 
             case "MttoAdmin":
                 UsrRol = "Mtto";
-                await MaestraData.GetCentrosxEmpresa("All" + claims.FirstOrDefault(c => c.Type.Contains("IdEmpresa"))?.Value);
+                if (!string.IsNullOrEmpty(idEmpresa))
+                    await MaestraData.GetCentrosxEmpresa("All" + idEmpresa);
                 break;
+
             case "SeguridadAdmin":
-                UsrRol = "Seguridad";//Seguridad para filtar por seguridad
-                await MaestraData.GetCentrosxEmpresa("All" + claims.FirstOrDefault(c => c.Type.Contains("IdEmpresa"))?.Value);
+                UsrRol = "Seguridad";
+                if (!string.IsNullOrEmpty(idEmpresa))
+                    await MaestraData.GetCentrosxEmpresa("All" + idEmpresa);
                 break;
+
             case "CalidadAdmin":
-                UsrRol = "Calidad";//Calidad para filtar por calidad
-                await MaestraData.GetCentrosxEmpresa("All" + claims.FirstOrDefault(c => c.Type.Contains("IdEmpresa"))?.Value);
+                UsrRol = "Calidad";
+                if (!string.IsNullOrEmpty(idEmpresa))
+                    await MaestraData.GetCentrosxEmpresa("All" + idEmpresa);
                 break;
 
             case "Mantenimiento":
                 UsrRol = "Mtto";
-                await MaestraData.GetCentrosxEmpresa(claims.FirstOrDefault(c => c.Type.Contains("IdCentro"))?.Value);
+                if (!string.IsNullOrEmpty(idCentro))
+                    await MaestraData.GetCentrosxEmpresa(idCentro);
                 break;
 
             default:
-                UsrRol = claims.FirstOrDefault(c => c.Type.Contains("role"))?.Value;
-                await MaestraData.GetCentrosxEmpresa(claims.FirstOrDefault(c => c.Type.Contains("IdCentro"))?.Value);
+                UsrRol = rol;
+                if (!string.IsNullOrEmpty(idCentro))
+                    await MaestraData.GetCentrosxEmpresa(idCentro);
                 break;
         }
         
@@ -786,17 +793,36 @@ else if (dataIsLoaded == 2 && PizarraData.reudiatablas.Count() == 0)
 
     protected async Task BuscarDivision(ChangeEventArgs e)
     {
-            IdCentro = int.Parse(e.Value.ToString());
-            IdDiv = 0;
-            IdMasterSeleccionado = 0;
-            NombreLinea = "Todo";
-            try{
-                if(IdCentro != 0){
-                    MaestraData.divisions = await MaestraData.ObtenerDivisionDelCentro(IdCentro);
-                }
-            }catch(Exception ex){
-                NotificationService.Notify(Notificar.Notificacion("error", "Error", DiccionarioTraduccionesService.Traducciones["SDivision"]));
+        IdDiv = 0;
+        IdMasterSeleccionado = 0;
+        NombreLinea = "Todo";
+
+        if (e?.Value is not string valor || !int.TryParse(valor, out var centroId))
+        {
+            IdCentro = 0;
+            return;
+        }
+
+        IdCentro = centroId;
+
+        try
+        {
+            if (IdCentro != 0)
+            {
+                MaestraData.divisions =
+                    await MaestraData.ObtenerDivisionDelCentro(IdCentro);
             }
+        }
+        catch
+        {
+            NotificationService.Notify(
+                Notificar.Notificacion(
+                    "error",
+                    "Error",
+                    DiccionarioTraduccionesService.Traducciones["SDivision"]
+                )
+            );
+        }
     }
 
 protected async Task Get()
@@ -940,60 +966,84 @@ protected async Task Get()
     {
         try
         {
+            if (string.IsNullOrWhiteSpace(accion))
+                return;
 
+            BuscarOdt = await LocalStorage.GetItemAsStringAsync("OdtValue");
 
-            if (accion != null)
+            if (string.IsNullOrEmpty(BuscarOdt) && !valueodt)
             {
-                //Si esta filtrando por ODT se consulta la odt si el campo es vacio se procede normal
-                BuscarOdt = await LocalStorage.GetItemAsStringAsync("OdtValue");
+                valuvisualeodt = valueodt = false;
 
-                if (string.IsNullOrEmpty(BuscarOdt) && !valueodt)
+                if (string.IsNullOrWhiteSpace(f1) || string.IsNullOrWhiteSpace(f2))
+                    return;
+
+                if (!DateTime.TryParseExact(f1, "dd-MM-yyyy", null,
+                    System.Globalization.DateTimeStyles.None, out var date1))
+                    return;
+
+                if (!DateTime.TryParseExact(f2, "dd-MM-yyyy", null,
+                    System.Globalization.DateTimeStyles.None, out var date2))
+                    return;
+
+                fecha1 = date1;
+                fecha2 = date2;
+
+                if (!int.TryParse(accion, out var idCentro))
+                    return;
+
+                if (!int.TryParse(division, out var idDiv))
+                    return;
+
+                IdCentro = idCentro;
+                IdDiv = idDiv;
+
+                Status = est ?? string.Empty;
+                tipoconsulta = tipo ?? string.Empty;
+
+                if (!string.IsNullOrWhiteSpace(linea) && linea != "Todo")
                 {
-                    valuvisualeodt = valueodt = false;
-
-
-                    string[] fec1 = f1.Split('-');
-                    string[] fec2 = f2.Split('-');
-
-                    //año, mes dia
-                    DateTime date1 = new DateTime(int.Parse(fec1[2]), int.Parse(fec1[1]), int.Parse(fec1[0]));
-                    DateTime date2 = new DateTime(int.Parse(fec2[2]), int.Parse(fec2[1]), int.Parse(fec2[0]));
-                    fecha1 = date1;
-                    fecha2 = date2;
-                    IdCentro = int.Parse(accion);
-                    IdDiv = int.Parse(division);
-                    Status = est;
-                    if (!string.IsNullOrEmpty(linea) && linea != "Todo")
-                    {
-                        NombreLinea = linea;
-                    }
-                    tipoconsulta = tipo;
-                    dataIsLoaded = 1;
-                    PizarraData.reudiatablas = await PizarraData.GetPendientes
-                    (accion, division, date1, date2, tipo, est)?? new List<ReunionDTO>();
-                    PizarraData.reudiatablas = PizarraData.reudiatablas
-                        .Where(d => d.Idksf != 6)
-                        .ToList();
-                    ObtenerReunionesPorRol();//actualizar tabla
-                    ConstruirCatalogoEquiposPorNombre();
-                    AplicarFiltroPorCodigoSeleccionado();
-                    dataIsLoaded = 2;
-                }
-                else
-                {
-                    valuvisualeodt = valueodt;
-                    await BuscarxOdt();
-
+                    NombreLinea = linea;
                 }
 
+                dataIsLoaded = 1;
+
+                PizarraData.reudiatablas =
+                    await PizarraData.GetPendientes(
+                        accion,
+                        division ?? string.Empty,
+                        date1,
+                        date2,
+                        tipoconsulta,
+                        Status
+                    ) ?? new List<ReunionDTO>();
+
+                PizarraData.reudiatablas = PizarraData.reudiatablas
+                    .Where(d => d.Idksf != 6)
+                    .ToList();
+
+                ObtenerReunionesPorRol();
+                ConstruirCatalogoEquiposPorNombre();
+                AplicarFiltroPorCodigoSeleccionado();
+
+                dataIsLoaded = 2;
+            }
+            else
+            {
+                valuvisualeodt = valueodt;
+                await BuscarxOdt();
             }
         }
-        catch (Exception ex)
+        catch
         {
-            NotificationService.Notify(Notificar.Notificacion("error", DiccionarioTraduccionesService.Traducciones["ErrorInesp"], DiccionarioTraduccionesService.Traducciones["Reload"]));
-
+            NotificationService.Notify(
+                Notificar.Notificacion(
+                    "error",
+                    DiccionarioTraduccionesService.Traducciones["ErrorInesp"],
+                    DiccionarioTraduccionesService.Traducciones["Reload"]
+                )
+            );
         }
-
     }
 
     
@@ -1002,16 +1052,21 @@ protected async Task Get()
         if (!string.IsNullOrEmpty(UsrRol))
         {
             foreach (var e in PizarraData.reudiatablas)
-                {
-                    e.Responsable = RespoReuData.resporeus.Where(x => x.IdResReu == e.IdResReu).FirstOrDefault().Rrnombre;
-                }
-            listareu = PizarraData.reudiatablas.Where(r => r.Responsable.StartsWith(UsrRol)).ToList();
+            {
+                e.Responsable = RespoReuData.resporeus
+                    .FirstOrDefault(x => x.IdResReu == e.IdResReu)
+                    ?.Rrnombre
+                    ?? string.Empty;
+            }
 
+            listareu = PizarraData.reudiatablas
+                .Where(r => !string.IsNullOrEmpty(r.Responsable) &&
+                            r.Responsable.StartsWith(UsrRol))
+                .ToList();
         }
         else
         {
             listareu = PizarraData.reudiatablas;
-
         }
     }
 
@@ -1039,17 +1094,30 @@ protected async Task Get()
     
     protected async Task BuscarLineas(ChangeEventArgs e)
     {
-        IdDiv = int.Parse(e.Value.ToString());
+        IdDiv = 0;
+
+        if (e?.Value is not string valor || !int.TryParse(valor, out var divisionId))
+            return;
+
+        IdDiv = divisionId;
+
         try
         {
             if (IdDiv != 0)
             {
-                MaestraData.lineas = await MaestraData.ObtenerLasLineasPorDivision(IdDiv);
+                MaestraData.lineas =
+                    await MaestraData.ObtenerLasLineasPorDivision(IdDiv);
             }
         }
-        catch (Exception ex)
+        catch
         {
-            NotificationService.Notify(Notificar.Notificacion("error", "Error", DiccionarioTraduccionesService.Traducciones["SLinea"]));
+            NotificationService.Notify(
+                Notificar.Notificacion(
+                    "error",
+                    "Error",
+                    DiccionarioTraduccionesService.Traducciones["SLinea"]
+                )
+            );
         }
     }
 
