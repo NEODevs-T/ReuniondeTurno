@@ -498,40 +498,31 @@ else if (dataIsLoaded == 2 && tabla.Count() == 0)
         {
             dataIsLoaded = 1;
             tabla = await PizarraData.GetHistoricos(IdCentro.ToString(), IdDiv.ToString(), fecha1, fecha2, tipoconsulta, Status);
-foreach (var d in PizarraData.reudiatablas)
-{
-    // KSF
-    d.Ksf = KsfData.ksfs
-        .FirstOrDefault(x => x.Idksf == d.Idksf) is var ksf && ksf != null
-            ? (idPais == 5 ? ksf.KsfEnglish : ksf.KsfNombre)
-            : string.Empty;
-
-    // Responsable
-    d.Responsable = RespoReuData.resporeus
-        .FirstOrDefault(x => x.IdResReu == d.IdResReu) is var respo && respo != null
-            ? (idPais == 5 ? respo.Rrenglish : respo.Rrnombre)
-            : string.Empty;
-
-    // Causa de calidad
-    var causa = CausaCalidadData.causaCals
-        .FirstOrDefault(x => x.IdCausaCal == d.IdCausaCal);
-
-    if (causa == null)
-    {
-        d.CausaCalNombre = idPais == 5
-            ? "Cause not found"
-            : "Causa no encontrada";
-        continue;
-    }
-
-    // ✅ async correctamente awaited
-    await MaestraData.GetPRueba01(causa.IdCausaCal);
-
-    d.CausaCalNombre = idPais == 5
-        ? causa.Ccenglish
-        : causa.Ccnombre;
-}
-               {
+            foreach (var d in PizarraData.reudiatablas)
+            {
+                d.Ksf = KsfData.ksfs
+                    .FirstOrDefault(x => x.Idksf == d.Idksf) is var ksf && ksf != null
+                        ? (idPais == 5 ? ksf.KsfEnglish : ksf.KsfNombre)
+                        : string.Empty;
+                d.Responsable = RespoReuData.resporeus
+                    .FirstOrDefault(x => x.IdResReu == d.IdResReu) is var respo && respo != null
+                        ? (idPais == 5 ? respo.Rrenglish : respo.Rrnombre)
+                        : string.Empty;
+                var causa = CausaCalidadData.causaCals
+                    .FirstOrDefault(x => x.IdCausaCal == d.IdCausaCal);
+                if (causa == null)
+                {
+                    d.CausaCalNombre = idPais == 5
+                        ? "Cause not found"
+                        : "Causa no encontrada";
+                    continue;
+                }
+                await MaestraData.GetPRueba01(causa.IdCausaCal);
+                d.CausaCalNombre = idPais == 5
+                    ? causa.Ccenglish
+                    : causa.Ccnombre;
+            }
+            {
         if (SelectedCausaCalidad == 0)
         {
             // Mostrar todo
