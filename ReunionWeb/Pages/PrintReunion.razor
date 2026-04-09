@@ -124,7 +124,7 @@ else
 
 
                             <BSTD>@d.RdcodEq</BSTD>
-                            <BSTD ColSpan="4">@d.Rddisc.ToUpper()</BSTD>
+                            <BSTD ColSpan="4">@(d.Rddisc?.ToUpperInvariant() ?? string.Empty)</BSTD>
                             @* <BSTD>@d.RdcodDis</BSTD> *@
                             @if (@d.RdplanAcc is not null)
                             {
@@ -198,25 +198,25 @@ else
     [Parameter]
     public string? tipo { get; set; }
 
-    private List<AsistenReuDTO> listaAsistencia { get; set; }
-    private List<LineaDTO> lineas { get; set; }
-    private List<DivisionDTO> divisions { get; set; }
-    private List<MaestraVDTO> centro { get; set; }
-    private List<KsfDTO> ksfs { get; set; }
-    private List<RespoReuDTO> resporeu { get; set; }
-    private List<ReunionDTO> reunionditabla { get; set; }
-    private List<ReunionDTO> reudiatabla { get; set; }
-    private List<AsistenReuDTO> asistenreus { get; set; }
-    private List<CargoReuDTO> cargoreus { get; set; }
-    private List<StatsAsisDto> StatsAsisDtos { get; set; }
-    private List<EquiposEamVDTO> equipos { get; set; }
-    private List<EquiposEamVDTO> equiposlinea { get; set; }
-    private List<EquipoEamDTO> listaEqupis { get; set; }
-    private RegistroCambiosDTO listaRegistro { get; set; }
-    private List<CalendarioTrabajoDTO> calentrabajo { get; set; }
-    private List<CambFecDTO> cambiofecha { get; set; }
-    private List<ReunionDTO> reudiatablas { get; set; }
-    private List<Claim> claims { get; set; }
+    private List<AsistenReuDTO> listaAsistencia { get; set; } = new ();
+    private List<LineaDTO> lineas { get; set; } = new ();
+    private List<DivisionDTO> divisions { get; set; } = new ();
+    private List<MaestraVDTO> centro { get; set; } = new ();
+    private List<KsfDTO> ksfs { get; set; }  = new ();
+    private List<RespoReuDTO> resporeu { get; set; }  = new ();
+    private List<ReunionDTO> reunionditabla { get; set; }  = new ();
+    private List<ReunionDTO> reudiatabla { get; set; } = new ();
+    private List<AsistenReuDTO> asistenreus { get; set; }  = new ();
+    private List<CargoReuDTO> cargoreus { get; set; }  = new ();
+    private List<StatsAsisDto> StatsAsisDtos { get; set; }  = new ();
+    private List<EquiposEamVDTO> equipos { get; set; }  = new ();
+    private List<EquiposEamVDTO> equiposlinea { get; set; }  = new ();
+    private List<EquipoEamDTO> listaEqupis { get; set; }  = new ();
+    private List<RegistroCambiosDTO> listaRegistro { get; set; }  = new ();
+    private List<CalendarioTrabajoDTO> calentrabajo { get; set; }  = new ();
+    private List<CambFecDTO> cambiofecha { get; set; }  = new ();
+    private List<ReunionDTO> reudiatablas { get; set; }  = new ();
+    private List<Claim> claims { get; set; } = new ();
     private int idPais { get; set; }
     private bool traduccionesCargadas = false;
 
@@ -246,8 +246,8 @@ else
         await RespoReuData.GetResReu();
         await CausaCalidadData.GetCausasCalidad();
         await LocalizationService.EstablecerCulturaDesdeTokenAsync();
-        CultureInfo.CurrentCulture = CultureInfo.DefaultThreadCurrentCulture;
-        CultureInfo.CurrentUICulture = CultureInfo.DefaultThreadCurrentUICulture;
+        CultureInfo.CurrentCulture = CultureInfo.DefaultThreadCurrentCulture ?? CultureInfo.InvariantCulture;
+        CultureInfo.CurrentUICulture = CultureInfo.DefaultThreadCurrentUICulture ?? CultureInfo.InvariantCulture;
         await DiccionarioTraduccionesService.CargarTraduccionesAsync();
         traduccionesCargadas = true;
     }
@@ -259,41 +259,50 @@ else
         {
             dataIsLoaded = 1;
 
-            // 1) Parsear fechas f1/f2 que vienen como dd-MM-yyyy
+            // 1) Parsear fechas
             var formatos = new[] { "dd-MM-yyyy", "dd/MM/yyyy", "yyyy-MM-dd" };
             var cultura = CultureInfo.InvariantCulture;
 
             if (!DateTime.TryParseExact(f1, formatos, cultura, DateTimeStyles.AssumeLocal, out var f1Date))
                 f1Date = DateTime.Today.AddDays(-1);
+
             if (!DateTime.TryParseExact(f2, formatos, cultura, DateTimeStyles.AssumeLocal, out var f2Date))
                 f2Date = DateTime.Today;
 
-            // Normalizar inicio y fin de día
-            var fechaInicio = f1Date.Date; // 00:00:00
-            var fechaFin = f2Date.Date.AddDays(1).AddTicks(-1); // 23:59:59.9999999
+            var fechaInicio = f1Date.Date;
+            var fechaFin = f2Date.Date.AddDays(1).AddTicks(-1);
 
-            // 2) Obtener datos del backend con el rango correcto
+            // 2) Normalizar parámetros
+            var idCentro = accion;
+            var idDivision = division ?? string.Empty;
+            var tipoConsulta = tipo ?? string.Empty;
+
+            // 3) Llamada segura al backend
             PizarraData.reudiatablas = await PizarraData.GetPendientes(
-                accion,
-                division,
+                idCentro,
+                idDivision,
                 fechaInicio,
                 fechaFin,
-                tipo,
+                tipoConsulta,
                 "Reunion"
             ) ?? new List<ReunionDTO>();
 
-            // 3) Filtrar por la fecha de REUNIÓN (como en la vista)
+            // 4) Filtro por fecha de reunión
             PizarraData.reudiatablas = PizarraData.reudiatablas
-                .Where(r => r != null &&
-                            r.RdfecReu.Date >= f1Date.Date &&
+                .Where(r => r.RdfecReu.Date >= f1Date.Date &&
                             r.RdfecReu.Date <= f2Date.Date)
                 .ToList();
 
-            // 4) Completar propiedades auxiliares como haces en tu código
+            // 5) Completar propiedades
             foreach (var e in PizarraData.reudiatablas)
             {
-                e.Ksf = KsfData.ksfs.FirstOrDefault(x => x.Idksf == e.Idksf)?.KsfNombre;
-                e.Responsable = RespoReuData.resporeus.FirstOrDefault(x => x.IdResReu == e.IdResReu)?.Rrnombre;
+                e.Ksf = KsfData.ksfs
+                    .FirstOrDefault(x => x.Idksf == e.Idksf)
+                    ?.KsfNombre ?? string.Empty;
+
+                e.Responsable = RespoReuData.resporeus
+                    .FirstOrDefault(x => x.IdResReu == e.IdResReu)
+                    ?.Rrnombre ?? string.Empty;
             }
 
             dataIsLoaded = 2;
