@@ -157,7 +157,7 @@
                                 }
                                 @texto
                                 </BSTD>
-                                <BSTD ColSpan="4">@d.Rddisc.ToUpper()</BSTD>
+                                <BSTD ColSpan="4">@(d.Rddisc?.ToUpperInvariant() ?? string.Empty)</BSTD>
                                 @* <BSTD>@d.RdcodDis</BSTD> *@
                                 @if (@d.RdplanAcc is not null)
                                 {
@@ -244,14 +244,13 @@ else if (dataIsLoaded == 2 && PizarraData.reudiatablas.Count() == 0)
     public string? est { get; set; }
 
 
-    int dataIsLoaded = 0, filtrocod = 0;
+    int dataIsLoaded = 0;
     string ayer = DateTime.Now.AddDays(-1).ToString("yyyyMMdd");
-    string error;
+    private string error = string.Empty;
     
     private string? Origencalidad { get; set; } ="Todo";
     private int IdCentro { get; set; } = 0; //id del Centro
     private int IdDiv { get; set; } = 0; //id de la division
-    private int CentroComedor;//Variable para verificar si es el comedor venezuela;
     private NotifiRadzen Notificar = new NotifiRadzen();//Logic para crear las noyificaciones radzen
 
 
@@ -271,7 +270,7 @@ else if (dataIsLoaded == 2 && PizarraData.reudiatablas.Count() == 0)
 
 
 
-    private List<Claim> claims { get; set; }
+    private List<Claim> claims { get; set; } = new ();
 
     private async Task CreateData()
 
@@ -318,11 +317,11 @@ else if (dataIsLoaded == 2 && PizarraData.reudiatablas.Count() == 0)
         var authState = await AuthStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;
         await LocalizationService.EstablecerCulturaDesdeTokenAsync();
-        CultureInfo.CurrentCulture = CultureInfo.DefaultThreadCurrentCulture;
-        CultureInfo.CurrentUICulture = CultureInfo.DefaultThreadCurrentUICulture;
+        CultureInfo.CurrentCulture = CultureInfo.DefaultThreadCurrentCulture ?? CultureInfo.InvariantCulture;
+        CultureInfo.CurrentUICulture = CultureInfo.DefaultThreadCurrentUICulture ?? CultureInfo.InvariantCulture;
         await DiccionarioTraduccionesService.CargarTraduccionesAsync();
         traduccionesCargadas = true;
-        Rol = claims?.FirstOrDefault(c => c.Type.Contains("role"))?.Value;
+        Rol = claims?.FirstOrDefault(c => c.Type.Contains("role"))?.Value?? string.Empty;
         var idEmpresa = claims?.FirstOrDefault(c => c.Type.Contains("IdEmpresa"))?.Value;
         var idCentroClaim = claims?.FirstOrDefault(c => c.Type.Contains("IdCentro"))?.Value;
 
@@ -335,7 +334,7 @@ else if (dataIsLoaded == 2 && PizarraData.reudiatablas.Count() == 0)
         }
         else
         {
-            await MaestraData.GetCentrosxEmpresa(idCentroClaim);
+            await MaestraData.GetCentrosxEmpresa(idCentroClaim ?? string.Empty);
         }
 
         await KsfData.Getksf();
@@ -357,15 +356,34 @@ else if (dataIsLoaded == 2 && PizarraData.reudiatablas.Count() == 0)
 
     protected async Task BuscarDivision(ChangeEventArgs e)
     {
-            IdCentro = int.Parse(e.Value.ToString());
-            IdDiv = 0;
-            try{
-                if(IdCentro != 0){
-                    MaestraData.divisions = await MaestraData.ObtenerDivisionDelCentro(IdCentro);
-                }
-            }catch(Exception ex){
-                            NotificationService.Notify(Notificar.Notificacion("error", "Error", DiccionarioTraduccionesService.Traducciones["SCentro"]));
+        IdDiv = 0;
+
+        if (e?.Value is not string valor || !int.TryParse(valor, out var centroId))
+        {
+            IdCentro = 0;
+            return;
+        }
+
+        IdCentro = centroId;
+
+        try
+        {
+            if (IdCentro != 0)
+            {
+                MaestraData.divisions =
+                    await MaestraData.ObtenerDivisionDelCentro(IdCentro);
             }
+        }
+        catch
+        {
+            NotificationService.Notify(
+                Notificar.Notificacion(
+                    "error",
+                    "Error",
+                    DiccionarioTraduccionesService.Traducciones["SCentro"]
+                )
+            );
+        }
     }
 
 
@@ -373,7 +391,7 @@ protected async Task Get()
 {
     if (IdCentro != 0 && IdDiv != 0)
     {
-        error = null;
+        error = string.Empty;
 
         if (dataIsLoaded != 1)
         {
@@ -431,7 +449,7 @@ protected override async Task OnParametersSetAsync()
         dataIsLoaded = 1;
 
         IdCentro = int.Parse(accion);
-        IdDiv = int.Parse(division);
+        IdDiv = int.TryParse(division, out var divId) ? divId : 0;
 
         // Definir el rango de fechas para el día actual
         DateTime fechaHoyInicio = DateTime.Today;
@@ -439,19 +457,30 @@ protected override async Task OnParametersSetAsync()
 
         // Obtener los datos
         
+        var idCentro = accion;                // ya validado previamente
+        var idDivision = division ?? string.Empty;
+        var tipoConsulta = tipo ?? string.Empty;
+
         try
         {
             PizarraData.reudiatablas = await PizarraData.GetPendientes(
-            accion,
-            division,
-            fechaHoyInicio,
-            fechaHoyFin,
-            tipo,
-            "Reunion") ?? new List<ReunionDTO>();
+                idCentro,
+                idDivision,
+                fechaHoyInicio,
+                fechaHoyFin,
+                tipoConsulta,
+                "Reunion"
+            ) ?? new List<ReunionDTO>();
         }
-        catch (Exception ex)
+        catch
         {
-            NotificationService.Notify(Notificar.Notificacion("error", "Error", DiccionarioTraduccionesService.Traducciones["Error"]));
+            NotificationService.Notify(
+                Notificar.Notificacion(
+                    "error",
+                    "Error",
+                    DiccionarioTraduccionesService.Traducciones["Error"]
+                )
+            );
         }
         // Filtrar los datos para mostrar solo las reuniones del día actual
         if (PizarraData.reudiatablas != null)
