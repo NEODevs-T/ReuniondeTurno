@@ -119,7 +119,9 @@ else
                 <RadzenDataGridColumn TItem="AsistenReuPorcetanjeDTO" Property="ReunionesProgramadas" Title="@DiccionarioTraduccionesService.Traducciones["ReunionesProgramadas"]" />
                 <RadzenDataGridColumn TItem="AsistenReuPorcetanjeDTO" Property="ReunionesAsistidas" Title="@DiccionarioTraduccionesService.Traducciones["ReunionesAsistidas"]">
                     <FooterTemplate>
-                        <b>Total: @registrosFiltrados.Sum(x => x.ReunionesAsistidas)</b>
+                        <b>
+                            Total: @(registrosFiltrados?.Sum(x => x.ReunionesAsistidas) ?? 0)
+                        </b>
                     </FooterTemplate>
                 </RadzenDataGridColumn>
                 <RadzenDataGridColumn TItem="AsistenReuPorcetanjeDTO" Property="PorcentajeAsistencia" Title="@DiccionarioTraduccionesService.Traducciones["PorcentajeAsistencia"]">
@@ -147,7 +149,9 @@ else
                 </RadzenDataGridColumn>
                 <RadzenDataGridColumn TItem="AsistenReuPorcetanjeDTO" Property="ReunionesSuplencias" Title="@DiccionarioTraduccionesService.Traducciones["ReunionesConSuplencias"]">
                 <FooterTemplate>
-                        <b>Total: @registrosFiltrados.Sum(x => x.ReunionesSuplencias)</b>
+                        <b>
+                            Total: @(registrosFiltrados?.Sum(x => x.ReunionesSuplencias) ?? 0)
+                        </b>
                     </FooterTemplate>
                 </RadzenDataGridColumn>
                 <RadzenDataGridColumn TItem="AsistenReuPorcetanjeDTO" Property="PorcentajeSuplencia" Title="@DiccionarioTraduccionesService.Traducciones["PorcentajeSuplencia"]">
@@ -192,19 +196,18 @@ else
     public string area { get; set; } = "";
     public string empresa { get; set; } = "";
     private bool diasExcepcionalesLaborables = false;
-    private DateTime? fechaEventoTemporal;
     private List<DateTime> eventosExternosFechas = new();
     private string filtroCargo = "";
     private List<AsistenReuPorcetanjeDTO> registrosFiltrados = new();
-    private List<AsistenReuPorcetanjeDTO> registros;
+    private List<AsistenReuPorcetanjeDTO> registros = new();
     private double porcentajeGlobal = 0;
     private double porcentajeSuplencia = 0;
     private List<Empresa> empresas = new();
     private List<Area> areas = new();
     private List<CarReuDTO> cargosReunion = new();
     private int dataIsLoaded = 0;
-private bool traduccionesCargadas = false;
-    private List<Claim> claims;
+    private bool traduccionesCargadas = false;
+    private List<Claim> claims = new();
     
         protected override async Task OnInitializedAsync()
     {
@@ -213,8 +216,8 @@ private bool traduccionesCargadas = false;
         claims = user.Claims.ToList();
 
         await LocalizationService.EstablecerCulturaDesdeTokenAsync();
-        CultureInfo.CurrentCulture = CultureInfo.DefaultThreadCurrentCulture;
-        CultureInfo.CurrentUICulture = CultureInfo.DefaultThreadCurrentUICulture;
+        CultureInfo.CurrentCulture = CultureInfo.DefaultThreadCurrentCulture ?? CultureInfo.InvariantCulture;
+        CultureInfo.CurrentUICulture = CultureInfo.DefaultThreadCurrentUICulture ?? CultureInfo.InvariantCulture;
         await DiccionarioTraduccionesService.CargarTraduccionesAsync();
             traduccionesCargadas = true;
 
@@ -223,7 +226,7 @@ private bool traduccionesCargadas = false;
         cargosReunion = await CargoReuData.GetCargosReunion();
 
         empresas = cargosReunion
-            .Where(c => c.Empresa.Contains(idEmpresaUsuario))
+            .Where(c => c.Empresa.Contains(idEmpresaUsuario ?? string.Empty))
             .Select(c => c.Empresa)
             .Distinct()
             .Select(e => new Empresa { Id = e, Nombre = e })
@@ -282,13 +285,7 @@ async Task AbrirDialogoDiasNoLaborables(bool value)
         }
     }
 }
-    void AgregarEventoExterno()
-    {
-        if (fechaEventoTemporal.HasValue && !eventosExternosFechas.Contains(fechaEventoTemporal.Value.Date))
-        {
-            eventosExternosFechas.Add(fechaEventoTemporal.Value.Date);
-        }
-    }
+
     void EliminarEventoExterno(DateTime fecha)
     {
         eventosExternosFechas.Remove(fecha);
@@ -349,8 +346,8 @@ void LimpiarFiltros()
     filtroCargo = string.Empty;
     diasExcepcionalesLaborables = false;
     eventosExternosFechas.Clear();
-    registros = null;
-    registrosFiltrados = null;
+    registros.Clear();
+    registrosFiltrados.Clear();
 }
 
 private string GetColor(double porcentaje, bool mayorEsMejor)
@@ -376,13 +373,14 @@ private string GetColor(double porcentaje, bool mayorEsMejor)
 }
 public class Empresa
 {
-    public string Id { get; set; }
-    public string Nombre { get; set; }
+    public string Id { get; set; } = string.Empty;
+    public string Nombre { get; set; } = string.Empty;
 }
+
 public class Area
 {
-    public string Id { get; set; }
-    public string Nombre { get; set; }
+    public string Id { get; set; } = string.Empty;
+    public string Nombre { get; set; } = string.Empty;
 }
 
 

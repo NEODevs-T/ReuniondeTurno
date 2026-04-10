@@ -58,8 +58,7 @@
     [Parameter] public DateTime FechaMaxima { get; set; }
     private List<DateTime> fechasTemp = new();
     private DateTime? fechaTemp;
-    private List<Claim> claims { get; set; }
-    private bool traduccionesCargadas = false;
+    private List<Claim> claims { get; set; } = new();
 
         private async Task CreateData()
     {
@@ -72,10 +71,9 @@
     {
                 await CreateData();
         await LocalizationService.EstablecerCulturaDesdeTokenAsync();
-        CultureInfo.CurrentCulture = CultureInfo.DefaultThreadCurrentCulture;
-        CultureInfo.CurrentUICulture = CultureInfo.DefaultThreadCurrentUICulture;
+        CultureInfo.CurrentCulture = CultureInfo.DefaultThreadCurrentCulture ?? CultureInfo.InvariantCulture;
+        CultureInfo.CurrentUICulture = CultureInfo.DefaultThreadCurrentUICulture ?? CultureInfo.InvariantCulture;
         await DiccionarioTraduccionesService.CargarTraduccionesAsync();
-        traduccionesCargadas = true;
     }
 
     protected override void OnInitialized()

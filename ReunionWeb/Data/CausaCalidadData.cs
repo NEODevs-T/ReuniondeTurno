@@ -30,13 +30,14 @@ public class CausaCalidadData: ICausaCalidadData
     
     public List<CausaCalDTO> causaCals { get; set; } = new List<CausaCalDTO>();
     
-    
     public async Task<List<CausaCalDTO>> GetCausasCalidad()
     {
         url = $"{BaseUrl}/GetCausasCalidad";
         cliente = _clientFactory.CreateClient();
-        causaCals = await _http.GetFromJsonAsync<List<CausaCalDTO>>(url);
-        var results = causaCals;
-        return results;
+
+        causaCals = await _http.GetFromJsonAsync<List<CausaCalDTO>>(url)
+                    ?? new List<CausaCalDTO>();
+
+        return causaCals;
     }
 }

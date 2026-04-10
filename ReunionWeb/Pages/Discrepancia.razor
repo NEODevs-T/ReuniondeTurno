@@ -254,15 +254,15 @@ else
     
     [CascadingParameter]
     private Task<AuthenticationState>? authenticationState { get; set; }
-    private List<Claim> claims { get; set; }
+    private List<Claim> claims { get; set; } = new();
 
    // private string Ubicacion { get; set; } = null;
     ReunionDTO Reuniondb = new ReunionDTO();
     private NotifiRadzen Notificar = new NotifiRadzen();
     private string _message = "";
     private DateTime fechahoy, fechatrabajo = DateTime.Today;
-    private string fechahoy2;
-    private int Idretornado;
+    //private string fechahoy2;
+    //private int Idretornado;
     private string tipoequipo { get; set; } = "1";
     CambStatDTO CambStata = new CambStatDTO();
     CambFecDTO CambFech = new CambFecDTO();
@@ -272,8 +272,8 @@ else
     private int idDiv { get; set; }
     private int idLin { get; set; }
     private int idEqui { get; set; }
-    private string mensaje = "";
-    private string Notificacion = "";
+    //private string mensaje = "";
+    //private string Notificacion = "";
     private bool isDesactivado { get; set; } = false;
     private List<AsistenReuDTO> listaAsistencia { get; set; } = new List<AsistenReuDTO>();
     private int IdCentro { get; set; }
@@ -282,11 +282,11 @@ else
     string? selectedEquipoId;
     string? selectedEquipoName;
     string? filter;
-    bool codsuccess = false;
+    //bool codsuccess = false;
 
     private int idPais { get; set; }
-
-    private string nombre  { get; set;}
+    private int IdEmpresa { get; set; }
+    //private string nombre  { get; set;}
     int dataIsLoaded = 0;
     private bool traduccionesCargadas = false;
 
@@ -306,17 +306,18 @@ else
         await RespoReuData.GetResReu();
         await CausaCalidadData.GetCausasCalidad();
         await LocalizationService.EstablecerCulturaDesdeTokenAsync();
-        CultureInfo.CurrentCulture = CultureInfo.DefaultThreadCurrentCulture;
-        CultureInfo.CurrentUICulture = CultureInfo.DefaultThreadCurrentUICulture;
+        CultureInfo.CurrentCulture = CultureInfo.DefaultThreadCurrentCulture ?? CultureInfo.InvariantCulture;
+        CultureInfo.CurrentUICulture = CultureInfo.DefaultThreadCurrentUICulture ?? CultureInfo.InvariantCulture;
         await DiccionarioTraduccionesService.CargarTraduccionesAsync();
         traduccionesCargadas = true;
 
         Reuniondb.IdCausaCal = 1;
         Reuniondb.OrigenCal = "";
 
-        var UsrAdmin = claims?.FirstOrDefault(c => c.Type.Contains("role"))?.Value;
-        var idEmpresa = claims?.FirstOrDefault(c => c.Type.Contains("IdEmpresa"))?.Value;
-        var idCentroClaim = claims?.FirstOrDefault(c => c.Type.Contains("IdCentro"))?.Value;
+        var UsrAdmin = claims.FirstOrDefault(c => c.Type.Contains("role"))?.Value?? string.Empty;
+        var idEmpresa = claims.FirstOrDefault(c => c.Type.Contains("IdEmpresa"))?.Value?? string.Empty;
+        var idCentroClaim = claims.FirstOrDefault(c => c.Type.Contains("IdCentro"))?.Value?? string.Empty;
+
 
         // --- Cargar centros según el UsrAdmin ---
         var esRolConAll = UsrAdmin == "Admin" || UsrAdmin == "SuperAdmin" || UsrAdmin == "PrimeUser";
@@ -366,6 +367,13 @@ else
         {
             idPais = paisTemp;
         }
+
+        var idEmpresaClaim = claims.FirstOrDefault(c => c.Type == "IdEmpresa")?.Value;
+        if (int.TryParse(idEmpresaClaim, out var empresaTemp))
+        {
+            IdEmpresa = empresaTemp;
+        }
+
     }
 
     private async Task SetCentroInicialAsync()
@@ -395,38 +403,38 @@ else
         }
 
     private void OnResponsableChanged(ChangeEventArgs e)
-{
-    var selectedResponsableId = e.Value?.ToString();
-
-    if (!string.IsNullOrEmpty(selectedResponsableId))
     {
-        Reuniondb.IdResReu = int.Parse(selectedResponsableId);
-        Reuniondb.Responsable = RespoReuData.resporeus
-            .FirstOrDefault(k => k.IdResReu == Reuniondb.IdResReu)?.Rrnombre;
+        var selectedResponsableId = e.Value?.ToString();
 
-        IsObservacionesVisible = Reuniondb.IdResReu == 9;
-
-        // Si el responsable es 9, limpiar el campo de Ubicación
-        if (Reuniondb.IdResReu == 9)
+        if (!string.IsNullOrEmpty(selectedResponsableId))
         {
-            Reuniondb.OrigenCal = ""; // Limpiamos el valor de Ubicación
+            Reuniondb.IdResReu = int.Parse(selectedResponsableId);
+            Reuniondb.Responsable = RespoReuData.resporeus
+                .FirstOrDefault(k => k.IdResReu == Reuniondb.IdResReu)?.Rrnombre;
+
+            IsObservacionesVisible = Reuniondb.IdResReu == 9;
+
+            // Si el responsable es 9, limpiar el campo de Ubicación
+            if (Reuniondb.IdResReu == 9)
+            {
+                Reuniondb.OrigenCal = ""; // Limpiamos el valor de Ubicación
+            }
+            else
+            {
+                Reuniondb.IdCausaCal = 1;
+                Reuniondb.OrigenCal = "N/A";
+            }
+
         }
         else
         {
+            IsObservacionesVisible = false;
             Reuniondb.IdCausaCal = 1;
-            Reuniondb.OrigenCal = "N/A";
+            Reuniondb.OrigenCal = "";
         }
 
+        StateHasChanged();
     }
-    else
-    {
-        IsObservacionesVisible = false;
-        Reuniondb.IdCausaCal = 1;
-        Reuniondb.OrigenCal = "";
-    }
-
-    StateHasChanged();
-}
 
     private void OnCausaCalidadChanged(ChangeEventArgs e)
     {
@@ -435,83 +443,143 @@ else
         StateHasChanged();
     }
 
-private void OnUbicacionChanged(ChangeEventArgs e)
-{
-    // Obtiene el valor del evento y asigna "N/A" si es nulo o vacío
-    Reuniondb.OrigenCal = string.IsNullOrEmpty(e.Value?.ToString()) ? "" : e.Value.ToString();
-    
-    // Notifica a Blazor que el estado del componente ha cambiado
-    StateHasChanged();
-}
-
+    private void OnUbicacionChanged(ChangeEventArgs e)
+    {
+        // Obtiene el valor del evento y asigna "N/A" si es nulo o vacío
+        Reuniondb.OrigenCal = e?.Value?.ToString() ?? string.Empty;    
+        // Notifica a Blazor que el estado del componente ha cambiado
+        StateHasChanged();
+    }
 
     protected async Task BuscarDivision(ChangeEventArgs e)
     {
-        idCent = int.Parse(e.Value.ToString());
         idDiv = idLin = idEqui = 0;
+
+        if (e?.Value is not string valor || !int.TryParse(valor, out var centroId))
+        {
+            idCent = 0;
+            return;
+        }
+
+        idCent = centroId;
+
+        if (idCent == 0)
+            return;
+
         try
         {
-            if (idCent != 0)
-                MaestraData.divisions = await MaestraData.ObtenerDivisionDelCentro(idCent);
+            MaestraData.divisions =
+                await MaestraData.ObtenerDivisionDelCentro(idCent);
         }
-        catch (Exception ex)
+        catch
         {
-            NotificationService.Notify(Notificar.Notificacion("error", "Error", DiccionarioTraduccionesService.Traducciones["SCentro"]));
+            NotificationService.Notify(
+                Notificar.Notificacion(
+                    "error",
+                    "Error",
+                    DiccionarioTraduccionesService.Traducciones["SCentro"]
+                )
+            );
         }
     }
 
     protected async Task BuscarLinea(ChangeEventArgs e)
     {
-        idDiv = int.Parse(e.Value.ToString());
         idLin = idEqui = 0;
+
+        if (e?.Value is not string valor || !int.TryParse(valor, out var divisionId))
+        {
+            idDiv = 0;
+            return;
+        }
+
+        idDiv = divisionId;
+
+        if (idCent == 0 || idDiv == 0)
+            return;
+
         try
         {
-            if (idCent != 0)
-                MaestraData.lineas = await MaestraData.ObtenerLasLineasPorDivision(idDiv);
+            MaestraData.lineas =
+                await MaestraData.ObtenerLasLineasPorDivision(idDiv);
         }
-        catch (Exception ex)
+        catch
         {
-            NotificationService.Notify(Notificar.Notificacion("error", "Error", DiccionarioTraduccionesService.Traducciones["SDivision"]));
+            NotificationService.Notify(
+                Notificar.Notificacion(
+                    "error",
+                    "Error",
+                    DiccionarioTraduccionesService.Traducciones["SDivision"]
+                )
+            );
         }
     }
 
     protected async Task BuscarEquipo(ChangeEventArgs e)
     {
-        idLin = int.Parse(e.Value.ToString());
         idEqui = 0;
+
+        if (e?.Value is not string valor || !int.TryParse(valor, out var lineaId))
+        {
+            idLin = 0;
+            return;
+        }
+
+        idLin = lineaId;
+
         await BuscarIdMaster(idLin);
+
+        if (idCent == 0 || idLin == 0)
+            return;
+
         try
         {
-            if (idCent != 0)
-                MaestraData.equipos = await MaestraData.GetEquiposEAMPorLinea(idLin);
+            MaestraData.equipos =
+                await MaestraData.GetEquiposEAMPorLinea(idLin);
         }
-        catch (Exception ex)
+        catch
         {
-            NotificationService.Notify(Notificar.Notificacion("error", "Error", DiccionarioTraduccionesService.Traducciones["SArea"]));
+            NotificationService.Notify(
+                Notificar.Notificacion(
+                    "error",
+                    "Error",
+                    DiccionarioTraduccionesService.Traducciones["SArea"]
+                )
+            );
         }
     }
 
     protected async Task BuscarIdMaster(int e)
     {
         idLin = e;
+
+        if (idCent == 0)
+            return;
+
         try
         {
-            if (idCent != 0)
-                MaestraData.maestra = await MaestraData.GetMaestraXLinea(idLin);
+            MaestraData.maestra =
+                await MaestraData.GetMaestraXLinea(idLin);
         }
-        catch (Exception ex)
+        catch
         {
-            NotificationService.Notify(Notificar.Notificacion("error", "Error", DiccionarioTraduccionesService.Traducciones["ErrorInser"]));
+            NotificationService.Notify(
+                Notificar.Notificacion(
+                    "error",
+                    "Error",
+                    DiccionarioTraduccionesService.Traducciones["ErrorInser"]
+                )
+            );
         }
     }
 
     protected async Task Insert(EditContext d)
-{
-    try
     {
-        var maestraItem = MaestraData.maestra.FirstOrDefault(x => x.IdLinea == idLin);
-        var lineaItem = MaestraData.lineas.FirstOrDefault(x => x.IdLinea == idLin);
-        var centroItem = MaestraData.centro.FirstOrDefault(c => c.IdCentro == idCent);
+        try
+        {
+            var maestraItem = MaestraData.maestra.FirstOrDefault(x => x.IdLinea == idLin);
+            var lineaItem = MaestraData.lineas.FirstOrDefault(x => x.IdLinea == idLin);
+            var centroItem = MaestraData.centro.FirstOrDefault(c => c.IdCentro == idCent);
 
         if (maestraItem == null || lineaItem == null || centroItem == null)
         {
@@ -523,8 +591,8 @@ private void OnUbicacionChanged(ChangeEventArgs e)
         Reuniondb.Rdarea = lineaItem.Linea;
         Reuniondb.Rdstatus = "Pendiente";
         Reuniondb.IdTipReu = reunionTurno;
-        Reuniondb.IdPais = int.Parse(claims.First(c => c.Type == "IdPais")?.Value);
-        Reuniondb.IdEmpresa = int.Parse(claims.First(c => c.Type == "IdEmpresa")?.Value);
+        Reuniondb.IdPais = idPais;
+        Reuniondb.IdEmpresa = IdEmpresa;
         Reuniondb.Ksf = KsfData.ksfs.FirstOrDefault(k => k.Idksf == Reuniondb.Idksf)?.KsfNombre ?? "";
 
         if (tipoequipo == "1")
@@ -574,7 +642,7 @@ private void OnUbicacionChanged(ChangeEventArgs e)
 
     IsObservacionesVisible = false;
     isDesactivado = false;
-}
+    }
 
 
     private bool ValidateFields(ReunionDTO reunion)
@@ -620,17 +688,21 @@ private void OnUbicacionChanged(ChangeEventArgs e)
         equiposfiltro = null;
     }
 
-    protected async Task Reset()
+    protected void Reset()
     {
         ResetFields();
     }
 
-    async Task HandleInput(ChangeEventArgs d)
+    void HandleInput(ChangeEventArgs d)
     {
         filter = d.Value?.ToString();
+
         equiposfiltro = !string.IsNullOrEmpty(filter)
-            ? MaestraData.equipos.Where(a => a.EcodEquiEam.Contains(filter, StringComparison.OrdinalIgnoreCase)).ToList()
+            ? MaestraData.equipos
+                .Where(a => a.EcodEquiEam.Contains(filter, StringComparison.OrdinalIgnoreCase))
+                .ToList()
             : null;
+
         selectedEquipoName = selectedEquipoId = null;
     }
 

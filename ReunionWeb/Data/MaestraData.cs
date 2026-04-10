@@ -132,14 +132,30 @@ public class MaestraData : IMaestraData
         return equipos = await cliente.GetFromJsonAsync<List<EquipoEamDTO>>(url) ?? new List<EquipoEamDTO>();
         }
 
-        public async Task<List<CausaCalidadVDTO>> GetPRueba01(int Idcausa)
+        public async Task<List<CausaCalidadVDTO>> GetPRueba01(int idCausa)
         {
-            url = $"{BaseUrl}/GetPRueba01/{Idcausa}";
-            cliente = _clientFactory.CreateClient();
-            return causas = await cliente.GetFromJsonAsync<List<CausaCalidadVDTO>>(url) ?? new List<CausaCalidadVDTO>();
+            var url = $"{BaseUrl}/GetPRueba01/{idCausa}";
+            var cliente = _clientFactory.CreateClient();
+
+            try
+            {
+                var response = await cliente.GetAsync(url);
+
+                if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+                {
+                    return new List<CausaCalidadVDTO>();
+                }
+
+                response.EnsureSuccessStatusCode();
+
+                return await response.Content
+                    .ReadFromJsonAsync<List<CausaCalidadVDTO>>()
+                    ?? new List<CausaCalidadVDTO>();
+            }
+            catch (HttpRequestException)
+            {
+                return new List<CausaCalidadVDTO>();
+            }
         }
-
-
-
 }
 
