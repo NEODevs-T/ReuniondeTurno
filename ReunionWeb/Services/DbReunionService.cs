@@ -98,7 +98,11 @@ public class DbReunionService : IDbReunionService
 
             if (d.Rdcentro is not null)
             {
-                // Consultar nombre del centro y división para retornar el id en pendientes
+                if (string.IsNullOrWhiteSpace(d.Rdcentro) || string.IsNullOrWhiteSpace(d.Rddiv))
+                {
+                    return false;
+                }
+
                 CentroDivisionDTO centrodiv = await GetCentroDivi(d.Rdcentro, d.Rddiv, 1);
 
                 if (centrodiv == null)
@@ -135,7 +139,7 @@ public class DbReunionService : IDbReunionService
             return true;
 
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             return false;
         }
@@ -183,7 +187,7 @@ public class DbReunionService : IDbReunionService
             }
 
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             return false;
         }

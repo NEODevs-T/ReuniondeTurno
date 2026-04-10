@@ -52,7 +52,9 @@ namespace ReunionWeb
             var payload = jwt.Split('.')[1];
             var jsonBytes=ParseBase64WithoutPadding(payload);
             var keyValuePairs = JsonSerializer.Deserialize<Dictionary<string, object>>(jsonBytes);
-            return keyValuePairs.Select(KeyValuePair => new Claim(KeyValuePair.Key, KeyValuePair.Value.ToString()));
+            return (keyValuePairs ?? Enumerable.Empty<KeyValuePair<string, object>>())
+                    .Where(kvp => !string.IsNullOrWhiteSpace(kvp.Key) && kvp.Value != null)
+                    .Select(kvp => new Claim(kvp.Key, kvp.Value!.ToString()!));        
         }
         private static byte[] ParseBase64WithoutPadding(string base64)
         {

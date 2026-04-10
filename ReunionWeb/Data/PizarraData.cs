@@ -94,46 +94,69 @@ public class PizarraData : IPizarraData
         return reudiatablas = await client.GetFromJsonAsync<List<ReunionDTO>>(url) ?? new();
     }
 
-    public async Task<bool> UpdateDiscrepancia(ReunionDTO d, int id, int tipo, string f1, string f2, string estado)
+    public async Task<bool> UpdateDiscrepancia(
+        ReunionDTO d,
+        int id,
+        int tipo,
+        string f1,
+        string f2,
+        string estado)
     {
-        var client = _clientFactory.CreateClient();
-        string url = $"{BaseUrl}/UpdateDiscrepancia/{id}";
-        var response = await client.PutAsJsonAsync(url, id);
-
         try
         {
-            string div = "", centro = "";
-            if (d.Rdcentro is not null)
+            var client = _clientFactory.CreateClient();
+            string url = $"{BaseUrl}/UpdateDiscrepancia/{id}";
+
+            var response = await client.PutAsJsonAsync(url, id);
+
+            if (!response.IsSuccessStatusCode)
+                return false;
+
+            bool band =
+                await response.Content.ReadFromJsonAsync<bool>();
+
+            if (!band)
+                return false;
+
+            // Normalizar centro y división
+            string centro = string.Empty;
+            string div = string.Empty;
+
+            if (!string.IsNullOrWhiteSpace(d.Rdcentro) &&
+                !string.IsNullOrWhiteSpace(d.Rddiv))
             {
-                CentroDivisionDTO centrodiv = await GetCentroDivi(d.Rdcentro, d.Rddiv, 1);
-                if (centrodiv == null) return false;
+                var centrodiv =
+                    await GetCentroDivi(d.Rdcentro, d.Rddiv, 1);
+
                 centro = centrodiv.IdCentro.ToString();
                 div = centrodiv.IdDivision.ToString();
             }
-
-            if (response.IsSuccessStatusCode)
+            else
             {
-                bool band = await response.Content.ReadFromJsonAsync<bool>();
-                if (band)
-                {
-                    string ruta = tipo switch
-                    {
-                        0 => $"pendientes/{centro}/{div}/{f1}/{f2}/{tipo}/{estado}",
-                        1 => $"reunion/{centro}/{div}/{f1}/{f2}/{tipo}/Reunion",
-                        2 => $"pendientes/{centro}/{div}/{f1}/{f2}/{tipo}/{estado}",
-                        _ => ""
-                    };
-                    _navigationManager.NavigateTo(ruta);
-                }
-                return band;
+                // No se puede navegar sin centro/división
+                return false;
             }
+
+            // Construcción de la ruta
+            string ruta = tipo switch
+            {
+                0 => $"pendientes/{centro}/{div}/{f1}/{f2}/{tipo}/{estado}",
+                1 => $"reunion/{centro}/{div}/{f1}/{f2}/{tipo}/Reunion",
+                2 => $"pendientes/{centro}/{div}/{f1}/{f2}/{tipo}/{estado}",
+                _ => string.Empty
+            };
+
+            if (!string.IsNullOrEmpty(ruta))
+            {
+                _navigationManager.NavigateTo(ruta);
+            }
+
+            return true;
         }
         catch
         {
             return false;
         }
-
-        return false;
     }
 
     public async Task<(bool success, string centro, string division)> UpdateDiscrepancia2(ReunionDTO d, int id)
@@ -148,8 +171,19 @@ public class PizarraData : IPizarraData
             bool band = await response.Content.ReadFromJsonAsync<bool>();
             if (band)
             {
-                var centrodiv = await GetCentroDivi(d.Rdcentro, d.Rddiv, 1);
-                return (true, centrodiv.IdCentro.ToString(), centrodiv.IdDivision.ToString());
+                var centro = d.Rdcentro ?? string.Empty;
+                var division = d.Rddiv ?? string.Empty;
+
+                if (string.IsNullOrWhiteSpace(centro) || string.IsNullOrWhiteSpace(division))
+                    return (false, string.Empty, string.Empty);
+
+                var centrodiv = await GetCentroDivi(centro, division, 1);
+
+                return (
+                    true,
+                    centrodiv.IdCentro.ToString(),
+                    centrodiv.IdDivision.ToString()
+                );
             }
         }
 

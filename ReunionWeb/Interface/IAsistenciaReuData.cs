@@ -19,6 +19,6 @@ public interface IAsistenciaReuData
     Task<List<AsistenReuDTO>> GetListaAsist(string div, string empresa, string f1, string f2);
     Task<PorcentajeAsistenciaTurnoResponseDTO> GetPorcentajeAsistenciaResponsee(
     string fechaInicio, string fechaFin, string empresa, string area,
-    bool diasExcepcionalesLaborables = false, List<string> eventosExternos = null);
+    bool diasExcepcionalesLaborables = false, List<string>? eventosExternos = null);
 }
 

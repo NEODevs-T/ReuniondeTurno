@@ -35,7 +35,7 @@ public class APIReunionService : IAPIReunionService
         public List<MaestraVDTO> centro { get; set; } = new List<MaestraVDTO>();
         public List<LineaVDTO> lineas { get; set; } = new List<LineaVDTO>();
         public List<DivisionesVDTO> divisions { get; set; } = new List<DivisionesVDTO>();
-        public List<KsfDTO> ksfs { get; set; } = new List<KsfDTO>();
+        public List<KsfDTO> ksfs { get; set; } = new();
         public List<RespoReuDTO> resporeu { get; set; } = new List<RespoReuDTO>();
         public List<ReunionDTO> reunionditabla { get; set; } = new List<ReunionDTO>();
         public List<ReunionDTO> reudiatabla { get; set; } = new List<ReunionDTO>();
@@ -46,7 +46,7 @@ public class APIReunionService : IAPIReunionService
         public List<EquipoEamDTO> equiposlinea { get; set; } = new List<EquipoEamDTO>();
         public List<CalendarioTrabajoDTO> calentrabajo { get; set; } = new List<CalendarioTrabajoDTO>();
 
-        public RegistroCambiosDTO listaRegistro { get; set; } //= new RegistroCambiosDTO(); 
+        public RegistroCambiosDTO listaRegistro { get; set; } = new(); //= new RegistroCambiosDTO(); 
         public List<AsistenReuPorcetanjeDTO> asistenreuspor { get; set; } = new List<AsistenReuPorcetanjeDTO>();
 
 
@@ -125,15 +125,16 @@ public class APIReunionService : IAPIReunionService
                 return await cliente.GetFromJsonAsync<List<LineaVDTO>>(url) ?? new List<LineaVDTO>();
         }
 
-
         public async Task<List<KsfDTO>> Getksf()
         {
-                url = $"{BaseUrlLineas}/GetKsf";
-                cliente = _clientFactory.CreateClient();
-                ksfs = await _http.GetFromJsonAsync<List<KsfDTO>>($"{BaseUrlLineas}/GetKsf");
-                var results = await cliente.GetFromJsonAsync<List<KsfDTO>>(url);
-                return results;
-                // return await cliente.GetFromJsonAsync<List<KsfDTO>>(url) ?? new List<KsfDTO>();
+        url = $"{BaseUrl}/GetKsf";
+        cliente = _clientFactory.CreateClient();
+
+        var resultado =
+                await _http.GetFromJsonAsync<List<KsfDTO>>(url)
+                ?? new List<KsfDTO>();
+
+        return resultado;
         }
 
         public async Task<List<RespoReuDTO>> GetResReu()
