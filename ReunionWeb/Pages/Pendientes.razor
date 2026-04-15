@@ -76,14 +76,12 @@ else
         }
         <BSCol ColumnLarge="3" ColumnSmall="6">
             <BSLabel>@DiccionarioTraduccionesService.Traducciones["Estado"]</BSLabel>
-
-<BSInput InputType="InputType.Select" @bind-Value="Status" class="form-select" required>
-    <option value="">@DiccionarioTraduccionesService.Traducciones["Seleccione"]</option>
-    <option value="Todo">@DiccionarioTraduccionesService.Traducciones["Todos"]</option>
-    <option value="Pendiente">@DiccionarioTraduccionesService.Traducciones["Pendiente"]</option>
-    <option value="Cerrado">@DiccionarioTraduccionesService.Traducciones["Cerrado"]</option>
-</BSInput>
-
+            <BSInput InputType="InputType.Select" @bind-Value="Status" class="form-select" required>
+                <option value="">@DiccionarioTraduccionesService.Traducciones["Seleccione"]</option>
+                <option value="Todo">@DiccionarioTraduccionesService.Traducciones["Todos"]</option>
+                <option value="Pendiente">@DiccionarioTraduccionesService.Traducciones["Pendiente"]</option>
+                <option value="Cerrado">@DiccionarioTraduccionesService.Traducciones["Cerrado"]</option>
+            </BSInput>
         </BSCol>
 
         @*
@@ -828,47 +826,44 @@ else if (dataIsLoaded == 2 && PizarraData.reudiatablas.Count() == 0)
         }
     }
 
-protected async Task Get()
-{
-    if (IdCentro != 0 && IdDiv != 0)
+    protected async Task Get()
     {
-        if (dataIsLoaded != 1)
+        if (IdCentro == 0 || IdDiv == 0 || string.IsNullOrWhiteSpace(Status))
         {
-            dataIsLoaded = 1;
-            PizarraData.reudiatablas = await PizarraData.GetPendientes
-            (IdCentro.ToString(), IdDiv.ToString(), fecha1, fecha2, tipoconsulta, Status) ?? new List<ReunionDTO>();
-
-            PizarraData.reudiatablas = PizarraData.reudiatablas
-                .Where(d => d.Idksf != 6)
-                .ToList();
-
-            // Verifica que los datos estén correctamente cargados
-            if (PizarraData.reudiatablas != null)
-            {
-                ObtenerReunionesPorRol(); // Actualizar tabla
-                ConstruirCatalogoEquiposPorNombre();
-                AplicarFiltroPorCodigoSeleccionado();
-                if (IdMasterSeleccionado > 0)
-                {
-                    listareu = listareu
-                        .Where(r => r.IdMaster == IdMasterSeleccionado)
-                        .ToList();
-                }
-            }
-            else
-            {
-                NotificationService.Notify(Notificar.Notificacion("error", "Error", DiccionarioTraduccionesService.Traducciones["NFDatos"]));
-            }
-
-            dataIsLoaded = 2;
-            StateHasChanged();
+            NotificationService.Notify(
+                Notificar.Notificacion(
+                    "advertencia",
+                    DiccionarioTraduccionesService.Traducciones["Atencion"],
+                    DiccionarioTraduccionesService.Traducciones["SVLista"]
+                )
+            );
+            return;
         }
+
+        if (dataIsLoaded == 1)
+            return;
+
+        dataIsLoaded = 1;
+
+        PizarraData.reudiatablas = await PizarraData.GetPendientes(
+            IdCentro.ToString(),
+            IdDiv.ToString(),
+            fecha1,
+            fecha2,
+            tipoconsulta,
+            Status
+        ) ?? new List<ReunionDTO>();
+
+        PizarraData.reudiatablas = PizarraData.reudiatablas
+            .Where(d => d.Idksf != 6)
+            .ToList();
+
+        ObtenerReunionesPorRol();
+        ConstruirCatalogoEquiposPorNombre();
+        AplicarFiltroPorCodigoSeleccionado();
+
+        dataIsLoaded = 2;
     }
-    else
-    {
-        NotificationService.Notify(Notificar.Notificacion("advertencia", DiccionarioTraduccionesService.Traducciones["Atencion"], DiccionarioTraduccionesService.Traducciones["SVLista"]));
-    }
-}
 
 
     private async Task BuscarxOdt()
