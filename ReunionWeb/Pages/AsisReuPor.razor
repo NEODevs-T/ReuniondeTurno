@@ -7,6 +7,7 @@
 @using ReunionWeb.Resources
 @using ReunionWeb.Services
 
+@inject IMaestraData MaestraData
 @inject IDiccionarioTraduccionesService DiccionarioTraduccionesService
 @inject IAsistenciaReuData AsistenciaReuData
 @inject ICargoReuData CargoReuData
@@ -16,13 +17,6 @@
 @inject ILocalStorageService LocalStorage
 @inject LocalizationService LocalizationService
 @inject ITranslationService Translator
-
-
-
-
-@attribute [Authorize(Roles = "Admin, AdminChempro, SuperUser, SemiAdmin, SuperAdmin, PrimeUser")]
-
-
 
 @if (!traduccionesCargadas || dataIsLoaded == 1)
 {
@@ -208,9 +202,42 @@ else
     private int dataIsLoaded = 0;
     private bool traduccionesCargadas = false;
     private List<Claim> claims = new();
+    private string rolUsuario = "";
+    private string empresaUsuario = "";     
+    private string idEmpresaUsuario = "";  
+    private string idCentroUsuario = "";
+
+    private async Task CreateData()
+    {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        claims = user.Claims.ToList();
+
+        var idPaisClaim = claims.FirstOrDefault(c => c.Type == "IdPais")?.Value;
+        if (int.TryParse(idPaisClaim, out int paisTemp))
+        {
+            idPais = paisTemp;
+        }
+        
+        rolUsuario = claims.FirstOrDefault(c => c.Type.Contains("role"))?.Value ?? "";
+
+        empresaUsuario = claims.FirstOrDefault(c =>
+                c.Type == "Empresa" ||
+                (c.Type.Contains("Empresa") && !c.Type.Contains("IdEmpresa")))
+            ?.Value ?? "";
+
+        idEmpresaUsuario = claims.FirstOrDefault(c =>
+                c.Type == "IdEmpresa" || c.Type.Contains("IdEmpresa"))
+            ?.Value ?? "";
+
+        idCentroUsuario = claims.FirstOrDefault(c =>
+                c.Type == "IdCentro" || c.Type.Contains("IdCentro"))
+            ?.Value ?? "";
+    } 
     
         protected override async Task OnInitializedAsync()
     {
+        await CreateData();
         var authState = await AuthStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;
         claims = user.Claims.ToList();
@@ -221,75 +248,126 @@ else
         await DiccionarioTraduccionesService.CargarTraduccionesAsync();
             traduccionesCargadas = true;
 
-        string? idEmpresaUsuario = claims.FirstOrDefault(c => c.Type.Contains("Empresa"))?.Value;
-
         cargosReunion = await CargoReuData.GetCargosReunion();
 
-        empresas = cargosReunion
-            .Where(c => c.Empresa.Contains(idEmpresaUsuario ?? string.Empty))
-            .Select(c => c.Empresa)
-            .Distinct()
-            .Select(e => new Empresa { Id = e, Nombre = e })
-            .ToList();
+        if (string.IsNullOrWhiteSpace(empresaUsuario))
+        {
+            empresas = cargosReunion
+                .Where(c => !string.IsNullOrWhiteSpace(c.Empresa))
+                .Select(c => c.Empresa.Trim())
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .OrderBy(e => e)
+                .Select(e => new Empresa { Id = e, Nombre = e })
+                .ToList();
+        }
+        else
+        {
+            empresas = cargosReunion
+                .Where(c => !string.IsNullOrWhiteSpace(c.Empresa) &&
+                            string.Equals(c.Empresa.Trim(), empresaUsuario.Trim(), StringComparison.OrdinalIgnoreCase))
+                .Select(c => c.Empresa.Trim())
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .OrderBy(e => e)
+                .Select(e => new Empresa { Id = e, Nombre = e })
+                .ToList();
+        }
+
+        switch (rolUsuario)
+        {
+            case "Admin":
+                await MaestraData.GetCentrosxEmpresa("All" + idEmpresaUsuario);
+                break;
+
+            default:
+                await MaestraData.GetCentrosxEmpresa(idCentroUsuario);
+                break;
+        }
 
         areas = new List<Area>();
+
+        if (empresas.Count == 1)
+        {
+            empresa = empresas.First().Id;
+            OnEmpresaChanged(empresa);
+        }
     }
 
-        
-
-
-        private void OnEmpresaChanged(object value)
+    private void OnEmpresaChanged(object value)
     {
         empresa = value?.ToString() ?? "";
         area = "";
 
-        if (string.IsNullOrEmpty(empresa))
+        if (string.IsNullOrWhiteSpace(empresa))
         {
             areas = new List<Area>();
+            StateHasChanged();
+            return;
         }
-        else
+
+        var centrosPorEmpresa = cargosReunion
+            .Where(c => !string.IsNullOrWhiteSpace(c.Empresa)
+                    && string.Equals(c.Empresa.Trim(), empresa.Trim(), StringComparison.OrdinalIgnoreCase))
+            .Select(c => c.Centro?.Trim())
+            .Where(c => !string.IsNullOrWhiteSpace(c))
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .ToList();
+
+        var centrosPermitidos = MaestraData.centro
+            .Select(c => c.Centro?.Trim())
+            .Where(c => !string.IsNullOrWhiteSpace(c))
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+        areas = centrosPorEmpresa
+            .Where(c => centrosPermitidos.Contains(c!))
+            .OrderBy(c => c)
+            .Select(c => new Area
+            {
+                Id = c!,
+                Nombre = c!
+            })
+            .ToList();
+
+        if (areas.Count == 1)
         {
-            areas = cargosReunion
-                .Where(c => c.Empresa == empresa)
-                .Select(c => c.Centro)
-                .Distinct()
-                .Select(a => new Area { Id = a, Nombre = a })
-                .ToList();
+            area = areas.First().Id;
         }
+
         StateHasChanged();
     }
     
-async Task AbrirDialogoDiasNoLaborables(bool value)
-{
-    diasExcepcionalesLaborables = value;
-
-    if (value)
+    async Task AbrirDialogoDiasNoLaborables(bool value)
     {
-        var result = await DialogService.OpenAsync<DiasNoLaborablesDialog>(
-            DiccionarioTraduccionesService.Traducciones["DiasNoLaborables"],
-            new Dictionary<string, object>
-            {
-                { "FechasIniciales", eventosExternosFechas },
-                { "FechaMaxima", fechaFin}
-            },
-            new DialogOptions
-            {
-                Width = "500px",
-                Height = "auto",
-                CloseDialogOnOverlayClick = false
-            });
+        diasExcepcionalesLaborables = value;
 
-        if (result is List<DateTime> fechas)
+        if (value)
         {
-            eventosExternosFechas = fechas;
+            var result = await DialogService.OpenAsync<DiasNoLaborablesDialog>(
+                DiccionarioTraduccionesService.Traducciones["DiasNoLaborables"],
+                new Dictionary<string, object>
+                {
+                    { "FechasIniciales", eventosExternosFechas },
+                    { "FechaMaxima", fechaFin}
+                },
+                new DialogOptions
+                {
+                    Width = "500px",
+                    Height = "auto",
+                    CloseDialogOnOverlayClick = false
+                });
+
+            if (result is List<DateTime> fechas)
+            {
+                eventosExternosFechas = fechas;
+            }
         }
     }
-}
 
     void EliminarEventoExterno(DateTime fecha)
     {
         eventosExternosFechas.Remove(fecha);
     }
+    
     private async Task Consultar()
     {
         dataIsLoaded = 1;
@@ -322,66 +400,77 @@ async Task AbrirDialogoDiasNoLaborables(bool value)
     }
         dataIsLoaded = 2;
         StateHasChanged();
-}
-private void FiltrarCargo()
-{
-    if (string.IsNullOrEmpty(filtroCargo))
-    {
-        registrosFiltrados = registros?.ToList() ?? new List<AsistenReuPorcetanjeDTO>();
     }
-    else
+    
+    private void FiltrarCargo()
     {
-        registrosFiltrados = registros?
-            .Where(x => x.Nombre.Contains(filtroCargo, StringComparison.OrdinalIgnoreCase))
-            .ToList() ?? new List<AsistenReuPorcetanjeDTO>();
-    }
-}
-
-void LimpiarFiltros()
-{
-    fechaInicio = DateTime.Today;
-    fechaFin = DateTime.Today;
-    empresa = string.Empty;
-    area = string.Empty;
-    filtroCargo = string.Empty;
-    diasExcepcionalesLaborables = false;
-    eventosExternosFechas.Clear();
-    registros.Clear();
-    registrosFiltrados.Clear();
-}
-
-private string GetColor(double porcentaje, bool mayorEsMejor)
-{
-    if (mayorEsMejor)
-    {
-        if (porcentaje >= 90)
-            return "green";
-        else if (porcentaje >= 60)
-            return "orange";
+        if (string.IsNullOrEmpty(filtroCargo))
+        {
+            registrosFiltrados = registros?.ToList() ?? new List<AsistenReuPorcetanjeDTO>();
+        }
         else
-            return "red";
+        {
+            registrosFiltrados = registros?
+                .Where(x => x.Nombre.Contains(filtroCargo, StringComparison.OrdinalIgnoreCase))
+                .ToList() ?? new List<AsistenReuPorcetanjeDTO>();
+        }
     }
-    else
-    {
-        if (porcentaje <= 60)
-            return "green";
-        else if (porcentaje <= 90)
-            return "orange";
-        else
-            return "red";
-    }
-}
-public class Empresa
-{
-    public string Id { get; set; } = string.Empty;
-    public string Nombre { get; set; } = string.Empty;
-}
 
-public class Area
-{
-    public string Id { get; set; } = string.Empty;
-    public string Nombre { get; set; } = string.Empty;
-}
+    void LimpiarFiltros()
+    {
+        fechaInicio = DateTime.Today;
+        fechaFin = DateTime.Today;
+        empresa = string.Empty;
+        area = string.Empty;
+        filtroCargo = string.Empty;
+        diasExcepcionalesLaborables = false;
+        eventosExternosFechas.Clear();
+        registros.Clear();
+        registrosFiltrados.Clear();
+        
+        if (empresas.Count == 1)
+        {
+            empresa = empresas.First().Id;
+            OnEmpresaChanged(empresa);
+        }
+        else
+        {
+            areas = new List<Area>();
+        }
+    }
+
+    private string GetColor(double porcentaje, bool mayorEsMejor)
+    {
+        if (mayorEsMejor)
+        {
+            if (porcentaje >= 90)
+                return "green";
+            else if (porcentaje >= 60)
+                return "orange";
+            else
+                return "red";
+        }
+        else
+        {
+            if (porcentaje <= 60)
+                return "green";
+            else if (porcentaje <= 90)
+                return "orange";
+            else
+                return "red";
+        }
+    }
+    public class Empresa
+    {
+        public string Id { get; set; } = string.Empty;
+        public string Nombre { get; set; } = string.Empty;
+    }
+
+    public class Area
+    {
+        public string Id { get; set; } = string.Empty;
+        public string Nombre { get; set; } = string.Empty;
+    }
 
 
 }
